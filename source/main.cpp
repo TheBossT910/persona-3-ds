@@ -12,6 +12,20 @@
 
 #include "background.h"
 
+//a simple sprite structure
+//it is generally preferred to separate your game object
+//from OAM
+typedef struct
+{
+   u16* gfx;
+   SpriteSize size;
+   SpriteColorFormat format;
+   int rotationIndex;
+   int paletteAlpha;
+   int x;
+   int y;
+} MySprite;
+
 volatile int frame = 0;
 
 // fn for the interrupt
@@ -26,25 +40,72 @@ int main(void) {
 
 	// set video mode for 2 text layers and 2 extended background layers
 	videoSetMode(MODE_5_2D);
-
 	// set sub video mode for 4 text layers
 	videoSetModeSub(MODE_0_2D);
 
 	// map vram bank A to main engine background (slot 0)
-	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+	// map vram bank B to main engine sprites (slot 0)
+	vramSetBankB(VRAM_B_MAIN_SPRITE);
 
 	// debug init
 	consoleDemoInit();
 
-	// set brightness on bottom screens to completely dark (no visible image)
+	// set brightness on bottom screen to completely dark (no visible image)
 	setBrightness(2, -16);
 
-	// setup bitmap background (for image) on background 3
-	bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	// setup bitmap background (for background image) on background 3
+	int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	dmaCopy(backgroundBitmap, bgGetGfxPtr(bg3), 256*256);
+	dmaCopy(backgroundPal, BG_PALETTE, 256*2);
+	
+	// TODO: setup moon as sprite
+	// creating 3 sprites with different color formats
+	MySprite sprites[] = {
+		{0, SpriteSize_32x32, SpriteColorFormat_Bmp, 0, 15, 20, 15},
+		{0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 20, 80},
+		{0, SpriteSize_32x32, SpriteColorFormat_16Color, 0, 1, 20, 136}
+	};
 
-	// NOTE: imgs need to be converted to be used (http://www.coranac.com/projects/#grit)
-	// NOTE: backgroundBitmap is an extern defined in background.h
-	decompress(backgroundBitmap, BG_GFX, LZ77Vram);
+	// initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
+	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
+	
+	// allocating space for sprite graphics
+	for(int i = 0; i < 3; i++)
+      sprites[i].gfx = oamAllocateGfx(&oamMain, sprites[i].size, sprites[i].format);
+
+	// fill bmp sprite with the color red
+	dmaFillHalfWords(ARGB16(1,31,0,0), sprites[0].gfx, 32*32*2);
+	// fill the 256 color sprite with index 1 (2 pixels at a time)
+	dmaFillHalfWords((1<<8)|1, sprites[1].gfx, 32*32);
+	// fill the 16 color sprite with index 1 (4 pixels at a time)
+	dmaFillHalfWords((1<<12)|(1<<8)|(1<<4)|1, sprites[2].gfx, 32*32 / 2);
+
+	// set index 1 to blue...this will be the 256 color sprite
+	SPRITE_PALETTE[1] = RGB15(0,31,0);
+	// set index 17 to green...this will be the 16 color sprite
+	SPRITE_PALETTE[16 + 1] = RGB15(0,0,31);
+
+	for(int i = 0; i < 3; i++) {
+		oamSet(
+		&oamMain, 						// main display
+		i,       						// oam entry to set
+		sprites[i].x, sprites[i].y, 	// position
+		0, 								// priority
+		sprites[i].paletteAlpha, 		// palette for 16 color sprite or alpha for bmp sprite
+		sprites[i].size,
+		sprites[i].format,
+		sprites[i].gfx,
+		sprites[i].rotationIndex,
+		true, 							// double the size of rotated sprites
+		false, 							// don't hide the sprite
+		false, false, 					// vflip, hflip
+		false 							// apply mosaic
+		);
+	}
+
+	// update display to show sprites
+	oamUpdate(&oamMain);
 	
 	// text uses ansi escape sequences
 	iprintf("Taha Rashid\n");
@@ -56,7 +117,6 @@ int main(void) {
 
 	// NOTE: bottom screen has 24 lines, 32 columns (from 0 -> 23, 0 -> 32)
 	iprintf("\x1b[23;31HTest!");
-
 	iprintf("\x1b[11;11HPress Start");
 
 	// fade top screen in
@@ -80,7 +140,6 @@ int main(void) {
 	int brightnessCounter = 0;
  
 	while(pmMainLoop()) {
-	
 		swiWaitForVBlank();
 		scanKeys();
 		int keys = keysDown();
