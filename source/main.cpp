@@ -13,7 +13,7 @@
 #include "skyBackground.h"
 #include "roomBackground.h"
 #include "silhouetteBackground.h"
-#include "moonSprite.h"
+#include "logoSprite.h"
 
 //a simple sprite structure
 //it is generally preferred to separate your game object
@@ -90,23 +90,23 @@ int main(void) {
 
 	// showing moon as 3 sprites
 	MySprite sprites[] = {
-		{0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 0, 0},
-		{0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 0, 64, 0},
-		{0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 1, 128, 0}
+		{0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 0, 120},
+		// {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 0, 64, 0},
+		// {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 1, 128, 0}
 	};
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
 	oamInit(&oamMain, SpriteMapping_1D_128, false);
 	
 	// allocating space for sprite graphics
-	u16* moonSpriteGfxPtr = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
-	dmaCopy(moonSpriteTiles, moonSpriteGfxPtr, moonSpriteTilesLen);
-    dmaCopy(moonSpritePal, SPRITE_PALETTE, moonSpritePalLen);
+	u16* logoSpriteGfxPtr = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
+	dmaCopy(logoSpriteTiles, logoSpriteGfxPtr, logoSpriteTilesLen);
+    dmaCopy(logoSpritePal, SPRITE_PALETTE, logoSpritePalLen);
 
-	for(int i = 0; i < 3; i++)
-      sprites[i].gfx = moonSpriteGfxPtr;
+	for(int i = 0; i < 1; i++)
+      sprites[i].gfx = logoSpriteGfxPtr;
 
-	for(int i = 0; i < 3; i++) {
+	for(int i = 0; i < 1; i++) {
 		oamSet(
 		&oamMain, 						// main display
 		i,       						// oam entry to set
@@ -205,13 +205,13 @@ int main(void) {
 		// scroll silhouette background
 		// animate X (moving right towards 0)
 		if (silhouetteX < 0 && frame % 5 == 0) {
-			silhouetteX += (-silhouetteX) / 5 + 1;
+			silhouetteX += (-silhouetteX) / 6 + 1;
 			if (silhouetteX > 0) silhouetteX = 0;
 		}
 
 		// animate Y (moving up towards 0)
 		if (silhouetteY > 0 && frame % 5 == 0) {
-			silhouetteY += (-silhouetteY) / 5 + 1; 
+			silhouetteY += (-silhouetteY) / 6 + 1; 
 			if (silhouetteY < 0) silhouetteY = 0;
 		}
 
