@@ -105,27 +105,6 @@ int main(void) {
 
 	for(int i = 0; i < 1; i++)
       sprites[i].gfx = logoSpriteGfxPtr;
-
-	for(int i = 0; i < 1; i++) {
-		oamSet(
-		&oamMain, 						// main display
-		i,       						// oam entry to set
-		sprites[i].x, sprites[i].y, 	// position
-		0, 								// priority
-		sprites[i].paletteAlpha, 		// palette for 16 color sprite or alpha for bmp sprite
-		sprites[i].size,
-		sprites[i].format,
-		sprites[i].gfx,
-		sprites[i].rotationIndex,
-		true, 							// double the size of rotated sprites
-		false, 							// don't hide the sprite
-		false, false, 					// vflip, hflip
-		false 							// apply mosaic
-		);
-	}
-
-	// update display to show sprites
-	oamUpdate(&oamMain);
 	
 	// text uses ansi escape sequences
 	iprintf("Taha Rashid\n");
@@ -137,7 +116,8 @@ int main(void) {
 
 	// NOTE: bottom screen has 24 lines, 32 columns (from 0 -> 23, 0 -> 32)
 	iprintf("\x1b[23;31HTest!");
-	iprintf("\x1b[11;11HPress Start");
+	// center the text by doing (32 / 2) - (len / 2)
+	iprintf("\x1b[11;8HPress Any Button");
 
 	// for slide in animation
 	// move camera to the empty right half of the 512px wide background
@@ -165,15 +145,19 @@ int main(void) {
 	int durationCounter = 0;
 	int brightness = 16;
 	int brightnessCounter = 0;
+
+	bool displayLogo = false;
+	int logoOpacity = 0;
  
 	while(pmMainLoop()) {
 		swiWaitForVBlank();
 		bgUpdate();
+		oamUpdate(&oamMain);
 		scanKeys();
 		int keys = keysDown();
 
-		// cancel text animation on start btn or touchscreen input
-		if (keys & (KEY_START | KEY_TOUCH)) {
+		// cancel text animation on any key input
+		if (keys) {
 			setBrightness(2, 0);
 			animateText = false;
 		}
@@ -184,23 +168,6 @@ int main(void) {
 		iprintf("\x1b[10;0HFrame = %d",frame);
 		iprintf("\x1b[16;0HTouch x = %04X, %04X\n", touchXY.rawx, touchXY.px);
 		iprintf("Touch y = %04X, %04X\n", touchXY.rawy, touchXY.py);
-
-		
-		// animate text (fade in/out)
-		if (!animateText) {
-			continue;
-		}
-
-		durationCounter++;
-		if (durationCounter >= duration) {
-			durationCounter = 0;
-			brightnessCounter++;
-			setBrightness(2, brightnessCounter - 16);
-		}
-
-		if (brightnessCounter >= brightness) {
-			brightnessCounter = 0;
-		}
 
 		// scroll silhouette background
 		// animate X (moving right towards 0)
@@ -216,6 +183,59 @@ int main(void) {
 		}
 
 		bgSetScroll(bg[0], -silhouetteX, -silhouetteY);
+		
+		// perform code after silhouette slide-in
+		if (silhouetteX < 0 || silhouetteY < 0) {
+			oamMain.oamMemory[0].attribute[0] &= ~ATTR0_DISABLED;
+			continue;
+		}
+
+		// animate bottom screen text
+		if (animateText) {
+			durationCounter++;
+			if (durationCounter >= duration) {
+				durationCounter = 0;
+				brightnessCounter++;
+				setBrightness(2, brightnessCounter - 16);
+			}
+
+			if (brightnessCounter >= brightness) {
+				brightnessCounter = 0;
+			}
+		}
+
+		// setup sprites
+		if (!displayLogo) {
+			displayLogo = true;
+			for(int i = 0; i < 1; i++) {
+				oamSet(
+					&oamMain, 						// main display (OamState)
+					i,       						// oam entry to set (id)
+					sprites[i].x, sprites[i].y, 	// position
+					0, 								// priority
+					sprites[i].paletteAlpha, 		// palette for 16 color sprite or alpha for bmp sprite
+					sprites[i].size,
+					sprites[i].format,
+					sprites[i].gfx,
+					sprites[i].rotationIndex,
+					true, 							// double the size of rotated sprites
+					false, 							// don't hide the sprite
+					false, false, 					// vflip, hflip
+					false 							// apply mosaic
+					);
+				
+				oamMain.oamMemory[i].attribute[0] |= ATTR0_TYPE_BLENDED;
+				// source is sprite, dest is all bgs
+				REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_SPRITE | 
+							BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BG2 | BLEND_DST_BACKDROP;
+			}
+		}
+
+		// fade in sprites
+        if (logoOpacity < 16 && frame % 4 == 0) {
+            logoOpacity++;
+			REG_BLDALPHA = logoOpacity | ((16 - logoOpacity) << 8);
+        }
 	}
 
 	return 0;
