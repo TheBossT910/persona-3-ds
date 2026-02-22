@@ -13,12 +13,10 @@
 #include "skyBackground.h"
 #include "roomBackground.h"
 #include "silhouetteBackground.h"
-#include "overlayImage1.h"
+#include "overlayBackground.h"
 #include "logoSprite.h"
 
 //a simple sprite structure
-//it is generally preferred to separate your game object
-//from OAM
 typedef struct
 {
    u16* gfx;
@@ -66,10 +64,10 @@ int main(void) {
 
 	// initialize backgrounds
 	// check https://mtheall.com/vram.html to ensure bg fit in vram
-	bg[0] = bgInit(0, BgType_Text8bpp, BgSize_T_512x512, 12, 6);	// silhouette
-	bg[1] = bgInit(1, BgType_Text8bpp, BgSize_T_256x256, 10, 0);	// room
-	bg[2] = bgInit(2, BgType_Text8bpp, BgSize_T_256x256, 11, 2);	// sky
-	bg[3] = bgInit(3, BgType_ExRotation, BgSize_ER_256x256, 9, 8); 	// overlay
+	bg[0] = bgInit(0, BgType_Text8bpp, BgSize_T_512x512, 11, 2);		// silhouette
+	bg[1] = bgInit(1, BgType_Text8bpp, BgSize_T_256x256, 9, 0);			// room
+	bg[2] = bgInit(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);		// sky
+	bg[3] = bgInit(3, BgType_ExRotation, BgSize_ER_512x512, 19, 8); 	// overlay
 
 	// need to set priority to properly display
 	// 0 is highest, 3 is lowest
@@ -82,13 +80,13 @@ int main(void) {
 	dmaCopy(silhouetteBackgroundTiles,  bgGetGfxPtr(bg[0]), silhouetteBackgroundTilesLen);
 	dmaCopy(roomBackgroundTiles,  bgGetGfxPtr(bg[1]), roomBackgroundTilesLen);
   	dmaCopy(skyBackgroundTiles, bgGetGfxPtr(bg[2]), skyBackgroundTilesLen);
-	dmaCopy(overlayImage1Tiles, bgGetGfxPtr(bg[3]), overlayImage1TilesLen);
+	dmaCopy(overlayBackgroundTiles, bgGetGfxPtr(bg[3]), overlayBackgroundTilesLen);
 
 	// copy maps to vram
 	dmaCopy(silhouetteBackgroundMap,  bgGetMapPtr(bg[0]), silhouetteBackgroundMapLen);
 	dmaCopy(roomBackgroundMap,  bgGetMapPtr(bg[1]), roomBackgroundMapLen);
   	dmaCopy(skyBackgroundMap, bgGetMapPtr(bg[2]), skyBackgroundMapLen);
-	dmaCopy(overlayImage1Map,   bgGetMapPtr(bg[3]), overlayImage1MapLen);
+	dmaCopy(overlayBackgroundMap,   bgGetMapPtr(bg[3]), overlayBackgroundMapLen);
 
 	vramSetBankE(VRAM_E_LCD); // for main engine
 
@@ -96,19 +94,18 @@ int main(void) {
 	dmaCopy(silhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], silhouetteBackgroundPalLen);	// bg 0, slot 0 (slot can be specified slot in .grit file)
 	dmaCopy(roomBackgroundPal,  &VRAM_E_EXT_PALETTE[1][0],  roomBackgroundPalLen);  			// bg 1, slot 0
 	dmaCopy(skyBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], skyBackgroundPalLen); 					// bg 2, slot 0 
-	dmaCopy(overlayImage1Pal,   &VRAM_E_EXT_PALETTE[3][0], overlayImage1PalLen);				// bg 3, slot 0
+	dmaCopy(overlayBackgroundPal,   &VRAM_E_EXT_PALETTE[3][0], overlayBackgroundPalLen);		// bg 3, slot 0
 
 	// map vram to extended palette
 	vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
 	bgHide(bg[3]);	// hide overlay
-	bgSetCenter(bg[3], 128, 48);	// set overlay center to center of screen (for rotation) based on top left of image
+	bgSetCenter(bg[3], 128, 96);	// pivot point on the screen (at the screen's center)
+	bgSetScroll(bg[3], 256, 256);	// pivot point on the image (at the image's center)
 
-	// showing moon as 3 sprites
+	// showing logo as sprite
 	MySprite sprites[] = {
 		{0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 0, 120},
-		// {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 0, 64, 0},
-		// {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 1, 128, 0}
 	};
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
@@ -270,12 +267,12 @@ int main(void) {
 		// setup blending for overlay
 		if (!displayOverlay) {
 			displayOverlay = true;
-			bgShow(bg[3]);
 			REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_BG3 | BLEND_DST_BG2;
+			bgShow(bg[3]);
 		}
 
 		// fade in overlay
-		if (overlayOpacity < 6 && frame % 2 == 0) {
+		if (overlayOpacity < 6 && frame % 4 == 0) {
 			overlayOpacity++;
 			REG_BLDALPHA = overlayOpacity | ((16 - overlayOpacity) << 8);
 		}
