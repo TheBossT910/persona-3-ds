@@ -51,6 +51,11 @@ void MainMenuView::Init() {
     bgSetPriority(bg[0], 0);	// silhouette
     bgSetPriority(bg[2], 1);	// fog
     bgSetPriority(bg[1], 2);	// door
+
+    // reset background vram
+    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
+    dmaFillHalfWords(1, bgGetMapPtr(bg[0]), 2048);
+    dmaFillHalfWords(2, bgGetMapPtr(bg[0]), 2048);
 	
 	// copy graphics to vram
 	dmaCopy(menuSilhouetteBackgroundTiles,  bgGetGfxPtr(bg[0]), menuSilhouetteBackgroundTilesLen);
