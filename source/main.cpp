@@ -46,7 +46,9 @@ int main(void) {
         // check state of currentView
         if (currentView != nullptr) {
             ViewState nextState = currentView->Update();
-            if (nextState == ViewState::MAIN_MENU) {
+            if (nextState == ViewState::INTRO) {
+                SwitchView(new IntroView());
+            } else if (nextState == ViewState::MAIN_MENU) {
                 SwitchView(new MainMenuView());
             }
         }

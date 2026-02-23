@@ -128,11 +128,10 @@ ViewState IntroView::Update() {
             setBrightness(3, i);
         
             // wait a few frames
-            for (int duration = 0; duration <= 4; duration++) {
+            for (int duration = 0; duration <= 2; duration++) {
                 swiWaitForVBlank();
             }
         }
-
         return ViewState::MAIN_MENU;
     }
     
@@ -200,6 +199,7 @@ ViewState IntroView::Update() {
         // source is sprite, dest is all bgs
         REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_SPRITE | 
                     BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BG2;
+        REG_BLDALPHA = 0 | (16  << 8);
     }
 
     // fade in logoSprite
