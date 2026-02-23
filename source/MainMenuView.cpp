@@ -81,18 +81,12 @@ void MainMenuView::Init() {
 	bgSetCenter(bg[2], 128, 96);	// pivot point on the screen (at the screen's center)
 	bgSetScroll(bg[2], 128, 96);	// pivot point on the image (at the image's center)
 
-	// text uses ansi escape sequences
-	iprintf("Taha Rashid\n");
-	iprintf("\033[31;1;4mFeb 18, 2025\n\x1b[39m");
-	iprintf("Line 3\n");
-	iprintf("\x1b[32;1mLine 4\n\x1b[39m");
-	iprintf("\x1b[31;1;4mLine 5\n\x1b[39m");
-	iprintf("Line 6\n");
-
 	// NOTE: bottom screen has 24 lines, 32 columns (from 0 -> 23, 0 -> 32)
-	iprintf("\x1b[23;31HTest!");
 	// center the text by doing (32 / 2) - (len / 2)
-	iprintf("\x1b[11;8HPress Any Button");
+	iprintf("\x1b[11;0HLoad Game\n");
+    iprintf("New Game\n");
+    iprintf("Config\n");
+    iprintf("Return to Title\n");
 
 	// for slide in animation
 	// move camera to the empty right half of the 512px wide background
@@ -118,7 +112,7 @@ ViewState MainMenuView::Update() {
     // transition to menu state on any input
     if (keys) {
         // transition both screens to white
-        for(int i = 0; i <= 16; i++) {
+        for(int i = 0; i > -16; i--) {
             setBrightness(3, i);
         
             // wait a few frames
@@ -128,8 +122,6 @@ ViewState MainMenuView::Update() {
         }
         return ViewState::INTRO;
     }
-    
-    iprintf("\x1b[10;0HMainMenuView");
 
     // scroll silhouette background
     // animate X (moving right towards 0)
