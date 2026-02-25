@@ -4,7 +4,8 @@
 enum class ViewState {
     KEEP_CURRENT,
     INTRO,
-    MAIN_MENU
+    MAIN_MENU,
+    IWATODAI_DORM
 };
 
 class View {

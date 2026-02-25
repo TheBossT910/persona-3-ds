@@ -5,6 +5,7 @@
 #include "View.h"
 #include "IntroView.h"
 #include "MainMenuView.h"
+#include "IwatodaiDormView.h"
 
 volatile int frame = 0;
 View* currentView = nullptr;
@@ -53,6 +54,8 @@ int main(void) {
                 SwitchView(new IntroView());
             } else if (nextState == ViewState::MAIN_MENU) {
                 SwitchView(new MainMenuView());
+            } else if (nextState == ViewState::IWATODAI_DORM) {
+                SwitchView(new IwatodaiDormView());
             }
         }
 

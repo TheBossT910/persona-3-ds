@@ -133,16 +133,22 @@ ViewState MainMenuView::Update() {
         optionCount = sceneOptionCount;
     } else if (menuOptions[3].selected) {
         // selected "Return to Title"
-        // transition both screens to black
         for(int i = 0; i > -16; i--) {
             setBrightness(3, i);
-        
-            // wait a few frames
             for (int duration = 0; duration <= 2; duration++) {
                 swiWaitForVBlank();
             }
         }
         return ViewState::INTRO;
+    } else if (sceneOptions[0].selected) {
+        // selected "Iwatodai Dorm"
+        for(int i = 0; i > -16; i--) {
+            setBrightness(3, i);
+            for (int duration = 0; duration <= 2; duration++) {
+                swiWaitForVBlank();
+            }
+        }
+        return ViewState::IWATODAI_DORM;
     } else if (sceneOptions[3].selected) {
         // select menuOptions
         sceneOptions[3].selected = false;
