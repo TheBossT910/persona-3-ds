@@ -81,13 +81,6 @@ void MainMenuView::Init() {
 	bgSetCenter(bg[2], 128, 96);	// pivot point on the screen (at the screen's center)
 	bgSetScroll(bg[2], 128, 96);	// pivot point on the image (at the image's center)
 
-	// NOTE: bottom screen has 24 lines, 32 columns (from 0 -> 23, 0 -> 32)
-	// center the text by doing (32 / 2) - (len / 2)
-	iprintf("\x1b[11;0HLoad Game\n");
-    iprintf("New Game\n");
-    iprintf("Config\n");
-    iprintf("Return to Title\n");
-
 	// for slide in animation
 	// move camera to the empty right half of the 512px wide background
 	bgSetScroll(bg[0], -silhouetteX, -silhouetteY);
@@ -103,15 +96,44 @@ void MainMenuView::Init() {
 			swiWaitForVBlank();
 		}
 	}
+
+    // set default options to menuOptions
+    options = menuOptions;
+    optionCount = menuOptionCount;
 }
 
 ViewState MainMenuView::Update() {
     scanKeys();
     int keys = keysDown();
 
-    // transition to menu state on any input
-    if (keys) {
-        // transition both screens to white
+    // display option text
+    if (keys & KEY_DOWN) {
+        selectedOption = (selectedOption + 1) % optionCount;
+    }
+
+    if (keys & KEY_UP) {
+        selectedOption = (selectedOption + optionCount - 1) % optionCount;
+    }
+
+    if (keys & KEY_A) {
+        options[selectedOption].selected = true;
+    }
+
+    if (keys & KEY_B) {
+        options[selectedOption].selected = false;
+    }
+
+    consoleClear();
+    // choosing which options to display
+    if (menuOptions[0].selected) {
+        // select sceneOptions
+        menuOptions[0].selected = false;
+        selectedOption = 0;
+        options = sceneOptions;
+        optionCount = sceneOptionCount;
+    } else if (menuOptions[3].selected) {
+        // selected "Return to Title"
+        // transition both screens to black
         for(int i = 0; i > -16; i--) {
             setBrightness(3, i);
         
@@ -121,6 +143,17 @@ ViewState MainMenuView::Update() {
             }
         }
         return ViewState::INTRO;
+    } else if (sceneOptions[3].selected) {
+        // select menuOptions
+        sceneOptions[3].selected = false;
+        selectedOption = 0;
+        options = menuOptions;
+        optionCount = menuOptionCount;
+    }
+
+    for (int option = 0; option < optionCount; option++) {
+        // display options
+        iprintf("%c%c %s\n", option == selectedOption ? '*' : ' ', options[option].selected ? '>' : ' ', options[option].name);
     }
 
     // scroll silhouette background

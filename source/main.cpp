@@ -38,7 +38,10 @@ int main(void) {
 	consoleDemoInit();
 
     // start with IntroView
-    SwitchView(new IntroView());
+    // SwitchView(new IntroView());
+
+    // DEBUG
+    SwitchView(new MainMenuView());
 
 	while(pmMainLoop()) {
 		swiWaitForVBlank();

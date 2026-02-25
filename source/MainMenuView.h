@@ -1,10 +1,40 @@
 #pragma once
 #include "View.h"
 
+typedef struct
+{
+    const char* name;
+    bool selected;
+} Option;
+
 // implementing from View
 class MainMenuView : public View {
     private:
         int bg[3];
+
+        // for options
+        Option menuOptions[4] = 
+        {
+            {"Load Game", false},
+            {"New Game  (N/A)", false},
+            {"Config    (N/A)", false},
+            {"Return to Title", false}
+        };
+
+        Option sceneOptions[4] = 
+        {
+            {"Iwatodai Dorm", false},
+            {"Gekkoukan Classroom", false},
+            {"Tartarus Level 1", false},
+            {"Back", false}
+        };
+
+        const int menuOptionCount = 4;
+        const int sceneOptionCount = 4;
+        // generic
+        Option *options;
+        int optionCount;
+        int selectedOption = 0;
         
         // for silhouette animation
         int silhouetteX = -256;
