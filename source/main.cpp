@@ -42,7 +42,7 @@ int main(void) {
     // SwitchView(new IntroView());
 
     // DEBUG
-    SwitchView(new MainMenuView());
+    SwitchView(new IwatodaiDormView());
 
 	while(pmMainLoop()) {
 		swiWaitForVBlank();

@@ -5,9 +5,12 @@
 
 // assets
 #include "teapot_bin.h"
+#include "output_bin.h"
 
 float rotateX = 0.0;
 float rotateY = 0.0;
+float translateX = 0.0;
+float translateY = 0.0;
 
 void IwatodaiDormView::Init() {
     // set video mode for 3　2D backgrounds, 1 3D background
@@ -34,9 +37,9 @@ void IwatodaiDormView::Init() {
 	glLoadIdentity();
 	gluPerspective(70, 256.0 / 192.0, 0.1, 40);
 
-	gluLookAt(	0.0, 0.0, 3.5,		// camera possition
-				0.0, 0.0, 0.0,		// look at
-				0.0, 1.0, 0.0);		// up
+	gluLookAt(	0.0, 0.0, 2,		// location of camera (x, y, z)
+				0.0, 0.0, 0.0,		// where camera is looking (x, y, z)
+				0.0, 1.0, 0.0);		// unit vector describing direction (x, y, z)
 
 	glLight(0, RGB15(31,31,31), 0,                      floattov10(-1.0),   0);
 	glLight(1, RGB15(31,0,31),  0,                      floattov10(1) - 1,  0);
@@ -46,6 +49,9 @@ void IwatodaiDormView::Init() {
 	//not a real gl function and will likely change
 	glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | 
         POLY_FORMAT_LIGHT0 | POLY_FORMAT_LIGHT1 | POLY_FORMAT_LIGHT2 | POLY_FORMAT_LIGHT3 ) ;
+    
+    // set color
+    glColor3b(255, 255, 255);
 
 	// debug init
 	// NOTE: for some reason, we cant use vram bank C. It might be because of consoleDemoInit...
@@ -56,19 +62,24 @@ ViewState IwatodaiDormView::Update() {
     scanKeys();
     u32 keys = keysHeld();
 
-    if(keys & KEY_A) return ViewState::MAIN_MENU;
-    if(keys & KEY_START) return ViewState::KEEP_CURRENT;
-    if(!(keys & KEY_UP)) rotateX += 3;
-    if(!(keys & KEY_DOWN)) rotateX -= 3;
-    if(!(keys & KEY_LEFT)) rotateY += 3;
-    if(!(keys & KEY_RIGHT)) rotateY -= 3;
+    if(keys & KEY_START) return ViewState::MAIN_MENU;
+    if(keys & KEY_A) rotateX += 3;
+    if(keys & KEY_B) rotateX -= 3;
+    if(keys & KEY_X) rotateY += 3;
+    if(keys & KEY_Y) rotateY -= 3;
+    if(!(keys & KEY_UP)) translateX += 3;
+    if(!(keys & KEY_DOWN)) translateX -= 3;
+    if(!(keys & KEY_LEFT)) translateY += 3;
+    if(!(keys & KEY_RIGHT)) translateY -= 3;
 
     glPushMatrix();
 
-    glRotateX(rotateX);
-    glRotateY(rotateY);
+    // TODO: figure out why X/Y are swapped. It might be the perspective of the camera
+    glRotateX(rotateY);
+    glRotateY(rotateX);
+    glTranslatef32(translateY * -10, translateX * 10, 0);
 
-    glCallList((u32*)teapot_bin);
+    glCallList((u32*)output_bin);
 
     glPopMatrix(1);
 
