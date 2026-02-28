@@ -6,56 +6,66 @@
 // assets
 #include "teapot_bin.h"
 #include "output_bin.h"
+#include "texture.h"
 
 float rotateX = 0.0;
 float rotateY = 0.0;
 float translateX = 0.0;
 float translateY = 0.0;
 
-void IwatodaiDormView::Init() {
-    // set video mode for 3　2D backgrounds, 1 3D background
-	videoSetMode(MODE_0_3D);
-	// set sub video mode for 4 text layers
-	videoSetModeSub(MODE_0_2D);
+// texture ID
+static int textureID;
 
-    // initialize gl
+void IwatodaiDormView::Init() {
+    videoSetMode(MODE_0_3D);
+    videoSetModeSub(MODE_0_2D);
+
     glInit();
     
-    // enable antialiasing
     glEnable(GL_ANTIALIAS);
+    glEnable(GL_TEXTURE_2D);  // enable texturing
 
-    // setup the rear plane
-	glClearColor(0,0,0,31); // BG must be opaque for AA to work
-	glClearPolyID(63);      // BG must have a unique polygon ID for AA to work
-	glClearDepth(0x7FFF);
+    glClearColor(0,0,0,31);
+    glClearPolyID(63);
+    glClearDepth(0x7FFF);
 
-	// this should work the same as the normal gl call
-	glViewport(0,0,255,191);
+    glViewport(0,0,255,191);
 
-	// any floating point gl call is being converted to fixed prior to being implemented
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(70, 256.0 / 192.0, 0.1, 40);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(70, 256.0 / 192.0, 0.1, 40);
 
-	gluLookAt(	0.0, 0.0, 2,		// location of camera (x, y, z)
-				0.0, 0.0, 0.0,		// where camera is looking (x, y, z)
-				0.0, 1.0, 0.0);		// unit vector describing direction (x, y, z)
+    gluLookAt(  0.0, 0.0, 2,
+                0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0);
 
-	glLight(0, RGB15(31,31,31), 0,                      floattov10(-1.0),   0);
-	glLight(1, RGB15(31,0,31),  0,                      floattov10(1) - 1,  0);
-	glLight(2, RGB15(0,31,0),   floattov10(-1.0),       0,                  0);
-	glLight(3, RGB15(0,0,31),   floattov10(1.0) - 1,    0,                  0);
+    glLight(0, RGB15(31,31,31), 0,                   floattov10(-1.0),  0);
+    glLight(1, RGB15(31,0,31),  0,                   floattov10(1) - 1, 0);
+    glLight(2, RGB15(0,31,0),   floattov10(-1.0),    0,                 0);
+    glLight(3, RGB15(0,0,31),   floattov10(1.0) - 1, 0,                 0);
 
-	//not a real gl function and will likely change
-	glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | 
-        POLY_FORMAT_LIGHT0 | POLY_FORMAT_LIGHT1 | POLY_FORMAT_LIGHT2 | POLY_FORMAT_LIGHT3 ) ;
-    
-    // set color
-    glColor3b(255, 255, 255);
+    // use VRAM_A for textures (VRAM_C is taken by consoleDemoInit)
+    vramSetBankA(VRAM_A_TEXTURE);
 
-	// debug init
-	// NOTE: for some reason, we cant use vram bank C. It might be because of consoleDemoInit...
-	consoleDemoInit();
+    // load texture
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0,
+        GL_RGBA,
+        TEXTURE_SIZE_64, TEXTURE_SIZE_64,
+        0,
+        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
+        textureBitmap  // from texture.h
+    );
+
+    // lights off for textured model — if you want lighting AND texture,
+    // change GL_RGBA to GL_RGB and add POLY_FORMAT_LIGHTx flags back below
+    glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
+
+    glColor3b(255, 255, 255);  // keep white so texture colors aren't tinted
+
+    consoleDemoInit();
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -74,38 +84,24 @@ ViewState IwatodaiDormView::Update() {
 
     glPushMatrix();
 
-    // TODO: figure out why X/Y are swapped. It might be the perspective of the camera
     glRotateX(rotateY);
     glRotateY(rotateX);
     glTranslatef32(translateY * -10, translateX * 10, 0);
 
+    // bind texture before drawing
+    glBindTexture(GL_TEXTURE_2D, textureID);
     glCallList((u32*)output_bin);
 
     glPopMatrix(1);
 
     glFlush(0);
 
-    // bottom screen
     iprintf("\x1b[10;0HIwatodaiDormView");
-    
-    // for (int delay = 0; delay < 15; delay++) {
-    //     swiWaitForVBlank();
-    // }
-
-    // for(int i = 0; i > -16; i--) {
-    //     setBrightness(3, i);
-    //     for (int duration = 0; duration <= 2; duration++) {
-    //         swiWaitForVBlank();
-    //     }
-    // }
 
     return ViewState::KEEP_CURRENT;
 }
 
 void IwatodaiDormView::Cleanup() {
-    // reset brightness
     setBrightness(3, 0);
-
-    // clear text
-    iprintf("\x1b[2J"); 
+    iprintf("\x1b[2J");
 }
