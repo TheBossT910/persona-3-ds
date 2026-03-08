@@ -1,6 +1,7 @@
 #include <nds.h>
 #include <stdio.h>
 #include "globals.h"
+#include "math.h"
 #include "IwatodaiDormView.h"
 
 // assets
@@ -98,20 +99,51 @@ ViewState IwatodaiDormView::Update() {
     scanKeys();
     u32 keys = keysHeld();
 
+    float speed = 0.01f;
+
+    float forwardX = -sin(angle) * speed;
+    float forwardZ = cos(angle) * speed;
+
+    float rightX = cos(angle) * speed;
+    float rightZ = sin(angle) * speed;
+
     if(keys & KEY_START) return ViewState::MAIN_MENU;
-    if(keys & KEY_L) angle += 3;
-    if(keys & KEY_R) angle -= 3;
 
-    if(!(keys & KEY_UP)) translateX += 0.01;
-    if(!(keys & KEY_DOWN)) translateX -= 0.01;
-    if(!(keys & KEY_LEFT)) translateZ += 0.01;
-    if(!(keys & KEY_RIGHT)) translateZ -= 0.01;
+    float angleIncrement = 0.02f;
+    if(keys & KEY_L) angle += angleIncrement;
+    if(keys & KEY_R) angle -= angleIncrement;
 
-    // move cameras
-    glRotateX(angle);
-    gluLookAt(  translateX, 0.6, -1 + translateZ,   // location of camera (x, y, z)
-                translateX, -0.8, translateZ,       // where camera is looking (x, y, z)
-                0, 1.0, 0.0);                       // unit vectors describing direction
+    if(!(keys & KEY_DOWN)) {
+        translateX += forwardX;
+        translateZ += forwardZ;
+    }
+    if(!(keys & KEY_UP)) {
+        translateX -= forwardX;
+        translateZ -= forwardZ;
+    }
+    if(!(keys & KEY_LEFT)) {
+        translateX -= rightX;
+        translateZ -= rightZ;
+    }
+    if(!(keys & KEY_RIGHT)) {
+        translateX += rightX;
+        translateZ += rightZ;
+    }
+
+    float distance = 0.5f; 
+    float cameraX = translateX + (sin(angle) * distance);
+    float cameraY = 0.6f;
+    float cameraZ = translateZ - (cos(angle) * distance);
+
+    // look further down the same path the camera is facing
+    float lookAhead = 0.3f;
+    float targetX = translateX - (sin(angle) * lookAhead);
+    float targetY = 0.1f;
+    float targetZ = translateZ + (cos(angle) * lookAhead);
+
+    gluLookAt(  cameraX, cameraY, cameraZ,
+                targetX, targetY, targetZ,
+                0.0f, 1.0f, 0.0f);
 
     // draw environment
     glPushMatrix();
@@ -122,8 +154,6 @@ ViewState IwatodaiDormView::Update() {
     glPushMatrix();
         // move character
         glTranslatef(translateX, 0, translateZ);
-        // TODO: export character and environment model at 0,0,0 in Blockbench. This is translating the model to show properly
-        glTranslatef(0, 0.0, -0.5);
         DrawPlayerModel();
     glPopMatrix(1);
 
