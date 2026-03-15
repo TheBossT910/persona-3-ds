@@ -23,6 +23,11 @@ DATA		:=	data
 INCLUDES	:=	include
 GRAPHICS	:=	graphics
 
+GAME_TITLE	   := Persona 3 DS
+GAME_SUBTITLE1 := Memento Mori
+GAME_SUBTITLE2 := A Fan Recreation
+export GAME_ICON := $(CURDIR)/../icon.bmp
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
