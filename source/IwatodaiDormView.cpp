@@ -78,8 +78,8 @@ void CharacterController() {
     float rightX = cos(angle) * speed;
     float rightZ = sin(angle) * speed;
 
-    if(keys & KEY_L) angle += angleIncrement;
-    if(keys & KEY_R) angle -= angleIncrement;
+    if(keys & KEY_L) angle -= angleIncrement;
+    if(keys & KEY_R) angle += angleIncrement;
 
     float deltaX = 0.0f;
     float deltaZ = 0.0f;
