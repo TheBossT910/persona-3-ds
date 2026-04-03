@@ -23,7 +23,7 @@ PrintConsole console;
 // world
 const float tileSize = 0.0625f;
 const float worldOffsetX = 1.8125f;
-const float worldOffsetZ = 2.0f;
+const float worldOffsetZ = 1.6875f;
 const float characterRadius = 0.05f;
 
 // movement and viewpoint
