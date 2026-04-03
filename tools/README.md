@@ -20,6 +20,11 @@ convert_map.py *input* *output* [x y width height]
 python3 convert_map.py /Users/taharashid/Desktop/texture.png output.h 0 0 64 64
 
 ---
+Activate .venv
+
+python3 -m venv ~/.venv
+source ~/.venv/bin/activate
+---
 
 ## Figuring Out World Offset and Tile Size
 
