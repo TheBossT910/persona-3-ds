@@ -145,7 +145,43 @@ void CharacterController() {
               0.0f, 1.0f, 0.0f);
 }
 
-void InteractionController() {
+
+void DialougeController() {
+    int line = 0;    
+    while (true) {
+        consoleClear();
+        switch(line) {
+            case 0:
+                iprintf("\x1b[12;16HWhat's up?");
+                break;
+            case 1:
+                iprintf("\x1b[12;16HTime to go?");
+                break;
+            case 2:
+                iprintf("\x1b[12;16HDon't slack off.");
+                break;
+            default:
+                return;
+        }
+
+        scanKeys();
+        u32 keys = keysHeld();
+        if (keys & KEY_A) {
+            line++;
+        } else if (keys & KEY_B) {
+            line--;
+        } if (keys & KEY_START) {
+            return;
+        }
+
+        // delay between input and display
+        for (int i = 0; i < 6; i++) {
+            swiWaitForVBlank();
+        }
+    }
+}
+
+void InteractionController(u32 inputKeys) {
     switch(isTileAt(translateX, translateZ)) {
         case TileType::NEXT_SCENE:
             iprintf("\x1b[12;0HNext scene zone");
@@ -154,8 +190,15 @@ void InteractionController() {
             iprintf("\x1b[12;0HPrev scene zone");
             break;
         case TileType::CHARACTER_Akihiko:
-            iprintf("\x1b[12;16HAkihiko zone");
+            iprintf("\x1b[12;16HPress A to talk");
             bgShow(bgAkihiko);
+            if (inputKeys & KEY_A) {
+                // delay between input and controller
+                for (int i = 0; i < 6; i++) {
+                    swiWaitForVBlank();
+                }
+                DialougeController();
+            }
             break;
         default:
             consoleClear();
@@ -266,7 +309,7 @@ ViewState IwatodaiDormView::Update() {
 
     glFlush(0);
 
-    InteractionController();
+    InteractionController(keys);
 
     // print coordinates (64x64 area from 0,0 to 64,64)
     iprintf("\x1b[10;16Htile: %d, %d",
