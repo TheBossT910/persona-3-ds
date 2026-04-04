@@ -50,12 +50,13 @@ I chose to make a demake of one of my favourite games, Persona 3, for a few reas
 - [x] Main menu with interactive option selector
 - [x] 3D environment rendering with UV-mapped textures
 - [x] Basic camera controls
-- [ ] Character model + movement controls
-- [ ] Collision + interaction detection
+- [x] Character model + movement controls
+- [x] Collision + interaction detection
+- [ ] Dialouge system
+- [ ] Combat system
+- [ ] Music/SFX playback
 - [ ] Iwatodai Dorm — fully detailed environment
 - [ ] Additional scenes (world map, school room, Tartarus)
-- [ ] Music/SFX playback
-- [ ] Interaction system
 
 ---
 
