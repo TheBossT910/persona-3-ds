@@ -1,4 +1,4 @@
-# persona-3-ds
+# Persona 3 DS
 
 A Nintendo DS demake of **Persona 3**, developed in C++ using devkitpro. This project is a personal deep-dive into embedded systems and low-level graphics programming, building a game engine from scratch without external game libraries.
 
