@@ -76,10 +76,10 @@ cameraPosition CharacterController::update(u32 keys)
 
     cameraPosition camPos;
 
-    forwardX = -sin(angle) * speed;
-    forwardZ = cos(angle) * speed;
-    rightX = cos(angle) * speed;
-    rightZ = sin(angle) * speed;
+    forwardX = -sin(angle);
+    forwardZ = cos(angle);
+    rightX = cos(angle);
+    rightZ = sin(angle);
 
     if (keys & KEY_L)
         angle -= angleIncrement;
@@ -110,17 +110,17 @@ cameraPosition CharacterController::update(u32 keys)
         deltaZ += rightZ;
     }
 
-    if (deltaX != 0.0f && deltaZ != 0.0f)
+    if (deltaX != 0.0f || deltaZ != 0.0f)
     {
         // set walking animation
         if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER)) {
             characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER, true);
         }
 
-        // normalize diagonal movement to prevent faster speed
-        const float invSqrt2 = 0.707106781187;  // 1/sqrt(2)
-        deltaX *= invSqrt2;
-        deltaZ *= invSqrt2;
+        // normalize movement vector so diagonal speed matches cardinal speed
+        float length = sqrt(deltaX * deltaX + deltaZ * deltaZ);
+        deltaX = (deltaX / length) * speed;
+        deltaZ = (deltaZ / length) * speed;
     } else {
         // set idle animation
         if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER)) {
