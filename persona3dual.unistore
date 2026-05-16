@@ -1,0 +1,31 @@
+{
+  "storeInfo": {
+    "title": "Persona 3 Dual",
+    "author": "TheBossT910",
+    "url": "https://persona-3-dual.vercel.app/persona3dual.unistore",
+    "file": "persona3dual.unistore"
+  },
+  "storeContent": [
+    {
+      "info": {
+        "title": "Persona 3 Dual",
+        "author": "TheBossT910",
+        "category": "Games",
+        "console": "NDS",
+        "github": "TheBossT910/persona-3-dual",
+        "description": "A Nintendo DS demake of Persona 3, developed in C++ using devkitpro.",
+        "icon_index": 0
+      },
+      "objects": [
+        {
+          "type": "downloadRelease",
+          "repo": "TheBossT910/persona-3-dual",
+          "file": "*.nds",
+          "output": "/games/persona3dual.nds",
+          "prerelease": false,
+          "latestRelease": true
+        }
+      ]
+    }
+  ]
+}
