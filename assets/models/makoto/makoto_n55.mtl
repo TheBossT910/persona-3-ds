@@ -2,3 +2,6 @@
 
 newmtl 0006_bc001_t02_tm2
 map_Kd makoto_texture_3.png
+
+newmtl 0007_bc001_t02_tm2
+map_Kd makoto_texture_3.png
