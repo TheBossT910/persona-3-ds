@@ -262,6 +262,7 @@ ViewState IwatodaiStreetsView::update()
                   camPos.upZ);
 
         glPushMatrix();
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(0));
         iwatodaiStreetsEnv.draw();
         glPopMatrix(1);
 
@@ -269,6 +270,8 @@ ViewState IwatodaiStreetsView::update()
         CharacterPosition charPos = playerCtrl->isCharacterAt();
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
+
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
         characterAnimationCtrl.render();
         glPopMatrix(1);
 
