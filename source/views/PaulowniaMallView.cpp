@@ -22,8 +22,7 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
 
 void PaulowniaMallView::setMusic()
 {
-    musicCtrl.init(
-        (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 0.0f, 920.973f);
+    musicCtrl.init((fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 0.0f, -1.0f);
 }
 
 // TODO: dont forget to clear in future
@@ -388,6 +387,7 @@ ViewState PaulowniaMallView::update()
 
         // draw environment
         glPushMatrix();
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(0));
         paulowniaMallEnv.draw();
         paulowniaMallEnv.drawBillboards(enableBillboards, // billboards face camera
                                         camPos.cameraX,
@@ -403,6 +403,7 @@ ViewState PaulowniaMallView::update()
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
         // draw character
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
         characterAnimationCtrl.render();
         glPopMatrix(1);
 

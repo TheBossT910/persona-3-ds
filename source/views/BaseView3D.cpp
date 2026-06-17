@@ -25,9 +25,10 @@ void BaseView3D::init()
     glEnable(GL_TEXTURE_2D); // for adding textures
     glEnable(GL_BLEND);      // useful for UI
     glEnable(GL_FOG);        // hide poping of polygons
+    glEnable(GL_OUTLINE);
 
     glClearColor(0, 0, 0, 31);
-    glClearPolyID(0);
+    glClearPolyID(63);
     glClearDepth(0x7FFF);
 
     // viewport
@@ -36,6 +37,9 @@ void BaseView3D::init()
     glLoadIdentity();
     // zNear is how close the camera can see, zFar is the maximum draw distance
     gluPerspective(55, 256.0 / 192.0, 1.0, 10.0);
+
+    // outline
+    glSetOutlineColor(0, RGB15(0, 0, 0));
 
     // fog
     // setup color

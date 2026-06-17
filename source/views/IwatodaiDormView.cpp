@@ -22,7 +22,7 @@ const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset&
 
 void IwatodaiDormView::setMusic()
 {
-    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
+    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 0.0f, -1.0f);
 }
 
 // TODO: dont forget to clear in future
@@ -304,7 +304,9 @@ ViewState IwatodaiDormView::update()
 
         // draw environment
         glPushMatrix();
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(0));
         iwatodaiDormFloor1Env.draw();
+        // TODO: fix billboard support
         // iwatodaiDormFloor1Env.drawBillboards(enableBillboards, // billboards face camera
         //                                      camPos.cameraX,
         //                                      camPos.cameraY,
@@ -319,6 +321,7 @@ ViewState IwatodaiDormView::update()
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
         // draw character
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
         characterAnimationCtrl.render();
         glPopMatrix(1);
 
