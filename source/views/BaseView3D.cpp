@@ -23,9 +23,9 @@ void BaseView3D::init()
     glInit();
     glEnable(GL_ANTIALIAS);  // cleans up edges
     glEnable(GL_TEXTURE_2D); // for adding textures
-    glEnable(GL_BLEND);      // useful for UI
-    glEnable(GL_FOG);        // hide poping of polygons
-    glEnable(GL_OUTLINE);
+    // glEnable(GL_BLEND);      // useful for UI
+    glEnable(GL_FOG);     // hide poping of polygons
+    glEnable(GL_OUTLINE); // stylistic character outline
 
     glClearColor(0, 0, 0, 31);
     glClearPolyID(63);
