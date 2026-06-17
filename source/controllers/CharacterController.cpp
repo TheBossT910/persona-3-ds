@@ -164,7 +164,7 @@ CameraPosition CharacterController::update(u32 keys)
 
     // set camera positions
     camPos.cameraX = characterTranslate.x + (sin(angle) * distance);
-    camPos.cameraY = 0.6f + height;
+    camPos.cameraY = 0.8f + height;
     camPos.cameraZ = characterTranslate.z - (cos(angle) * distance);
 
     // look further down the same path the camera is facing
