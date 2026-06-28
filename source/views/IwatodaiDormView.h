@@ -38,8 +38,8 @@ class IwatodaiDormView : public BaseView3D
     CameraPosition camPos;
     // world
     const float tileSize = 0.062500f;
-    const float worldOffsetX = 2.243581f;
-    const float worldOffsetZ = 3.500000f;
+    const float worldOffsetX = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_X;
+    const float worldOffsetZ = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_Z;
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     // movement and viewpoint
     const float speed = 0.03f;
@@ -48,7 +48,7 @@ class IwatodaiDormView : public BaseView3D
     const float lookAhead = 0.2f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
-    const float height = 0.2;
+    const float height = 0.0;
     const float angle = -1.6;
     const float characterFacingAngle = 180.0f;
     DialogueController dialogueCtrl;
