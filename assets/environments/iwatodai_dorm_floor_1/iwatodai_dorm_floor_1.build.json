@@ -1,15 +1,4 @@
 {
     "asset_type": "build_environment",
-    "target_size": 7.0,
-    "center": true,
-    "source_blender": true,
-    "skip_grit": false,
-    "grit_flags": "-gTT -gB16 -gb -ftb",
-    "rgba": true,
-    "color": [
-        255,
-        255,
-        255
-    ],
-    "max_tex_size": 64
+    "grit_flags": "-gT! -gB16 -gb -ftb"
 }

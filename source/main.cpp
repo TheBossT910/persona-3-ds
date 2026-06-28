@@ -14,11 +14,11 @@
 #include "views/DisclaimerView.h"
 #include "views/IntroView.h"
 #include "views/IwatodaiDormView.h"
-#include "views/IwatodaiStreetsView.h"
+// #include "views/IwatodaiStreetsView.h"
 #include "views/MainMenuView.h"
-#include "views/PaulowniaMallView.h"
+// #include "views/PaulowniaMallView.h"
 #include "views/SignContractView.h"
-#include "views/StationView.h"
+// #include "views/StationView.h"
 #include "views/VideoView.h"
 
 // controllers
@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
     srand(TIMER0_DATA);
 
     // start with DisclaimerView
-    SwitchView(new DisclaimerView());
+    SwitchView(new IwatodaiDormView());
 
     while (pmMainLoop())
     {
@@ -241,9 +241,9 @@ int main(int argc, char* argv[])
                 SwitchView(new IwatodaiDormView());
                 break;
 
-            case ViewState::IWATODAI_STREETS:
-                SwitchView(new IwatodaiStreetsView());
-                break;
+                // case ViewState::IWATODAI_STREETS:
+                //     SwitchView(new IwatodaiStreetsView());
+                //     break;
 
             case ViewState::DISCLAIMER:
                 SwitchView(new DisclaimerView());
@@ -265,13 +265,13 @@ int main(int argc, char* argv[])
                 SwitchView(new VideoView("cutscene-2.vid", ViewState::IWATODAI_DORM));
                 break;
 
-            case ViewState::STATION:
-                SwitchView(new StationView());
-                break;
+                // case ViewState::STATION:
+                //     SwitchView(new StationView());
+                //     break;
 
-            case ViewState::PAULOWNIA_MALL:
-                SwitchView(new PaulowniaMallView());
-                break;
+                // case ViewState::PAULOWNIA_MALL:
+                //     SwitchView(new PaulowniaMallView());
+                //     break;
 
             default:
                 break;

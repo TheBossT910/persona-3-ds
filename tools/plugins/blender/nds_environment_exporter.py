@@ -9,7 +9,7 @@ from bpy_extras.io_utils import ExportHelper
 bl_info = {
     "name": "NDS Studio Exporter & Baker",
     "author": "AI Assistant",
-    "version": (3, 5, 0),
+    "version": (4, 0, 1),
     "blender": (4, 0, 0),
     "location": "View3D > Sidebar > NDS Engine",
     "description": "Bakes Vertex Lighting, auto-compresses textures, and maps filepaths for NDS arrays.",
@@ -23,6 +23,7 @@ bl_info = {
 FIFO_COLOR = 0x20
 FIFO_TEXCOORD = 0x22
 FIFO_BEGIN = 0x40
+FIFO_END = 0x41
 FIFO_VERTEX16 = 0x23
 FIFO_NOP = 0x00
 GL_TRIANGLES = 0
@@ -58,6 +59,14 @@ def floattov16(f):
 
 def floattot16(f):
     return max(-32768, min(32767, int(f * (1 << 4)))) & 0xFFFF
+
+
+def to_signed_v16(f):
+    return max(-32768, min(32767, int(f * (1 << 12))))
+
+
+def to_signed_t16(f):
+    return int(f * (1 << 4))
 
 
 def rgb_to_rgb15(color):
@@ -130,14 +139,12 @@ class OBJECT_OT_nds_bake_vertex_lighting(bpy.types.Operator):
             self.report({"ERROR"}, f"Bake failed: {str(e)}")
             return {"CANCELLED"}
 
-        # --- POST-PROCESS: AMBIENT CLAMP TO PREVENT MULTIPLY BY ZERO ---
         clamp = scene.nds_ambient_clamp
         for obj in valid_meshes:
             color_attr = obj.data.color_attributes.get("NDS_Illumination")
             if color_attr:
                 for i in range(len(color_attr.data)):
                     c = color_attr.data[i].color
-                    # Force a minimum brightness floor so DS textures remain visible
                     color_attr.data[i].color = (
                         max(clamp, c[0]),
                         max(clamp, c[1]),
@@ -192,12 +199,8 @@ class EXPORT_SCENE_OT_nds_binary(bpy.types.Operator, ExportHelper):
         export_dir = os.path.dirname(self.filepath)
         bin_out = self.filepath
         h_out = os.path.splitext(bin_out)[0] + ".h"
-
         max_size_cap = int(self.max_tex_size)
         depsgraph = context.evaluated_depsgraph_get()
-
-        tex_registry = {}
-        tex_info = []
 
         all_verts = []
         for obj in mesh_objects:
@@ -217,22 +220,25 @@ class EXPORT_SCENE_OT_nds_binary(bpy.types.Operator, ExportHelper):
             else 1.0
         )
         scale = self.target_scale / max_dim if max_dim > 0 else 1.0
-        offset = ((min(xs) + max(xs)) / 2.0, min(ys), (min(zs) + max(zs)) / 2.0)
+        offset = (
+            (min(xs) + max(xs)) / 2.0,
+            min(ys),
+            (min(zs) + max(zs)) / 2.0,
+        )
 
-        mapped_xs, mapped_zs = [], []
-        for x, y, z in zip(xs, ys, zs):
-            mapped_xs.append((x - offset[0]) * scale)
-            mapped_zs.append(-(y - offset[1]) * scale)
+        mapped_xs = [(x - offset[0]) * scale for x in xs]
+        mapped_zs = [-(y - offset[1]) * scale for y in ys]
 
-        min_x = min(mapped_xs) if mapped_xs else 0
-        max_x = max(mapped_xs) if mapped_xs else 0
-        min_z = min(mapped_zs) if mapped_zs else 0
-        max_z = max(mapped_zs) if mapped_zs else 0
+        min_x, max_x = min(mapped_xs), max(mapped_xs)
+        min_z, max_z = min(mapped_zs), max(mapped_zs)
 
         world_width = max_x - min_x
         world_depth = max_z - min_z
         world_offset_x = (max_x + min_x) / 2.0
         world_offset_z = (max_z + min_z) / 2.0
+
+        tex_registry = {}
+        tex_info = []
 
         for obj in mesh_objects:
             for slot in obj.material_slots:
@@ -243,7 +249,6 @@ class EXPORT_SCENE_OT_nds_binary(bpy.types.Operator, ExportHelper):
                         if img
                         else "default_tex"
                     )
-
                     if t_name not in tex_registry:
                         w = (
                             nearest_valid_tex_size(img.size[0], max_size_cap)
@@ -275,20 +280,23 @@ class EXPORT_SCENE_OT_nds_binary(bpy.types.Operator, ExportHelper):
                     self.report({"WARNING"}, f"Could not process image {t_name}: {ex}")
 
         sub_lists = {}
+        billboards = []
+
         for tex_name, tex_idx in tex_registry.items():
             words = []
             for obj in mesh_objects:
+                is_billboard = obj.name.startswith("BB_")
+
                 eval_obj = obj.evaluated_get(depsgraph)
                 mesh = eval_obj.to_mesh()
                 mesh.transform(obj.matrix_world)
                 mesh.calc_loop_triangles()
 
                 uv_layer = mesh.uv_layers.active
-                color_layer = (
-                    mesh.color_attributes.active_color
-                    if mesh.color_attributes
-                    else None
-                )
+
+                # THE FIX: STRICTLY ONLY USE OUR BAKED LIGHTING LAYER
+                # This safely ignores imported garbage/ripped vertex colors.
+                color_layer = mesh.color_attributes.get("NDS_Illumination")
 
                 faces_for_tex = []
                 for tri in mesh.loop_triangles:
@@ -310,58 +318,128 @@ class EXPORT_SCENE_OT_nds_binary(bpy.types.Operator, ExportHelper):
                         faces_for_tex.append(tri)
 
                 if faces_for_tex:
-                    words.append(pack_cmds(FIFO_BEGIN))
-                    words.append(struct.pack("<I", GL_TRIANGLES))
+                    if is_billboard:
+                        b_verts = [
+                            mesh.vertices[loop].co
+                            for tri in faces_for_tex
+                            for loop in tri.loops
+                        ]
+                        bxs = [v.x for v in b_verts]
+                        bys = [v.y for v in b_verts]
+                        bzs = [v.z for v in b_verts]
+                        cx = ((min(bxs) + max(bxs)) / 2.0 - offset[0]) * scale
+                        cy = ((min(bzs) + max(bzs)) / 2.0 - offset[2]) * scale
+                        cz = -((min(bys) + max(bys)) / 2.0 - offset[1]) * scale
+                        hw = (max(bxs) - min(bxs)) / 2.0 * scale
+                        hh = (max(bzs) - min(bzs)) / 2.0 * scale
 
-                    for tri in faces_for_tex:
-                        for loop_idx in tri.loops:
-                            loop = mesh.loops[loop_idx]
+                        u_vals, v_vals = [], []
+                        for tri in faces_for_tex:
+                            for loop_idx in tri.loops:
+                                if uv_layer:
+                                    uv = uv_layer.data[loop_idx].uv
+                                    u_vals.append(uv.x)
+                                    v_vals.append(uv.y)
+                        if u_vals:
+                            u_min, u_max = min(u_vals), max(u_vals)
+                            v_min_raw, v_max_raw = min(v_vals), max(v_vals)
+                            v_min = 1.0 - v_max_raw
+                            v_max = 1.0 - v_min_raw
+                        else:
+                            u_min, u_max, v_min, v_max = 0.0, 1.0, 0.0, 1.0
 
-                            col = [1.0, 1.0, 1.0]
-                            if color_layer:
-                                col = color_layer.data[loop_idx].color
-                            words.append(pack_cmds(FIFO_COLOR))
-                            words.append(struct.pack("<I", rgb_to_rgb15(col)))
+                        tw, th = tex_info[tex_idx][1], tex_info[tex_idx][2]
+                        billboards.append(
+                            {
+                                "cx": cx,
+                                "cy": cy,
+                                "cz": cz,
+                                "hw": hw,
+                                "hh": hh,
+                                "tex_slot": tex_idx,
+                                "u0_16": to_signed_t16(u_min * tw),
+                                "v0_16": to_signed_t16(v_min * th),
+                                "u1_16": to_signed_t16(u_max * tw),
+                                "v1_16": to_signed_t16(v_max * th),
+                            }
+                        )
+                    else:
+                        words.append(pack_cmds(FIFO_BEGIN))
+                        words.append(struct.pack("<I", GL_TRIANGLES))
 
-                            uv_x, uv_y = 0.0, 0.0
-                            if uv_layer:
-                                uv_x = uv_layer.data[loop_idx].uv.x
-                                uv_y = uv_layer.data[loop_idx].uv.y
+                        for tri in faces_for_tex:
+                            for loop_idx in tri.loops:
+                                loop = mesh.loops[loop_idx]
 
-                            tw, th = tex_info[tex_idx][1], tex_info[tex_idx][2]
-                            u16 = floattot16(uv_x * tw)
-                            v16 = floattot16((1.0 - uv_y) * th)
-                            words.append(pack_cmds(FIFO_TEXCOORD))
-                            words.append(
-                                struct.pack(
-                                    "<I", (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)
+                                col = [1.0, 1.0, 1.0]
+                                if color_layer:
+                                    col = color_layer.data[loop_idx].color
+                                words.append(pack_cmds(FIFO_COLOR))
+                                words.append(struct.pack("<I", rgb_to_rgb15(col)))
+
+                                uv_x, uv_y = 0.0, 0.0
+                                if uv_layer:
+                                    uv_x = uv_layer.data[loop_idx].uv.x
+                                    uv_y = uv_layer.data[loop_idx].uv.y
+
+                                tw, th = tex_info[tex_idx][1], tex_info[tex_idx][2]
+                                u16 = floattot16(uv_x * tw)
+                                v16 = floattot16((1.0 - uv_y) * th)
+                                words.append(pack_cmds(FIFO_TEXCOORD))
+                                words.append(
+                                    struct.pack(
+                                        "<I", (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)
+                                    )
                                 )
-                            )
 
-                            vx, vy, vz = mesh.vertices[loop.vertex_index].co
-                            sx = (vx - offset[0]) * scale
-                            sy = (vz - offset[2]) * scale
-                            sz = -(vy - offset[1]) * scale
+                                vx, vy, vz = mesh.vertices[loop.vertex_index].co
+                                sx = (vx - offset[0]) * scale
+                                sy = (vz - offset[2]) * scale
+                                sz = -(vy - offset[1]) * scale
 
-                            words.append(pack_cmds(FIFO_VERTEX16))
-                            words.append(
-                                struct.pack(
-                                    "<I", (floattov16(sy) << 16) | floattov16(sx)
+                                words.append(pack_cmds(FIFO_VERTEX16))
+                                words.append(
+                                    struct.pack(
+                                        "<I", (floattov16(sy) << 16) | floattov16(sx)
+                                    )
                                 )
-                            )
-                            words.append(struct.pack("<I", floattov16(sz)))
+                                words.append(struct.pack("<I", floattov16(sz)))
+
+                        words.append(pack_cmds(FIFO_END))
+                        words.append(struct.pack("<I", 0))
 
                 eval_obj.to_mesh_clear()
             sub_lists[tex_idx] = words
 
+        billboards.sort(key=lambda b: b["tex_slot"])
+
+        old_to_new = {}
+        tex_info_geo = []
+        for old_idx, entry in enumerate(tex_info):
+            words = sub_lists.get(old_idx, [])
+            if words:
+                old_to_new[old_idx] = len(tex_info_geo)
+                tex_info_geo.append((entry, words))
+            else:
+                old_to_new[old_idx] = None
+
+        for b in billboards:
+            new_slot = old_to_new.get(b["tex_slot"])
+            b["tex_slot_remapped"] = new_slot if new_slot is not None else b["tex_slot"]
+
         with open(bin_out, "wb") as f:
             f.write(b"ENV1")
-            f.write(struct.pack("<I", len(tex_info)))
-            for i in range(len(tex_info)):
-                words = sub_lists.get(i, [])
+            f.write(struct.pack("<I", len(tex_info_geo)))
+            for _, words in tex_info_geo:
                 f.write(struct.pack("<I", len(words)))
                 for w in words:
                     f.write(w)
+
+        n_geo = len(tex_info_geo)
+        n_tex = len(tex_info)
+        n_geo
+        max(n_tex, 1)
+        UP = model_name.upper()
 
         with open(h_out, "w") as h:
             h.write("#pragma once\n// Auto-generated by NDS Studio Exporter\n")
@@ -372,64 +450,80 @@ class EXPORT_SCENE_OT_nds_binary(bpy.types.Operator, ExportHelper):
                 "#include <math.h>\n#include <nds.h>\n#include <stdio.h>\n#include <stdlib.h>\n\n"
             )
 
-            h.write(
-                f"#define {model_name.upper()}_WORLD_OFFSET_X {world_offset_x:.6f}f\n"
-            )
-            h.write(
-                f"#define {model_name.upper()}_WORLD_OFFSET_Z {world_offset_z:.6f}f\n"
-            )
-            h.write(f"#define {model_name.upper()}_WORLD_WIDTH {world_width:.6f}f\n")
-            h.write(f"#define {model_name.upper()}_WORLD_DEPTH {world_depth:.6f}f\n\n")
+            h.write("// World bounds\n")
+            h.write(f"#define {UP}_WORLD_OFFSET_X {world_offset_x:.6f}f\n")
+            h.write(f"#define {UP}_WORLD_OFFSET_Z {world_offset_z:.6f}f\n")
+            h.write(f"#define {UP}_WORLD_WIDTH    {world_width:.6f}f\n")
+            h.write(f"#define {UP}_WORLD_DEPTH    {world_depth:.6f}f\n\n")
 
             h.write(
-                f"static const char* const {model_name}_TextureFilenames[{len(tex_info)}] = {{\n"
+                f"static const char* const {model_name}_TextureFilenames[{n_tex}] = {{\n"
             )
-            for _, (t_name, _, _, _) in enumerate(tex_info):
+            for t_name, _, _, _ in tex_info:
                 h.write(f'    "{t_name}",\n')
             h.write("};\n\n")
 
             h.write(f"enum {model_name}_TexSlot\n{{\n")
             for i, (t_name, _, _, _) in enumerate(tex_info):
-                h.write(f"    {model_name.upper()}_TEX_{t_name.upper()} = {i},\n")
-            h.write(f"    {model_name.upper()}_TEX_COUNT = {len(tex_info)}\n}};\n\n")
+                h.write(f"    {UP}_TEX_{t_name.upper()} = {i},\n")
+            h.write(f"    {UP}_TEX_COUNT = {n_tex}\n}};\n\n")
 
-            h.write(
-                f"struct {model_name}_BillboardData\n{{\n    v16 x, y, z;\n    v16 halfWidth, halfHeight;\n    int texSlot;\n    short u0, v0, u1, v1;\n}};\n\n"
-            )
+            h.write(f"struct {model_name}_BillboardData\n{{\n")
+            h.write("    v16 x, y, z;\n")
+            h.write("    v16 halfWidth, halfHeight;\n")
+            h.write("    int texSlot;\n")
+            h.write("    short u0, v0, u1, v1;\n")
+            h.write("};\n\n")
 
+            dl_safe = max(n_geo, 1)
+            tex_safe = max(n_tex, 1)
             h.write(f"class {model_name}_Environment\n{{\n  public:\n")
-            h.write(
-                f"    u32* displayLists[{len(tex_info)}];\n    u32 dlSizes[{len(tex_info)}];\n    int textureIDs[{len(tex_info)}];\n\n"
-            )
-            h.write("    static const int BILLBOARD_COUNT = 0;\n")
-            h.write(
-                f"    const {model_name}_BillboardData BILLBOARDS[1] = {{ 0 }};\n\n"
-            )
+            h.write(f"    u32* displayLists[{dl_safe}];\n")
+            h.write(f"    u32  dlSizes[{dl_safe}];\n")
+            h.write(f"    int  textureIDs[{tex_safe}];\n\n")
+            h.write(f"    static const int BILLBOARD_COUNT = {len(billboards)};\n")
+
+            if billboards:
+                h.write(
+                    f"    const {model_name}_BillboardData BILLBOARDS[{len(billboards)}] = {{\n"
+                )
+                for b in billboards:
+                    h.write(
+                        f"        {{ {to_signed_v16(b['cx'])}, {to_signed_v16(b['cy'])}, "
+                        f"{to_signed_v16(b['cz'])}, "
+                        f"{to_signed_v16(b['hw'])}, {to_signed_v16(b['hh'])}, "
+                        f"{b['tex_slot_remapped']}, "
+                        f"{b['u0_16']}, {b['v0_16']}, {b['u1_16']}, {b['v1_16']} }},\n"
+                    )
+                h.write("    };\n\n")
+            else:
+                h.write(
+                    f"    const {model_name}_BillboardData* BILLBOARDS = nullptr;\n\n"
+                )
 
             h.write(f"    {model_name}_Environment()\n    {{\n")
-            h.write(f"        for (int i = 0; i < {len(tex_info)}; i++)\n        {{\n")
-            h.write(
-                "            displayLists[i] = NULL;\n            dlSizes[i] = 0;\n            textureIDs[i] = 0;\n        }\n    }\n\n"
-            )
+            h.write(f"        for (int i = 0; i < {dl_safe}; i++)\n        {{\n")
+            h.write("            displayLists[i] = nullptr; dlSizes[i] = 0;\n")
+            h.write("        }\n")
+            h.write(f"        for (int i = 0; i < {tex_safe}; i++)\n        {{\n")
+            h.write("            textureIDs[i] = 0;\n")
+            h.write("        }\n    }\n\n")
 
             h.write(
-                f"    bool load(const char* filepath, const unsigned int* bitmaps[{len(tex_info)}])\n    {{\n"
+                f"    bool load(const char* filepath, const unsigned int* bitmaps[{tex_safe}])\n    {{\n"
             )
-            h.write(
-                '        FILE* file = fopen(filepath, "rb");\n        if (!file) return false;\n\n'
-            )
+            h.write('        FILE* file = fopen(filepath, "rb");\n')
+            h.write("        if (!file) return false;\n\n")
             h.write("        char magic[4];\n        fread(magic, 1, 4, file);\n")
             h.write(
-                "        if (magic[0] != 'E' || magic[1] != 'N' || magic[2] != 'V' || magic[3] != '1') { fclose(file); return false; }\n\n"
+                "        if (magic[0]!='E'||magic[1]!='N'||magic[2]!='V'||magic[3]!='1') { fclose(file); return false; }\n\n"
             )
-
             h.write(
                 "        u32 groupCount;\n        fread(&groupCount, sizeof(u32), 1, file);\n"
             )
             h.write(
-                f"        if (groupCount != {len(tex_info)}) {{ fclose(file); return false; }}\n\n"
+                f"        if (groupCount != {n_geo}) {{ fclose(file); return false; }}\n\n"
             )
-
             h.write("        for (u32 i = 0; i < groupCount; i++)\n        {\n")
             h.write("            fread(&dlSizes[i], sizeof(u32), 1, file);\n")
             h.write(
@@ -446,31 +540,95 @@ class EXPORT_SCENE_OT_nds_binary(bpy.types.Operator, ExportHelper):
                 h.write(f"            glGenTextures(1, &textureIDs[{i}]);\n")
                 h.write(f"            glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
                 h.write(
-                    f"            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TEXTURE_SIZE_{w}, TEXTURE_SIZE_{h_px}, 0, TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[{i}]);\n"
+                    f"            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TEXTURE_SIZE_{w}, TEXTURE_SIZE_{h_px}, 0,"
+                    f" TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[{i}]);\n"
                 )
                 h.write("        }\n")
             h.write("        return true;\n    }\n\n")
 
             h.write("    void draw()\n    {\n")
-            for i in range(len(tex_info)):
-                h.write(f"        glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
+            for i, ((t_name, w, h_px, _), _) in enumerate(tex_info_geo):
+                orig_idx = next(
+                    oi for oi, entry in enumerate(tex_info) if entry[0] == t_name
+                )
+                if i > 0:
+                    h.write("        while (GFX_BUSY);\n")
+                h.write(
+                    f"        glBindTexture(GL_TEXTURE_2D, textureIDs[{orig_idx}]);\n"
+                )
                 h.write(
                     f"        if (displayLists[{i}]) glCallList(displayLists[{i}]);\n"
                 )
-                h.write("        while (GFX_BUSY);\n")
+            h.write("        while (GFX_BUSY);\n")
+            h.write("    }\n\n")
+
+            h.write(
+                "    void drawBillboards(bool faceCamera, float camX, float camY, float camZ)\n    {\n"
+            )
+            h.write("        if (BILLBOARD_COUNT == 0) return;\n")
+            h.write("        int  currentSlot = -1;\n")
+            h.write("        bool inQuads     = false;\n\n")
+            h.write("        for (int i = 0; i < BILLBOARD_COUNT; i++)\n        {\n")
+            h.write(
+                f"            const {model_name}_BillboardData& bb = BILLBOARDS[i];\n"
+            )
+            h.write("            if (bb.texSlot != currentSlot)\n            {\n")
+            h.write("                if (inQuads) { glEnd(); inQuads = false; }\n")
+            h.write("                while (GFX_BUSY);\n")
+            h.write(
+                "                glBindTexture(GL_TEXTURE_2D, textureIDs[bb.texSlot]);\n"
+            )
+            h.write("                currentSlot = bb.texSlot;\n")
+            h.write("            }\n")
+            h.write(
+                "            if (!inQuads) { glBegin(GL_QUADS); inQuads = true; }\n\n"
+            )
+            h.write("            v16 rX = (v16)(4096), rY = 0, rZ = 0;\n")
+            h.write("            v16 uX = 0, uY = (v16)(4096), uZ = 0;\n\n")
+            h.write("            if (faceCamera)\n            {\n")
+            h.write("                float bx = (float)bb.x / 4096.0f;\n")
+            h.write("                float bz = (float)bb.z / 4096.0f;\n")
+            h.write("                float dx = camX - bx, dz = camZ - bz;\n")
+            h.write("                float dist = sqrtf(dx*dx + dz*dz);\n")
+            h.write("                if (dist > 0.001f) { dx /= dist; dz /= dist; }\n")
+            h.write("                rX = (v16)(dz * 4096.0f);\n")
+            h.write("                rZ = (v16)(-dx * 4096.0f);\n")
+            h.write("            }\n\n")
+            h.write(
+                "            v16 rx = mulf32(rX, bb.halfWidth),  ry = mulf32(rY, bb.halfWidth),  rz = mulf32(rZ, bb.halfWidth);\n"
+            )
+            h.write(
+                "            v16 ux = mulf32(uX, bb.halfHeight), uy = mulf32(uY, bb.halfHeight), uz = mulf32(uZ, bb.halfHeight);\n\n"
+            )
+            h.write(
+                "            glTexCoord2t16(bb.u0, bb.v1); glVertex3v16(bb.x-rx-ux, bb.y-ry-uy, bb.z-rz-uz);\n"
+            )
+            h.write(
+                "            glTexCoord2t16(bb.u1, bb.v1); glVertex3v16(bb.x+rx-ux, bb.y+ry-uy, bb.z+rz-uz);\n"
+            )
+            h.write(
+                "            glTexCoord2t16(bb.u1, bb.v0); glVertex3v16(bb.x+rx+ux, bb.y+ry+uy, bb.z+rz+uz);\n"
+            )
+            h.write(
+                "            glTexCoord2t16(bb.u0, bb.v0); glVertex3v16(bb.x-rx+ux, bb.y-ry+uy, bb.z-rz+uz);\n"
+            )
+            h.write("        }\n")
+            h.write("        if (inQuads) { glEnd(); }\n")
+            h.write("        while (GFX_BUSY);\n")
             h.write("    }\n\n")
 
             h.write("    void cleanup()\n    {\n")
-            h.write(f"        for (u32 i = 0; i < {len(tex_info)}; i++)\n        {{\n")
+            h.write(f"        for (u32 i = 0; i < {dl_safe}; i++)\n        {{\n")
             h.write(
-                "            if (displayLists[i]) { free(displayLists[i]); displayLists[i] = NULL; }\n"
+                "            if (displayLists[i]) { free(displayLists[i]); displayLists[i] = nullptr; }\n"
             )
             h.write("        }\n")
-            h.write(f"        glDeleteTextures({len(tex_info)}, textureIDs);\n")
+            h.write(f"        glDeleteTextures({tex_safe}, textureIDs);\n")
             h.write("    }\n};\n")
 
         self.report(
-            {"INFO"}, f"Successfully exported {model_name}.bin, .h, and textures."
+            {"INFO"},
+            f"Exported {model_name}.bin + .h  ({n_geo} DL group(s), {len(billboards)} billboard(s)).",
         )
         return {"FINISHED"}
 
@@ -486,7 +644,6 @@ class VIEW3D_PT_nds_dev_panel(bpy.types.Panel):
         scene = context.scene
 
         col = layout.column(align=True)
-        # Expose the ambient clamp parameter so you can dial it in
         col.prop(scene, "nds_ambient_clamp", text="Ambient Brightness")
         col.operator("object.nds_bake_vertex_lighting", icon="LIGHT_SUN")
         layout.separator()
@@ -504,7 +661,6 @@ def menu_func_export(self, context):
 
 
 def register():
-    # Register the scene property so it persists across your map design
     bpy.types.Scene.nds_ambient_clamp = FloatProperty(
         name="Ambient Clamp",
         description="Prevents shadows from hitting absolute zero, ensuring DS textures remain visible.",

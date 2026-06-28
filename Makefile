@@ -95,8 +95,11 @@ JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
 
 # One .h output per environment directory
-ENV_OUT_DIRS    := $(foreach d,$(ENV_DIRS),source/environments/$(notdir $(d)))
-ENVIRONMENT_OUT := $(foreach d,$(ENV_DIRS),$(CURDIR)/source/environments/$(notdir $(d)).h)
+ENV_BIN_FILES   := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.bin)
+
+# Keep track of environment directories so Make knows where to find the generated .s files later
+ENV_OUT_DIRS    := $(foreach file,$(ENV_BIN_FILES),source/environments/$(notdir $(patsubst %/,%,$(dir $(file)))))
+ENVIRONMENT_OUT := $(foreach file,$(ENV_BIN_FILES),$(CURDIR)/source/environments/$(notdir $(file:.bin=.h)))
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -206,15 +209,13 @@ video: $(VIDEO_OUT)
 # folder, copies the .bin to data/environments/<name>/ and copies the .h to
 # source/environments/ directly — no mv needed.
 #---------------------------------------------------------------------------------
-$(CURDIR)/source/environments/%.h: \
-		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.bin) \
+$(CURDIR)/source/environments/%.h: $(ASSETS_ENVIRONMENTS)/%/$$*.bin \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.png) \
-		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.build.json)
-	@echo "  ENV   $*"
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/$$*.build.json) \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
+	@echo "  ENV    $*"
 	@mkdir -p $(dir $@) $(CURDIR)/data/environments/$*
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py \
-		"$(ASSETS_ENVIRONMENTS)/$*" \
-		"$(CURDIR)/data/environments/$*"
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/environments/$*"
 	@touch $@
 
 environments: $(ENVIRONMENT_OUT)
