@@ -66,12 +66,12 @@ float Enemy::calculateBaseDamage(BattleParticipant& defender, Skill& skill)
     float affinityMtp = BattleCalcs::getAffinityMtp(*defender.getBattleStats(), skill);
     if (skill.skillType == SkillType::RegularAttack)
         return (sqrt((float)(skill.movePower * 6 * atk) /
-                     (8 * defender.getBattleStats()->en + defender.armour->defense)) *
+                     (8 * defender.getBattleStats()->en + defender.armour.defense)) *
                 9 * levelDifference) *
                affinityMtp;
     else if (skill.skillType == SkillType::Attack || skill.skillType == SkillType::MultiAttack)
         return (
-            (sqrt((float)(skill.movePower * 6 * atk) / (8 * defender.getBattleStats()->en + defender.armour->defense)) *
+            (sqrt((float)(skill.movePower * 6 * atk) / (8 * defender.getBattleStats()->en + defender.armour.defense)) *
                  9 * levelDifference -
              10) *
             affinityMtp);

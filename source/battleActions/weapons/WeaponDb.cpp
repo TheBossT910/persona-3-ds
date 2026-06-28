@@ -13,7 +13,7 @@ void WeaponDb::Initialize()
     imitationKatana.hitRate = 92;
     imitationKatana.weaponType = WeaponType::TwoHandedSword;
 
-    imitationKatana.weaponPower = 30;
-    imitationKatana.hitRate = 98;
-    imitationKatana.weaponType = WeaponType::Bow;
+    practiceBow.weaponPower = 30;
+    practiceBow.hitRate = 98;
+    practiceBow.weaponType = WeaponType::Bow;
 }

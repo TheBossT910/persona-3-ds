@@ -25,8 +25,8 @@ void EnemyDb::Initialize()
     mercilessMaya.battleStats.ag = 2;
     mercilessMaya.battleStats.lu = 2;
     mercilessMaya.baseAttackAction = &SkillDb::strikeAttack;
-    mercilessMaya.armour = &ArmourDb::enemyArmour;
-    mercilessMaya.shoe = &ShoeDb::enemyShoe;
+    mercilessMaya.armour = ArmourDb::enemyArmour;
+    mercilessMaya.shoe = ShoeDb::enemyShoe;
 
     mercilessMayaSkills[0] = &SkillDb::agi;
     mercilessMaya.skill = mercilessMayaSkills;
@@ -41,6 +41,7 @@ void EnemyDb::Initialize()
     mercilessMaya.battleStats.affinities[(u32)Element::Wind] = BattleStats::Neutral;
     mercilessMaya.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     mercilessMaya.battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
+    mercilessMaya.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 
     /*--------------COWARDLY MAYA--------------*/
     cowardlyMaya.name = "Cowardly Maya";
@@ -55,8 +56,8 @@ void EnemyDb::Initialize()
     cowardlyMaya.battleStats.ag = 2;
     cowardlyMaya.battleStats.lu = 2;
     cowardlyMaya.baseAttackAction = &SkillDb::strikeAttack;
-    cowardlyMaya.armour = &ArmourDb::enemyArmour;
-    cowardlyMaya.shoe = &ShoeDb::enemyShoe;
+    cowardlyMaya.armour = ArmourDb::enemyArmour;
+    cowardlyMaya.shoe = ShoeDb::enemyShoe;
 
     cowardlyMayaSkills[0] = &SkillDb::bufu;
     cowardlyMaya.skill = cowardlyMayaSkills;
@@ -71,4 +72,5 @@ void EnemyDb::Initialize()
     cowardlyMaya.battleStats.affinities[(u32)Element::Wind] = BattleStats::Neutral;
     cowardlyMaya.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     cowardlyMaya.battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
+    cowardlyMaya.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 }

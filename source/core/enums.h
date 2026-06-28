@@ -146,6 +146,24 @@ enum class TileType
     SCENE_7 = 407,
     SCENE_8 = 408,
     SCENE_9 = 409,
+
+    // characters (party)
+    C_MC = 600,
+    C_YU = 601,
+    C_JU = 602,
+    C_AK = 603,
+    C_MI = 604,
+    C_FU = 605,
+    C_AE = 606,
+    C_KO = 607,
+    C_KE = 608,
+    C_SH = 609,
+
+    // enemies (shadows)
+    // w = weak, m = medium, s = tring
+    SHD_W = 800,
+    SHD_M = 801,
+    SHD_S = 802,
 };
 
 enum class MainMenuOptions
@@ -187,6 +205,7 @@ enum class BattleMenuOptions
     PERSONA,
     TARGET_ENEMY,
     TARGET_HEAL,
+    ALL_OUT_ATTACK,
     ALERT
 };
 

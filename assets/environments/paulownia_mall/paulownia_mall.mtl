@@ -1,4 +1,4 @@
-# Blender 5.1.1 MTL File: 'Finished-Paulownia-MS1.blend'
+# Blender 5.1.1 MTL File: 'Finished-Paulownia.blend'
 # www.blender.org
 
 newmtl Material__0.007
@@ -231,16 +231,6 @@ d 1.000000
 illum 2
 map_Kd f008_001_hiho.png
 
-newmtl f008_001_jitensyat.007
-Ns 250.000000
-Ka 1.000000 1.000000 1.000000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 2
-map_Kd f008_001_jitensya.png
-
 newmtl f008_001_jyutant.007
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
@@ -371,16 +361,6 @@ d 1.000000
 illum 2
 map_Kd f008_001_komono02.png
 
-newmtl f008_001_komonoal.007
-Ns 250.000000
-Ka 1.000000 1.000000 1.000000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 2
-map_Kd f008_001_chair.png
-
 newmtl f008_001_komonoal1.023
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
@@ -430,16 +410,6 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd f008_001_plantA.png
-
-newmtl f008_001_redrectt.007
-Ns 250.000000
-Ka 1.000000 1.000000 1.000000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 2
-map_Kd f008_001_redrect.png
 
 newmtl f008_001_skyt.007
 Ns 250.000000

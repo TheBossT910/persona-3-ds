@@ -1,7 +1,7 @@
 #pragma once
 #include "CharacterProfile.h"
 
-struct CharacterProfiles
+struct CharacterProfileDb
 {
     static CharacterProfile player;
     static CharacterProfile yukari;

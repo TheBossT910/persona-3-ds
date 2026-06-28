@@ -1,14 +1,14 @@
 {
-  "buildCommand": "cp ../tile_map.json ./tile_map.json && cp ../../icon.bmp ./icon.bmp && mkdir -p ./docs/md && cp ../../docs/*.md ./docs/md/ && mkdir -p ./docs/imgs && cp -r ../../docs/imgs/* ./docs/imgs/",
+  "buildCommand": "cp ../tile_map.json ./tile_map.json && cp ../../icon.bmp ./icon.bmp",
   "outputDirectory": ".",
   "rewrites": [
     {
-      "source": "/map-editor",
-      "destination": "/map-editor/map-editor.html"
+      "source": "/",
+      "destination": "/index.html"
     },
     {
-      "source": "/docs",
-      "destination": "/docs/docs.html"
+      "source": "/map-editor",
+      "destination": "/index.html"
     }
   ]
 }

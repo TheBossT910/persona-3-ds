@@ -1,6 +1,4 @@
 #include "BattleCalcs.h"
-#include "../enemies/Enemy.h"
-#include "../party/PartyMember.h"
 
 u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
 {
@@ -21,7 +19,7 @@ u32 BattleCalcs::hitrate(BattleParticipant& attacker, BattleParticipant& defende
     u32 multipliedAccuracy;
     if (attacker.participantType == ParticipantType::Enemy)
     {
-        float shoeMultiplier = (float)(attackerStats.ag + 200) / (defender.shoe->evasion / 2.0f + 200);
+        float shoeMultiplier = (float)(attackerStats.ag + 200) / (defender.shoe.evasion / 2.0f + 200);
         multipliedAccuracy = baseAccuracy * skill.hitRate * shoeMultiplier;
     }
     else
@@ -43,23 +41,18 @@ u32 BattleCalcs::healing(BattleParticipant& user, Skill& skill)
     return (u32)floor(base * range / 100.0f);
 }
 
-/* TODO: on hold
-u32 CalcHpDif::calculateDamageAllOutAttack(BattleStats* attackerStats,
-                                           BattleStats* defenderStats,
-                                           u32* attackerLevel,
-                                           u32* defenderLevel,
-                                           u32* participantCount)
+u32 BattleCalcs::allOutAttack(Player& attacker, BattleParticipant& defender, u32 participantCount)
 {
-    damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel, skill);
-    //TODO: use weapon damage / 2
-    // TODO: hopefully correct, should be looked at by someone that knows some  math
-    float base = trunc(sqrt((float)(skill->movePower * 15 * Atk) / defenderStats->en) * 1.6f *
-                       (levelDifference * levelDifference) * affinityMtp * *participantCount);
+    float levelDifference = BattleCalcs::getLevelDifference(attacker.lv, defender.lv);
+    BattleStats& attackerStats = *attacker.getBattleStats();
+    BattleStats& defenderStats = *defender.getBattleStats();
+
+    float affinityMtp = BattleCalcs::getAffinityMtp(*defender.getBattleStats(), SkillDb::allOutAttack);
+    float base = trunc(sqrt((float)((attacker.weapon.weaponPower / 2.0f) * 15 * attackerStats.st) / defenderStats.en) *
+                       1.6f * (levelDifference * levelDifference) * affinityMtp * participantCount);
     float range = 95 + (u32)(rand() % 11);
     return (u32)trunc(base * range / 100.0f);
 }
-
-*/
 
 const float BattleCalcs::levelMultipliers[24] = {0.5f,  0.51f, 0.53f, 0.59f, 0.66f, 0.75f, 0.84f, 0.91f,
                                                  0.97f, 0.99f, 1.0f,  1.0f,  1.0f,  1.0f,  1.01f, 1.03f,

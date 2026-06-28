@@ -23,7 +23,7 @@ void SignContractView::init()
     musicCtrl.loadSFX(SFX_MENU);
     musicCtrl.loadSFX(SFX_SELECT);
     musicCtrl.loadSFX(SFX_CANCEL);
-    musicCtrl.init((fatBasePath + "music/menus/contract/mistic.pcm").c_str(), 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + "music/menus/contract/mistic.pcm").c_str(), 1.998f, 49.959f);
 
     videoSetMode(MODE_5_2D);
     videoSetModeSub(MODE_0_2D);

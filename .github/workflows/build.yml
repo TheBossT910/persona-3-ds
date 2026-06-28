@@ -154,7 +154,7 @@ jobs:
 
       - name: Compress and Package Assets
         run: |
-          gzip -1 sdcard.img
+          zip sdcard.img.zip sdcard.img
           zip -r data.zip data/
 
       # --- 4. Validate and publish ---
@@ -193,7 +193,7 @@ jobs:
             echo "| File | Use for |"
             echo "|------|---------|"
             echo "| \`persona-3-dual.nds\` | ROM - required for both emulator and hardware |"
-            echo "| \`sdcard.img.gz\` | melonDS emulator - decompress & mount via DLDI settings |"
+            echo "| \`sdcard.img.zip\` | melonDS emulator - decompress & mount via DLDI settings |"
             echo "| \`data.zip\` | Real hardware - extract and place \`data/\` next to the ROM on your SD card |"
             echo ""
             echo "## Checksums"
@@ -215,5 +215,5 @@ jobs:
           body_path: release-notes.md
           files: |
             persona-3-dual.nds
-            sdcard.img.gz
+            sdcard.img.zip
             data.zip

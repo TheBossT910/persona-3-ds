@@ -113,6 +113,26 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* tar
     optionCount = battleOptions.size();
 }
 
+void BattleMenuComponent::loadAllOutAttackConfirmation()
+{
+    if (loadedOption == BattleMenuOptions::ALL_OUT_ATTACK)
+    {
+        return;
+    };
+
+    battleOptions.clear();
+    loadedOption = BattleMenuOptions::ALL_OUT_ATTACK;
+    pauseMessage = "Confirm All-out-attack?";
+
+    MenuOption yes = {"Yes", -1, MENU_BIND(BattleMenuComponent, battleOptionSelected)};
+    MenuOption no = {"No", -1, MENU_BIND(BattleMenuComponent, battleOptionSelected)};
+    battleOptions.push_back(yes);
+    battleOptions.push_back(no);
+
+    options = battleOptions.data();
+    optionCount = battleOptions.size();
+}
+
 void BattleMenuComponent::loadAlertOptions(const std::string& text)
 {
     if (loadedOption == BattleMenuOptions::ALERT)

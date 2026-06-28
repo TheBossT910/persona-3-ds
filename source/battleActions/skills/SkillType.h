@@ -10,5 +10,6 @@ enum class SkillType
     MultiAttack,
     MultiHeal,
     MultiBuff,
-    MultiDebuff
+    MultiDebuff,
+    AllOutAttack,
 };

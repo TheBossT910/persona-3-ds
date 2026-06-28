@@ -2,7 +2,7 @@
 
 #define MAIN_MENU_OPTIONS 3
 #define LEVEL_OPTIONS 6
-#define SETTING_OPTIONS 2
+#define SETTING_OPTIONS 3
 #define SETTING_INTRO_OPTIONS 4
 
 class MainMenuComponent : public BaseMenu
@@ -29,6 +29,7 @@ class MainMenuComponent : public BaseMenu
     MenuOption settingOptions[SETTING_OPTIONS] = {
         {"Change Intro Video", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
         {"Toggle FEMC Mode", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
+        {"v0.6", -1, nullptr},
     };
 
     MenuOption settingIntroOptions[SETTING_INTRO_OPTIONS] = {

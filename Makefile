@@ -33,8 +33,8 @@ INCLUDES    :=  include source
 SFX         :=  assets/sfx
 
 GAME_TITLE     := Persona 3 Dual
-GAME_SUBTITLE1 := A Fan Recreation
-GAME_SUBTITLE2 := Demake by P3D Team
+GAME_SUBTITLE1 := Memento Mori.
+GAME_SUBTITLE2 := Atlus/Sega, P3D Team
 export GAME_ICON := $(CURDIR)/../icon.bmp
 
 #---------------------------------------------------------------------------------

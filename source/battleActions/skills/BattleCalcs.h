@@ -1,7 +1,10 @@
 #pragma once
 #include "../BattleParticipant.h"
 #include "../BattleStats.h"
+#include "../enemies/Enemy.h"
+#include "../party/Player.h"
 #include "../shoes/Shoe.h"
+#include "../skills/SkillDb.h"
 #include "Skill.h"
 #include <algorithm>
 #include <cmath>
@@ -18,11 +21,7 @@ struct BattleCalcs
     static float getLevelDifference(u32 attackerLevel, u32 defenderLevel);
     static float getAffinityMtp(BattleStats& battleStats, Skill& skill);
 
-    static u32 allOutAttack(BattleStats* attackerStats,
-                            BattleStats* defenderStats,
-                            u32* attackerLevel,
-                            u32* defenderLevel,
-                            u32* participantCount);
+    static u32 allOutAttack(Player& attacker, BattleParticipant& defender, u32 participantCount);
 
   private:
     //Attack

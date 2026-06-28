@@ -9,8 +9,6 @@
 // model
 #include "models/kotone.h"
 #include "models/makoto.h"
-// dialogue
-#include "dialogue/demo_dialogue.h"
 // map
 #include "maps/paulownia_mall.h"
 
@@ -22,13 +20,11 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
 
 void PaulowniaMallView::setMusic()
 {
-    musicCtrl.init((fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 0.0f, -1.0f);
+    musicCtrl.init(
+        (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
 }
 
-// TODO: dont forget to clear in future
 PaulowniaMallView::PaulowniaMallView()
-    : battleParticipants(new std::vector<BattleParticipant*>({&mercilessMaya, &cowardlyMaya})),
-      battleController(battleParticipants, &characterProfiles, battleStartCondition)
 {
 }
 
@@ -58,19 +54,13 @@ void PaulowniaMallView::setupEnvironment()
                               envTextures[PAULOWNIA_MALL_TEX_F008_001_KOMONO01]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_FUN03] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_fun03", envTextures[PAULOWNIA_MALL_TEX_F008_001_FUN03]);
-    // bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GLOW] = loadEnvironmentBitmap(
-    //     fatBasePath + "environments/paulownia_mall/f008_001_glow", envTextures[PAULOWNIA_MALL_TEX_F008_001_GLOW]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_KOMONO02] =
         loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_komono02",
                               envTextures[PAULOWNIA_MALL_TEX_F008_001_KOMONO02]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_LIGFLA] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_ligfla", envTextures[PAULOWNIA_MALL_TEX_F008_001_LIGFLA]);
-    // bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_SHADOW] = loadEnvironmentBitmap(
-    //     fatBasePath + "environments/paulownia_mall/f008_001_shadow", envTextures[PAULOWNIA_MALL_TEX_F008_001_SHADOW]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_ENTER02] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_enter02", envTextures[PAULOWNIA_MALL_TEX_F008_001_ENTER02]);
-    bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_REDRECT] = loadEnvironmentBitmap(
-        fatBasePath + "environments/paulownia_mall/f008_001_redrect", envTextures[PAULOWNIA_MALL_TEX_F008_001_REDRECT]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_PLANTA] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_plantA", envTextures[PAULOWNIA_MALL_TEX_F008_001_PLANTA]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_KEIMARK] = loadEnvironmentBitmap(
@@ -81,8 +71,6 @@ void PaulowniaMallView::setupEnvironment()
         fatBasePath + "environments/paulownia_mall/f008_001_fl01", envTextures[PAULOWNIA_MALL_TEX_F008_001_FL01]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GRA02] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_gra02", envTextures[PAULOWNIA_MALL_TEX_F008_001_GRA02]);
-    // bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GRA] = loadEnvironmentBitmap(
-    //     fatBasePath + "environments/paulownia_mall/f008_001_gra", envTextures[PAULOWNIA_MALL_TEX_F008_001_GRA]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_HIHO] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_hiho", envTextures[PAULOWNIA_MALL_TEX_F008_001_HIHO]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_KANBAN03] =
@@ -111,10 +99,6 @@ void PaulowniaMallView::setupEnvironment()
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_KANBAN02] =
         loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_kanban02",
                               envTextures[PAULOWNIA_MALL_TEX_F008_001_KANBAN02]);
-    bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_JITENSYA] =
-        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_jitensya",
-                              envTextures[PAULOWNIA_MALL_TEX_F008_001_JITENSYA]);
-
     paulowniaMallEnv.load((fatBasePath + "environments/paulownia_mall/paulownia_mall.bin").c_str(), bitmapsEnv);
     for (int i = 0; i < PAULOWNIA_MALL_TEX_COUNT; ++i)
     {
@@ -185,16 +169,8 @@ void PaulowniaMallView::init()
     // setup environment
     PaulowniaMallView::setupEnvironment();
 
-    // setup dialogue
-    demo_dialogue_bg_slot = bgSharedSub1;
-
     // setup pause menu
-    // use the same shared background slot as the demo dialogue
     pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
-
-    // setup battle menu
-    // TODO: check if isBattleMenuActive is just a dummy value
-    battleMenuCmpt.init(-1, &isBattleMenuActive);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -208,13 +184,10 @@ void PaulowniaMallView::init()
 
     uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
     uiCtrl.registerScreen(&menuHUDScreen, false);
-    uiCtrl.registerScreen(&dialogueScreen, false);
     uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
-    prevBattleState = false;
     prevPauseState = false;
-    prevDialogueState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
 }
@@ -232,27 +205,6 @@ ViewState PaulowniaMallView::update()
 
     switch (phase)
     {
-    case ViewPhase::Battle:
-    {
-        bool isActive = battleController.isActive();
-        // set
-        if (!isActive && !prevBattleState)
-        {
-            // TODO: display battle UI
-            uiCtrl.hideAll();
-            battleController.execute();
-            prevBattleState = true;
-        }
-        //exit
-        else if (!isActive && prevBattleState)
-        {
-            PaulowniaMallView::setMusic();
-            prevBattleState = false;
-            phase = ViewPhase::Environment;
-        }
-        break;
-    }
-
     case ViewPhase::Pause:
     {
         // set
@@ -276,29 +228,6 @@ ViewState PaulowniaMallView::update()
         {
             consoleClear();
             prevPauseState = false;
-            phase = ViewPhase::Environment;
-        }
-        break;
-    }
-
-    case ViewPhase::Dialogue:
-    {
-        bool isActive = dialogueCtrl.isActive();
-        // set
-        if (!isActive && !prevDialogueState)
-        {
-            // TODO: fix dialogue view. It uses the same background id as the UI render (when it should use an alt id)
-            uiCtrl.show(&dialogueScreen, false);
-            demo_yukari_kenji_argument_load();
-            dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-            dialogueCtrl.start(demo_yukari_kenji_argument_first());
-            prevDialogueState = true;
-        }
-        // exit
-        else if (!isActive && prevDialogueState)
-        {
-            bgHide(bgSharedSub1);
-            prevDialogueState = false;
             phase = ViewPhase::Environment;
         }
         break;
@@ -334,21 +263,6 @@ ViewState PaulowniaMallView::update()
             }
         }
 
-        // start dialogue
-        if (pressed & KEY_A)
-        {
-            prevEnvironmentState = false;
-            phase = ViewPhase::Dialogue;
-        }
-
-        // start battle
-        if (keys & KEY_Y)
-        {
-            prevEnvironmentState = false;
-            phase = ViewPhase::Battle;
-        }
-
-        // trigger dialogue from interaction
         switch (playerCtrl->isTileAt())
         {
         // left
@@ -432,8 +346,6 @@ ViewState PaulowniaMallView::update()
     }
 
     // update controllers
-    battleController.update(pressed);
-    dialogueCtrl.update(keys);
     characterAnimationCtrl.update();
     musicCtrl.update();
 

@@ -7,7 +7,6 @@ class IntroView : public BaseView
   private:
     Sprite logoSprite[2];
     int bg[4];
-    touchPosition touchXY;
 
     // sub screen
     int bgSubLogo;

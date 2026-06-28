@@ -12,9 +12,9 @@ void VideoView::init()
 ViewState VideoView::update()
 {
     scanKeys();
-    int keys = keysDown();
+    int pressed = keysDown();
 
-    if (keys)
+    if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
     {
         musicCtrl.pause();
         for (int i = 0; i <= 16; i++)

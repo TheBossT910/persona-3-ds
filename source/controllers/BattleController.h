@@ -40,14 +40,20 @@ class BattleController
     int menuIndex = 0;
     Skill* selectedSkill = nullptr;
 
+    bool pendingPersonaSwitch = false;
+    bool switchedPersonaThisTurn = false;
+    PersonaBase* personaBeforeSwitch = nullptr;
+
     std::string pendingAlert;
     BattlePhase alertReturnPhase = BattlePhase::Done;
 
-    std::vector<BattleParticipant*>* battleParticipants;
-    std::vector<BattleParticipant*> enemies;
-    std::vector<BattleParticipant*> partyMembers;
+    bool allOutAttackWasPossibleThisKnockDown = false;
 
-    CharacterProfiles* characterProfiles;
+    std::vector<BattleParticipant*>* battleParticipants = nullptr;
+    std::vector<Enemy*>* enemies = nullptr;
+    std::vector<PartyMember*>* partyMembers = nullptr;
+    Player* player = nullptr;
+
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     AttackAction attack;
@@ -57,15 +63,13 @@ class BattleController
 
     std::array<ActionBase*, 4> actions = {&attack, &guard, &persona, &switchPersona};
 
-    PartyMember* player = nullptr;
-    PartyMember* yukari = nullptr;
-    PartyMember* junpei = nullptr;
-
     void applyResult(const TurnResult& r, BattleParticipant* target = nullptr);
     void advanceTurn();
     void setNextPhase(BattlePhase nextPhase);
     void calculateTurnOrder();
     void handleDeadParticipants();
+    std::vector<BattleParticipant*> getAliveEnemies();
+    bool allEnemiesKnockedDown();
     bool isSingleTarget(SkillType type);
 
     static bool getParticipantByHigherAgility(BattleParticipant* a, BattleParticipant* b)
@@ -83,13 +87,15 @@ class BattleController
         return phase;
     }
 
-    void execute();
+    void execute(Player* player,
+                 std::vector<PartyMember*>* partyMembers,
+                 std::vector<Enemy*>* enemies,
+                 std::vector<BattleParticipant*>* battleParticipants,
+                 BattleStartCondition battleStartCondition);
     BattleResult update(u32 keys);
     void exit();
 
-    BattleController(std::vector<BattleParticipant*>* iBattleParticipants,
-                     CharacterProfiles* iCharacterProfiles,
-                     BattleStartCondition iBattleStartCondition);
+    BattleController();
     ~BattleController()
     {
     }

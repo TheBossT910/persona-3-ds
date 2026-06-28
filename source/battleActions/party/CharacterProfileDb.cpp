@@ -5,11 +5,11 @@
 #include "../skills/SkillDb.h"
 #include "../weapons/WeaponDb.h"
 
-CharacterProfile CharacterProfiles::player;
-CharacterProfile CharacterProfiles::yukari;
-CharacterProfile CharacterProfiles::junpei;
+CharacterProfile CharacterProfileDb::player;
+CharacterProfile CharacterProfileDb::yukari;
+CharacterProfile CharacterProfileDb::junpei;
 
-void CharacterProfiles::Initialize()
+void CharacterProfileDb::Initialize()
 {
     /*--------------MC-----------------*/
     player.name = "Player";

@@ -13,6 +13,7 @@ struct SkillDb
     static Skill powerSlash;
     static Skill slashAttack;
     static Skill strikeAttack;
+    static Skill allOutAttack;
 
     static void Initialize();
 };

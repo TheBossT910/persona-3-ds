@@ -23,8 +23,8 @@ struct BattleParticipant
     ParticipantType participantType;
 
     //Enemies have default values
-    Armour* armour;
-    Shoe* shoe;
+    Armour armour;
+    Shoe shoe;
 
     float currentTurnOrderAgility;
     bool oneMore = false;
@@ -36,4 +36,6 @@ struct BattleParticipant
     virtual void setCurrentTurnOrderAgility(float boost) = 0;
     virtual BattlePhase getInitalTurnPhase() = 0;
     virtual void onDead(BattleResult& battleResult) = 0;
+
+    virtual ~BattleParticipant() = default;
 };

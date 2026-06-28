@@ -1,26 +1,26 @@
 #include "PartyMember.h"
 #include "../skills/BattleCalcs.h"
 
-PartyMember::PartyMember(CharacterProfile* iCharacterProfile) : characterProfile(iCharacterProfile)
+PartyMember::PartyMember(const CharacterProfile& iCharacterProfile) : characterProfile(iCharacterProfile)
 
 {
-    name = characterProfile->name;
-    maxHp = characterProfile->maxHp;
-    hp = characterProfile->hp;
-    maxSp = characterProfile->maxSp;
-    sp = characterProfile->sp;
-    lv = characterProfile->lv;
+    name = characterProfile.name;
+    maxHp = characterProfile.maxHp;
+    hp = characterProfile.hp;
+    maxSp = characterProfile.maxSp;
+    sp = characterProfile.sp;
+    lv = characterProfile.lv;
 
-    baseAttackAction = characterProfile->baseAttackAction;
-    participantType = characterProfile->participantType;
+    baseAttackAction = characterProfile.baseAttackAction;
+    participantType = characterProfile.participantType;
 
-    armourType = &characterProfile->armourType;
-    armour = &characterProfile->armour;
-    shoe = &characterProfile->shoe;
-    weaponType = characterProfile->weaponType;
-    weapon = characterProfile->weapon;
-    personas = characterProfile->personas;
-    curPersona = characterProfile->curPersona;
+    armourType = characterProfile.armourType;
+    armour = characterProfile.armour;
+    shoe = characterProfile.shoe;
+    weaponType = characterProfile.weaponType;
+    weapon = characterProfile.weapon;
+    personas = characterProfile.personas;
+    curPersona = characterProfile.curPersona;
 }
 
 float PartyMember::calculateBaseDamage(BattleParticipant& defender, Skill& skill)
@@ -28,7 +28,7 @@ float PartyMember::calculateBaseDamage(BattleParticipant& defender, Skill& skill
     u32 atk = BattleCalcs::getAtk(curPersona->battleStats, skill);
     float levelDifference = BattleCalcs::getLevelDifference(lv, defender.lv);
     float affinityMtp = BattleCalcs::getAffinityMtp(*defender.getBattleStats(), skill);
-    u32 movePower = (skill.skillType == SkillType::RegularAttack) ? (weapon.weaponPower / 2) : skill.movePower;
+    u32 movePower = (skill.skillType == SkillType::RegularAttack) ? (weapon.weaponPower / 2.0f) : skill.movePower;
     return floor(sqrt((float)(movePower * 15 * atk) / defender.getBattleStats()->en) * 2 * levelDifference *
                  affinityMtp);
 }
@@ -51,6 +51,16 @@ BattlePhase PartyMember::getInitalTurnPhase()
 void PartyMember::onDead(BattleResult& battleResult)
 {
     //TODO: clear ailments, buffs etc in the future as they get wiped when revived
+}
+
+bool PartyMember::canParticipateInAllOutAttack()
+{
+    if (hp <= 0 || knockedDown)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool PartyMember::actorCanUse(ActionBase* action)

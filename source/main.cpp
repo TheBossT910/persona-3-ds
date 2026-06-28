@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
     ShoeDb::Initialize();
     PersonaDb::Initialize();
     EnemyDb::Initialize();
-    CharacterProfiles::Initialize();
+    CharacterProfileDb::Initialize();
 
     // seed random using DS hardware timer
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;

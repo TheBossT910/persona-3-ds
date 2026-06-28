@@ -6,6 +6,7 @@ enum class BattlePhase
     ChooseSkill,
     ChoosePersona,
     ChooseTarget,
+    ConfirmAllOutAttack,
     ShowAlert,
     EnemyTurn,
     Done

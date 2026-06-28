@@ -200,14 +200,14 @@ ViewState IntroView::update()
 {
     musicCtrl.update();
     scanKeys();
-    int keys = keysDown();
+    int pressed = keysDown();
 
     // transition to menu state on any input
-    if (keys)
+    if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
     {
         musicCtrl.playSFX(SFX_SELECT, 255, 128);
         musicCtrl.pause();
-        // transition both screens to white
+        // transition both screens to black
         for (int i = 0; i <= 16; i++)
         {
             setBrightness(3, -i);
@@ -221,8 +221,24 @@ ViewState IntroView::update()
         }
         return ViewState::MAIN_MENU;
     }
+    else if (pressed & KEY_B)
+    {
+        musicCtrl.playSFX(SFX_CANCEL, 255, 128);
+        musicCtrl.pause();
+        // transition both screens to black
+        for (int i = 0; i <= 16; i++)
+        {
+            setBrightness(3, -i);
 
-    touchRead(&touchXY);
+            // wait a few frames
+            for (int duration = 0; duration <= 2; duration++)
+            {
+                musicCtrl.update();
+                swiWaitForVBlank();
+            }
+        }
+        return ViewState::INTRO_VIDEO;
+    }
 
     // scroll silhouette background
     // animate X (moving right towards 0)

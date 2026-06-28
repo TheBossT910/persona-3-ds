@@ -103,7 +103,6 @@ void DisclaimerView::init()
 
 ViewState DisclaimerView::update()
 {
-    // transition to IntroVideoView
     musicCtrl.update();
     return ViewState::INTRO_VIDEO;
 }

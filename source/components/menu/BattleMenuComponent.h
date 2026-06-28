@@ -27,6 +27,7 @@ class BattleMenuComponent : public BaseMenu
     void loadSkillOptions(PersonaBase* persona);
     void loadPersonaOptions(std::vector<PersonaBase*>* personas);
     void loadTargetOptions(std::vector<BattleParticipant*>* targets, bool healTarget);
+    void loadAllOutAttackConfirmation();
     void loadAlertOptions(const std::string& text);
     bool isAlertExpired(int durationFrames) const;
     void reset();

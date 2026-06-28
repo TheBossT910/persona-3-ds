@@ -20,6 +20,27 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
+void IwatodaiStreetsView::setMusic()
+{
+    std::string streetsMusicPath;
+    float start;
+    float end;
+    if (saveData.femcMode)
+    {
+        start = 34.001f;
+        end = 93.032f;
+        streetsMusicPath = "music/locations/iwatodaiStreets/sun.pcm";
+    }
+    else
+    {
+        start = 31.0f;
+        end = 177.587f;
+        streetsMusicPath = "music/locations/iwatodaiStreets/changing_seasons.pcm";
+    }
+
+    musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), start, end);
+}
+
 void IwatodaiStreetsView::setupEnvironment()
 {
     GraphicAsset envTextures[IWATODAI_STREETS_TEX_COUNT] = {};
@@ -45,9 +66,6 @@ void IwatodaiStreetsView::setupEnvironment()
         fatBasePath + "environments/iwatodai_streets/f007_009_28", envTextures[IWATODAI_STREETS_TEX_F007_009_28]);
     bitmaps[IWATODAI_STREETS_TEX_F007_009_24] = loadEnvironmentBitmap(
         fatBasePath + "environments/iwatodai_streets/f007_009_24", envTextures[IWATODAI_STREETS_TEX_F007_009_24]);
-    bitmaps[IWATODAI_STREETS_TEX_F007_009_INFLOOR] =
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_infloor",
-                              envTextures[IWATODAI_STREETS_TEX_F007_009_INFLOOR]);
     bitmaps[IWATODAI_STREETS_TEX_F007_009_09] = loadEnvironmentBitmap(
         fatBasePath + "environments/iwatodai_streets/f007_009_09", envTextures[IWATODAI_STREETS_TEX_F007_009_09]);
     bitmaps[IWATODAI_STREETS_TEX_F007_009_11] = loadEnvironmentBitmap(
@@ -70,6 +88,8 @@ void IwatodaiStreetsView::setupEnvironment()
         fatBasePath + "environments/iwatodai_streets/f007_009_01", envTextures[IWATODAI_STREETS_TEX_F007_009_01]);
     bitmaps[IWATODAI_STREETS_TEX_F007_009_23] = loadEnvironmentBitmap(
         fatBasePath + "environments/iwatodai_streets/f007_009_23", envTextures[IWATODAI_STREETS_TEX_F007_009_23]);
+    bitmaps[IWATODAI_STREETS_TEX_ENEMY] = loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/enemy",
+                                                                envTextures[IWATODAI_STREETS_TEX_ENEMY]);
     iwatodaiStreetsEnv.load((fatBasePath + "environments/iwatodai_streets/iwatodai_streets.bin").c_str(), bitmaps);
     for (int i = 0; i < IWATODAI_STREETS_TEX_COUNT; ++i)
     {
@@ -118,16 +138,7 @@ void IwatodaiStreetsView::init()
                                          true);
 
     // setup music
-    std::string streetsMusicPath;
-    if (saveData.femcMode)
-    {
-        streetsMusicPath = "music/locations/iwatodaiStreets/sun.pcm";
-    }
-    else
-    {
-        streetsMusicPath = "music/locations/iwatodaiStreets/changing_seasons.pcm";
-    }
-    musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), 0.0f, -1.0f);
+    setMusic();
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
@@ -149,6 +160,10 @@ void IwatodaiStreetsView::init()
     // pause menu
     pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
 
+    // setup battle menu
+    // TODO: check if isBattleMenuActive is just a dummy value
+    battleMenuCmpt.init(-1, &isBattleMenuActive);
+
     // setup UI
     int bgMain[3] = {1, 2, 3};
     int bgSub[4] = {bgSharedSub2, bgSharedSub3, 2, 3};
@@ -161,6 +176,7 @@ void IwatodaiStreetsView::init()
     uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
+    prevBattleState = false;
     prevPauseState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
@@ -179,6 +195,48 @@ ViewState IwatodaiStreetsView::update()
 
     switch (phase)
     {
+    case ViewPhase::Battle:
+    {
+        bool isActive = battleController.isActive();
+        // set
+        if (!isActive && !prevBattleState)
+        {
+            // TODO: display battle menu UI
+            uiCtrl.hideAll();
+            battleController.execute(player, &partyMembers, &enemies, &battleParticipants, battleStartCondition);
+            prevBattleState = true;
+        }
+        //exit
+        else if (!isActive && prevBattleState)
+        {
+            //battle cleanup
+            for (BattleParticipant* participant : battleParticipants)
+            {
+                delete participant;
+            }
+
+            battleParticipants.clear();
+            enemies.clear();
+            partyMembers.clear();
+
+            //Reset battle
+            mercilessMaya = new Enemy(EnemyDb::mercilessMaya);
+            cowardlyMaya = new Enemy(EnemyDb::cowardlyMaya);
+            player = new Player(CharacterProfileDb::player);
+            yukari = new PartyMember(CharacterProfileDb::yukari);
+            junpei = new PartyMember(CharacterProfileDb::junpei);
+
+            battleParticipants = {mercilessMaya, cowardlyMaya, player, yukari, junpei};
+            enemies = {mercilessMaya, cowardlyMaya};
+            partyMembers = {player, yukari, junpei};
+
+            IwatodaiStreetsView::setMusic();
+            prevBattleState = false;
+
+            phase = ViewPhase::Environment;
+        }
+        break;
+    }
     case ViewPhase::Pause:
     {
         // set
@@ -247,7 +305,17 @@ ViewState IwatodaiStreetsView::update()
         case TileType::SCENE_2:
             musicCtrl.pause();
             return ViewState::STATION;
+        case TileType::SHD_W:
+            // start battle
+            iprintf("\x1b[0;0HStart Battle");
+            if (pressed & KEY_A)
+            {
+                prevEnvironmentState = false;
+                phase = ViewPhase::Battle;
+            }
+            break;
         default:
+            consoleClear();
             break;
         }
 
@@ -264,6 +332,10 @@ ViewState IwatodaiStreetsView::update()
         glPushMatrix();
         glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(0));
         iwatodaiStreetsEnv.draw();
+        iwatodaiStreetsEnv.drawBillboards(enableBillboards, // billboards face camera
+                                          camPos.cameraX,
+                                          camPos.cameraY,
+                                          camPos.cameraZ);
         glPopMatrix(1);
 
         glPushMatrix();
@@ -300,6 +372,7 @@ ViewState IwatodaiStreetsView::update()
     }
 
     musicCtrl.update();
+    battleController.update(pressed);
     characterAnimationCtrl.update();
 
     return ViewState::KEEP_CURRENT;

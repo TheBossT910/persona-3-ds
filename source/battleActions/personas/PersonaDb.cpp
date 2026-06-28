@@ -36,6 +36,7 @@ void PersonaDb::Initialize()
     orpheus.battleStats.affinities[(u32)Element::Wind] = BattleStats::Neutral;
     orpheus.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     orpheus.battleStats.affinities[(u32)Element::Dark] = BattleStats::Weak;
+    orpheus.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 
     /*--------------FORNEUS--------------*/
     forneus.name = "Forneus";
@@ -60,6 +61,7 @@ void PersonaDb::Initialize()
     forneus.battleStats.affinities[(u32)Element::Wind] = BattleStats::Neutral;
     forneus.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     forneus.battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
+    forneus.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 
     /*--------------HERMES--------------*/
     hermes.name = "Hermes";
@@ -83,6 +85,7 @@ void PersonaDb::Initialize()
     hermes.battleStats.affinities[(u32)Element::Wind] = BattleStats::Weak;
     hermes.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     hermes.battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
+    hermes.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 
     /*--------------IO--------------*/
     io.name = "Io";
@@ -108,4 +111,5 @@ void PersonaDb::Initialize()
     io.battleStats.affinities[(u32)Element::Wind] = BattleStats::Resist;
     io.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     io.battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
+    io.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 }
