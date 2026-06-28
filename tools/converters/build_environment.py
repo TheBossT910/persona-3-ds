@@ -1,81 +1,86 @@
 import os
-import re
-import argparse
-from . import obj2environment
+import shutil
 
 
-def convert(input_file, output_dir, config):
-    base_name = re.sub(
-        r"[^a-zA-Z0-9_]", "_", os.path.splitext(os.path.basename(input_file))[0]
-    )
+def convert(input_path, output_dir, config):
+    """
+    Routes .bin and .h to their build directories and generates .grit files for textures.
+    Reads grit_flags from the .build.json sidecar config.
+    """
+    # Resolve the source directory whether input is a file or folder
+    input_path = os.path.abspath(input_path)
+    if os.path.isdir(input_path):
+        src_dir = input_path
+    elif os.path.isfile(input_path):
+        src_dir = os.path.dirname(input_path)
+    else:
+        raise FileNotFoundError(f"CRITICAL: Input path does not exist: {input_path}")
 
-    # obj2environment reads PNG sizes, optionally resizes them in-place (via Pillow)
-    obj2environment.convert(input_file, output_dir, config)
+    folder_name = os.path.basename(os.path.normpath(src_dir))
 
-    tex_list = os.path.join(output_dir, f"{base_name}_textures.txt")
-    if not os.path.exists(tex_list):
-        return
+    # Destination directories (relative to project root / cwd)
+    data_env_dir = os.path.abspath(os.path.join("data", "environments", folder_name))
+    source_env_dir = os.path.abspath(os.path.join("source", "environments"))
 
-    if config.get("skip_grit"):
-        os.remove(tex_list)
-        return
+    os.makedirs(data_env_dir, exist_ok=True)
+    os.makedirs(source_env_dir, exist_ok=True)
 
-    grit_flags = config.get("grit_flags", "-gb -gB16 -p!")
-    pngs = [
-        line.strip()
-        for line in open(tex_list)
-        if line.strip() and not line.startswith("#")
-    ]
+    # Pull grit flags from .build.json, or fall back to safe defaults.
+    # The JSON value can be either a single string or a list of flag strings.
+    raw_flags = config.get("grit_flags", ["-gT!", "-gB16", "-gb", "-ftb"])
+    if isinstance(raw_flags, str):
+        # Allow the JSON to store flags as a single space-separated string
+        flag_list = raw_flags.split()
+    else:
+        flag_list = list(raw_flags)
 
-    for png in pngs:
-        if not os.path.exists(png):
-            print(f"  [WARN] PNG not found: {png}")
+    # .grit format: one flag per line
+    grit_content = "\n".join(flag_list) + "\n"
+
+    found_bin = False
+    found_header = False
+
+    print(f"[build_environment] Scanning: {src_dir}")
+    print(f"  data  -> {data_env_dir}")
+    print(f"  source-> {source_env_dir}")
+    print(f"  grit flags: {' '.join(flag_list)}")
+
+    for file_name in sorted(os.listdir(src_dir)):
+        file_path = os.path.join(src_dir, file_name)
+        if not os.path.isfile(file_path):
             continue
-        grit_file = os.path.splitext(png)[0] + ".grit"
-        print(f"  Generated {os.path.basename(grit_file)}")
-        with open(grit_file, "w") as f:
-            f.write(grit_flags)
 
-    os.remove(tex_list)
+        lower = file_name.lower()
 
+        # 1. Route the 3D map binary (.bin) -> data/environments/<folder>/
+        if lower.endswith(".bin"):
+            found_bin = True
+            dest = os.path.join(data_env_dir, file_name)
+            shutil.copy2(file_path, dest)
+            print(f"  [BIN]    {file_path}")
+            print(f"        -> {dest}")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="NDS environment build pipeline")
-    parser.add_argument("input")
-    parser.add_argument("output_dir")
-    parser.add_argument("--scale", type=float, default=None)
-    parser.add_argument("--target-size", type=float, default=4.0)
-    parser.add_argument("--no-center", action="store_true")
-    parser.add_argument("--source-blender", action="store_true")  # was missing before
-    parser.add_argument("--mapping", type=str, default=None)
-    parser.add_argument("--skip-grit", action="store_true")
-    parser.add_argument("--grit-flags", type=str, default="-gb -gB16 -p!")
-    parser.add_argument("--rgba", action="store_true")
-    parser.add_argument("--rgba-list", type=str, default="")
-    parser.add_argument(
-        "--color", nargs=3, type=int, metavar=("R", "G", "B"), default=[255, 255, 255]
-    )
-    parser.add_argument(
-        "--max-tex-size",
-        type=int,
-        default=None,
-        help="Cap all texture dimensions to this value (e.g. 64). "
-        "Requires Pillow.  Strongly recommended for scenes with "
-        "more than ~8 textures to avoid VRAM overflow.",
-    )
-    args = parser.parse_args()
+        # 2. Route the C++ header (.h) -> source/environments/
+        elif lower.endswith(".h"):
+            found_header = True
+            dest = os.path.join(source_env_dir, file_name)
+            shutil.copy2(file_path, dest)
+            print(f"  [HEADER] {file_path}")
+            print(f"        -> {dest}")
 
-    cli_config = {
-        "scale": args.scale,
-        "target_size": args.target_size,
-        "no_center": args.no_center,
-        "source_blender": args.source_blender,
-        "mapping": args.mapping,
-        "skip_grit": args.skip_grit,
-        "grit_flags": args.grit_flags,
-        "rgba": args.rgba,
-        "rgba_list": args.rgba_list,
-        "color": args.color,
-        "max_tex_size": args.max_tex_size,
-    }
-    convert(args.input, args.output_dir, cli_config)
+        # 3. Generate a .grit sidecar next to each texture (.png)
+        elif lower.endswith(".png"):
+            grit_path = os.path.splitext(file_path)[0] + ".grit"
+            with open(grit_path, "w") as f:
+                f.write(grit_content)
+            print(f"  [GRIT]   {grit_path}")
+
+    # Hard fail if the geometry binary is missing
+    if not found_bin:
+        raise FileNotFoundError(
+            f"CRITICAL: No .bin file found in {src_dir}\n"
+            "Make sure the Blender export completed successfully."
+        )
+
+    if not found_header:
+        print(f"  [WARN] No .h file found in {src_dir} — skipping header copy.")

@@ -47,12 +47,12 @@ else
     VENV_PYTHON := $(HOME)/.venv/bin/python3
 endif
 
-ASSETS_DIALOGUE := $(CURDIR)/assets/dialogue
-ASSETS_MUSIC    := $(CURDIR)/assets/music
-ASSETS_VIDEO    := $(CURDIR)/assets/video
+ASSETS_DIALOGUE     := $(CURDIR)/assets/dialogue
+ASSETS_MUSIC        := $(CURDIR)/assets/music
+ASSETS_VIDEO        := $(CURDIR)/assets/video
 ASSETS_ENVIRONMENTS := $(CURDIR)/assets/environments
-ASSETS_MODELS   := $(CURDIR)/assets/models
-ASSETS_MAPS     := $(CURDIR)/assets/maps
+ASSETS_MODELS       := $(CURDIR)/assets/models
+ASSETS_MAPS         := $(CURDIR)/assets/maps
 
 DATA_MUSIC      := $(CURDIR)/data/music
 DATA_VIDEO      := $(CURDIR)/data/video
@@ -68,19 +68,21 @@ else
 endif
 
 export MMUTIL
+
 #---------------------------------------------------------------------------------
 # Collect source files
 #---------------------------------------------------------------------------------
-DLG_FILES       := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
-MP3_FILES       := $(shell find $(ASSETS_MUSIC) -type f -name '*.mp3' 2>/dev/null)
-MP4_FILES       := $(wildcard $(ASSETS_VIDEO)/*.mp4)
-ENV_OBJ_FILES   := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
-JMAP_FILES      := $(wildcard $(ASSETS_MAPS)/*.jmap)
+DLG_FILES        := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
+MP3_FILES        := $(shell find $(ASSETS_MUSIC) -type f -name '*.mp3' 2>/dev/null)
+MP4_FILES        := $(wildcard $(ASSETS_VIDEO)/*.mp4)
+# Each subdirectory of assets/environments is one environment asset
+ENV_DIRS         := $(wildcard $(ASSETS_ENVIRONMENTS)/*)
+JMAP_FILES       := $(wildcard $(ASSETS_MAPS)/*.jmap)
 
 MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 
 # Recursively find all PNG files in graphics, environments, and models.
-FAT_PNG_FILES   := $(shell find $(CURDIR)/assets/graphics $(CURDIR)/assets/environments $(CURDIR)/assets/models -type f -name '*.png' 2>/dev/null)
+FAT_PNG_FILES    := $(shell find $(CURDIR)/assets/graphics $(CURDIR)/assets/environments $(CURDIR)/assets/models -type f -name '*.png' 2>/dev/null)
 
 #---------------------------------------------------------------------------------
 # Derive output paths & dynamically add environment output dirs to SOURCES
@@ -92,9 +94,9 @@ JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
 
-# Keep track of environment directories so Make knows where to find the generated .s files later
-ENV_OUT_DIRS    := $(foreach file,$(ENV_OBJ_FILES),source/environments/$(notdir $(patsubst %/,%,$(dir $(file)))))
-ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments/$(notdir $(file:.obj=.h)))
+# One .h output per environment directory
+ENV_OUT_DIRS    := $(foreach d,$(ENV_DIRS),source/environments/$(notdir $(d)))
+ENVIRONMENT_OUT := $(foreach d,$(ENV_DIRS),$(CURDIR)/source/environments/$(notdir $(d)).h)
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -175,6 +177,7 @@ dirs:
 	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments $(CURDIR)/data/graphics
 
 sdcard: sdcard.img
+
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $$(wildcard $(ASSETS_DIALOGUE)/$$*.build.json)
 	@echo "  DLG   $(notdir $<)"
@@ -198,23 +201,26 @@ $(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $$(wildcard $(ASSETS_VIDEO)/$$*.build
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
-# ENVIRONMENTS: Appended /$* to force output into a specific subdirectory
+# ENVIRONMENTS
+# Triggered by the asset folder as a whole. build_environment.py scans the
+# folder, copies the .bin to data/environments/<name>/ and copies the .h to
+# source/environments/ directly — no mv needed.
 #---------------------------------------------------------------------------------
-$(CURDIR)/source/environments/%.h: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
+$(CURDIR)/source/environments/%.h: \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.bin) \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.png) \
-		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.mtl) \
-		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/$$*.build.json) \
-		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.build.json)
 	@echo "  ENV   $*"
 	@mkdir -p $(dir $@) $(CURDIR)/data/environments/$*
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/environments/$*"
-	@mv $(CURDIR)/data/environments/$*/$*.h $@
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py \
+		"$(ASSETS_ENVIRONMENTS)/$*" \
+		"$(CURDIR)/data/environments/$*"
 	@touch $@
 
 environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
-# MODELS: Appended /$* to force output into a specific subdirectory
+# MODELS
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 		$$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
@@ -238,10 +244,8 @@ jmaps: $(JMAP_OUT)
 #---------------------------------------------------------------------------------
 # ALL GRAPHICS (Dynamic explicit rules using GNU Make Macros)
 #---------------------------------------------------------------------------------
-# Generate the exact target paths.
 FAT_GRAPHICS_OUT := $(foreach file,$(FAT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
 
-# Define a macro that acts as a blueprint for our build rule
 define GRIT_RULE
 $(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
 	@echo "  GRIT  $$(notdir $$<)"
@@ -249,7 +253,6 @@ $(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),
 	@grit "$$<" -ftb -fh! -o "$$(patsubst %.img.bin,%,$$@)"
 endef
 
-# Evaluate the macro for every single PNG found, dynamically scripting the rules into the Make environment
 $(foreach file,$(FAT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
 
 graphics: $(FAT_GRAPHICS_OUT)

@@ -7,59 +7,87 @@ import argparse
 from typing import Optional
 
 
-def load_config(input_file: str) -> dict:
-    """Load configuration from a sidecar JSON file next to the input file."""
-    base, _ = os.path.splitext(input_file)
+def load_config(input_path: str) -> dict:
+    """
+    Load configuration from a .build.json sidecar file.
 
-    # 1. Check exactly next to the file (e.g., assets/models/akihiko/akihiko.build.json)
-    config_path = base + ".build.json"
-    if os.path.exists(config_path):
-        with open(config_path, "r") as f:
-            return json.load(f)
+    Search order:
+      1. <input_dir>/<folder_name>.build.json   (sidecar inside the asset folder)
+      2. <parent_dir>/<folder_name>.build.json  (sidecar adjacent to the asset folder)
+      3. <input_base>.build.json                (sidecar next to a single input file)
+      4. <grandparent_dir>/<stem>.build.json    (legacy fallback)
+    """
+    input_path = os.path.abspath(input_path)
 
-    # 2. Check the parent directory (e.g., assets/models/akihiko.build.json)
-    parent_dir = os.path.dirname(os.path.dirname(input_file))
-    file_name = os.path.basename(base)
-    parent_config_path = os.path.join(parent_dir, file_name + ".build.json")
-    if os.path.exists(parent_config_path):
-        with open(parent_config_path, "r") as f:
-            return json.load(f)
+    candidates = []
 
+    if os.path.isdir(input_path):
+        dir_name = os.path.basename(os.path.normpath(input_path))
+        parent_dir = os.path.dirname(input_path)
+        candidates = [
+            os.path.join(input_path, f"{dir_name}.build.json"),  # inside folder
+            os.path.join(parent_dir, f"{dir_name}.build.json"),  # adjacent to folder
+        ]
+    else:
+        base = os.path.splitext(input_path)[0]
+        parent_dir = os.path.dirname(input_path)
+        grandparent = os.path.dirname(parent_dir)
+        stem = os.path.basename(base)
+        candidates = [
+            base + ".build.json",  # next to the file
+            os.path.join(grandparent, stem + ".build.json"),  # legacy fallback
+        ]
+
+    for path in candidates:
+        if os.path.exists(path):
+            print(f"[build_asset] Config loaded: {path}")
+            with open(path, "r") as f:
+                return json.load(f)
+
+    print("[build_asset] No .build.json found; using empty config.")
     return {}
 
 
-def guess_asset_type(input_file: str) -> Optional[str]:
-    """Guess the asset type based on file extension."""
-    ext = os.path.splitext(input_file)[1].lower()
-    if ext == ".dlg":
-        return "dlg2dialogue"
-    if ext == ".mp4":
-        return "video2vid"
-    if ext == ".jmap":
-        return "jmap2map"
-    if ext == ".obj":
-        return "build_environment"
-    if ext == ".json":
-        return "build_model"
-    return None
+def guess_asset_type(input_path: str, config: dict) -> Optional[str]:
+    """Determine the asset type from config, directory contents, or file extension."""
+
+    # Explicit override in JSON always wins
+    if config.get("asset_type"):
+        return config["asset_type"]
+
+    # Directory heuristic: presence of a .bin means it's an environment
+    if os.path.isdir(input_path):
+        contents = os.listdir(input_path)
+        if any(f.lower().endswith(".bin") for f in contents):
+            return "build_environment"
+
+    ext = os.path.splitext(input_path)[1].lower()
+    ext_map = {
+        ".dlg": "dlg2dialogue",
+        ".mp4": "video2vid",
+        ".jmap": "jmap2map",
+        ".json": "build_model",
+        ".bin": "build_environment",
+    }
+    return ext_map.get(ext)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="P3 Dual Project Asset Compiler")
-    parser.add_argument("input", help="Input file")
+    parser = argparse.ArgumentParser(description="Asset Compiler")
+    parser.add_argument("input", help="Input file or directory")
     parser.add_argument("output", help="Output file or directory")
     args, unknown = parser.parse_known_args()
 
-    # Load JSON Sidecar
     config = load_config(args.input)
+    asset_type = guess_asset_type(args.input, config)
 
-    # Identify asset routing
-    asset_type = config.get("asset_type") or guess_asset_type(args.input)
     if not asset_type:
         print(f"Error: Cannot determine asset type for {args.input}")
         sys.exit(1)
 
-    # Inject unknown CLI flags into the config dynamically (Overrides JSON)
+    print(f"[build_asset] asset_type = {asset_type}")
+
+    # Merge unknown CLI flags into config (--key value pairs)
     i = 0
     while i < len(unknown):
         if unknown[i].startswith("--"):
@@ -67,11 +95,11 @@ def main() -> None:
             vals = []
             i += 1
             while i < len(unknown) and not unknown[i].startswith("--"):
-                val = unknown[i]
+                raw = unknown[i]
                 try:
-                    val = float(val) if "." in val else int(val)
+                    val = float(raw) if "." in raw else int(raw)
                 except ValueError:
-                    pass
+                    val = raw
                 vals.append(val)
                 i += 1
 
@@ -84,11 +112,10 @@ def main() -> None:
         else:
             i += 1
 
-    # Dispatch
     try:
         converter = importlib.import_module(f"converters.{asset_type}")
     except ModuleNotFoundError:
-        print(f"Error: Module converters.{asset_type} not found.")
+        print(f"Error: Module 'converters.{asset_type}' not found.")
         sys.exit(1)
 
     converter.convert(args.input, args.output, config)
