@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
+float frameDelay = 2.0; // animation speed -> higher = slower
+float frameTimer = 0.0;
+
 // Lifecycle
 AnimationController::AnimationController()
 {
@@ -256,6 +259,14 @@ void AnimationController::update()
     if (!isPlaying || currentAnimIndex == -1)
         return;
 
+    frameTimer += 1.0;
+
+    if (frameTimer < frameDelay)
+    {
+        return;
+    }
+
+    frameTimer -= frameDelay;  //timer reset
     currentFrame++;
 
     if (currentFrame >= animations[currentAnimIndex].duration)
