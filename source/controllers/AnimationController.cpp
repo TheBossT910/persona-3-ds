@@ -266,7 +266,7 @@ void AnimationController::update()
         return;
     }
 
-    frameTimer -= frameDelay;  //timer reset
+    frameTimer -= frameDelay; //timer reset
     currentFrame++;
 
     if (currentFrame >= animations[currentAnimIndex].duration)
