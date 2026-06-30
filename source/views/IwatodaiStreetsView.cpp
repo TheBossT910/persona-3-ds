@@ -259,7 +259,7 @@ ViewState IwatodaiStreetsView::update()
         if (pressed & KEY_START)
         {
             consoleClear();
-            prevPauseState = true;
+            prevPauseState = false;
             phase = ViewPhase::Environment;
         }
         break;
@@ -350,13 +350,13 @@ ViewState IwatodaiStreetsView::update()
         if (enableDebugPrint)
         {
             iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
-            iprintf("\x1b[20;0H\033[31mTouch y = %04X, %04X\n", touch.rawy, touch.py);
-            iprintf("\x1b[21;0H\033[31mtile(x,z): %d, %d",
+            iprintf("\x1b[20;0HTouch y = %04X, %04X\n", touch.rawy, touch.py);
+            iprintf("\x1b[21;0Htile(x,z): %d, %d",
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
-            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
+            iprintf("\x1b[22;0Htranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
             iprintf(
-                "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+                "\x1b[23;0Hangle(w,c): %d, %d\033[37;1m", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
         break;
     }

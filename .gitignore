@@ -45,3 +45,4 @@ persona-3-dual.lst
 .DS_Store
 sdcard.img
 sdcard.img.idx
+.venv/
