@@ -1,7 +1,9 @@
 #include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
-// controllers
+// controllers / components
+#include "components/ui/MenuHUDScreen.h"
 #include "controllers/CharacterController.h"
+#include "controllers/UIController.h"
 // environments
 #include "environments/paulownia_mall.h"
 
@@ -51,4 +53,9 @@ class PaulowniaMallView : public BaseView3D
     const float characterFacingAngle = 180;
 
     void setMusic();
+
+    UIController* uiCtrl = UIController::getInstance();
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+
+    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };

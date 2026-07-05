@@ -5,7 +5,7 @@
 
 void VideoView::init()
 {
-    videoCtrl.init(filename, 15.0f, nextView);
+    videoCtrl->init(filename, 15.0f, nextView);
     setBrightness(2, -16);
 }
 
@@ -16,18 +16,18 @@ ViewState VideoView::update()
 
     if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
     {
-        musicCtrl.pause();
+        musicCtrl->pause();
         for (int i = 0; i <= 16; i++)
         {
             setBrightness(3, -i);
-            musicCtrl.update();
+            musicCtrl->update();
             swiWaitForVBlank();
         }
 
         return nextView;
     }
 
-    return videoCtrl.update();
+    return videoCtrl->update();
 }
 
 void VideoView::cleanup()

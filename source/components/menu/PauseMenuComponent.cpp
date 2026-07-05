@@ -8,6 +8,34 @@
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
+PauseMenuComponent* PauseMenuComponent::instance = nullptr;
+
+void PauseMenuComponent::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new PauseMenuComponent();
+    }
+}
+
+void PauseMenuComponent::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+PauseMenuComponent* PauseMenuComponent::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 DialogueController dialogueCtrl;
 
 void PauseMenuComponent::loadBg(int bgIndex)
@@ -38,7 +66,7 @@ void PauseMenuComponent::loadBg(int bgIndex)
         return;
     }
 
-    GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
+    GraphicAsset bg = graphicsCtrl->loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
     ;
     dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
     dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);
@@ -47,7 +75,7 @@ void PauseMenuComponent::loadBg(int bgIndex)
     dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
-    graphicsCtrl.unloadGrit(bg);
+    graphicsCtrl->unloadGrit(bg);
 }
 
 void PauseMenuComponent::init(int iBgSlot, bool* isActive, const std::string& iPauseMessage)
@@ -159,7 +187,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
     switch (static_cast<DebugOption>(selectedOption))
     {
     case DebugOption::DISCLAIMER_VIEW:
-        musicCtrl.pause();
+        musicCtrl->pause();
         selectedView = ViewState::DISCLAIMER;
         break;
     case DebugOption::INTRO_VIEW:
@@ -200,12 +228,12 @@ ViewState PauseMenuComponent::debugOptionSelected()
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_BILLBOARDS:
-        enableBillboards = !enableBillboards;
+        Globals::enableBillboards = !Globals::enableBillboards;
         *isActivePtr = false;
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_DEBUG_PRINT:
-        enableDebugPrint = true;
+        Globals::enableDebugPrint = !Globals::enableDebugPrint;
         *isActivePtr = false;
         selectedView = ViewState::KEEP_CURRENT;
         break;
@@ -217,115 +245,115 @@ ViewState PauseMenuComponent::debugOptionSelected()
 
 ViewState PauseMenuComponent::characterAnimOptionSelected()
 {
-    characterAnimationCtrl.stop();
+    characterAnimationCtrl->stop();
 
     ViewState selectedView = ViewState::KEEP_CURRENT;
     switch (static_cast<CharacterAnimOption>(selectedOption))
     {
     case CharacterAnimOption::TOGGLE_AUTO_ANIM:
-        enableCharacterAnim = !enableCharacterAnim;
+        Globals::enableCharacterAnim = !Globals::enableCharacterAnim;
         break;
     case CharacterAnimOption::ANIM_1:
-        characterAnimationCtrl.set(0, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(0, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_2:
-        characterAnimationCtrl.set(1, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(1, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_3:
-        characterAnimationCtrl.set(2, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(2, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_4:
-        characterAnimationCtrl.set(3, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(3, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_5:
-        characterAnimationCtrl.set(4, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(4, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_6:
-        characterAnimationCtrl.set(5, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(5, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_7:
-        characterAnimationCtrl.set(6, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(6, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_8:
-        characterAnimationCtrl.set(7, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(7, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_9:
-        characterAnimationCtrl.set(8, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(8, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_10:
-        characterAnimationCtrl.set(9, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(9, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_11:
-        characterAnimationCtrl.set(10, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(10, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_12:
-        characterAnimationCtrl.set(11, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(11, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_13:
-        characterAnimationCtrl.set(12, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(12, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_14:
-        characterAnimationCtrl.set(13, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(13, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_15:
-        characterAnimationCtrl.set(14, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(14, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_16:
-        characterAnimationCtrl.set(15, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(15, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_17:
-        characterAnimationCtrl.set(16, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(16, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_18:
-        characterAnimationCtrl.set(17, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(17, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_19:
-        characterAnimationCtrl.set(18, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(18, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_20:
-        characterAnimationCtrl.set(19, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(19, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_21:
-        characterAnimationCtrl.set(20, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(20, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_22:
-        characterAnimationCtrl.set(21, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(21, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_23:
-        characterAnimationCtrl.set(22, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(22, true);
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_24:
-        characterAnimationCtrl.set(23, true);
-        enableCharacterAnim = false;
+        characterAnimationCtrl->set(23, true);
+        Globals::enableCharacterAnim = false;
         break;
     default:
         break;
     }
 
     *isActivePtr = false;
-    characterAnimationCtrl.play();
+    characterAnimationCtrl->play();
     return selectedView;
 }

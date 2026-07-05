@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/MusicController.h"
 #include "core/enums.h"
 #include <nds.h>
 #include <string>
@@ -9,12 +10,19 @@
 class VideoController
 {
   public:
-    VideoController() {};
+    static void create();
+    static void destroy();
+    static VideoController* getInstance();
+
     void init(std::string iFileName, float iFps, ViewState iNextState);
     ViewState update();
     void cleanup();
 
   private:
+    VideoController() {};
+    ~VideoController() {};
+    static VideoController* instance;
+
     ViewState nextState;
     float fps;
 
@@ -38,4 +46,6 @@ class VideoController
     u8 audioBuf[16384];
 
     void refillBuffer();
+
+    MusicController* musicCtrl = MusicController::getInstance();
 };

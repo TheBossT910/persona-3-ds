@@ -40,8 +40,8 @@ void DisclaimerView::init()
 
     // copy graphics to vram
     std::string bgPath = fatBasePath + "graphics/DisclaimerView/backgrounds/";
-    GraphicAsset bgCaution = graphicsCtrl.loadGrit(bgPath + "cautionBackground/cautionBackground");
-    GraphicAsset bgCautionSub = graphicsCtrl.loadGrit(bgPath + "cautionBackgroundSub/cautionBackgroundSub");
+    GraphicAsset bgCaution = graphicsCtrl->loadGrit(bgPath + "cautionBackground/cautionBackground");
+    GraphicAsset bgCautionSub = graphicsCtrl->loadGrit(bgPath + "cautionBackgroundSub/cautionBackgroundSub");
 
     dmaCopy(bgCaution.tiles, bgGetGfxPtr(bg[0]), bgCaution.tilesLen);
     dmaCopy(bgCautionSub.tiles, bgGetGfxPtr(bg[1]), bgCautionSub.tilesLen);
@@ -64,8 +64,8 @@ void DisclaimerView::init()
 
     bgUpdate();
 
-    graphicsCtrl.unloadGrit(bgCaution);
-    graphicsCtrl.unloadGrit(bgCautionSub);
+    graphicsCtrl->unloadGrit(bgCaution);
+    graphicsCtrl->unloadGrit(bgCautionSub);
 
     // fade caution screens in
     for (int i = 0; i <= 16; i++)
@@ -76,7 +76,7 @@ void DisclaimerView::init()
         for (int frame = 0; frame <= 6; frame++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 
@@ -84,7 +84,7 @@ void DisclaimerView::init()
     for (int frame = 0; frame <= 90; frame++)
     {
         swiWaitForVBlank();
-        musicCtrl.update();
+        musicCtrl->update();
     }
 
     // fade caution screens out
@@ -96,14 +96,14 @@ void DisclaimerView::init()
         for (int frame = 0; frame <= 6; frame++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 }
 
 ViewState DisclaimerView::update()
 {
-    musicCtrl.update();
+    musicCtrl->update();
     return ViewState::INTRO_VIDEO;
 }
 

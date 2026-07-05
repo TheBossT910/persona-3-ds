@@ -1,4 +1,5 @@
 #include "MainMenuComponent.h"
+#include "controllers/SaveController.h"
 #include "core/globals.h"
 #include <string>
 
@@ -33,7 +34,7 @@ void MainMenuComponent::loadBg(int bgIndex)
         return;
     }
 
-    GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
+    GraphicAsset bg = graphicsCtrl->loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
     dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
     dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);
 
@@ -41,7 +42,7 @@ void MainMenuComponent::loadBg(int bgIndex)
     dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
-    graphicsCtrl.unloadGrit(bg);
+    graphicsCtrl->unloadGrit(bg);
 
     if (showBg)
     {
@@ -157,7 +158,7 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
 
 void MainMenuComponent::updateSave()
 {
-    if (!saveCtrl.write())
+    if (!SaveController::getInstance()->write())
     {
         consoleDemoInit();
         iprintf("Failed to write save data!\n");

@@ -2,6 +2,34 @@
 #include <stdio.h>
 #include <string.h>
 
+AnimationController* AnimationController::instance = nullptr;
+
+void AnimationController::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new AnimationController();
+    }
+}
+
+void AnimationController::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+AnimationController* AnimationController::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 // Lifecycle
 AnimationController::AnimationController()
 {

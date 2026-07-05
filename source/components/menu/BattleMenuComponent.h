@@ -11,6 +11,10 @@ class BattleMenuComponent : public BaseMenu
     void loadBg(int bgIndex) override;
 
   private:
+    BattleMenuComponent() {};
+    virtual ~BattleMenuComponent() = default;
+    static BattleMenuComponent* instance;
+
     BattleMenuOptions loadedOption = BattleMenuOptions::NONE;
 
     std::vector<MenuOption> battleOptions;
@@ -20,6 +24,10 @@ class BattleMenuComponent : public BaseMenu
     int battleOptionSelected();
 
   public:
+    static void create();
+    static void destroy();
+    static BattleMenuComponent* getInstance();
+
     void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "") override;
     ViewState update(int keys) override;
     // option loaders

@@ -11,7 +11,9 @@
 class MusicController
 {
   public:
-    MusicController();
+    static void create();
+    static void destroy();
+    static MusicController* getInstance();
 
     // audio
     void init(const char* filePath, float loopStartSeconds = 0.0f, float loopEndSeconds = -1.0f);
@@ -32,5 +34,9 @@ class MusicController
     void cleanup();
 
   private:
+    MusicController() {};
+    ~MusicController() {};
+    static MusicController* instance;
+
     long getAudioStartOffset(FILE* file);
 };

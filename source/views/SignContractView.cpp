@@ -1,4 +1,5 @@
 #include "SignContractView.h"
+#include "controllers/SaveController.h"
 #include "core/enums.h"
 #include "core/globals.h"
 #include <nds.h>
@@ -9,9 +10,9 @@
 
 void SignContractView::cancelSFX()
 {
-    musicCtrl.stopSFX(sfxMenuHandle);
-    musicCtrl.stopSFX(sfxSelectHandle);
-    musicCtrl.stopSFX(sfxCancelHandle);
+    musicCtrl->stopSFX(sfxMenuHandle);
+    musicCtrl->stopSFX(sfxSelectHandle);
+    musicCtrl->stopSFX(sfxCancelHandle);
 }
 
 void SignContractView::init()
@@ -20,10 +21,10 @@ void SignContractView::init()
     setBrightness(3, -16);
 
     // setup music
-    musicCtrl.loadSFX(SFX_MENU);
-    musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.loadSFX(SFX_CANCEL);
-    musicCtrl.init((fatBasePath + "music/menus/contract/mistic.pcm").c_str(), 1.998f, 49.959f);
+    musicCtrl->loadSFX(SFX_MENU);
+    musicCtrl->loadSFX(SFX_SELECT);
+    musicCtrl->loadSFX(SFX_CANCEL);
+    musicCtrl->init((fatBasePath + "music/menus/contract/mistic.pcm").c_str(), 1.998f, 49.959f);
 
     videoSetMode(MODE_5_2D);
     videoSetModeSub(MODE_0_2D);
@@ -43,7 +44,7 @@ void SignContractView::init()
 
     // load contract background from runtime assets
     GraphicAsset contractBg =
-        graphicsCtrl.loadGrit(fatBasePath + "graphics/SignContractView/backgrounds/contract/contract");
+        graphicsCtrl->loadGrit(fatBasePath + "graphics/SignContractView/backgrounds/contract/contract");
 
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
     if (contractBg.tiles)
@@ -56,7 +57,7 @@ void SignContractView::init()
         dmaCopy(contractBg.pal, &VRAM_E_EXT_PALETTE[0][0], contractBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
-    graphicsCtrl.unloadGrit(contractBg);
+    graphicsCtrl->unloadGrit(contractBg);
 
     // setup console
     consoleInit(&animatedConsole, 0, BgType_Text4bpp, BgSize_T_256x256, 5, 3, false, true);
@@ -87,7 +88,7 @@ void SignContractView::init()
         for (int duration = 0; duration <= 2; duration++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 }
@@ -103,7 +104,7 @@ ViewState SignContractView::update()
     {
         key = 8;
         cancelSFX();
-        sfxCancelHandle = musicCtrl.playSFX(SFX_CANCEL, 255, 128);
+        sfxCancelHandle = musicCtrl->playSFX(SFX_CANCEL, 255, 128);
 
         if (isLastName)
         {
@@ -155,7 +156,7 @@ ViewState SignContractView::update()
     {
         key = 10;
         cancelSFX();
-        sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
+        sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
 
         if (isLastName)
         {
@@ -197,10 +198,10 @@ ViewState SignContractView::update()
                 for (int duration = 0; duration <= 2; duration++)
                 {
                     swiWaitForVBlank();
-                    musicCtrl.update();
+                    musicCtrl->update();
                 }
             }
-            musicCtrl.pause();
+            musicCtrl->pause();
 
             return ViewState::CUTSCENE_2;
         }
@@ -209,7 +210,7 @@ ViewState SignContractView::update()
     else if (key > 0)
     {
         cancelSFX();
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
+        sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
 
         if (isLastName && (lastNameIndex < 31))
         {
@@ -251,14 +252,14 @@ ViewState SignContractView::update()
         REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
     }
 
-    musicCtrl.update();
+    musicCtrl->update();
     return ViewState::KEEP_CURRENT;
 }
 
 void SignContractView::cleanup()
 {
     // update save data (names)
-    if (!saveCtrl.write())
+    if (!SaveController::getInstance()->write())
     {
         consoleDemoInit();
         iprintf("Failed to write save data!\n");

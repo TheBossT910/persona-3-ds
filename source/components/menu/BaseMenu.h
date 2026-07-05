@@ -2,6 +2,7 @@
 
 #define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (BaseMenu::*)()>(&ClassName::Method)
 
+#include "controllers/MusicController.h"
 #include "core/structs.h"
 #include <maxmod9.h>
 #include <nds.h>
@@ -40,4 +41,7 @@ class BaseMenu
     void cancelSFX();
     ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
     void prevOption();
+
+  protected:
+    MusicController* musicCtrl = MusicController::getInstance();
 };

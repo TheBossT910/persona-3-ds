@@ -4,11 +4,9 @@
 class UIController
 {
   public:
-    // TODO: change all other universal controllers to this style?
-    // static UIController& get() {
-    //     static UIController instance;
-    //     return instance;
-    // }
+    static void create();
+    static void destroy();
+    static UIController* getInstance();
 
     // TODO: add persistence support
     // TODO: add a way to pass in -1, indicating reduced # of bg slots
@@ -29,7 +27,10 @@ class UIController
     void cleanup();
 
   private:
-    // UIController() = default;
+    UIController() = default; // this needs to be defaul, else it won't initialize properly
+    ~UIController() {};
+    static UIController* instance;
+
     void lruUpdate(int id, bool isMain);
 
     OamState* oamSub;

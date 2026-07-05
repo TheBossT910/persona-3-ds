@@ -26,6 +26,8 @@ class MainMenuView : public BaseView
     int baseSpeed = 20;
     int fluctuation = 50;
 
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+
   public:
     void init() override;
     ViewState update() override;

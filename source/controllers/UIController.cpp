@@ -1,5 +1,33 @@
 #include "UIController.h"
 
+UIController* UIController::instance = nullptr;
+
+void UIController::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new UIController();
+    }
+}
+
+void UIController::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+UIController* UIController::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 // set the background pointers to use
 void UIController::setGraphics(int iBgSub[4], int iBgMain[3], OamState* iOamSub, OamState* iOamMain)
 {

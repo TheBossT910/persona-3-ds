@@ -5,6 +5,34 @@
 #include <stdio.h>
 #include <string.h> // for memcmp
 
+VideoController* VideoController::instance = nullptr;
+
+void VideoController::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new VideoController();
+    }
+}
+
+void VideoController::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+VideoController* VideoController::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 void VideoController::init(std::string iFileName, float iFps, ViewState iNextState)
 {
     nextState = iNextState;
@@ -26,7 +54,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
     vramSetBankD(VRAM_D_MAIN_BG_0x06020000);
     vramSetBankC(VRAM_C_SUB_BG);
 
-    musicCtrl.initVideoAudio();
+    musicCtrl->initVideoAudio();
 
     videoFile = fopen(videoPath.c_str(), "rb");
     if (!videoFile)
@@ -123,7 +151,7 @@ void VideoController::refillBuffer()
     {
         u32 safeSize = (audioSize > sizeof(audioBuf)) ? sizeof(audioBuf) : audioSize;
         fread(audioBuf, 1, safeSize, videoFile);
-        musicCtrl.pushVideoAudio(audioBuf, safeSize);
+        musicCtrl->pushVideoAudio(audioBuf, safeSize);
         if (audioSize > safeSize)
             fseek(videoFile, audioSize - safeSize, SEEK_CUR); // Skip overflowing remainder
     }
@@ -146,14 +174,14 @@ void VideoController::refillBuffer()
 
 ViewState VideoController::update()
 {
-    musicCtrl.update();
+    musicCtrl->update();
 
     for (int r = 0; r < READS_PER_UPDATE; r++)
     {
         refillBuffer();
     }
 
-    int expectedFrame = (int)(musicCtrl.getVideoTime() * fps);
+    int expectedFrame = (int)(musicCtrl->getVideoTime() * fps);
 
     if (currentFrame > expectedFrame && !fileEOF)
     {

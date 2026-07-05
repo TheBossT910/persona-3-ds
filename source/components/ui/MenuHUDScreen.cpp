@@ -1,4 +1,33 @@
 #include "MenuHUDScreen.h"
+
+MenuHUDScreen* MenuHUDScreen::instance = nullptr;
+
+void MenuHUDScreen::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new MenuHUDScreen();
+    }
+}
+
+void MenuHUDScreen::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+        instance = nullptr;
+    }
+}
+
+MenuHUDScreen* MenuHUDScreen::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new MenuHUDScreen();
+    }
+    return instance;
+}
+
 // TODO: clean up and properly implement class
 
 // helper
@@ -9,7 +38,7 @@ void MenuHUDScreen::renderBackground()
 
     std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/";
     GraphicAsset bgHUD =
-        graphicsCtrl.loadGrit(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
+        graphicsCtrl->loadGrit(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
 
     dmaCopy(bgHUD.tiles, bgGetGfxPtr(bgId), bgHUD.tilesLen);
     dmaCopy(bgHUD.map, bgGetMapPtr(bgId), bgHUD.mapLen);
@@ -17,7 +46,7 @@ void MenuHUDScreen::renderBackground()
     dmaCopy(bgHUD.pal, &VRAM_H_EXT_PALETTE[2][0], bgHUD.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
-    graphicsCtrl.unloadGrit(bgHUD);
+    graphicsCtrl->unloadGrit(bgHUD);
     bgLoaded = true;
 }
 
@@ -76,7 +105,7 @@ void MenuHUDScreen::load()
 {
     // load graphics
     bgLoaded = false;
-    spriteCtrl.spritePath = "graphics/MenuHUD/sprites/";
+    spriteCtrl->spritePath = "graphics/MenuHUD/sprites/";
 
     // setup sprites
     // moon
@@ -120,23 +149,23 @@ void MenuHUDScreen::load()
 
     // get sprites
     // moon
-    spriteCtrl.switchSprite(SpriteType::MOON, MoonSprite::MOON_22, &moonSprite);
+    spriteCtrl->switchSprite(SpriteType::MOON, MoonSprite::MOON_22, &moonSprite);
     // day of the week
-    spriteCtrl.switchSprite(SpriteType::DAY_OF_WEEK, DayOfWeekSprite::TUESDAY, &dayOfWeekSprite);
+    spriteCtrl->switchSprite(SpriteType::DAY_OF_WEEK, DayOfWeekSprite::TUESDAY, &dayOfWeekSprite);
     // numbers
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[0]);
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_4, &numberSprites[1]);
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[2]);
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_7, &numberSprites[3]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[0]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_4, &numberSprites[1]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[2]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_7, &numberSprites[3]);
     // time
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_0_0, &timeSprites[0]);
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_1_0, &timeSprites[1]);
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_2_0, &timeSprites[2]);
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_3_0, &timeSprites[3]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_0_0, &timeSprites[0]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_1_0, &timeSprites[1]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_2_0, &timeSprites[2]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_3_0, &timeSprites[3]);
     // skill level
-    spriteCtrl.switchSprite(SpriteType::SKILL_SPRITE, SkillSprite::SKILLS_LEVEL, &skillSprites[0]);
+    spriteCtrl->switchSprite(SpriteType::SKILL_SPRITE, SkillSprite::SKILLS_LEVEL, &skillSprites[0]);
     // slash
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::SLASH, &slashSprite);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::SLASH, &slashSprite);
 
     // TODO: initialize any extra sprite registers for max-case arrays?
     // ...
@@ -167,5 +196,5 @@ void MenuHUDScreen::load()
 void MenuHUDScreen::unload()
 {
     // TODO: implement
-    spriteCtrl.unloadAll();
+    spriteCtrl->unloadAll();
 }

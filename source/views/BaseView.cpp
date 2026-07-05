@@ -8,16 +8,16 @@ void BaseView::cleanup()
     consoleClear();
 
     // global controllers
-    videoCtrl.cleanup();
-    musicCtrl.cleanup();
-    characterAnimationCtrl.stop();
+    videoCtrl->cleanup();
+    musicCtrl->cleanup();
+    characterAnimationCtrl->stop();
 
     // global components
-    pauseMenuCmpt.cancelSFX();
-    enableBillboards = true;
-    enableCharacterAnim = true;
-    enableDebugPrint = false;
-    isPauseMenuActive = false;
+    pauseMenuCmpt->cancelSFX();
+    Globals::enableBillboards = true;
+    Globals::enableCharacterAnim = true;
+    Globals::enableDebugPrint = false;
+    Globals::isPauseMenuActive = false;
 
     // disable blending globally to prevent ghosting across scenes
     REG_BLDCNT = 0;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "components/menu/BattleMenuComponent.h"
+#include "controllers/MusicController.h"
 #include <algorithm>
 #include <array>
 #include <nds.h>
@@ -76,6 +78,9 @@ class BattleController
     {
         return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
     };
+
+    MusicController* musicCtrl = MusicController::getInstance();
+    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
 
   public:
     bool isActive() const
