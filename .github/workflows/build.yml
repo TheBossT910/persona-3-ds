@@ -36,6 +36,7 @@ jobs:
     # Run all steps directly inside custom compiler environment.
     container:
       image: ghcr.io/${{ github.repository }}/p3d-builder:latest
+      options: --user root
 
     # CCACHE_DIR: explicit path so ccache writes inside the mounted workspace
     # and actions/cache can find it at a stable absolute location.

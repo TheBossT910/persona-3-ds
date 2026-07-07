@@ -72,15 +72,16 @@ void IntroView::init()
     std::string suffix = femc ? "FEMC" : "";
 
     GraphicAsset silhouette =
-        graphicsCtrl.loadGrit(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
-    GraphicAsset room = graphicsCtrl.loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
-    GraphicAsset sky = graphicsCtrl.loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
-    GraphicAsset overlay = graphicsCtrl.loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
-    GraphicAsset skySub = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
+        graphicsCtrl->loadGrit(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
+    GraphicAsset room = graphicsCtrl->loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
+    GraphicAsset sky = graphicsCtrl->loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
+    GraphicAsset overlay =
+        graphicsCtrl->loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
+    GraphicAsset skySub = graphicsCtrl->loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
 
-    GraphicAsset attribution = graphicsCtrl.loadGrit(bgPath + "attributionBackground/attributionBackground");
-    GraphicAsset logoLeft = graphicsCtrl.loadGrit(spritePath + "logoSpriteLeft/logoSpriteLeft");
-    GraphicAsset logoRight = graphicsCtrl.loadGrit(spritePath + "logoSpriteRight/logoSpriteRight");
+    GraphicAsset attribution = graphicsCtrl->loadGrit(bgPath + "attributionBackground/attributionBackground");
+    GraphicAsset logoLeft = graphicsCtrl->loadGrit(spritePath + "logoSpriteLeft/logoSpriteLeft");
+    GraphicAsset logoRight = graphicsCtrl->loadGrit(spritePath + "logoSpriteRight/logoSpriteRight");
 
     // copy graphics to vram
     dmaCopy(silhouette.tiles, bgGetGfxPtr(bg[0]), silhouette.tilesLen);
@@ -145,18 +146,18 @@ void IntroView::init()
     bgUpdate();
 
     // unload all graphics now that it's copied to vram
-    graphicsCtrl.unloadGrit(silhouette);
-    graphicsCtrl.unloadGrit(room);
-    graphicsCtrl.unloadGrit(sky);
-    graphicsCtrl.unloadGrit(overlay);
-    graphicsCtrl.unloadGrit(attribution);
-    graphicsCtrl.unloadGrit(skySub);
-    graphicsCtrl.unloadGrit(logoLeft);
-    graphicsCtrl.unloadGrit(logoRight);
+    graphicsCtrl->unloadGrit(silhouette);
+    graphicsCtrl->unloadGrit(room);
+    graphicsCtrl->unloadGrit(sky);
+    graphicsCtrl->unloadGrit(overlay);
+    graphicsCtrl->unloadGrit(attribution);
+    graphicsCtrl->unloadGrit(skySub);
+    graphicsCtrl->unloadGrit(logoLeft);
+    graphicsCtrl->unloadGrit(logoRight);
 
     // point to music
-    musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.init((fatBasePath + "music/menus/title/tightrope.pcm").c_str(), 17.962f, 66.082f);
+    musicCtrl->loadSFX(SFX_SELECT);
+    musicCtrl->init((fatBasePath + "music/menus/title/tightrope.pcm").c_str(), 17.962f, 66.082f);
 
     // hide sub screen text and attribution text layer
     REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_SRC_BG0 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
@@ -174,7 +175,7 @@ void IntroView::init()
         // wait for duration amount of frames
         for (int frame = 0; frame <= 3; frame++)
         {
-            musicCtrl.update();
+            musicCtrl->update();
             swiWaitForVBlank();
         }
     }
@@ -190,7 +191,7 @@ void IntroView::init()
         // wait for duration amount of frames
         for (int frame = 0; frame <= 6; frame++)
         {
-            musicCtrl.update();
+            musicCtrl->update();
             swiWaitForVBlank();
         }
     }
@@ -198,15 +199,15 @@ void IntroView::init()
 
 ViewState IntroView::update()
 {
-    musicCtrl.update();
+    musicCtrl->update();
     scanKeys();
     int pressed = keysDown();
 
     // transition to menu state on any input
     if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
     {
-        musicCtrl.playSFX(SFX_SELECT, 255, 128);
-        musicCtrl.pause();
+        musicCtrl->playSFX(SFX_SELECT, 255, 128);
+        musicCtrl->pause();
         // transition both screens to black
         for (int i = 0; i <= 16; i++)
         {
@@ -215,7 +216,7 @@ ViewState IntroView::update()
             // wait a few frames
             for (int duration = 0; duration <= 2; duration++)
             {
-                musicCtrl.update();
+                musicCtrl->update();
                 swiWaitForVBlank();
             }
         }
@@ -223,8 +224,8 @@ ViewState IntroView::update()
     }
     else if (pressed & KEY_B)
     {
-        musicCtrl.playSFX(SFX_CANCEL, 255, 128);
-        musicCtrl.pause();
+        musicCtrl->playSFX(SFX_CANCEL, 255, 128);
+        musicCtrl->pause();
         // transition both screens to black
         for (int i = 0; i <= 16; i++)
         {
@@ -233,7 +234,7 @@ ViewState IntroView::update()
             // wait a few frames
             for (int duration = 0; duration <= 2; duration++)
             {
-                musicCtrl.update();
+                musicCtrl->update();
                 swiWaitForVBlank();
             }
         }

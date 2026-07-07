@@ -114,9 +114,9 @@ CameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
         // set walking animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != characterWalkAnim))
+        if (Globals::enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterWalkAnim))
         {
-            characterAnimationCtrl.set(characterWalkAnim, true);
+            characterAnimationCtrl->set(characterWalkAnim, true);
         }
 
         // normalize diagonal movement to prevent faster speed
@@ -127,12 +127,12 @@ CameraPosition CharacterController::update(u32 keys)
     else
     {
         // set idle animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != characterIdleAnim))
+        if (Globals::enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterIdleAnim))
         {
-            characterAnimationCtrl.set(characterIdleAnim, true);
+            characterAnimationCtrl->set(characterIdleAnim, true);
         }
     }
-    characterAnimationCtrl.play();
+    characterAnimationCtrl->play();
 
     nextX = characterTranslate.x + deltaX;
     nextZ = characterTranslate.z + deltaZ;

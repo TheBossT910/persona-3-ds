@@ -1,4 +1,33 @@
 #include "DialogueScreen.h"
+
+DialogueScreen* DialogueScreen::instance = nullptr;
+
+void DialogueScreen::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new DialogueScreen();
+    }
+}
+
+void DialogueScreen::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+DialogueScreen* DialogueScreen::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 // TODO: clean up and properly implement class
 
 // helper
@@ -176,7 +205,7 @@ void DialogueScreen::removeSprites()
 void DialogueScreen::load()
 {
     // load graphics
-    spriteCtrl.spritePath = "graphics/Dialogue/sprites/";
+    spriteCtrl->spritePath = "graphics/Dialogue/sprites/";
 
     // setup sprites
     // calendar
@@ -204,29 +233,29 @@ void DialogueScreen::load()
 
     // get sprites
     // calendar
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
-                            saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR,
-                            &calendarSprite[0]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
-                            saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR,
-                            &calendarSprite[1]);
+    spriteCtrl->switchSprite(SpriteType::DIALOGUE,
+                             saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR,
+                             &calendarSprite[0]);
+    spriteCtrl->switchSprite(SpriteType::DIALOGUE,
+                             saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR,
+                             &calendarSprite[1]);
     // text box
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
-                            saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER,
-                            &textBox[0]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
-                            saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE,
-                            &textBox[1]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
-                            saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE,
-                            &textBox[2]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
-                            saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER,
-                            &textBox[3]);
+    spriteCtrl->switchSprite(SpriteType::DIALOGUE,
+                             saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER,
+                             &textBox[0]);
+    spriteCtrl->switchSprite(SpriteType::DIALOGUE,
+                             saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE,
+                             &textBox[1]);
+    spriteCtrl->switchSprite(SpriteType::DIALOGUE,
+                             saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE,
+                             &textBox[2]);
+    spriteCtrl->switchSprite(SpriteType::DIALOGUE,
+                             saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER,
+                             &textBox[3]);
     // name tag
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
-                            saveData.femcMode ? DialogueSprite::NAME_TAG_FEMC : DialogueSprite::NAME_TAG,
-                            &nameTag[0]);
+    spriteCtrl->switchSprite(SpriteType::DIALOGUE,
+                             saveData.femcMode ? DialogueSprite::NAME_TAG_FEMC : DialogueSprite::NAME_TAG,
+                             &nameTag[0]);
 
     // copy sprites into memory
     // calendar
@@ -244,5 +273,5 @@ void DialogueScreen::load()
 void DialogueScreen::unload()
 {
     // TODO: implement
-    spriteCtrl.unloadAll();
+    spriteCtrl->unloadAll();
 }

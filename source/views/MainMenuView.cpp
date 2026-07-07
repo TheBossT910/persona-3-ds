@@ -7,7 +7,7 @@
 void MainMenuView::init()
 {
     // setup music
-    musicCtrl.init((fatBasePath + "music/menus/velvetRoom/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
+    musicCtrl->init((fatBasePath + "music/menus/velvetRoom/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
 
     // setup menu
     isMainMenuCmptActive = true;
@@ -22,7 +22,7 @@ void MainMenuView::init()
         for (int duration = 0; duration <= 2; duration++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 
@@ -69,9 +69,9 @@ void MainMenuView::init()
 
     // load graphics
     std::string bgPath = fatBasePath + "graphics/MainMenuView/backgrounds/";
-    GraphicAsset silhouetteBg = graphicsCtrl.loadGrit(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
-    GraphicAsset doorBg = graphicsCtrl.loadGrit(bgPath + "doorBackground/doorBackground");
-    GraphicAsset fogBg = graphicsCtrl.loadGrit(bgPath + "fogBackground/fogBackground");
+    GraphicAsset silhouetteBg = graphicsCtrl->loadGrit(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
+    GraphicAsset doorBg = graphicsCtrl->loadGrit(bgPath + "doorBackground/doorBackground");
+    GraphicAsset fogBg = graphicsCtrl->loadGrit(bgPath + "fogBackground/fogBackground");
 
     dmaCopy(silhouetteBg.tiles, bgGetGfxPtr(bg[0]), silhouetteBg.tilesLen);
     dmaCopy(doorBg.tiles, bgGetGfxPtr(bg[1]), doorBg.tilesLen);
@@ -87,9 +87,9 @@ void MainMenuView::init()
     dmaCopy(fogBg.pal, &VRAM_E_EXT_PALETTE[2][0], fogBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
-    graphicsCtrl.unloadGrit(silhouetteBg);
-    graphicsCtrl.unloadGrit(doorBg);
-    graphicsCtrl.unloadGrit(fogBg);
+    graphicsCtrl->unloadGrit(silhouetteBg);
+    graphicsCtrl->unloadGrit(doorBg);
+    graphicsCtrl->unloadGrit(fogBg);
 
     bgHide(bg[2]);
     bgSetCenter(bg[2], 128, 96); // pivot point on the screen (at the screen's center)
@@ -110,7 +110,7 @@ void MainMenuView::init()
         for (int frame = 0; frame <= 6; frame++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 }
@@ -123,10 +123,10 @@ ViewState MainMenuView::update()
     ViewState result = mainMenuCmpt.update(pressed);
     if (result != ViewState::KEEP_CURRENT)
     {
-        musicCtrl.pause();
+        musicCtrl->pause();
         return result;
     }
-    musicCtrl.update();
+    musicCtrl->update();
 
     // scroll silhouette background
     // animate X (moving right towards 0)

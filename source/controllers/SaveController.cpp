@@ -3,6 +3,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+SaveController* SaveController::instance = nullptr;
+
+void SaveController::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new SaveController();
+    }
+}
+
+void SaveController::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+SaveController* SaveController::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 // save the current data into a .sav file (text file)
 bool SaveController::write()
 {

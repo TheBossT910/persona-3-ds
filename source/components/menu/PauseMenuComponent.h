@@ -1,5 +1,8 @@
 #pragma once
 #include "components/menu/BaseMenu.h"
+#include "controllers/AnimationController.h"
+#include "controllers/GraphicsController.h"
+#include "core/globals.h"
 #include "dialogue/demo_dialogue.h"
 
 #define MENU_OPTIONS 8
@@ -20,6 +23,10 @@ class PauseMenuComponent : public BaseMenu
     void loadBg(int bgIndex) override;
 
   private:
+    PauseMenuComponent() {};
+    virtual ~PauseMenuComponent() = default; //w/o virtual we get a possible undefined behavior warning
+    static PauseMenuComponent* instance;
+
     MenuOption menuOptions[MENU_OPTIONS] = {
         {"Debug", -1, MENU_BIND(PauseMenuComponent, openDebugMenu)},
         {"Skill", -1, MENU_BIND(PauseMenuComponent, openSkillMenu)},
@@ -167,7 +174,16 @@ class PauseMenuComponent : public BaseMenu
     ViewState systemOptionSelected();
     ViewState characterAnimOptionSelected();
 
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
+
   public:
-    void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "Pause") override;
+    static void create();
+    static void destroy();
+    static PauseMenuComponent* getInstance();
+
+    void init(int iBgSlot,
+              bool* isActive = &Globals::isPauseMenuActive,
+              const std::string& iPauseMessage = "Pause") override;
     ViewState update(int keys) override;
 };

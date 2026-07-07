@@ -8,12 +8,20 @@
 class DialogueScreen : public UIScreen
 {
   public:
+    static void create();
+    static void destroy();
+    static DialogueScreen* getInstance();
+
     void load();
     void unload();
     void renderSprites() override;
     void removeSprites() override;
 
   private:
+    DialogueScreen() {};
+    ~DialogueScreen() {};
+    static DialogueScreen* instance;
+
     // sprites
     // TODO: reduce allocated sprite/sprite registers
     Sprite sprites[50];

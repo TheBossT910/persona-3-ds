@@ -16,13 +16,14 @@
 
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
-    asset = graphicsCtrl.loadGrit(path);
+    asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
 void IwatodaiDormView::setMusic()
 {
-    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
+    //musicCtrl->cleanup();
+    musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
 }
 
 // TODO: dont forget to clear in future
@@ -135,7 +136,7 @@ void IwatodaiDormView::setupEnvironment()
                                bitmapsEnv);
     for (int i = 0; i < IWATODAI_DORM_FLOOR_1_TEX_COUNT; ++i)
     {
-        graphicsCtrl.unloadGrit(envTextures[i]);
+        graphicsCtrl->unloadGrit(envTextures[i]);
     }
 }
 
@@ -187,16 +188,16 @@ void IwatodaiDormView::init()
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl.loadModel(
+    characterAnimationCtrl->loadModel(
         (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
-        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
     // setup environment
@@ -206,7 +207,7 @@ void IwatodaiDormView::init()
     demo_dialogue_bg_slot = bgSharedSub1;
 
     // setup pause menu
-    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
+    pauseMenuCmpt->init(bgSharedSub1);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -218,10 +219,10 @@ void IwatodaiDormView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl.registerScreen(&menuHUDScreen, false);
-    uiCtrl.registerScreen(&dialogueScreen, false);
-    uiCtrl.show(&menuHUDScreen, false);
+    uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->registerScreen(dialogueScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
@@ -249,15 +250,15 @@ ViewState IwatodaiDormView::update()
         if (!prevPauseState)
         {
             // TODO: display pause menu UI
-            uiCtrl.hideAll();
+            uiCtrl->hideAll();
             prevPauseState = true;
         }
 
         // run
-        ViewState menuResult = pauseMenuCmpt.update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return menuResult;
         }
 
@@ -277,7 +278,7 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevDialogueState)
         {
-            uiCtrl.show(&dialogueScreen, false);
+            uiCtrl->show(dialogueScreen, false);
             demo_yukari_kenji_argument_load();
             dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
             dialogueCtrl.start(demo_yukari_kenji_argument_first());
@@ -298,7 +299,7 @@ ViewState IwatodaiDormView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl.show(&menuHUDScreen, false);
+            uiCtrl->show(menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -316,7 +317,7 @@ ViewState IwatodaiDormView::update()
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
-            if (menuHUDScreen.onTouch(&touch) == 1)
+            if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;
@@ -327,10 +328,10 @@ ViewState IwatodaiDormView::update()
         switch (playerCtrl->isTileAt())
         {
         case TileType::SCENE_1:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::PAULOWNIA_MALL;
         case TileType::SCENE_0:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_STREETS;
         case TileType::C_AK:
             // start dialogue
@@ -360,7 +361,7 @@ ViewState IwatodaiDormView::update()
         // draw environment
         glPushMatrix();
         iwatodaiDormFloor1Env.draw();
-        iwatodaiDormFloor1Env.drawBillboards(enableBillboards, // billboards face camera
+        iwatodaiDormFloor1Env.drawBillboards(Globals::enableBillboards, // billboards face camera
                                              camPos.cameraX,
                                              camPos.cameraY,
                                              camPos.cameraZ);
@@ -374,13 +375,13 @@ ViewState IwatodaiDormView::update()
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
         // draw character
-        characterAnimationCtrl.render();
+        characterAnimationCtrl->render();
         glPopMatrix(1);
 
         glFlush(0);
 
         // print coordinates (64x64 area from 0,0 to 64,64)
-        if (enableDebugPrint)
+        if (Globals::enableDebugPrint)
         {
             iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
             iprintf("\x1b[20;0HTouch y = %04X, %04X\n", touch.rawy, touch.py);
@@ -403,8 +404,8 @@ ViewState IwatodaiDormView::update()
     }
 
     dialogueCtrl.update(keys);
-    characterAnimationCtrl.update();
-    musicCtrl.update();
+    characterAnimationCtrl->update();
+    musicCtrl->update();
 
     return ViewState::KEEP_CURRENT;
 }
@@ -416,7 +417,7 @@ void IwatodaiDormView::cleanup()
     // cleanup environment
     iwatodaiDormFloor1Env.cleanup();
     // reset ui
-    uiCtrl.cleanup();
+    uiCtrl->cleanup();
 
     // cleanup controllers
     delete playerCtrl;

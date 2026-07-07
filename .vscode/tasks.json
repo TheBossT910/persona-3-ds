@@ -1,6 +1,5 @@
 // See https://go.microsoft.com/fwlink/?LinkId=733558
 // for the documentation about the tasks.json format
-
 {
     "version": "2.0.0",
     "tasks": [
@@ -11,7 +10,9 @@
             "args": [
                 "DEBUG=1"
             ],
-            "problemMatcher": ["$gcc"]
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
             "label": "clean",
@@ -19,42 +20,6 @@
             "command": "make",
             "args": [
                 "clean"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "gdb-debug",
-            "type": "process",
-            // OS specific commands to launch melonDS
-            "windows": {
-                // For this to work, Windows needs to know where melonDS.exe lives.
-                // 1. Extract melonDS to a permanent folder (e.g., C:\Emulators\melonDS\)
-                // 2. Search Windows for "Environment Variables" -> Edit system environment variables.
-                // 3. Click "Environment Variables...", find "Path" in the top list, and click Edit.
-                // 4. Click New, paste your folder path, and hit OK.
-                // 5. RESTART VS CODE so it can see the new path.
-                "command": "melonDS",
-                "args": ["${workspaceFolder}/${workspaceFolderBasename}.nds"]
-            },
-            "linux": {
-                "command": "melonDS",
-                "args": ["${workspaceFolder}/${workspaceFolderBasename}.nds"]
-            },
-            "osx": {
-                "command": "open",
-                "args": ["-a", "melonDS", "${workspaceFolder}/${workspaceFolderBasename}.nds"]
-            },
-            "dependsOn": [
-                "make debug"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "stop-emulation",
-            "type": "process",
-            "command": "killall",
-            "args": [
-                "melonDS"
             ],
             "problemMatcher": []
         }

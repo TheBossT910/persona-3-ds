@@ -1,5 +1,8 @@
 #pragma once
+#include "components/menu/BattleMenuComponent.h"
+#include "components/ui/MenuHUDScreen.h"
 #include "controllers/CharacterController.h"
+#include "controllers/UIController.h"
 #include "environments/iwatodai_streets.h"
 #include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
@@ -72,4 +75,9 @@ class IwatodaiStreetsView : public BaseView3D
     bool isBattleMenuActive = false;
 
     void setMusic();
+
+    UIController* uiCtrl = UIController::getInstance();
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
+    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };

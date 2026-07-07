@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/AnimationController.h"
 #include "core/enums.h"
 #include "core/geometry.h"
 #include "core/globals.h"
@@ -76,4 +77,6 @@ class CharacterController
   private:
     TileType isTileAt(int tileX, int TileY);
     bool isTileWalkable(float worldX, float worldZ);
+
+    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
 };

@@ -1,4 +1,5 @@
 #include "components/menu/BaseMenu.h"
+#include "controllers/GraphicsController.h"
 
 #define MAIN_MENU_OPTIONS 3
 #define LEVEL_OPTIONS 6
@@ -47,6 +48,8 @@ class MainMenuComponent : public BaseMenu
 
     // helper
     void updateSave();
+
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 
   public:
     void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "") override;

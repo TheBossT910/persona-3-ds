@@ -4,17 +4,17 @@
 
 void BaseMenu::cancelSFX()
 {
-    musicCtrl.stopSFX(sfxMenuHandle);
-    musicCtrl.stopSFX(sfxSelectHandle);
-    musicCtrl.stopSFX(sfxCancelHandle);
+    musicCtrl->stopSFX(sfxMenuHandle);
+    musicCtrl->stopSFX(sfxSelectHandle);
+    musicCtrl->stopSFX(sfxCancelHandle);
 }
 
 void BaseMenu::init(int iBgSlot, bool* isActive, const std::string& iPauseMessage)
 {
     // point to music
-    musicCtrl.loadSFX(SFX_MENU);
-    musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.loadSFX(SFX_CANCEL);
+    musicCtrl->loadSFX(SFX_MENU);
+    musicCtrl->loadSFX(SFX_SELECT);
+    musicCtrl->loadSFX(SFX_CANCEL);
 
     // set default options
     selectedOption = 0;
@@ -35,12 +35,12 @@ ViewState BaseMenu::update(int keys)
     // navigate options
     if (keys & KEY_DOWN)
     {
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
+        sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
         selectedOption = (selectedOption + 1) % optionCount;
     }
     else if (keys & KEY_UP)
     {
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
+        sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
         selectedOption = (selectedOption + optionCount - 1) % optionCount;
     }
 
@@ -57,7 +57,7 @@ ViewState BaseMenu::update(int keys)
     else if (keys & KEY_A)
     {
         cancelSFX();
-        sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
+        sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
 
         MenuState currentState = {options, optionCount, selectedOption, startIndex};
 
@@ -83,7 +83,7 @@ ViewState BaseMenu::update(int keys)
     if (keys & KEY_B)
     {
         cancelSFX();
-        musicCtrl.playSFX(SFX_CANCEL, 255, 128);
+        musicCtrl->playSFX(SFX_CANCEL, 255, 128);
         selectedOption = 0;
         startIndex = 0;
         prevOption();

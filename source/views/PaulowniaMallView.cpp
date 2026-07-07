@@ -14,13 +14,13 @@
 
 static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
-    asset = graphicsCtrl.loadGrit(path);
+    asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
 void PaulowniaMallView::setMusic()
 {
-    musicCtrl.init(
+    musicCtrl->init(
         (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
 }
 
@@ -102,7 +102,7 @@ void PaulowniaMallView::setupEnvironment()
     paulowniaMallEnv.load((fatBasePath + "environments/paulownia_mall/paulownia_mall.bin").c_str(), bitmapsEnv);
     for (int i = 0; i < PAULOWNIA_MALL_TEX_COUNT; ++i)
     {
-        graphicsCtrl.unloadGrit(envTextures[i]);
+        graphicsCtrl->unloadGrit(envTextures[i]);
     }
 }
 
@@ -154,23 +154,23 @@ void PaulowniaMallView::init()
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl.loadModel(
+    characterAnimationCtrl->loadModel(
         (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
-        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
     // setup environment
     PaulowniaMallView::setupEnvironment();
 
     // setup pause menu
-    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
+    pauseMenuCmpt->init(bgSharedSub1);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -182,9 +182,9 @@ void PaulowniaMallView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl.registerScreen(&menuHUDScreen, false);
-    uiCtrl.show(&menuHUDScreen, false);
+    uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
@@ -211,15 +211,15 @@ ViewState PaulowniaMallView::update()
         if (!prevPauseState)
         {
             // TODO: display pause menu UI
-            uiCtrl.hideAll();
+            uiCtrl->hideAll();
             prevPauseState = true;
         }
 
         // run
-        ViewState menuResult = pauseMenuCmpt.update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return menuResult;
         }
 
@@ -238,7 +238,7 @@ ViewState PaulowniaMallView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl.show(&menuHUDScreen, false);
+            uiCtrl->show(menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -256,7 +256,7 @@ ViewState PaulowniaMallView::update()
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
-            if (menuHUDScreen.onTouch(&touch) == 1)
+            if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;
@@ -267,11 +267,11 @@ ViewState PaulowniaMallView::update()
         {
         // left
         case TileType::SCENE_0:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_STREETS;
         // right
         case TileType::SCENE_1:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_DORM;
         // middle
         case TileType::SCENE_2:
@@ -282,7 +282,7 @@ ViewState PaulowniaMallView::update()
         case TileType::SCENE_7:
         case TileType::SCENE_8:
         case TileType::SCENE_9:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::STATION;
         default:
             break;
@@ -302,7 +302,7 @@ ViewState PaulowniaMallView::update()
         // draw environment
         glPushMatrix();
         paulowniaMallEnv.draw();
-        paulowniaMallEnv.drawBillboards(enableBillboards, // billboards face camera
+        paulowniaMallEnv.drawBillboards(Globals::enableBillboards, // billboards face camera
                                         camPos.cameraX,
                                         camPos.cameraY,
                                         camPos.cameraZ);
@@ -316,13 +316,13 @@ ViewState PaulowniaMallView::update()
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
         // draw character
-        characterAnimationCtrl.render();
+        characterAnimationCtrl->render();
         glPopMatrix(1);
 
         glFlush(0);
 
         // print coordinates (64x64 area from 0,0 to 64,64)
-        if (enableDebugPrint)
+        if (Globals::enableDebugPrint)
         {
             iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
             iprintf("\x1b[20;0HTouch y = %04X, %04X\n", touch.rawy, touch.py);
@@ -344,8 +344,8 @@ ViewState PaulowniaMallView::update()
     }
 
     // update controllers
-    characterAnimationCtrl.update();
-    musicCtrl.update();
+    characterAnimationCtrl->update();
+    musicCtrl->update();
 
     return ViewState::KEEP_CURRENT;
 }
@@ -355,7 +355,7 @@ void PaulowniaMallView::cleanup()
     BaseView::cleanup();
 
     paulowniaMallEnv.cleanup();
-    uiCtrl.cleanup();
+    uiCtrl->cleanup();
 
     delete playerCtrl;
     playerCtrl = NULL;

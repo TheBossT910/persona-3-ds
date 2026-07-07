@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/SpriteController.h"
 #include "core/structs.h"
 #include <nds.h>
 #include <vector>
@@ -27,4 +28,6 @@ class UIScreen
     void moveSprite(int spriteId, int x, int y);
     void showSprite(int spriteId);
     void hideSprite(int spriteId);
+
+    SpriteController* spriteCtrl = SpriteController::getInstance();
 };

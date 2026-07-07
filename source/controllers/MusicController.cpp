@@ -106,8 +106,32 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
     return length;
 }
 
-MusicController::MusicController()
+MusicController* MusicController::instance = nullptr;
+
+void MusicController::create()
 {
+    if (!instance)
+    {
+        instance = new MusicController();
+    }
+}
+
+void MusicController::destroy()
+{
+    if (instance)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+MusicController* MusicController::getInstance()
+{
+    if (!instance)
+    {
+        create();
+    }
+    return instance;
 }
 
 void MusicController::init(const char* filePath, float loopStartSeconds, float loopEndSeconds)

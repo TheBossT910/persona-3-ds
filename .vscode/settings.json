@@ -10,13 +10,11 @@
         "**/*.d": true,
         "**/*.o": true,
     },
-
     "search.exclude": {
         "**/build": true,
         "**/data": true,
         "**/*.d": true
     },
-
     // Formatting
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
@@ -24,7 +22,6 @@
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "editor.formatOnSave": true,
-
     // C++ IntelliSense
     "C_Cpp.intelliSenseEngine": "default",
     "C_Cpp.formatting": "default",

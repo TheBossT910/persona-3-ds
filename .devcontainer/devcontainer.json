@@ -1,0 +1,21 @@
+{
+    "name": "Persona 3 Dual Dev Container",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": ".."
+    },
+    "runArgs": [
+        // gdb should be able to connect to melonDS gdbstub (which runs native on Host)
+        "--add-host=host.docker.internal:host-gateway"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools"
+            ]
+        }
+    },
+    // mount to /project
+    "workspaceMount": "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
+    "workspaceFolder": "/project"
+}

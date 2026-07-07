@@ -2,6 +2,34 @@
 #include <malloc.h>
 #include <nds.h>
 
+GraphicsController* GraphicsController::instance = nullptr;
+
+void GraphicsController::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new GraphicsController();
+    }
+}
+
+void GraphicsController::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+GraphicsController* GraphicsController::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 static std::string assetFilePath(const std::string& basePath, const char* suffix)
 {
     std::string directPath = basePath + suffix;

@@ -283,6 +283,13 @@ enum class DebugOption
     PLAY_CHARACTER_ANIM
 };
 
+enum class ModelVersion
+{
+    INVALID,
+    MDL1,
+    MDL2
+};
+
 enum class CharacterAnimOption
 {
     TOGGLE_AUTO_ANIM = 0,

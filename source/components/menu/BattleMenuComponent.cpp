@@ -1,6 +1,34 @@
 #include "BattleMenuComponent.h"
 #include "core/globals.h"
 
+BattleMenuComponent* BattleMenuComponent::instance = nullptr;
+
+void BattleMenuComponent::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new BattleMenuComponent();
+    }
+}
+
+void BattleMenuComponent::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+BattleMenuComponent* BattleMenuComponent::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 void BattleMenuComponent::loadBg(int bgIndex)
 {
     // no background support yet

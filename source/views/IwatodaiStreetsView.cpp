@@ -16,7 +16,7 @@
 
 static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
-    asset = graphicsCtrl.loadGrit(path);
+    asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
@@ -38,7 +38,7 @@ void IwatodaiStreetsView::setMusic()
         streetsMusicPath = "music/locations/iwatodaiStreets/changing_seasons.pcm";
     }
 
-    musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), start, end);
+    musicCtrl->init((fatBasePath + streetsMusicPath).c_str(), start, end);
 }
 
 void IwatodaiStreetsView::setupEnvironment()
@@ -93,7 +93,7 @@ void IwatodaiStreetsView::setupEnvironment()
     iwatodaiStreetsEnv.load((fatBasePath + "environments/iwatodai_streets/iwatodai_streets.bin").c_str(), bitmaps);
     for (int i = 0; i < IWATODAI_STREETS_TEX_COUNT; ++i)
     {
-        graphicsCtrl.unloadGrit(envTextures[i]);
+        graphicsCtrl->unloadGrit(envTextures[i]);
     }
 }
 
@@ -142,27 +142,27 @@ void IwatodaiStreetsView::init()
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl.loadModel(
+    characterAnimationCtrl->loadModel(
         (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
-        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
     // setup environment
     IwatodaiStreetsView::setupEnvironment();
 
     // pause menu
-    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
+    pauseMenuCmpt->init(bgSharedSub1);
 
     // setup battle menu
     // TODO: check if isBattleMenuActive is just a dummy value
-    battleMenuCmpt.init(-1, &isBattleMenuActive);
+    battleMenuCmpt->init(-1, &isBattleMenuActive);
 
     // setup UI
     int bgMain[3] = {1, 2, 3};
@@ -171,9 +171,9 @@ void IwatodaiStreetsView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl.registerScreen(&menuHUDScreen, false);
-    uiCtrl.show(&menuHUDScreen, false);
+    uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
 
     // setup view phases
     prevBattleState = false;
@@ -202,7 +202,7 @@ ViewState IwatodaiStreetsView::update()
         if (!isActive && !prevBattleState)
         {
             // TODO: display battle menu UI
-            uiCtrl.hideAll();
+            uiCtrl->hideAll();
             battleController.execute(player, &partyMembers, &enemies, &battleParticipants, battleStartCondition);
             prevBattleState = true;
         }
@@ -243,15 +243,15 @@ ViewState IwatodaiStreetsView::update()
         if (!prevPauseState)
         {
             // TODO: display pause menu UI
-            uiCtrl.hideAll();
+            uiCtrl->hideAll();
             prevPauseState = true;
         }
 
         // run
-        ViewState menuResult = pauseMenuCmpt.update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return menuResult;
         }
 
@@ -270,7 +270,7 @@ ViewState IwatodaiStreetsView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl.show(&menuHUDScreen, false);
+            uiCtrl->show(menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -287,7 +287,7 @@ ViewState IwatodaiStreetsView::update()
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
-            if (menuHUDScreen.onTouch(&touch) == 1)
+            if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;
@@ -297,13 +297,13 @@ ViewState IwatodaiStreetsView::update()
         switch (playerCtrl->isTileAt())
         {
         case TileType::SCENE_0:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_DORM;
         case TileType::SCENE_1:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::PAULOWNIA_MALL;
         case TileType::SCENE_2:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::STATION;
         case TileType::SHD_W:
             // start battle
@@ -331,7 +331,7 @@ ViewState IwatodaiStreetsView::update()
 
         glPushMatrix();
         iwatodaiStreetsEnv.draw();
-        iwatodaiStreetsEnv.drawBillboards(enableBillboards, // billboards face camera
+        iwatodaiStreetsEnv.drawBillboards(Globals::enableBillboards, // billboards face camera
                                           camPos.cameraX,
                                           camPos.cameraY,
                                           camPos.cameraZ);
@@ -341,13 +341,13 @@ ViewState IwatodaiStreetsView::update()
         CharacterPosition charPos = playerCtrl->isCharacterAt();
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-        characterAnimationCtrl.render();
+        characterAnimationCtrl->render();
         glPopMatrix(1);
 
         glFlush(0);
 
         // print coordinates (64x64 area from 0,0 to 64,64)
-        if (enableDebugPrint)
+        if (Globals::enableDebugPrint)
         {
             iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
             iprintf("\x1b[20;0HTouch y = %04X, %04X\n", touch.rawy, touch.py);
@@ -368,9 +368,9 @@ ViewState IwatodaiStreetsView::update()
     }
     }
 
-    musicCtrl.update();
+    musicCtrl->update();
     battleController.update(pressed);
-    characterAnimationCtrl.update();
+    characterAnimationCtrl->update();
 
     return ViewState::KEEP_CURRENT;
 }
@@ -380,7 +380,7 @@ void IwatodaiStreetsView::cleanup()
     BaseView::cleanup();
 
     iwatodaiStreetsEnv.cleanup();
-    uiCtrl.cleanup();
+    uiCtrl->cleanup();
 
     delete playerCtrl;
     playerCtrl = nullptr;

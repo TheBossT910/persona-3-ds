@@ -2,31 +2,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch melonDS",
+            "name": "[Docker] (gdb) Connect to melonDS",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/${workspaceFolderBasename}.elf",
+            // NOTE: this SHOULD BE the same as the target in the Makefile.
+            "program": "${workspaceFolder}/persona-3-dual.elf",
             "targetArchitecture": "arm",
-            "preLaunchTask": "gdb-debug",
-            "postDebugTask": "stop-emulation",
             "serverLaunchTimeout": 10000,
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            // OS specific paths
-            "osx": {
-                "miDebuggerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gdb"
-            },
-            "linux": {
-                "miDebuggerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gdb"
-            },
-            "windows": {
-                "miDebuggerPath": "C:/devkitPro/devkitARM/bin/arm-none-eabi-gdb.exe"
-            },
-
-            "miDebuggerServerAddress": "localhost:2345",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerServerAddress": "host.docker.internal:2345",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing",
@@ -36,15 +25,15 @@
             ],
             "customLaunchSetupCommands": [
                 {
-                    "text": "target remote localhost:2345",
+                    "text": "target remote host.docker.internal:2345",
                     "description": "Connect to melonDS",
                     "ignoreFailures": false
                 },
                 {
-                    "text": "symbol-file ${workspaceFolder}/${workspaceFolderBasename}.elf",
+                    "text": "symbol-file \"${workspaceFolder}/persona-3-dual.elf\"",
                     "description": "Force load symbols",
                     "ignoreFailures": false
-                }
+                },
             ]
         }
     ]

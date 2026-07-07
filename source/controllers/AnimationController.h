@@ -6,8 +6,9 @@
 class AnimationController
 {
   public:
-    AnimationController();
-    ~AnimationController();
+    static void create();
+    static void destroy();
+    static AnimationController* getInstance();
 
     // Load the MDL2 (or legacy MDL1) binary produced by obj2model.py.
     bool loadModel(const char* filepath);
@@ -46,6 +47,10 @@ class AnimationController
     }
 
   private:
+    AnimationController();
+    ~AnimationController();
+    static AnimationController* instance;
+
     void renderNode(int nodeId);
     Keyframe getInterpolatedFrame(const AnimTrack& track, int currentTime, int nodeId);
     static int textureSizeToEnum(int px);
