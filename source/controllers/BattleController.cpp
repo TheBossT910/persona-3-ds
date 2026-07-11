@@ -20,7 +20,7 @@ void BattleController::execute(Player* player,
 
     std::string path =
         fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
-    musicCtrl->init(path.c_str(), 0.0f, saveData.femcMode ? 78.315f : 84.767f);
+    musicCtrl->init(path.c_str(), 0.0f, -1.0f);
 
     this->player = player;
     this->partyMembers = partyMembers;
