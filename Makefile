@@ -297,7 +297,7 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/data/models/* $(CURDIR)/data/graphics/* $(CURDIR)/data/fonts/*
+	@rm -rf $(CURDIR)/data/models/* $(CURDIR)/data/graphics/* $(CURDIR)/data/fonts/* $(CURDIR)/data/environments/*
 	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
