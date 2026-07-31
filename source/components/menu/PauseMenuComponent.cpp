@@ -78,6 +78,13 @@ void PauseMenuComponent::loadBg(int bgIndex)
     graphicsCtrl->unloadGrit(bg);
 }
 
+void PauseMenuComponent::reset()
+{
+    BaseMenu::reset();
+    options = menuOptions;
+    optionCount = MENU_OPTIONS;
+}
+
 void PauseMenuComponent::init(int iBgSlot,
                               bool* isActive,
                               uint16_t* iTextVideoBuffer,
@@ -279,6 +286,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
         }
         *isActivePtr = false;
         openDebugMenu();
+        selectedView = ViewState::KEEP_CURRENT;
         break;
     default:
         selectedView = ViewState::KEEP_CURRENT;

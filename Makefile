@@ -174,19 +174,19 @@ graphics: $(FAT_GRAPHICS_OUT)
 # FONTS
 #---------------------------------------------------------------------------------
 
-FONT_BM_OUT := $(foreach file,$(FONT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
-FONT_FNT_OUT := $(foreach file,$(FONT_FNT_FILES),$(patsubst $(CURDIR)/assets/%.fnt,$(CURDIR)/data/%/$(notdir $(file)),$(file)))
+FONT_BM_OUT := $(foreach file,$(FONT_PNG_FILES),$(patsubst $(CURDIR)/assets/fonts/%.png,$(CURDIR)/data/fonts/%.img.bin,$(file)))
+FONT_FNT_OUT := $(foreach file,$(FONT_FNT_FILES),$(patsubst $(CURDIR)/assets/fonts/%.fnt,$(CURDIR)/data/fonts/%.fnt,$(file)))
 
 # Define a macro that acts as a blueprint for our build rule
 define GRIT_RULE
-$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
+$(patsubst $(CURDIR)/assets/fonts/%.png,$(CURDIR)/data/fonts/%.img.bin,$(1)): $(1) $$(wildcard $$(1:.png=.grit))
 	@echo "  GRIT  $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
 	$(V)$(BLOCKSDS)/tools/grit/grit "$$<" -ftb -gb8 -fh! -o "$$(patsubst %.img.bin,%,$$@)"
 endef
 
 define COPY_FONT_RULE
-$(patsubst $(CURDIR)/assets/%.fnt,$(CURDIR)/data/%/$(notdir $(1)),$(1)): $(1)
+$(patsubst $(CURDIR)/assets/fonts/%.fnt,$(CURDIR)/data/fonts/%.fnt,$(1)): $(1)
 	@echo "  COPY  $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
 	@cp "$$<" "$$@"
@@ -197,7 +197,6 @@ $(foreach file,$(FONT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
 $(foreach file,$(FONT_FNT_FILES),$(eval $(call COPY_FONT_RULE,$(file))))
 
 font_bitmap: $(FONT_BM_OUT) $(FONT_FNT_OUT)
-
 
 #---------------------------------------------------------------------------------
 # Second pass: after creating all the assets
@@ -250,7 +249,7 @@ clean-assets:
 	@echo "  CLEAN   assets"
 	$(V)$(RM) $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) \
 	          $(CURDIR)/source/dialogue/*_dialogue.h
-	$(V)$(RM) -r $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
+	$(V)$(RM) $(CURDIR)/data/models/* $(CURDIR)/data/graphics/* $(CURDIR)/data/fonts/* $(CURDIR)/data/environments/*
 	$(V)$(RM) sdcard.img sdcard.img.idx
 
 endif

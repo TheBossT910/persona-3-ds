@@ -197,6 +197,11 @@ class PauseMenuComponent : public BaseMenu
               const std::string& iPauseMessage = "Pause") override;
     ViewState update(int keys) override;
 
+    /**
+     * @brief Resets the pause menu to its initial state.
+     */
+    void reset() override;
+
     void setCameraController(CameraController* ctrl)
     {
         cameraCtrl = ctrl;

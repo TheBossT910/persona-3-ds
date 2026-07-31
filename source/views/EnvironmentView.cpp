@@ -199,7 +199,7 @@ void EnvironmentView::init()
     textVideoBufferSub = (uint16_t*)bgGetGfxPtr(bgTextSub);
     bgSetPriority(bgTextSub, 0);
 
-    cosmeticaFont = textCtrl->loadFont("cosmetica/size-12/size-12");
+    cosmeticaFont = textCtrl->loadFont("cosmetica", 12);
     textCtrl->loadDefaultPalette();
 
     // setup environment geometry/textures (fully generic, data-driven)
@@ -294,6 +294,7 @@ ViewState EnvironmentView::update()
         if (!prevPauseState)
         {
             uiCtrl->hideAll();
+            pauseMenuCmpt->reset();
             prevPauseState = true;
         }
 

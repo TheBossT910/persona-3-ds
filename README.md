@@ -8,8 +8,8 @@ A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. Based o
 ![Last Commit](https://img.shields.io/github/last-commit/p3d-project/persona-3-dual?style=flat-square&color=green)
 ![License](https://img.shields.io/badge/license-CC_BY--NC--SA_4.0-red)
 
-[![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
-[![Python](https://img.shields.io/badge/python-3670A0?logo=python&logoColor=white)](#)
+![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?logo=python&logoColor=white)
 ![Platform](https://img.shields.io/badge/platform-Nintendo%20DS-red?style=flat-square)
 ![Architecture](https://img.shields.io/badge/architecture-ARM9/ARM7-blue)
 

@@ -96,21 +96,17 @@ class DialogueParser:
             auto_idx += 1
             return lbl
 
-        def split_line(text):
-            tokens = text.split(" ")
-            currentLine = ""
-            finalLine = ""
-            for token in tokens:
-                lineSize = len(currentLine) + len(token)
-                if lineSize > 32:
-                    finalLine = finalLine + currentLine + (32 - len(currentLine)) * " "
-                    currentLine = token + " "
-                else:
-                    currentLine = currentLine + token + " "
-            finalLine = finalLine + currentLine
-            if len(finalLine) == 0:
-                return text
-            return finalLine
+        def parse_commands(text):
+            for m in re.finditer(r"\[([^\]]+)\]", text):
+                cmd = m.group(1)
+                if cmd.lower().startswith("c "):
+                    color = cmd[2:].strip()
+                    if color.lower() == "reset":
+                        text = text.replace(m.group(0), r"\xFF\x01\xFF")
+                    else:
+                        code = hex(int(color))[2:].zfill(2)
+                        text = text.replace(m.group(0), rf"\xFF\x01\x{code}")
+            return text
 
         def add_line(char, text, bg):
             nonlocal pending_label
@@ -122,7 +118,7 @@ class DialogueParser:
                     0, f"Duplicate label '@{label}' in '{interaction.name}'"
                 )
             bg_index = interaction.bg_order.index(bg)
-            text = split_line(text)
+            text = parse_commands(text)
             dl = DialogueLine(
                 index=idx,
                 label=label,
@@ -465,7 +461,7 @@ def convert(input_file, output_base, config):
         with open(h_path, "w", encoding="utf-8") as f:
             f.write(h)
         with open(cpp_path, "w", encoding="utf-8") as f:
-            f.write(cpp)
+            f.write(cpp.replace("\\\\", "\\"))
         _format_cpp_h_files([h_path, cpp_path])
         print(f"Written: {h_path} / {cpp_path}")
 

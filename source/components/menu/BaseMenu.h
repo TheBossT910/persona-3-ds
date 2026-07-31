@@ -42,6 +42,10 @@ class BaseMenu
                       uint16_t* iTextVideoBuffer,
                       uint16_t* iTextVideoBufferSub,
                       const std::string& iPauseMessage = "Pause");
+    /**
+     * @brief Resets the menu to its initial state.
+     */
+    virtual void reset();
     virtual ViewState update(int keys);
     void cancelSFX();
     ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
@@ -50,7 +54,7 @@ class BaseMenu
   protected:
     MusicController* musicCtrl = MusicController::getInstance();
     TextController* textCtrl = TextController::getInstance();
-    Font* font = textCtrl->loadFont("cosmetica/size-12/size-12");
+    Font* font = textCtrl->loadFont("cosmetica", 12);
     uint16_t* textVideoBuffer = nullptr;
     uint16_t* textVideoBufferSub = nullptr;
 };

@@ -36,6 +36,14 @@ void BaseMenu::init(int iBgSlot,
     nextViewState = ViewState::KEEP_CURRENT;
 }
 
+void BaseMenu::reset()
+{
+    selectedOption = 0;
+    startIndex = 0;
+    while (!prevOptions.empty())
+        prevOptions.pop();
+}
+
 ViewState BaseMenu::update(int keys)
 {
     // navigate options
@@ -112,9 +120,9 @@ ViewState BaseMenu::update(int keys)
     {
         int option = startIndex + i;
         if (option == selectedOption)
-            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 8, TextColor::Blue);
+            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 9, TextColor::Blue);
         else
-            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 8, TextColor::White);
+            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 9, TextColor::White);
     }
 
     // load selectedOption's background

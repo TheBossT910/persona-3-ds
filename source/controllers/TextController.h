@@ -16,7 +16,7 @@ struct Glyph
 {
     int xPos;
     int yPos;
-    int width = 0; //used to check if the glyph was read in correctly. Setting it to 0 here wipes any old data
+    int width = 0; /// Used to check if the glyph was read in correctly. Setting it to 0 here wipes any old data
     int height;
     int xOffset;
     int yOffset;
@@ -24,14 +24,18 @@ struct Glyph
 
 /**
  * @brief Stores data for a font.
+ * @note Assumes that the regular and bold (if present) font bitmaps are the same size.
  */
 struct Font
 {
     std::uint8_t* bitmap = nullptr;
+    std::uint8_t* bitmapBold = nullptr;
     int bitmapWidth = 256;
     int bitmapHeight = 256;
     int lineHeight = 32;
     Glyph glyphs[256];
+    Glyph boldGlyphs[256];
+    bool boldLoaded = false;
 };
 
 /**
@@ -64,6 +68,19 @@ enum TextColor
 };
 
 /**
+ * @brief Human readable enum for text instructions.
+ */
+enum TextInstruction
+{
+    ColorChange = 0x01,
+    StyleChange = 0x02,
+    StyleBold = 0x01,
+    StyleItalic = 0x02,
+    StyleUnderline = 0x04,
+    Reset = 0xFF
+};
+
+/**
  * @brief A struct that represents a block of text being rendered on the screen.
  */
 struct Text
@@ -73,11 +90,15 @@ struct Text
     int startX;
     int startY;
     std::string content;
-    int color;
     Font* font;
     uint16_t* videoBuffer;
     int cursorPos;
+    int baseColor;
+    int activeColor;
     int counter;
+    bool bold;
+    bool italic;
+    bool underline;
 };
 
 /**
@@ -106,10 +127,13 @@ class TextController
 
     /**
      * @brief Load a font from a file.
-     * @param fontFilePath The path to the font file without file extension.
+     * @param name Name of the font.
+     * @param size Size of the font.
      * @return Pointer to the loaded font, or nullptr if loading failed.
+     * @note This function assumes that the font files are located in the "fonts" directory and follow the naming convention "<name>/size-<size>".
+     * @warning This function will halt the program if the regular font fails to load. If the bold font fails to load, it will simply set the boldLoaded flag to false and continue.
      */
-    Font* loadFont(const std::string& fontFilePath = "console/size-5/size-5");
+    Font* loadFont(const std::string& name, int size);
 
     /**
      * @brief Loads the predefined default palette.
@@ -170,8 +194,19 @@ class TextController
      * @param x The x-coordinate to start drawing the glyph.
      * @param y The y-coordinate to start drawing the glyph.
      * @param color The color to use for the glyph.
+     * @param bold Whether to use the bold version of the bitmap.
+     * @param italic Whether the glyph should be sheared to simulate italic text.
+     * @param underline Whether the glyph should be underlined.
      */
-    void drawGlyph(const Glyph& glyph, Font* font, uint16_t* videoBuffer, int x, int y, int color);
+    void drawGlyph(const Glyph& glyph,
+                   Font* font,
+                   uint16_t* videoBuffer,
+                   int x,
+                   int y,
+                   int color,
+                   bool bold = false,
+                   bool italic = false,
+                   bool underline = false);
     /**
      * @brief Clear the text layer by filling the video buffer with black.
      * @param videoBuffer Pointer to the video buffer to clear.
@@ -206,6 +241,8 @@ class TextController
     int LETTER_SPACING = 1;
     int LINE_SPACING = 2;
     int SPACE_WIDTH = 2;
+    /// 128 = 1 pixel shift every 2 rows, 64 = 1 pixel shift every 4 rows
+    int SLANT_FACTOR = 64;
 
     TextController();
     TextController(const TextController&) = delete;
@@ -222,9 +259,10 @@ class TextController
      * @brief Load the font metadata from a file.
      * @param path The path to the font metadata file.
      * @param font Pointer to the font to populate with metadata.
+     * @param forBoldBitmap Whether the metadata being loaded is for the bold version of the font.
      * @return true if loading was successful, false otherwise.
      */
-    bool loadFontMetadata(const std::string& path, Font* font);
+    bool loadFontMetadata(const std::string& path, Font* font, bool forBoldBitmap = false);
 
     // Helper Functions
     /**
@@ -266,6 +304,13 @@ class TextController
      */
     void drawPixel(uint16_t* videoBuffer, int x, int y, int paletteValue);
     /**
+     * @brief Get the next character from a given Text object.
+     * @param text Pointer to the Text object to extract the next character from.
+     * @return The next character in the Text object's content, or a nullptr if there are no more characters.
+     * @note This function automatically increments the cursor position in the Text object.
+     */
+    char getNextChar(Text* text);
+    /**
      * @brief Get the next word from a given text string.
      * @param text The text string to extract the next word from.
      * @return The next word in the text string, or an empty string if there are no more words.
@@ -278,7 +323,7 @@ class TextController
      * @param startX The starting x-coordinate for rendering the text.
      * @return true if the text will exceed the screen width, false otherwise.
      */
-    bool checkWordWrap(const std::string& text, Font* font, int startX);
+    bool checkWordWrap(const std::string& text, Font* font, int startX, bool bold = false);
     /**
      * @brief Extract an integer value from a line of text based on a specified key.
      * @param line The line of text to extract the value from.
@@ -287,6 +332,17 @@ class TextController
      * @note This function assumes that the line takes the form "key=value ".
      */
     int extractIntValue(const std::string& line, const std::string& key);
+    /**
+     * @brief Underline a specificed area.
+     * @param startX The starting x-coordinate of the area to underline.
+     * @param y The y-coordinate of the area to underline.
+     * @param width The width of the area to underline.
+     * @param videoBuffer Pointer to the video buffer to draw to.
+     * @param color The color to use for the underline.
+     * @details This function draws a horizontal line of the specified width at the specified y-coordinate, starting from the specified x-coordinate.
+     * It should be used to underline gaps in the text, that are not handled by the regular text rendering, i.e. the gaps between letters or spaces.
+     */
+    void underlineGap(int startX, int y, int width, uint16_t* videoBuffer, int color);
     /**
      * @brief Halts the program and displays an error message.
      *

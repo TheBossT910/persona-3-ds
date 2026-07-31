@@ -39,7 +39,7 @@ class IntroView : public BaseView
     int fluctuation = 50;
 
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
-    Font* font = textCtrl->loadFont("cosmetica/size-16/size-16");
+    Font* font = textCtrl->loadFont("cosmetica", 16);
     TextController* textCtrl = TextController::getInstance();
 
   public:

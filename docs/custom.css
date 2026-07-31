@@ -1,0 +1,150 @@
+@font-face {
+  font-family: "BM Space";
+  src: url("docs/fonts/BMSPA___.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "MgOpen Cosmetica";
+  src: url("docs/fonts/MgOpen_Cosmetica_Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Noto Sans Japanese";
+  src: url("docs/fonts/NotoSansJP-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/*
+   The theme is kept intentionally plain: white page, near-black text, gray structure.
+   The only brand color present is Dual Green, used purely for links and interactive states
+*/
+html {
+  --font-family: "MgOpen Cosmetica", -apple-system, sans-serif;
+  line-height: 1.5;
+
+  /* The one brand color in use */
+  --primary-color: #00ca69; /* Dual Green: links & interactive elements */
+  --primary-dark-color: #1c7637; /* Dark Green: link hover/active state */
+  --primary-light-color: #00ca69;
+  --on-primary-color: #ffffff;
+  --link-color: #00ca69;
+
+  /* Plain neutral page */
+  --page-background-color: #ffffff;
+  --page-foreground-color: #1b1b1b;
+  --page-secondary-foreground-color: #5c5c5c;
+
+  /* Plain neutral structure */
+  --separator-color: #e4e4e4;
+  --side-nav-background: #fafafa;
+  --code-background: #f5f5f5;
+  --code-foreground: #1b1b1b;
+  --tablehead-background: #f0f0f0;
+  --odd-color: rgba(0, 0, 0, 0.03);
+  --menu-selected-background: #00ca69;
+
+  --blockquote-background: #f5f5f5;
+  --blockquote-foreground: #5c5c5c;
+
+  --warning-color: #e8a33d;
+  --warning-color-dark: #9c6414;
+  --warning-color-darker: #4d3106;
+  --bug-color: #c0392b;
+
+  --box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.08);
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--primary-dark-color);
+  text-decoration: underline;
+}
+
+html.dark-mode {
+  --primary-color: #12a858; /* Dual Green 2 */
+  --primary-dark-color: #3ddb8f; /* lighter green for hover, stays visible on dark bg */
+  --primary-light-color: #12a858;
+  --on-primary-color: #ffffff;
+  --link-color: #12a858;
+
+  --page-background-color: #181818;
+  --page-foreground-color: #ededed;
+  --page-secondary-foreground-color: #a0a0a0;
+
+  --separator-color: #333333;
+  --side-nav-background: #141414;
+  --code-background: #212121;
+  --code-foreground: #ededed;
+  --tablehead-background: #242424;
+  --odd-color: rgba(255, 255, 255, 0.04);
+  --menu-selected-background: #12a858;
+
+  --blockquote-background: #212121;
+  --blockquote-foreground: #a0a0a0;
+
+  --warning-color: #e8a33d;
+  --warning-color-dark: #c4842a;
+  --warning-color-darker: #7a5218;
+  --bug-color: #e0574a;
+
+  --box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.4);
+}
+
+h1,
+.title {
+  font-family: "BM Space", sans-serif;
+  font-size: 54.9px;
+}
+
+h2 {
+  font-family: "Noto Sans Japanese", sans-serif;
+  font-weight: 900;
+  font-size: 43.9px;
+}
+
+h3 {
+  font-family: "Noto Sans Japanese", sans-serif;
+  font-weight: 800;
+  font-size: 35.2px;
+}
+
+h4 {
+  font-family: "Noto Sans Japanese", sans-serif;
+  font-weight: 600;
+  font-size: 28.1px;
+}
+
+h5 {
+  font-family: "MgOpen Cosmetica", sans-serif;
+  font-weight: 400;
+  font-size: 22.5px;
+}
+
+body,
+p,
+div,
+li {
+  font-size: 18px;
+}
+
+caption,
+.caption,
+figcaption {
+  font-family: "Noto Sans Japanese", sans-serif;
+  font-weight: 300;
+  font-size: 14.4px;
+}
+
+.tiny-text {
+  font-family: "Noto Sans Japanese", sans-serif;
+  font-weight: 300;
+  font-size: 11.5px;
+}
