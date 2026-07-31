@@ -21,9 +21,6 @@
 
 class PauseMenuComponent : public BaseMenu
 {
-  protected:
-    void loadBg(int bgIndex) override;
-
   private:
     PauseMenuComponent() {};
     virtual ~PauseMenuComponent() = default;

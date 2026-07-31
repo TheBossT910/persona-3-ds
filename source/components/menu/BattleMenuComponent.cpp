@@ -29,12 +29,6 @@ BattleMenuComponent* BattleMenuComponent::getInstance()
     return instance;
 }
 
-void BattleMenuComponent::loadBg(int bgIndex)
-{
-    // no background support yet
-    return;
-}
-
 void BattleMenuComponent::init(int iBgSlot,
                                bool* isActive,
                                uint16_t* iTextVideoBuffer,

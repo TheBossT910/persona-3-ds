@@ -215,6 +215,9 @@ void EnvironmentView::init()
     // setup battle menu
     battleMenuCmpt->init(-1, &isBattleMenuActive, textVideoBuffer, textVideoBufferSub);
 
+    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
+    MenuBackgroundScreen::getInstance()->load();
+
     // setup UI
     // NOTE: bg 0 is the 3D view
     int bgMain[3] = {1, 2, 3};

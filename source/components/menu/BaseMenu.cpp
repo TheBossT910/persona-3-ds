@@ -131,7 +131,7 @@ ViewState BaseMenu::update(int keys)
         int bgIndex = options[selectedOption].bgIndex;
         if (bgIndex != -1)
         {
-            loadBg(bgIndex);
+            menuBgScreen->showBackground(bgIndex);
             bgShow(bgSlot);
         }
         else

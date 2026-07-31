@@ -2,6 +2,7 @@
 
 #define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (BaseMenu::*)()>(&ClassName::Method)
 
+#include "components/ui/MenuBackgroundScreen.h"
 #include "controllers/MusicController.h"
 #include "controllers/TextController.h"
 #include "core/structs.h"
@@ -22,8 +23,6 @@ class BaseMenu
     int optionCount = 0;
     int selectedOption = 0;
     int startIndex = 0;
-
-    virtual void loadBg(int bgIndex) = 0;
 
   private:
     // sfx
@@ -54,6 +53,7 @@ class BaseMenu
   protected:
     MusicController* musicCtrl = MusicController::getInstance();
     TextController* textCtrl = TextController::getInstance();
+    MenuBackgroundScreen* menuBgScreen = MenuBackgroundScreen::getInstance();
     Font* font = textCtrl->loadFont("cosmetica", 12);
     uint16_t* textVideoBuffer = nullptr;
     uint16_t* textVideoBufferSub = nullptr;
