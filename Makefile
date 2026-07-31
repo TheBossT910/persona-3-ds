@@ -1,84 +1,70 @@
-#---------------------------------------------------------------------------------
-.SUFFIXES:
-#---------------------------------------------------------------------------------
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2023-2026
 
+.SUFFIXES:
 .SECONDARY:
 .SECONDEXPANSION:
+.DEFAULT_GOAL := all
 
-ifeq ($(strip $(DEVKITARM)),)
-$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
-endif
+BLOCKSDS ?= /opt/blocksds/core
 
-include $(DEVKITARM)/ds_rules
+# User config
+# ===========
 
-# Default flags for release optimization
-OPT := -O3
-LTO_FLAG := -flto=auto
+NAME          := persona-3-dual
+GAME_TITLE    := Persona 3 Dual
+GAME_SUBTITLE := Memento Mori.
+GAME_AUTHOR   := Atlus/Sega, P3D Team
+GAME_ICON     := icon.bmp
 
-ifeq ($(DEBUG), 1)
-    OPT := -O0 -g
-    LTO_FLAG :=
-endif
+# A compile_commands.json file is created if this is set to 1
+COMPDB := 1
 
-#---------------------------------------------------------------------------------
-# TARGET is the name of the output
-# BUILD is the directory where object files & intermediate files will be placed
-# SOURCES is a list of directories containing source code
-# INCLUDES is a list of directories containing extra header files
-#---------------------------------------------------------------------------------
-TARGET      :=  persona-3-dual
-BUILD       :=  build
-SOURCES 	:= source source/views source/controllers source/core source/data source/dialogue source/models source/environment source/components source/helpers source/tests \
-			   source/components/ui source/components/menu \
-               source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/battleActions/armours source/battleActions/personas source/battleActions/shoes source/battleActions/weapons
-INCLUDES    := include source libs/aegis_engine/include libs/aegis_engine/libs/etl/include libs/aegis_engine/libs/fpm/include
-SFX         := assets/sfx
+# Source code paths
+# -----------------
 
-GAME_TITLE     := Persona 3 Dual
-GAME_SUBTITLE1 := Memento Mori.
-GAME_SUBTITLE2 := Atlus/Sega, P3D Team
-export GAME_ICON := $(CURDIR)/../icon.bmp
+SOURCEDIRS  := source
+INCLUDEDIRS := source \
+               libs/aegis_engine/include \
+               libs/aegis_engine/libs/etl/include \
+               libs/aegis_engine/libs/fpm/include
+GFXDIRS     :=
+BINDIRS     :=
+AUDIODIRS   := assets/sfx
+NITROFSDIR  :=
+
+# Libraries
+# ---------
+
+LIBS    := -lmm9 -lnds9
+LIBDIRS := $(BLOCKSDS)/libs/maxmod
 
 #---------------------------------------------------------------------------------
 # Python tool configuration
 #---------------------------------------------------------------------------------
 TOOLS_DIR       := $(CURDIR)/tools
-ifeq ($(OS),Windows_NT)
-    VENV_PYTHON := $(HOME)/.venv/Scripts/python.exe
-else
-    VENV_PYTHON := $(HOME)/.venv/bin/python3
-endif
+VENV_PYTHON     := $(HOME)/.venv/bin/python3
+ASSETS_DIR      := $(CURDIR)/assets
 
-ASSETS_DIALOGUE := $(CURDIR)/assets/dialogue
-ASSETS_MUSIC    := $(CURDIR)/assets/music
-ASSETS_VIDEO    := $(CURDIR)/assets/video
-ASSETS_ENVIRONMENTS := $(CURDIR)/assets/environments
-ASSETS_MODELS   := $(CURDIR)/assets/models
-ASSETS_MAPS     := $(CURDIR)/assets/maps
+ASSETS_DIALOGUE     := $(ASSETS_DIR)/dialogue
+ASSETS_MUSIC        := $(ASSETS_DIR)/music
+ASSETS_VIDEO        := $(ASSETS_DIR)/video
+ASSETS_ENVIRONMENTS := $(ASSETS_DIR)/environments
+ASSETS_MODELS       := $(ASSETS_DIR)/models
+ASSETS_MAPS         := $(ASSETS_DIR)/maps
 
-DATA_MUSIC      := $(CURDIR)/data/music
-DATA_VIDEO      := $(CURDIR)/data/video
-
-#---------------------------------------------------------------------------------
-# MMUTIL OS select
-#---------------------------------------------------------------------------------
-
-ifeq ($(OS),Windows_NT)
-    MMUTIL := $(DEVKITPRO)/tools/bin/mmutil.exe
-else
-    MMUTIL := $(DEVKITPRO)/tools/bin/mmutil
-endif
-
-export MMUTIL
+DATA_MUSIC := $(CURDIR)/data/music
+DATA_VIDEO := $(CURDIR)/data/video
 
 #---------------------------------------------------------------------------------
 # Collect source files
 #---------------------------------------------------------------------------------
-DLG_FILES       := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
-MP3_FILES       := $(shell find $(ASSETS_MUSIC) -type f -name '*.mp3' 2>/dev/null)
-MP4_FILES       := $(wildcard $(ASSETS_VIDEO)/*.mp4)
-ENV_OBJ_FILES   := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
-JMAP_FILES      := $(wildcard $(ASSETS_MAPS)/*.jmap)
+DLG_FILES        := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
+MP3_FILES        := $(shell find $(ASSETS_MUSIC) -type f -name '*.mp3' 2>/dev/null)
+MP4_FILES        := $(wildcard $(ASSETS_VIDEO)/*.mp4)
+ENV_OBJ_FILES    := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
+JMAP_FILES       := $(wildcard $(ASSETS_MAPS)/*.jmap)
 
 MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 
@@ -90,120 +76,44 @@ FONT_FNT_FILES   := $(shell find $(CURDIR)/assets/fonts -type f -name '*.fnt' 2>
 #---------------------------------------------------------------------------------
 # Derive output paths
 #---------------------------------------------------------------------------------
-DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
-MUSIC_OUT    := $(patsubst $(ASSETS_MUSIC)/%.mp3,$(DATA_MUSIC)/%.pcm,$(MP3_FILES))
-VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
-JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
+DIALOGUE_OUT    := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
+MUSIC_OUT       := $(patsubst $(ASSETS_MUSIC)/%.mp3,$(DATA_MUSIC)/%.pcm,$(MP3_FILES))
+VIDEO_OUT       := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
+JMAP_OUT        := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 
-MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
+MODEL_OUT       := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
 
 # Environments are now built entirely into .bin files by obj2environment.py
 # and integrated into source/data/environmentDb.cpp, no .h headers needed
 # Map obj files to sentinel files in data/environments/<name>/.sentinel
 ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/data/environments/$(notdir $(patsubst %/,%,$(dir $(file))))/.sentinel)
 
-#---------------------------------------------------------------------------------
-# options for code generation
-#---------------------------------------------------------------------------------
-ARCH    :=  -march=armv5te -mtune=arm946e-s -mthumb
+.PHONY: assets dialogue music video environments jmaps models graphics font_bitmap sdcard help
 
-CFLAGS  := $(OPT) $(ARCH) $(INCLUDE) -DARM9 -Wall $(LTO_FLAG) -ffunction-sections -fdata-sections
-CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
+assets: dialogue music video environments jmaps models graphics font_bitmap
 
-ASFLAGS := -g $(ARCH)
-
-LDFLAGS = -specs=ds_arm9.specs $(ARCH) $(LTO_FLAG) -Wl,--gc-sections -Wl,-Map,$(notdir $*.map)
-
-#---------------------------------------------------------------------------------
-# any extra libraries we wish to link with the project
-#---------------------------------------------------------------------------------
-LIBS    := -lmm9 -lfat -lnds9
-
-#---------------------------------------------------------------------------------
-# list of directories containing libraries, this must be the top level containing
-# include and lib
-#---------------------------------------------------------------------------------
-LIBDIRS := $(LIBNDS) $(PORTLIBS)
-
-#---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
-#---------------------------------------------------------------------------------
-
-export TOPDIR   := $(CURDIR)
-export OUTPUT   := $(CURDIR)/$(TARGET)
-
-export VPATH    := $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-                   $(foreach dir,$(DATA),$(CURDIR)/$(dir))
-
-export DEPSDIR  := $(CURDIR)/$(BUILD)
-
-CFILES      := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES    := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-CPPFILES    += $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
-CPPFILES    := $(sort $(CPPFILES))
-SFILES      := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES    := soundbank.bin
-
-export SFXFILES := $(foreach dir,$(notdir $(wildcard $(SFX)/*.*)),$(CURDIR)/$(SFX)/$(dir))
-
-ifeq ($(strip $(CPPFILES)),)
-    export LD := $(CC)
-else
-    export LD := $(CXX)
-endif
-
-export OFILES   := $(addsuffix .o,$(BINFILES)) \
-                   $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
-
-export INCLUDE  := $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-                   $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-                   -I$(CURDIR)/$(BUILD)
-
-export LIBPATHS := $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
-
-.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models graphics font_bitmap sdcard help
-
-#---------------------------------------------------------------------------------
-$(BUILD):
-	@$(MAKE) --no-print-directory assets
-	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-	@$(MAKE) --no-print-directory sdcard.img
-
-help:
-	@echo "  make            Build everything"
-	@echo "  make assets     Run all asset converters"
-
-assets: dirs dialogue music video environments jmaps models graphics font_bitmap
-
-dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments $(CURDIR)/data/graphics $(CURDIR)/data/fonts
-
-sdcard: sdcard.img
-
+# Dialogue
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $$(wildcard $(ASSETS_DIALOGUE)/$$*.build.json)
 	@echo "  DLG   $(notdir $<)"
 	@mkdir -p $(CURDIR)/source/dialogue
-	@cd $(CURDIR)/source/dialogue && \
-		$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$*"
-
+	@cd $(CURDIR)/source/dialogue && $(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$*"
 dialogue: $(DIALOGUE_OUT)
 
+# Music
 #---------------------------------------------------------------------------------
 $(DATA_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3
 	@echo "  PCM   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@ffmpeg -i "$<" -f s16le -ar 32000 -ac 2 "$@" -y -loglevel error
-
 music: $(MUSIC_OUT)
 
+# Video
 #---------------------------------------------------------------------------------
 $(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $$(wildcard $(ASSETS_VIDEO)/$$*.build.json)
 	@echo "  VID   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(basename $@)"
-
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
@@ -219,7 +129,6 @@ $(CURDIR)/data/environments/%/.sentinel: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
 	@mkdir -p $(dir $@) $(CURDIR)/data/environments/$*
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/environments/$*"
 	@touch $@
-
 environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
@@ -233,30 +142,28 @@ $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/models/$*/$*.bin"
 	@mv $(CURDIR)/data/models/$*/$*.h $@
 	@touch $@
-
 models: $(MODEL_OUT)
 
+# Jmaps
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.jmap
 	@echo "  JMAP  $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$@"
-
 jmaps: $(JMAP_OUT)
 
 #---------------------------------------------------------------------------------
 # ALL GRAPHICS (Dynamic explicit rules using GNU Make Macros)
 #---------------------------------------------------------------------------------
-
-# Generate the exact target paths.
-FAT_GRAPHICS_OUT := $(foreach file,$(FAT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
+FAT_GRAPHICS_OUT := $(foreach file,$(FAT_PNG_FILES),$(patsubst $(ASSETS_DIR)/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
 
 # Define a macro that acts as a blueprint for our build rule
 define GRIT_RULE
-$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
+
+$(patsubst $(ASSETS_DIR)/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
 	@echo "  GRIT  $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
-	@grit "$$<" -ftb -fh! -o "$$(patsubst %.img.bin,%,$$@)"
+	$(V)$(BLOCKSDS)/tools/grit/grit "$$<" -ftb -fh! -o "$$(patsubst %.img.bin,%,$$@)"
 endef
 
 # Evaluate the macro for every single PNG found, dynamically scripting the rules into the Make environment
@@ -264,7 +171,6 @@ $(foreach file,$(FAT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
 
 graphics: $(FAT_GRAPHICS_OUT)
 
-#---------------------------------------------------------------------------------
 # FONTS
 #---------------------------------------------------------------------------------
 
@@ -276,7 +182,7 @@ define GRIT_RULE
 $(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
 	@echo "  GRIT  $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
-	@grit "$$<" -ftb -gb8 -fh! -o "$$(patsubst %.img.bin,%,$$@)"
+	$(V)$(BLOCKSDS)/tools/grit/grit "$$<" -ftb -gb8 -fh! -o "$$(patsubst %.img.bin,%,$$@)"
 endef
 
 define COPY_FONT_RULE
@@ -292,52 +198,59 @@ $(foreach file,$(FONT_FNT_FILES),$(eval $(call COPY_FONT_RULE,$(file))))
 
 font_bitmap: $(FONT_BM_OUT) $(FONT_FNT_OUT)
 
-#---------------------------------------------------------------------------------
-clean:
-	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
-	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/data/models/* $(CURDIR)/data/graphics/* $(CURDIR)/data/fonts/*
-	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
+# Second pass: after creating all the assets
+# We use the official BlocksDS template, which already has everything configured
+#---------------------------------------------------------------------------------
+ifndef ASSETS_DONE
+
+.PHONY: all dump clean
+
+all dump: assets
+	@$(MAKE) --no-print-directory ASSETS_DONE=1 $@
+
+clean:
+	@$(MAKE) --no-print-directory ASSETS_DONE=1 $@
 else
 
-DEPENDS := $(OFILES:.o=.d)
-
-$(OUTPUT).nds : $(OUTPUT).elf
-$(OUTPUT).elf : $(OFILES)
-
-soundbank.bin soundbank.h : $(SFXFILES)
-	@mmutil $^ -d -osoundbank.bin -hsoundbank.h
-
-%.bin.o : %.bin
-	@echo $(notdir $<)
-	@$(bin2o)
-
-%.mp3.o : %.mp3
-	@echo $(notdir $<)
-	@$(bin2o)
-
--include $(DEPENDS)
-
+# Debug flags
+ifeq ($(DEBUG),1)
+CFLAGS   := -O0 -ggdb
+CXXFLAGS := -O0 -ggdb
 endif
+
+# Default makefile includes arm7_maxmod as ARM7 elf
+# It compiles with some default flags
+include $(BLOCKSDS)/sys/default_makefiles/rom_arm9/Makefile
 
 #---------------------------------------------------------------------------------
 # Generate a FAT32 SD Card image
 #---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
-DATA_FILES := $(shell find $(CURDIR)/data -type f)
-endif
+all: sdcard.img
 
-sdcard.img: $(OUTPUT).nds $(DATA_FILES)
+DATA_FILES := $(shell find $(CURDIR)/data -type f)
+
+sdcard.img: $(NAME).nds $(DATA_FILES)
 ifeq ($(SKIPSD), 1)
 	@echo "Skipping sdcard.img generation..."
 else
 	@echo "Generating sdcard.img (2GB)..."
 	@$(VENV_PYTHON) -c "with open('sdcard.img', 'wb') as f: f.truncate(512 * 1024 * 1024 * 4)"
 	@mformat -i sdcard.img -v P3D_SD -F ::
-	@mcopy -i sdcard.img $(OUTPUT).nds ::/
+	@mcopy -i sdcard.img $(NAME).nds ::/
 	@mcopy -s -i sdcard.img $(CURDIR)/data ::/
 	@echo "Successfully built sdcard.img"
+endif
+
+.PHONY: clean-assets
+clean: clean-assets
+
+clean-assets:
+	@echo "  CLEAN   assets"
+	$(V)$(RM) $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) \
+	          $(CURDIR)/source/dialogue/*_dialogue.h
+	$(V)$(RM) -r $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
+	$(V)$(RM) sdcard.img sdcard.img.idx
+
 endif

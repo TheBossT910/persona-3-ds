@@ -1,8 +1,8 @@
 {
     "configurations": [
         {
-            "name": "NDS",
-            "compilerPath": "${env:DEVKITPRO}/devkitARM/bin/arm-none-eabi-g++",
+            "name": "BlocksDS NDS",
+            "compilerPath": "${ARM_GCC}/bin/arm-none-eabi-g++",
             "intelliSenseMode": "gcc-arm",
             "forcedInclude": [
                 "${workspaceFolder}/include/vscode_fix.h"
@@ -11,26 +11,20 @@
                 "${workspaceFolder}/include/**",
                 "${workspaceFolder}/source/**",
                 "${workspaceFolder}/build",
-                "${workspaceFolder}/libs/**",
-                "${env:DEVKITPRO}/libnds/include/**",
-                "${env:DEVKITPRO}/devkitARM/arm-none-eabi/include/**",
-                "${env:DEVKITPRO}/calico/include"
+                "${workspaceFolder}/libs/aegis_engine/include**",
+                "${workspaceFolder}/libs/aegis_engine/libs/etl/include**",
+                "${workspaceFolder}/libs/aegis_engine/libs/fpm/include**",
+                "${env:ARM_GCC}/arm-none-eabi/include/**",
+                "${env:BLOCKSDSLIBS}/dswifi/include/**",
+                "${env:BLOCKSDSLIBS}/libnds/include/**",
+                "${env:BLOCKSDSLIBS}/libteak/include/**",
+                "${env:BLOCKSDSLIBS}/libxm7/include/**",
+                "${env:BLOCKSDSLIBS}/maxmod/include/**"
             ],
             "defines": [
-                "__NDS__",
                 "ARM9",
-                "ENVIRONMENT_BUILD",
-                "_DEBUG"
+                "__NDS__"
             ],
-            "browse": {
-                "path": [
-                    "${workspaceFolder}/source",
-                    "${workspaceFolder}/include",
-                    "${env:DEVKITPRO}/libnds/include",
-                    "${env:DEVKITPRO}/devkitARM/arm-none-eabi/include"
-                ],
-                "limitSymbolsToIncludedHeaders": true
-            },
             "cStandard": "c11",
             "cppStandard": "c++17"
         }

@@ -165,7 +165,7 @@ void MainMenuComponent::updateSave()
     if (!SaveController::getInstance()->write())
     {
         consoleDemoInit();
-        iprintf("Failed to write save data!\n");
+        printf("Failed to write save data!\n");
         while (1)
         {
             swiWaitForVBlank();

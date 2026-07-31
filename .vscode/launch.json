@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             // NOTE: this SHOULD BE the same as the target in the Makefile.
-            "program": "${workspaceFolder}/persona-3-dual.elf",
+            "program": "${workspaceFolder}/build/persona-3-dual.elf",
             "targetArchitecture": "arm",
             "serverLaunchTimeout": 10000,
             "stopAtEntry": true,
@@ -30,7 +30,7 @@
                     "ignoreFailures": false
                 },
                 {
-                    "text": "symbol-file \"${workspaceFolder}/persona-3-dual.elf\"",
+                    "text": "symbol-file \"${workspaceFolder}/build/persona-3-dual.elf\"",
                     "description": "Force load symbols",
                     "ignoreFailures": false
                 },

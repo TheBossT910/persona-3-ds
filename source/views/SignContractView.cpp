@@ -71,8 +71,8 @@ void SignContractView::init()
     keyboardShow();
 
     consoleSelect(&animatedConsole);
-    iprintf("\x1b[11;6HEnter your last name");
-    iprintf("\x1b[0;0H%s", saveData.lastName);
+    printf("\x1b[11;6HEnter your last name");
+    printf("\x1b[0;0H%s", saveData.lastName);
     consoleSelect(&console);
 
     // setup animated text
@@ -112,7 +112,7 @@ ViewState SignContractView::update()
             {
                 saveData.lastName[lastNameIndex - 1] = '\0';
                 lastNameIndex--;
-                iprintf("%c", key);
+                printf("%c", key);
             }
         }
         else if (!isLastName && !isNameConfirmed)
@@ -125,16 +125,16 @@ ViewState SignContractView::update()
 
                 consoleSelect(&animatedConsole);
                 consoleClear();
-                iprintf("\x1b[11;6HEnter your last name");
+                printf("\x1b[11;6HEnter your last name");
 
                 consoleSelect(&console);
-                iprintf("\x1b[0;0H%s", saveData.lastName);
+                printf("\x1b[0;0H%s", saveData.lastName);
             }
             else
             {
                 saveData.firstName[firstNameIndex - 1] = '\0';
                 firstNameIndex--;
-                iprintf("%c", key);
+                printf("%c", key);
             }
         }
         else
@@ -145,10 +145,10 @@ ViewState SignContractView::update()
 
             consoleSelect(&animatedConsole);
             consoleClear();
-            iprintf("\x1b[11;6HEnter your first name");
+            printf("\x1b[11;6HEnter your first name");
 
             consoleSelect(&console);
-            iprintf("\x1b[0;0H%s", saveData.firstName);
+            printf("\x1b[0;0H%s", saveData.firstName);
         }
     }
     // Return (10) or "A"
@@ -166,10 +166,10 @@ ViewState SignContractView::update()
 
             consoleSelect(&animatedConsole);
             consoleClear();
-            iprintf("\x1b[11;5HEnter your first name");
+            printf("\x1b[11;5HEnter your first name");
 
             consoleSelect(&console);
-            iprintf("\x1b[0;0H%s", saveData.firstName);
+            printf("\x1b[0;0H%s", saveData.firstName);
         }
         else if (!isNameConfirmed)
         {
@@ -179,12 +179,12 @@ ViewState SignContractView::update()
 
             consoleSelect(&animatedConsole);
             consoleClear();
-            iprintf("\x1b[11;7HConfirm your name?");
+            printf("\x1b[11;7HConfirm your name?");
 
             consoleSelect(&console);
 
-            iprintf("\x1b[0;0H%s,", saveData.lastName);
-            iprintf("\x1b[1;0H%s", saveData.firstName);
+            printf("\x1b[0;0H%s,", saveData.lastName);
+            printf("\x1b[1;0H%s", saveData.firstName);
         }
         else
         {
@@ -225,7 +225,7 @@ ViewState SignContractView::update()
             firstNameIndex++;
         }
 
-        iprintf("%c", key);
+        printf("%c", key);
     }
 
     // animate text
@@ -262,7 +262,7 @@ void SignContractView::cleanup()
     if (!SaveController::getInstance()->write())
     {
         consoleDemoInit();
-        iprintf("Failed to write save data!\n");
+        printf("Failed to write save data!\n");
         while (1)
         {
             swiWaitForVBlank();

@@ -393,8 +393,8 @@ bool TextController::checkWordWrap(const std::string& text, Font* font, int star
 void TextController::haltOnError(const std::string& errorMessage)
 {
     consoleDemoInit();
-    iprintf("\n\n");
-    iprintf("Error; %s", errorMessage.c_str());
+    printf("\n\n");
+    printf("Error; %s", errorMessage.c_str());
     while (1)
         swiWaitForVBlank();
 }

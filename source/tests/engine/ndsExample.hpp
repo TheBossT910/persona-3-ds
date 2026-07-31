@@ -28,7 +28,7 @@
 
 #ifdef __NDS__
 #include <nds.h>
-#define ENGINE_TRACE(...) iprintf(__VA_ARGS__)
+#define ENGINE_TRACE(...) printf(__VA_ARGS__)
 #else
 #define ENGINE_TRACE(...) ((void)0)
 #endif
@@ -502,7 +502,7 @@ void NDSComputeCallback()
 void ndsExampleTest()
 {
     consoleDemoInit();
-    iprintf("Engine test\n");
+    printf("Engine test\n");
 
     static GameEngine engine;
     engine.SetComputeCallback(&NDSComputeCallback);
@@ -519,10 +519,10 @@ void ndsExampleTest()
     HealthComponent* hc = engine.CreateComponent<HealthComponent>();
     e->AddComponent(hc);
 
-    iprintf("Initial HP: %d\n", hc->GetCurrentHP());
+    printf("Initial HP: %d\n", hc->GetCurrentHP());
     hc->TakeDamage(15, 0);
     engine.Tick(ae::fixed_t(1) / 60);
-    iprintf("Final HP: %d\n", hc->GetCurrentHP());
+    printf("Final HP: %d\n", hc->GetCurrentHP());
 
     engine.DestroyComponent(hc);
     engine.DestroyEntity(e);
