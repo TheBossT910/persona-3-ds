@@ -182,7 +182,7 @@ define GRIT_RULE
 $(patsubst $(CURDIR)/assets/fonts/%.png,$(CURDIR)/data/fonts/%.img.bin,$(1)): $(1) $$(wildcard $$(1:.png=.grit))
 	@echo "  GRIT  $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
-	$(V)$(BLOCKSDS)/tools/grit/grit "$$<" -ftb -gb8 -fh! -o "$$(patsubst %.img.bin,%,$$@)"
+	$(V)$(BLOCKSDS)/tools/grit/grit "$$<" -ftb -gb -gB8 -fh! -o "$$(patsubst %.img.bin,%,$$@)"
 endef
 
 define COPY_FONT_RULE
