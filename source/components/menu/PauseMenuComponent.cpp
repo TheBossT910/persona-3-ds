@@ -38,46 +38,6 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
 
 DialogueController dialogueCtrl;
 
-void PauseMenuComponent::loadBg(int bgIndex)
-{
-    if (bgIndex < 0)
-        return;
-
-    std::string bgName;
-    switch (bgIndex)
-    {
-    case 0: // Akihiko
-        bgName = "bgAkihiko";
-        break;
-
-    case 1: // Kenji
-        bgName = "bgKenji";
-        break;
-
-    case 2: // Yukari
-        bgName = "bgYukari";
-        break;
-
-    case 3: // YukariClose
-        bgName = "bgYukariClose";
-        break;
-
-    default:
-        return;
-    }
-
-    GraphicAsset bg = graphicsCtrl->loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
-    ;
-    dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
-    dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);
-
-    vramSetBankH(VRAM_H_LCD);
-    dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
-    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-
-    graphicsCtrl->unloadGrit(bg);
-}
-
 void PauseMenuComponent::reset()
 {
     BaseMenu::reset();

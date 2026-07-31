@@ -7,9 +7,6 @@
 
 class BattleMenuComponent : public BaseMenu
 {
-  protected:
-    void loadBg(int bgIndex) override;
-
   private:
     BattleMenuComponent() {};
     virtual ~BattleMenuComponent() = default;
