@@ -208,5 +208,6 @@ ViewState MainMenuView::update()
 
 void MainMenuView::cleanup()
 {
+    musicCtrl->cleanup();
     BaseView::cleanup();
 }

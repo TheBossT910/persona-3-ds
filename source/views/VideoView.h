@@ -1,4 +1,6 @@
 #pragma once
+#include "controllers/MusicController.h"
+#include "controllers/VideoController.h"
 #include "core/globals.h"
 #include "views/BaseView.h"
 
@@ -18,4 +20,6 @@ class VideoView : public BaseView
   private:
     const char* filename;
     const ViewState nextView;
+    VideoController* videoCtrl = VideoController::getInstance();
+    MusicController* musicCtrl = MusicController::getInstance();
 };

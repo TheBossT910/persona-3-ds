@@ -74,18 +74,12 @@ void DisclaimerView::init()
 
         // wait for duration amount of frames
         for (int frame = 0; frame <= 6; frame++)
-        {
             swiWaitForVBlank();
-            musicCtrl->update();
-        }
     }
 
     // wait for duration amount of frames
     for (int frame = 0; frame <= 90; frame++)
-    {
         swiWaitForVBlank();
-        musicCtrl->update();
-    }
 
     // fade caution screens out
     for (int i = 0; i <= 16; i++)
@@ -94,16 +88,12 @@ void DisclaimerView::init()
 
         // wait for duration amount of frames
         for (int frame = 0; frame <= 6; frame++)
-        {
             swiWaitForVBlank();
-            musicCtrl->update();
-        }
     }
 }
 
 ViewState DisclaimerView::update()
 {
-    musicCtrl->update();
     return ViewState::INTRO_VIDEO;
 }
 

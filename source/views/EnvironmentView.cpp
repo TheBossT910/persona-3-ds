@@ -461,8 +461,10 @@ void EnvironmentView::cleanup()
     textCtrl->clearScreen(textVideoBuffer);
     textCtrl->clearScreen(textVideoBufferSub);
     textCtrl->unloadPalette();
-    // the console was setup in init(), so we can safely clear it here
-    //consoleClear();
+    pauseMenuCmpt->cancelSFX();
+    musicCtrl->cleanup();
+    characterAnimationCtrl->stop();
+
     BaseView::cleanup();
 
     env.cleanup();

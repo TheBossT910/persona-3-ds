@@ -1,4 +1,7 @@
 #pragma once
+#include "controllers/GraphicsController.h"
+#include "controllers/MusicController.h"
+#include "controllers/TextController.h"
 #include "core/globals.h"
 #include "views/BaseView.h"
 
@@ -39,6 +42,7 @@ class IntroView : public BaseView
     int fluctuation = 50;
 
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    MusicController* musicCtrl = MusicController::getInstance();
     Font* font = textCtrl->loadFont("cosmetica", 16);
     TextController* textCtrl = TextController::getInstance();
 

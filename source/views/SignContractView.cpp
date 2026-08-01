@@ -268,6 +268,6 @@ void SignContractView::cleanup()
             swiWaitForVBlank();
         }
     }
-
+    musicCtrl->cleanup();
     BaseView::cleanup();
 }

@@ -6,13 +6,7 @@ void BaseView::cleanup()
     // clear screen
     setBrightness(3, 0);
 
-    // global controllers
-    videoCtrl->cleanup();
-    musicCtrl->cleanup();
-    characterAnimationCtrl->stop();
-
     // global components
-    pauseMenuCmpt->cancelSFX();
     Globals::enableBillboards = true;
     Globals::enableCharacterAnim = true;
     Globals::enableDebugPrint = false;

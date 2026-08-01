@@ -9,9 +9,11 @@
 #include "environment/Environment.h"
 // components
 #include "components/menu/BattleMenuComponent.h"
+#include "components/menu/PauseMenuComponent.h"
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
 // controllers
+#include "controllers/AnimationController.h"
 #include "controllers/BattleController.h"
 #include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
@@ -130,11 +132,15 @@ class EnvironmentView : public BaseView
     // Controllers
     DialogueController dialogueCtrl;
     UIController* uiCtrl = UIController::getInstance();
+
+    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    MusicController* musicCtrl = MusicController::getInstance();
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
     MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
     BattleController* battleController = BattleController::getInstance();
     BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
+    PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
 
     // Environment
     Environment env;

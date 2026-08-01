@@ -32,6 +32,6 @@ ViewState VideoView::update()
 
 void VideoView::cleanup()
 {
-    // handles videoCtrl.cleanup()
+    videoCtrl->cleanup();
     BaseView::cleanup();
 }
