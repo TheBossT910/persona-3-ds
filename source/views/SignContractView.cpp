@@ -62,11 +62,12 @@ void SignContractView::init()
     // setup console
     consoleInit(&animatedConsole, 0, BgType_Text4bpp, BgSize_T_256x256, 5, 3, false, true);
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
-    keyboardInit(&keyboard, 2, BgType_Text4bpp, BgSize_T_256x512, 3, 1, false, true);
+
+    keyboardInit(keyboardGetDefault(), 2, BgType_Text4bpp, BgSize_T_256x512, 3, 1, false, true);
 
     bgSetPriority(animatedConsole.bgId, 0);
     bgSetPriority(console.bgId, 1);
-    bgSetPriority(keyboard.background, 2);
+    bgSetPriority(keyboardGetDefault()->background, 2);
 
     keyboardShow();
 
