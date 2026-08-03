@@ -15,7 +15,7 @@ BLOCKSDS ?= /opt/blocksds/core
 NAME          := persona-3-dual
 GAME_TITLE    := Persona 3 Dual
 GAME_SUBTITLE := Memento Mori.
-GAME_AUTHOR   := Atlus/Sega, P3D Team
+GAME_AUTHOR   := Atlus, The P3D Project
 GAME_ICON     := icon.bmp
 
 # A compile_commands.json file is created if this is set to 1
