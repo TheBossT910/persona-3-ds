@@ -18,7 +18,6 @@ class SignContractView : public BaseView
     // console
     PrintConsole console;
     PrintConsole animatedConsole;
-    Keyboard keyboard;
 
     // text animation
     int duration = 4;

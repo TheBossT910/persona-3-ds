@@ -60,7 +60,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
     if (!videoFile)
     {
         consoleDemoInit();
-        iprintf("ERR: %s", videoPath.c_str());
+        printf("ERR: %s", videoPath.c_str());
         while (1)
             swiWaitForVBlank();
     }
@@ -100,7 +100,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
         if (palRead != 256)
         {
             consoleDemoInit();
-            iprintf("ERR: palette read failed");
+            printf("ERR: palette read failed");
             while (1)
                 swiWaitForVBlank();
         }
@@ -123,7 +123,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
     if (!ramBuffer)
     {
         consoleDemoInit();
-        iprintf("ERR: malloc failed");
+        printf("ERR: malloc failed");
         while (1)
             swiWaitForVBlank();
     }
