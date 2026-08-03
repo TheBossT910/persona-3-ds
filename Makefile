@@ -109,7 +109,7 @@ ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/data/environments/$
 ARCH    :=  -march=armv5te -mtune=arm946e-s -mthumb
 
 CFLAGS  := $(OPT) $(ARCH) $(INCLUDE) -DARM9 -Wall $(LTO_FLAG) -ffunction-sections -fdata-sections
-CXXFLAGS    := $(CFLAGS) -std=gnu++17 -fno-rtti -fno-exceptions
+CXXFLAGS    := $(CFLAGS) -Wno-psabi -fno-rtti -fno-exceptions
 
 ASFLAGS := -g $(ARCH)
 

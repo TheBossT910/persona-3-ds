@@ -97,7 +97,7 @@ void SwitchView(BaseView* newView)
 // fn for the interrupt
 void Vblank()
 {
-    frame++;
+    frame = frame + 1;
 }
 
 void loadModels(bool isFemc)
