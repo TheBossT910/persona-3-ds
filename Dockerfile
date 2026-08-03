@@ -9,7 +9,7 @@
 # ==========================================
 
 # Use the dev-latest because it contains the source code of blocksds, so we can step in on the debugger
-FROM skylyrac/blocksds:dev-latest AS base
+FROM skylyrac/blocksds:dev-v1.22.2 AS base
 
 LABEL maintainer="The P3D Project"
 LABEL description="Full build environment for Persona 3 Dual (NDS homebrew)"
@@ -27,17 +27,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 # git-lfs       – large file storage (LFS pointers resolved during CI checkout)
 # ccache        – compiler cache for faster rebuilds (CI manages cache via actions/cache)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ffmpeg \
-    mtools \
-    libblas3 \
-    liblapack3 \
-    python3 \
-    python3-pip \
-    python3-venv \
-    zip \
-    gzip \
-    git-lfs \
-    ccache \
+    ffmpeg=7:6.1.1-3ubuntu5 \
+    mtools=4.0.43-1build1 \
+    libblas3=3.12.0-3build1.1 \
+    liblapack3=3.12.0-3build1.1 \
+    python3=3.12.3-0ubuntu2.1 \
+    python3-pip=24.0+dfsg-1ubuntu1.3 \
+    python3-venv=3.12.3-0ubuntu2.1 \
+    zip=3.0-13ubuntu0.2 \
+    gzip=1.12-1ubuntu3.2 \
+    git-lfs=3.4.1-1ubuntu0.4 \
+    ccache=4.9.1-1 \
     && git lfs install --system \
     && rm -rf /var/lib/apt/lists/*
 
