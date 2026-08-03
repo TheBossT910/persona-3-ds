@@ -24,56 +24,14 @@
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"
 
+#include "core/enums.h"            // EventIDs
+#include "core/routerIDs.hpp"      // RouterIDs
+#include "events/BattleEvents.hpp" // Events
+#include "events/GenericEvents.hpp"
 #include <aegis/system.hpp>
 
 // TODO: check for dead code/unfeasible paths
 // TODO: update Javadoc
-
-// TODO: move out of file?
-constexpr etl::message_router_id_t kBattleSystemRouterID = 0;
-
-// TODO: move EventID out of file?
-namespace EventID
-{
-enum : etl::message_id_t
-{
-    ExecuteBattle = 0,
-    BattleResult,
-    SetTextVideoBufferSub
-};
-} // namespace EventID
-
-// TODO: move Event out of file?
-namespace Event
-{
-struct ExecuteBattle : public etl::message<EventID::ExecuteBattle>
-{
-    CharacterProfile& player;
-    std::vector<CharacterProfile>& characterProfiles;
-    std::vector<EnemyProfile>& enemyProfiles;
-    BattleStartCondition battleStartCondition;
-
-    ExecuteBattle(CharacterProfile& iPlayer,
-                  std::vector<CharacterProfile>& iCharacterProfiles,
-                  std::vector<EnemyProfile>& iEnemyProfiles,
-                  BattleStartCondition iBattleStartCondition)
-        : player(iPlayer), characterProfiles(iCharacterProfiles), enemyProfiles(iEnemyProfiles),
-          battleStartCondition(iBattleStartCondition)
-    {
-    }
-};
-
-// TODO: deprecate /project/source/battleActions/BattleResult.h in favour of this Event version
-struct BattleResult : public etl::message<EventID::BattleResult>
-{
-    bool playerDied = false;
-};
-
-struct SetTextVideoBufferSub : public etl::message<EventID::SetTextVideoBufferSub>
-{
-    uint16_t* textVideoBufferSub = nullptr;
-};
-} // namespace Event
 
 class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>, public ae::Singleton<BattleSystem>
 {

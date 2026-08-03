@@ -31,7 +31,7 @@ BUILD       :=  build
 SOURCES 	:= source source/views source/controllers source/core source/data source/dialogue source/models source/environment source/components source/helpers source/tests \
 			   source/components/ui source/components/menu \
                source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/battleActions/armours source/battleActions/personas source/battleActions/shoes source/battleActions/weapons \
-			   source/systems source/managers
+			   source/systems source/managers source/events
 INCLUDES    := include source libs/aegis_engine/include libs/aegis_engine/libs/etl/include libs/aegis_engine/libs/fpm/include
 SFX         := assets/sfx
 

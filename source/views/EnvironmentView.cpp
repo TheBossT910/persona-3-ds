@@ -7,7 +7,7 @@
 #include "models/kotone.h"
 #include "models/makoto.h"
 
-#include "systems/BattleSystem.hpp" // TODO: Required for Event namespace, move Event namespace into seperate file?
+#include "systems/BattleSystem.hpp"
 
 namespace
 {

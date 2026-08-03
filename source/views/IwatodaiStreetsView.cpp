@@ -1,5 +1,6 @@
 #include "IwatodaiStreetsView.h"
-#include "systems/BattleSystem.hpp" // TODO: Required for Event namespace, move Event namespace into seperate file?
+#include "events/BattleEvents.hpp"
+#include "events/GenericEvents.hpp"
 
 IwatodaiStreetsView::IwatodaiStreetsView()
 {

@@ -1,4 +1,5 @@
 #pragma once
+#include <aegis/system.hpp>
 
 enum class ViewState
 {
@@ -327,3 +328,13 @@ enum class ViewPhase
     Dialogue,
     Environment
 };
+
+namespace EventID
+{
+enum : etl::message_id_t
+{
+    ExecuteBattle = 0,
+    BattleResult,
+    SetTextVideoBufferSub
+};
+} // namespace EventID
