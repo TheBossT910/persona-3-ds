@@ -37,7 +37,7 @@ static int textureSizeEnum(int size)
     case 1024:
         return TEXTURE_SIZE_1024;
     default:
-        iprintf("Invalid texture size %d\n", size);
+        printf("Invalid texture size %d\n", size);
         return TEXTURE_SIZE_8;
     }
 }
@@ -60,7 +60,7 @@ bool Environment::load(const EnvironmentDbEntry* entry,
     // Guard against a missing/oversized db entry before touching it
     if (!entry || entry->textureCount > MAX_ENVIRONMENT_TEXTURES)
     {
-        iprintf("EnvironmentDbEntry textures exceeds MAX_ENVIRONMENT_TEXTURES");
+        printf("EnvironmentDbEntry textures exceeds MAX_ENVIRONMENT_TEXTURES");
         return false;
     }
 
@@ -70,7 +70,7 @@ bool Environment::load(const EnvironmentDbEntry* entry,
 
     if (Globals::enableDebugPrint)
     {
-        iprintf("Environment::load opening '%s'\n", fullBinaryPath.c_str());
+        printf("Environment::load opening '%s'\n", fullBinaryPath.c_str());
     }
 
     FILE* file = fopen(fullBinaryPath.c_str(), "rb");

@@ -151,7 +151,7 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
     s_audioFile = fopen(filePath, "rb");
     if (!s_audioFile)
     {
-        iprintf("MusicController: failed to open %s\n", filePath);
+        printf("MusicController: failed to open %s\n", filePath);
         return;
     }
 

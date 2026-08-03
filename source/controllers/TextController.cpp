@@ -508,8 +508,8 @@ void TextController::underlineGap(int startX, int y, int width, uint16_t* videoB
 void TextController::haltOnError(const std::string& errorMessage)
 {
     consoleDemoInit();
-    iprintf("\n\n");
-    iprintf("Error; %s", errorMessage.c_str());
+    printf("\n\n");
+    printf("Error; %s", errorMessage.c_str());
     while (1)
         swiWaitForVBlank();
 }

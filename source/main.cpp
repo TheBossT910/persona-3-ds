@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
     if (!fatInitDefault())
     {
         consoleDemoInit();
-        iprintf("FAT initialization failed!\nPlease ensure the SD card is inserted.\n");
+        printf("FAT initialization failed!\nPlease ensure the SD card is inserted.\n");
         while (1)
             swiWaitForVBlank();
     }
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
     if (!SaveController::getInstance()->read())
     {
         consoleDemoInit();
-        iprintf("Failed to read save data!\n");
+        printf("Failed to read save data!\n");
         while (1)
         {
             swiWaitForVBlank();
@@ -203,7 +203,7 @@ int main(int argc, char* argv[])
     // start with DisclaimerView
     SwitchView(new DisclaimerView());
 
-    while (pmMainLoop())
+    while (1)
     {
         swiWaitForVBlank();
 
