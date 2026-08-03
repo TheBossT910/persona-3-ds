@@ -14,7 +14,6 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/AnimationController.h"
-#include "controllers/BattleController.h"
 #include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
@@ -138,7 +137,6 @@ class EnvironmentView : public BaseView
     MusicController* musicCtrl = MusicController::getInstance();
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
     MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
-    BattleController* battleController = BattleController::getInstance();
     BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
     PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
 

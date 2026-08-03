@@ -4,6 +4,8 @@
 
 // variables
 extern volatile int frame;
+extern volatile u32 systemKeysDown;
+extern volatile u32 systemKeysHeld;
 extern int fps;
 extern int fpsTimer;
 extern std::string fatBasePath;

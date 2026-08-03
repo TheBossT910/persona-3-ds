@@ -1,4 +1,5 @@
 #include "IwatodaiStreetsView.h"
+#include "systems/BattleSystem.hpp" // TODO: Required for Event namespace, move Event namespace into seperate file?
 
 IwatodaiStreetsView::IwatodaiStreetsView()
 {
@@ -18,8 +19,14 @@ IwatodaiStreetsView::~IwatodaiStreetsView()
 
 void IwatodaiStreetsView::startBattle()
 {
-    battleController->textVideoBufferSub = textVideoBufferSub;
-    battleController->execute(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
+    // set the sub text video buffer
+    Event::SetTextVideoBufferSub vbMsg;
+    vbMsg.textVideoBufferSub = textVideoBufferSub;
+    ae::BroadcastEvent(vbMsg);
+
+    // start battle
+    Event::ExecuteBattle msg(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
+    ae::BroadcastEvent(msg);
 }
 
 // ----------------------------

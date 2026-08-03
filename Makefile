@@ -30,7 +30,8 @@ TARGET      :=  persona-3-dual
 BUILD       :=  build
 SOURCES 	:= source source/views source/controllers source/core source/data source/dialogue source/models source/environment source/components source/helpers source/tests \
 			   source/components/ui source/components/menu \
-               source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/battleActions/armours source/battleActions/personas source/battleActions/shoes source/battleActions/weapons
+               source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/battleActions/armours source/battleActions/personas source/battleActions/shoes source/battleActions/weapons \
+			   source/systems source/managers
 INCLUDES    := include source libs/aegis_engine/include libs/aegis_engine/libs/etl/include libs/aegis_engine/libs/fpm/include
 SFX         := assets/sfx
 
@@ -108,7 +109,7 @@ ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/data/environments/$
 ARCH    :=  -march=armv5te -mtune=arm946e-s -mthumb
 
 CFLAGS  := $(OPT) $(ARCH) $(INCLUDE) -DARM9 -Wall $(LTO_FLAG) -ffunction-sections -fdata-sections
-CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
+CXXFLAGS    := $(CFLAGS) -std=gnu++17 -fno-rtti -fno-exceptions
 
 ASFLAGS := -g $(ARCH)
 

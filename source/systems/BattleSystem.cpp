@@ -1,4 +1,4 @@
-#include "BattleController.h"
+#include "BattleSystem.hpp"
 #include "./battleActions/skills/BattleCalcs.h"
 
 #include "./helpers/random.h"
@@ -6,67 +6,39 @@
 #include <cstdlib>
 #include <ctime>
 
-BattleController::BattleController()
+void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
 {
-}
-
-/**
- * @brief init function of battlesystem
- *
- * This gets called each time a new battle is made and resets
- * certain varaibles.
- *
- * @param player set player, we need to specifically know him for some things all the time
- * @param partyMembers all players currently on the field, handling
- * @param enemies all enemies
- * @param battleParticipants all enemies and partyMembers
- * @param battleStartCondition conditon like player advantage, enemy advante or even. used to decide turn order
- *
- * @details
- * Called before every new battle. At the moment we give in actuall battle participants which sucks
- * massivley. In the future i just want to pass participant profiles so the Battlecontroller
- * actually just manages everything itself.
- * Then proceeds to set music, setting variables and doing various cleanup.
- * Finally turn order is calculated with the battleStartConditon and battle gets started.
- *
- * @author Nolan Kolb (themoonwalker8692 / TrueGiles)
-*/
-void BattleController::execute(CharacterProfile& player,
-                               std::vector<CharacterProfile>& characterProfiles,
-                               std::vector<EnemyProfile>& enemyProfiles,
-                               BattleStartCondition battleStartCondition)
-{
-    active = true;
+    isActive = true;
 
     std::string path =
         fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
     musicCtrl->init(path.c_str(), 0.0f, -1.0f);
 
-    this->player = new Player(player);
+    this->player = new Player(msg.player);
     battleParticipants.push_back(this->player);
     this->partyMembers.push_back(this->player);
 
-    for (CharacterProfile& characterProfile : characterProfiles)
+    for (CharacterProfile& characterProfile : msg.characterProfiles)
     {
         PartyMember* partyMember = new PartyMember(characterProfile);
         this->partyMembers.push_back(partyMember);
         battleParticipants.push_back(partyMember);
     }
 
-    for (EnemyProfile& enemyProfile : enemyProfiles)
+    for (EnemyProfile& enemyProfile : msg.enemyProfiles)
     {
         Enemy* enemy = new Enemy(enemyProfile);
         this->enemies.push_back(enemy);
         battleParticipants.push_back(enemy);
     }
 
-    this->battleStartCondition = battleStartCondition;
+    this->battleStartCondition = msg.battleStartCondition;
 
     turnsTaken = 0;
     currentParticipantIndex = 0;
     selectedSkill = nullptr;
     pendingAlert.clear();
-    battleResult = BattleResult();
+    battleResult = Event::BattleResult();
     allOutAttackWasPossibleThisKnockDown = false;
     pendingPersonaSwitch = false;
     switchedPersonaThisTurn = false;
@@ -80,26 +52,29 @@ void BattleController::execute(CharacterProfile& player,
     phase = currentParticipantTurn->getInitalTurnPhase();
 }
 
-/**
- * @brief Actual Battle
- *
- * This is where the battle is controlled from.
- *
- * @param keys passes input
- *
- * @details
- * Controlls battle. Theres a phase switch which decides which menu point you are currently on
- * or stuff like enemy turn.
- * We have a system to build alerts (with a pendingAlert string) to then display these
- * in the ShowAlert phase after each action.
- * battleMenuCmpt is used to show the diffrent menu option in console.
- *
- * @author Nolan Kolb (TrueGiles / themoonwalker8692)
- */
-BattleResult BattleController::update(u32 keys)
+void BattleSystem::on_receive(const Event::SetTextVideoBufferSub& msg)
 {
-    if (!active)
-        return battleResult;
+    textVideoBufferSub = msg.textVideoBufferSub;
+}
+
+void BattleSystem::on_receive_unknown(const etl::imessage&)
+{
+}
+
+bool BattleSystem::IsActive()
+{
+    return isActive;
+}
+
+void BattleSystem::Init()
+{
+    isActive = false;
+}
+
+void BattleSystem::Update(ae::fixed_t)
+{
+    if (!isActive)
+        return;
 
     switch (phase)
     {
@@ -110,9 +85,9 @@ BattleResult BattleController::update(u32 keys)
         // render battleMenu
         battleMenuCmpt->loadActionOptions(&actions, actor->name);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(keys);
+        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
-        if ((menuIndex != -1) && (keys & KEY_A) && actor->actorCanUse(actions[menuIndex]))
+        if ((menuIndex != -1) && (systemKeysDown & KEY_A) && actor->actorCanUse(actions[menuIndex]))
         {
             TextController::getInstance()->clearScreen(textVideoBufferSub);
             if (menuIndex == ACTION_ATTACK)
@@ -134,7 +109,7 @@ BattleResult BattleController::update(u32 keys)
             {
                 if (switchedPersonaThisTurn)
                 {
-                    return battleResult;
+                    return;
                 }
                 phase = BattlePhase::ChoosePersona;
             }
@@ -151,9 +126,9 @@ BattleResult BattleController::update(u32 keys)
         //TODO: why not just return nullptr if nothing happens instead of setting -1 manually everywhere?
 
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(keys);
+        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
-        if ((menuIndex != -1) && (keys & KEY_A))
+        if ((menuIndex != -1) && (systemKeysDown & KEY_A))
         {
             Skill* s = actor->curPersona->skills[menuIndex];
 
@@ -180,7 +155,7 @@ BattleResult BattleController::update(u32 keys)
             }
         }
 
-        if (keys & KEY_B)
+        if (systemKeysDown & KEY_B)
             phase = BattlePhase::ChooseAction;
         break;
     }
@@ -198,9 +173,9 @@ BattleResult BattleController::update(u32 keys)
 
         battleMenuCmpt->loadPersonaOptions(&actor->personas);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(keys);
+        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
-        if ((menuIndex != -1) && (keys & KEY_A))
+        if ((menuIndex != -1) && (systemKeysDown & KEY_A))
         {
             if (actor->curPersona == actor->personas[menuIndex])
             {
@@ -219,7 +194,7 @@ BattleResult BattleController::update(u32 keys)
             phase = BattlePhase::ShowAlert;
         }
 
-        if (keys & KEY_B)
+        if (systemKeysDown & KEY_B)
             phase = BattlePhase::ChooseAction;
         break;
     }
@@ -252,9 +227,9 @@ BattleResult BattleController::update(u32 keys)
 
         battleMenuCmpt->loadTargetOptions(&targets, healTarget);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(keys);
+        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
-        if (menuIndex != -1 && (keys & KEY_A))
+        if (menuIndex != -1 && (systemKeysDown & KEY_A))
         {
             if (isSingleTarget(selectedSkill->skillType))
             {
@@ -278,7 +253,7 @@ BattleResult BattleController::update(u32 keys)
                     }
                 }
                 if (!canHealAnyTarget)
-                    return battleResult;
+                    return;
             }
 
             bool usingBaseAttack = selectedSkill == actor->baseAttackAction;
@@ -293,7 +268,7 @@ BattleResult BattleController::update(u32 keys)
             advanceTurn();
         }
 
-        if (keys & KEY_B)
+        if (systemKeysDown & KEY_B)
         {
             phase = (selectedSkill == actor->baseAttackAction) ? BattlePhase::ChooseAction : BattlePhase::ChooseSkill;
             menuIndex = -1;
@@ -305,9 +280,9 @@ BattleResult BattleController::update(u32 keys)
     {
         battleMenuCmpt->loadAllOutAttackConfirmation();
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(keys);
+        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
-        if (menuIndex != -1 && (keys & KEY_A))
+        if (menuIndex != -1 && (systemKeysDown & KEY_A))
         {
             allOutAttackWasPossibleThisKnockDown = true;
 
@@ -348,7 +323,7 @@ BattleResult BattleController::update(u32 keys)
     case BattlePhase::ShowAlert:
     {
         battleMenuCmpt->loadAlertOptions(pendingAlert);
-        battleMenuCmpt->update(keys);
+        battleMenuCmpt->update(systemKeysDown);
         if (battleMenuCmpt->isAlertExpired(120))
         {
             pendingAlert.clear();
@@ -382,16 +357,15 @@ BattleResult BattleController::update(u32 keys)
         break;
     }
 
-    return battleResult;
+    return;
 }
 
-void BattleController::exit()
+void BattleSystem::Shutdown()
 {
     TextController::getInstance()->clearScreen(textVideoBufferSub);
     musicCtrl->pause();
 
-    active = false;
-    phase = BattlePhase::Done;
+    isActive = false;
 
     turnsTaken = 0;
     currentParticipantIndex = 0;
@@ -419,7 +393,7 @@ void BattleController::exit()
     player = nullptr;
 }
 
-void BattleController::applyResult(const TurnResult& turnResult, BattleParticipant* target)
+void BattleSystem::applyResult(const TurnResult& turnResult, BattleParticipant* target)
 {
     if (!turnResult.log.empty())
         pendingAlert += turnResult.log + "\n";
@@ -454,11 +428,9 @@ void BattleController::applyResult(const TurnResult& turnResult, BattleParticipa
     }
 }
 
-void BattleController::advanceTurn()
+void BattleSystem::advanceTurn()
 {
     handleDeadParticipants();
-    if (!active)
-        return;
 
     //all out attack availability check
     if (allEnemiesKnockedDown() && !allOutAttackWasPossibleThisKnockDown)
@@ -504,7 +476,7 @@ void BattleController::advanceTurn()
     setNextPhase(nextPhase);
 }
 
-void BattleController::setNextPhase(BattlePhase nextPhase)
+void BattleSystem::setNextPhase(BattlePhase nextPhase)
 {
     if (!pendingAlert.empty())
     {
@@ -519,7 +491,7 @@ void BattleController::setNextPhase(BattlePhase nextPhase)
 }
 
 // TODO:: potentially rework since this would do a double turn if called again after 1st turn
-void BattleController::calculateTurnOrder()
+void BattleSystem::calculateTurnOrder()
 {
     // random boost from 1.2 to 1.4 that priorizes party
     float boost = 1.2f + (randf() * 0.2f);
@@ -567,7 +539,7 @@ void BattleController::calculateTurnOrder()
     }
 }
 
-void BattleController::handleDeadParticipants()
+void BattleSystem::handleDeadParticipants()
 {
     for (u32 i = 0; i < battleParticipants.size(); i++)
     {
@@ -578,11 +550,15 @@ void BattleController::handleDeadParticipants()
 
         BattleParticipant* dead = battleParticipants.at(i);
 
-        dead->onDead(battleResult);
+        // TODO: replace with better solution
+        BattleResult battleResultRaw;
+        battleResultRaw.playerDied = battleResult.playerDied;
+        dead->onDead(battleResultRaw);
 
         if (battleResult.playerDied)
         {
-            exit();
+            /// Don't display any battle results
+            Shutdown();
             return;
         }
     }
@@ -599,12 +575,14 @@ void BattleController::handleDeadParticipants()
 
     if (!enemiesAlive)
     {
-        exit();
+        /// Display battle results
+        ae::BroadcastEvent(battleResult);
+        Shutdown();
         return;
     }
 }
 
-std::vector<BattleParticipant*> BattleController::getAliveEnemies()
+std::vector<BattleParticipant*> BattleSystem::getAliveEnemies()
 {
     std::vector<BattleParticipant*> alive;
     for (BattleParticipant* enemy : enemies)
@@ -615,7 +593,7 @@ std::vector<BattleParticipant*> BattleController::getAliveEnemies()
     return alive;
 }
 
-bool BattleController::allEnemiesKnockedDown()
+bool BattleSystem::allEnemiesKnockedDown()
 {
     uint8_t aliveCount = 0;
     uint8_t knockedDownCount = 0;
@@ -635,7 +613,7 @@ bool BattleController::allEnemiesKnockedDown()
     return false;
 }
 
-bool BattleController::isSingleTarget(SkillType type)
+bool BattleSystem::isSingleTarget(SkillType type)
 {
     switch (type)
     {
