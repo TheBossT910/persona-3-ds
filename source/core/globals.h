@@ -1,3 +1,8 @@
+/**
+ * @file globals.h
+ * @brief Holds global variables used game-wide
+ */
+
 #pragma once
 #include "core/structs.h"
 #include <string>

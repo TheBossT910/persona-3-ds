@@ -1,3 +1,10 @@
+/**
+ * @file BattleEvents.hpp
+ * @brief Events for BattleSystem
+ * @author Nolan Kolb (TrueGiles / themoonwalker8692)
+ * @author Taha Rashid (TheBossT910 / thebosst)
+ */
+
 #pragma once
 #include "core/enums.h"
 #include <aegis/system.hpp>
@@ -6,17 +13,41 @@
 #include "./battleActions/enemies/EnemyProfileDb.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 
-/// @author Nolan Kolb (TrueGiles / themoonwalker8692)
-
 namespace Event
 {
+/**
+ * @brief Event payload to start the BattleSystem.
+ *
+ * @details Called before every new battle. At the moment we pass in actual
+ * battle participants which isn't ideal. In the future, the goal is to just pass
+ * participant profiles so the BattleSystem actually manages everything itself.
+ *
+ * Proceeding this event, the system sets music, initializes variables, and performs
+ * various cleanup. Finally, turn order is calculated with the battleStartCondition
+ * and the battle gets started.
+ */
 struct ExecuteBattle : public etl::message<EventID::ExecuteBattle>
 {
+    /// The main player character. We need to specifically know them for some things all the time.
     CharacterProfile& player;
+
+    /// All party members currently on the field.
     std::vector<CharacterProfile>& characterProfiles;
+
+    /// All enemies currently on the field.
     std::vector<EnemyProfile>& enemyProfiles;
+
+    /// Condition like player advantage, enemy advantage, or even. Used to decide turn order.
     BattleStartCondition battleStartCondition;
 
+    /**
+     * @brief Constructs the ExecuteBattle event.
+     *
+     * @param iPlayer The main player profile.
+     * @param iCharacterProfiles List of all player profiles in the party.
+     * @param iEnemyProfiles List of all enemy profiles in the encounter.
+     * @param iBattleStartCondition The advantage state for the encounter.
+     */
     ExecuteBattle(CharacterProfile& iPlayer,
                   std::vector<CharacterProfile>& iCharacterProfiles,
                   std::vector<EnemyProfile>& iEnemyProfiles,
@@ -28,11 +59,14 @@ struct ExecuteBattle : public etl::message<EventID::ExecuteBattle>
 };
 
 /**
- * @brief Holds data on how the battle concluded, possibly used in future
- * for things like game over screens, shuffeltime etc
+ * @brief Holds data on how the battle concluded.
+ *
+ * @details This event can be used in future for things like game over
+ * screens, shuffle time, etc.
 */
 struct BattleResult : public etl::message<EventID::BattleResult>
 {
+    /// A flag to check if the player died in battle
     bool playerDied = false;
 };
 } // namespace Event

@@ -1,3 +1,8 @@
+/**
+ * @file enums.h
+ * @brief Holds enums used game-wide
+ */
+
 #pragma once
 #include <aegis/system.hpp>
 
