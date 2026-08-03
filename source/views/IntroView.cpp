@@ -384,6 +384,7 @@ ViewState IntroView::update()
 
 void IntroView::cleanup()
 {
+    musicCtrl->cleanup();
     BaseView::cleanup();
 
     // clear all sprites from oam

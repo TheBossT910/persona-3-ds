@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/GraphicsController.h"
 #include "core/globals.h"
 #include "views/BaseView.h"
 #include <nds.h>

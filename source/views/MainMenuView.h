@@ -28,6 +28,7 @@ class MainMenuView : public BaseView
     int fluctuation = 50;
 
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    MusicController* musicCtrl = MusicController::getInstance();
 
   public:
     void init() override;

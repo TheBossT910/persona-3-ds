@@ -1,4 +1,6 @@
 #pragma once
+#include "controllers/GraphicsController.h"
+#include "controllers/MusicController.h"
 #include "views/BaseView.h"
 #include <maxmod9.h>
 #include <nds/arm9/console.h>
@@ -31,6 +33,7 @@ class SignContractView : public BaseView
     void cancelSFX();
 
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    MusicController* musicCtrl = MusicController::getInstance();
 
   public:
     void init() override;

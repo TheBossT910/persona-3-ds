@@ -8,9 +8,6 @@
 
 class MainMenuComponent : public BaseMenu
 {
-  protected:
-    void loadBg(int bgIndex) override;
-
   private:
     MenuOption mainMenuOptions[MAIN_MENU_OPTIONS] = {
         {"Load Game", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
