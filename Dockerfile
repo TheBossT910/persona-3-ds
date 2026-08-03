@@ -66,7 +66,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Add aigis user so we don't run as root on dev container
 # Also gives access to opt/wonderful (Wonderful Toolchain)
-RUN useradd -m aigis \
+RUN userdel -r ubuntu \
+    && useradd -m aigis \
     && chown -R aigis:aigis /opt/wonderful
 
 # Give sudo access to aigis
