@@ -110,7 +110,7 @@ BattlePhase Enemy::getInitalTurnPhase()
     return BattlePhase::EnemyTurn;
 }
 
-void Enemy::onDead(BattleResult& battleResult)
+void Enemy::onDead(Event::BattleResult& battleResult)
 {
 }
 

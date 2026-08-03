@@ -550,10 +550,7 @@ void BattleSystem::handleDeadParticipants()
 
         BattleParticipant* dead = battleParticipants.at(i);
 
-        // TODO: replace with better solution
-        BattleResult battleResultRaw;
-        battleResultRaw.playerDied = battleResult.playerDied;
-        dead->onDead(battleResultRaw);
+        dead->onDead(battleResult);
 
         if (battleResult.playerDied)
         {

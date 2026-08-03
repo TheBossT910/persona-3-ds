@@ -32,7 +32,7 @@ struct PartyMember : BattleParticipant
     float getTeamMultiplier() override;
     void setCurrentTurnOrderAgility(float boost) override;
     BattlePhase getInitalTurnPhase() override;
-    void onDead(BattleResult& battleResult) override;
+    void onDead(Event::BattleResult& battleResult) override;
     bool canParticipateInAllOutAttack();
     virtual bool actorCanUse(ActionBase* action);
 

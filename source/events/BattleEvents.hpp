@@ -6,6 +6,8 @@
 #include "./battleActions/enemies/EnemyProfileDb.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 
+/// @author Nolan Kolb (TrueGiles / themoonwalker8692)
+
 namespace Event
 {
 struct ExecuteBattle : public etl::message<EventID::ExecuteBattle>
@@ -25,7 +27,10 @@ struct ExecuteBattle : public etl::message<EventID::ExecuteBattle>
     }
 };
 
-// TODO: deprecate /project/source/battleActions/BattleResult.h in favour of this Event version
+/**
+ * @brief Holds data on how the battle concluded, possibly used in future
+ * for things like game over screens, shuffeltime etc
+*/
 struct BattleResult : public etl::message<EventID::BattleResult>
 {
     bool playerDied = false;
