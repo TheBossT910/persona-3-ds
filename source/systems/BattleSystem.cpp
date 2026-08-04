@@ -57,10 +57,6 @@ void BattleSystem::on_receive(const Event::SetTextVideoBufferSub& msg)
     textVideoBufferSub = msg.textVideoBufferSub;
 }
 
-void BattleSystem::on_receive_unknown(const etl::imessage&)
-{
-}
-
 bool BattleSystem::IsActive()
 {
     return isActive;
