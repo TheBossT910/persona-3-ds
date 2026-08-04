@@ -27,6 +27,6 @@ struct CharacterProfile : ProfileBase
     WeaponType weaponType;
     Weapon weapon;
 
-    etl::vector<PersonaBase*, 10> personas;
+    etl::vector<PersonaBase*, 13> personas;
     PersonaBase* curPersona;
 };
