@@ -98,7 +98,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
     optionCount = count;
 }
 
-void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas)
+void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 10>* personas)
 {
     textCtrl->clearScreen(textVideoBufferSub);
     if (loadedOption == BattleMenuOptions::PERSONA)
@@ -119,7 +119,7 @@ void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas
     optionCount = count;
 }
 
-void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* targets, bool healTarget)
+void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>* targets, bool healTarget)
 {
     textCtrl->clearScreen(textVideoBufferSub);
     BattleMenuOptions targetLoadedOption =

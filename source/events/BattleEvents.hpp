@@ -8,6 +8,7 @@
 #pragma once
 #include "core/enums.h"
 #include <aegis/system.hpp>
+#include <etl/vector.h>
 
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/EnemyProfileDb.h"
@@ -31,10 +32,10 @@ struct ExecuteBattle : public etl::message<EventID::ExecuteBattle>
     CharacterProfile& player;
 
     /// All party members currently on the field.
-    std::vector<CharacterProfile>& characterProfiles;
+    etl::vector<CharacterProfile, 4>& characterProfiles;
 
     /// All enemies currently on the field.
-    std::vector<EnemyProfile>& enemyProfiles;
+    etl::vector<EnemyProfile, 8>& enemyProfiles;
 
     /// Condition like player advantage, enemy advantage, or even. Used to decide turn order.
     BattleStartCondition battleStartCondition;
@@ -48,8 +49,8 @@ struct ExecuteBattle : public etl::message<EventID::ExecuteBattle>
      * @param iBattleStartCondition The advantage state for the encounter.
      */
     ExecuteBattle(CharacterProfile& iPlayer,
-                  std::vector<CharacterProfile>& iCharacterProfiles,
-                  std::vector<EnemyProfile>& iEnemyProfiles,
+                  etl::vector<CharacterProfile, 4>& iCharacterProfiles,
+                  etl::vector<EnemyProfile, 8>& iEnemyProfiles,
                   BattleStartCondition iBattleStartCondition)
         : player(iPlayer), characterProfiles(iCharacterProfiles), enemyProfiles(iEnemyProfiles),
           battleStartCondition(iBattleStartCondition)

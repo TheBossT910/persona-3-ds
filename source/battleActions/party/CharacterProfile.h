@@ -5,8 +5,8 @@
 #include "../shoes/Shoe.h"
 #include "../skills/Skill.h"
 #include "../weapons/Weapon.h"
+#include <etl/vector.h>
 #include <nds.h>
-#include <vector>
 
 /**
  * @brief Holds character data which a battleParticipant is created from
@@ -27,6 +27,6 @@ struct CharacterProfile : ProfileBase
     WeaponType weaponType;
     Weapon weapon;
 
-    std::vector<PersonaBase*> personas;
+    etl::vector<PersonaBase*, 10> personas;
     PersonaBase* curPersona;
 };

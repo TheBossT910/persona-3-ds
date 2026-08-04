@@ -30,7 +30,7 @@ Skill* Enemy::pickSkill()
     return (roll == 0) ? baseAttackAction : skill[roll - 1];
 }
 
-BattleParticipant* Enemy::pickTarget(std::vector<BattleParticipant*>& partyMembers)
+BattleParticipant* Enemy::pickTarget(etl::vector<BattleParticipant*, 13>& partyMembers)
 {
     BattleParticipant* target = nullptr;
     do

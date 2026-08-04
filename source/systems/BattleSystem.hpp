@@ -17,9 +17,9 @@
 
 #include <algorithm>
 #include <array>
+#include <etl/vector.h>
 #include <nds.h>
 #include <string>
-#include <vector>
 
 #include "./battleActions/actions/AttackAction.h"
 #include "./battleActions/actions/Guard.h"
@@ -43,16 +43,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     void Init() override;
 
     void Shutdown() override;
-
-    /**
-     * @brief Computes and controls the battle logic and flow
-     *
-     * @details There is a phase switch which decides which menu point you are currently on
-     * or stuff like enemy turn.
-     * We have a system to build alerts (with a pendingAlert string) to then display these
-     * in the ShowAlert phase after each action.
-     * battleMenuCmpt is used to show the diffrent menu option in console.
-     */
 
     /**
      * @brief Core update loop that processes the battle state machine and turn resolution.
@@ -154,9 +144,9 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     bool allOutAttackWasPossibleThisKnockDown = false;
 
     // Current battle data
-    std::vector<BattleParticipant*> battleParticipants;
-    std::vector<Enemy*> enemies;
-    std::vector<PartyMember*> partyMembers;
+    etl::vector<BattleParticipant*, 13> battleParticipants;
+    etl::vector<Enemy*, 8> enemies;
+    etl::vector<PartyMember*, 4> partyMembers;
     Player* player = nullptr;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
@@ -233,7 +223,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      *
      * @return A vector containing pointers to all enemies currently above 0 HP.
      */
-    std::vector<BattleParticipant*> getAliveEnemies();
+    etl::vector<BattleParticipant*, 13> getAliveEnemies();
 
     /**
      * @brief Evaluates if an All-Out Attack condition is met.

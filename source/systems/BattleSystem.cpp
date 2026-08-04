@@ -206,7 +206,7 @@ void BattleSystem::Update(ae::fixed_t)
         bool healTarget = selectedSkill && (selectedSkill->skillType == SkillType::Heal ||
                                             selectedSkill->skillType == SkillType::MultiHeal);
 
-        std::vector<BattleParticipant*> targets;
+        etl::vector<BattleParticipant*, 13> targets;
         if (healTarget)
         {
             for (PartyMember* partyMember : partyMembers)
@@ -289,7 +289,7 @@ void BattleSystem::Update(ae::fixed_t)
             //if yes
             if (menuIndex == 0)
             {
-                std::vector<BattleParticipant*> aliveEnemies = getAliveEnemies();
+                etl::vector<BattleParticipant*, 13> aliveEnemies = getAliveEnemies();
 
                 uint8_t participantCount = 0;
                 for (PartyMember* partyMember : partyMembers)
@@ -337,7 +337,7 @@ void BattleSystem::Update(ae::fixed_t)
     {
         Enemy* enemy = static_cast<Enemy*>(currentParticipantTurn);
         Skill* skill = enemy->pickSkill();
-        std::vector<BattleParticipant*> targets;
+        etl::vector<BattleParticipant*, 13> targets;
         //TODO: branch in future if using healing / buff
         for (PartyMember* partyMember : partyMembers)
         {
@@ -579,9 +579,9 @@ void BattleSystem::handleDeadParticipants()
     }
 }
 
-std::vector<BattleParticipant*> BattleSystem::getAliveEnemies()
+etl::vector<BattleParticipant*, 13> BattleSystem::getAliveEnemies()
 {
-    std::vector<BattleParticipant*> alive;
+    etl::vector<BattleParticipant*, 13> alive;
     for (BattleParticipant* enemy : enemies)
     {
         if (enemy->hp > 0)
