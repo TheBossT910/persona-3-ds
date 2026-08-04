@@ -247,7 +247,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      *
      * @param type The enumerated type classification of the skill.
      * @return true if the skill is a single-target action (e.g., Attack, single Heal/Buff),
-     *         false if it is multi-target or area-of-effect.
+     *         false if it is multi-target.
      */
     bool isSingleTarget(SkillType type);
 
