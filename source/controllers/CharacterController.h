@@ -6,6 +6,7 @@
 #include "core/geometry.h"
 #include "core/globals.h"
 #include "core/structs.h"
+#include "managers/MathManager.hpp"
 #include "systems/CameraSystem.hpp"
 
 // models
@@ -65,6 +66,8 @@ class CharacterController
     TileType isTileAt();
 
   private:
+    MathManager& math = MathManager::GetInstance();
+
     TileType isTileAt(int tileX, int TileY);
     bool isTileWalkable(float worldX, float worldZ);
 

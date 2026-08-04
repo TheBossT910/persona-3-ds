@@ -77,10 +77,10 @@ void CharacterController::update(u32 keys)
 
     float angleRad;
 
-    forwardX = -sin(cameraAngle) * speed;
-    forwardZ = cos(cameraAngle) * speed;
-    rightX = cos(cameraAngle) * speed;
-    rightZ = sin(cameraAngle) * speed;
+    forwardX = -math.sin(cameraAngle) * speed;
+    forwardZ = math.cos(cameraAngle) * speed;
+    rightX = math.cos(cameraAngle) * speed;
+    rightZ = math.sin(cameraAngle) * speed;
 
     if (keys & KEY_UP)
     {
