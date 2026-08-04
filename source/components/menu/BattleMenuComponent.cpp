@@ -98,7 +98,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
     optionCount = count;
 }
 
-void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 10>* personas)
+void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* personas)
 {
     textCtrl->clearScreen(textVideoBufferSub);
     if (loadedOption == BattleMenuOptions::PERSONA)

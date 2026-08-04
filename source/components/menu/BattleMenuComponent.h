@@ -36,7 +36,7 @@ class BattleMenuComponent : public BaseMenu
     // option loaders
     void loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name);
     void loadSkillOptions(PersonaBase* persona);
-    void loadPersonaOptions(etl::vector<PersonaBase*, 10>* personas);
+    void loadPersonaOptions(etl::vector<PersonaBase*, 13>* personas);
     void loadTargetOptions(etl::vector<BattleParticipant*, 13>* targets, bool healTarget);
     void loadAllOutAttackConfirmation();
     void loadAlertOptions(const std::string& text);

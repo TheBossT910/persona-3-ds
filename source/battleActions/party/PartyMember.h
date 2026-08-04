@@ -13,7 +13,7 @@
 struct PartyMember : BattleParticipant
 {
     ArmourType armourType;
-    etl::vector<PersonaBase*, 10> personas;
+    etl::vector<PersonaBase*, 13> personas;
     PersonaBase* curPersona;
     WeaponType weaponType;
     Weapon weapon;
