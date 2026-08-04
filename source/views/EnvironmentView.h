@@ -14,11 +14,12 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/AnimationController.h"
-#include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
 #include "controllers/UIController.h"
+
+#include "systems/CameraSystem.hpp"
 
 class EnvironmentView : public BaseView
 {
@@ -87,7 +88,7 @@ class EnvironmentView : public BaseView
     {
     }
 
-    virtual void configureCameraController()
+    virtual void setCameraConfig()
     {
     }
 
@@ -119,13 +120,11 @@ class EnvironmentView : public BaseView
 
     CharacterController* playerCtrl = nullptr;
 
-    CameraController cameraCtrl;
-
-    CameraPosition camPos;
+    Event::CameraPosition camPos;
     const float tileSize = 0.062500f;
 
-    // Override fields in configureCameraController() — same struct for all modes
-    CameraConfig camConfig;
+    // Override fields in setCameraConfig() — same struct for all modes
+    Event::ConfigureCamera camConfig;
 
     // -------------------------------------------------
     // Controllers

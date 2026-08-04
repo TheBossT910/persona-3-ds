@@ -340,6 +340,30 @@ enum : etl::message_id_t
 {
     ExecuteBattle = 0,
     BattleResult,
-    SetTextVideoBufferSub
+    SetTextVideoBufferSub,
+    CameraPosition,
+    ConfigureCamera,
+    SetCameraMode,
+    SetCameraPath,
+    SetCharacterPosition
 };
 } // namespace EventID
+
+/**
+ * @brief Controls how the camera behaves each frame.
+ *
+ * - Free   : first-person fly cam, d-pad moves, L/R rotates.
+ * - Static : fixed eye and target, ignores all input.
+ * - CCTV   : fixed eye position, target tracks the character.
+ * - Follow : orbits behind the character, L/R adjusts orbit angle.
+ * - Path   : plays back a @ref CameraPath keyframe sequence, then
+ *            automatically returns to Follow when complete.
+ */
+enum class CameraMode
+{
+    Free,
+    Static,
+    CCTV,
+    Follow,
+    Path
+};

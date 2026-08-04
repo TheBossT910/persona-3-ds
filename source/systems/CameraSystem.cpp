@@ -1,4 +1,8 @@
-#include "CameraController.h"
+#include "CameraSystem.hpp"
+#include "core/globals.h"
+
+// TODO: move into MathManager
+// ---
 #include <math.h>
 #include <nds/arm9/trig_lut.h>
 
@@ -12,9 +16,11 @@ static inline float hw_cosf(float r)
 {
     return cosLerp((s16)(r * RAD_TO_LIBNDS)) / 4096.0f;
 }
+// ---
 
-void CameraController::configure(const CameraConfig& config)
+void CameraSystem::on_receive(const Event::ConfigureCamera& config)
 {
+    isActive = true;
     mode = config.mode;
     currentPos = config.eye;
     targetPos = config.target;
@@ -25,30 +31,39 @@ void CameraController::configure(const CameraConfig& config)
     angleIncrement = config.angleIncrement;
 }
 
-void CameraController::setMode(CameraMode newMode)
+void CameraSystem::on_receive(const Event::SetCameraMode& msg)
 {
-    mode = newMode;
-    if (newMode == CameraMode::Path)
+    mode = msg.mode;
+    if (msg.mode == CameraMode::Path)
     {
         pathFrame = 0;
         pathKeyIndex = 0;
         pathDone = false;
     }
-    if (newMode == CameraMode::Free)
+    if (msg.mode == CameraMode::Free)
     {
         freeInitialised = false;
     }
 }
 
-void CameraController::setPath(const CameraPath* p)
+void CameraSystem::on_receive(const Event::SetCameraPath& msg)
 {
-    path = p;
+    path = msg.path;
     pathFrame = 0;
     pathKeyIndex = 0;
     pathDone = false;
 }
 
-float CameraController::getMovementAngle(const CharacterPosition& charPos) const
+void CameraSystem::on_receive(const Event::SetCharacterPosition& msg)
+{
+    charPos = msg.charPos;
+}
+
+void CameraSystem::on_receive_unknown(const etl::imessage&)
+{
+}
+
+float CameraSystem::getMovementAngle() const
 {
     switch (mode)
     {
@@ -60,49 +75,58 @@ float CameraController::getMovementAngle(const CharacterPosition& charPos) const
     }
 }
 
-CameraPosition CameraController::update(u32 keys, const CharacterPosition& charPos)
+void CameraSystem::Init()
 {
-    CameraPosition cam = {};
-    cam.up.y = 1.0f;
+    isActive = false;
+}
+
+void CameraSystem::Shutdown()
+{
+    isActive = false;
+}
+
+void CameraSystem::Update(ae::fixed_t)
+{
+    camPos.up.y = 1.0f;
 
     switch (mode)
     {
     case CameraMode::Static:
     {
-        cam.eye.x = currentPos.x;
-        cam.eye.y = currentPos.y;
-        cam.eye.z = currentPos.z;
-        cam.target.x = targetPos.x;
-        cam.target.y = targetPos.y;
-        cam.target.z = targetPos.z;
+        camPos.eye.x = currentPos.x;
+        camPos.eye.y = currentPos.y;
+        camPos.eye.z = currentPos.z;
+        camPos.target.x = targetPos.x;
+        camPos.target.y = targetPos.y;
+        camPos.target.z = targetPos.z;
         break;
     }
 
     case CameraMode::CCTV:
     {
-        cam.eye.x = currentPos.x;
-        cam.eye.y = currentPos.y;
-        cam.eye.z = currentPos.z;
-        cam.target.x = charPos.x;
-        cam.target.y = charPos.y;
-        cam.target.z = charPos.z;
+        camPos.eye.x = currentPos.x;
+        camPos.eye.y = currentPos.y;
+        camPos.eye.z = currentPos.z;
+        camPos.target.x = charPos.x;
+        camPos.target.y = charPos.y;
+        camPos.target.z = charPos.z;
         break;
     }
 
     case CameraMode::Follow:
     {
-        if (keys & KEY_L)
+        if (systemKeysHeld & KEY_L)
             angle -= angleIncrement;
-        if (keys & KEY_R)
+        if (systemKeysHeld & KEY_R)
             angle += angleIncrement;
 
-        cam.eye.x = charPos.x + hw_sinf(angle) * distance;
-        cam.eye.y = charPos.y + height;
-        cam.eye.z = charPos.z - hw_cosf(angle) * distance;
+        camPos.eye.x = charPos.x + hw_sinf(angle) * distance;
+        camPos.eye.y = charPos.y + height;
+        camPos.eye.z = charPos.z - hw_cosf(angle) * distance;
 
-        cam.target.x = charPos.x - hw_sinf(angle) * lookAhead;
-        cam.target.y = charPos.y + 0.1f;
-        cam.target.z = charPos.z + hw_cosf(angle) * lookAhead;
+        camPos.target.x = charPos.x - hw_sinf(angle) * lookAhead;
+        camPos.target.y = charPos.y + 0.1f;
+        camPos.target.z = charPos.z + hw_cosf(angle) * lookAhead;
         break;
     }
 
@@ -116,41 +140,41 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
             freeInitialised = true;
         }
 
-        if (keys & KEY_L)
+        if (systemKeysHeld & KEY_L)
             angle -= angleIncrement;
-        if (keys & KEY_R)
+        if (systemKeysHeld & KEY_R)
             angle += angleIncrement;
 
         const float fwdX = -hw_sinf(angle) * freeCameraSpeed;
         const float fwdZ = hw_cosf(angle) * freeCameraSpeed;
 
-        if (keys & KEY_UP)
+        if (systemKeysHeld & KEY_UP)
         {
             currentPos.x += fwdX;
             currentPos.z += fwdZ;
         }
-        if (keys & KEY_DOWN)
+        if (systemKeysHeld & KEY_DOWN)
         {
             currentPos.x -= fwdX;
             currentPos.z -= fwdZ;
         }
-        if (keys & KEY_RIGHT)
+        if (systemKeysHeld & KEY_RIGHT)
         {
             currentPos.x -= fwdZ;
             currentPos.z += fwdX;
         }
-        if (keys & KEY_LEFT)
+        if (systemKeysHeld & KEY_LEFT)
         {
             currentPos.x += fwdZ;
             currentPos.z -= fwdX;
         }
 
-        cam.eye.x = currentPos.x;
-        cam.eye.y = currentPos.y;
-        cam.eye.z = currentPos.z;
-        cam.target.x = currentPos.x - hw_sinf(angle);
-        cam.target.y = currentPos.y;
-        cam.target.z = currentPos.z + hw_cosf(angle);
+        camPos.eye.x = currentPos.x;
+        camPos.eye.y = currentPos.y;
+        camPos.eye.z = currentPos.z;
+        camPos.target.x = currentPos.x - hw_sinf(angle);
+        camPos.target.y = currentPos.y;
+        camPos.target.z = currentPos.z + hw_cosf(angle);
         break;
     }
 
@@ -174,24 +198,24 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
         {
             pathDone = true;
             mode = CameraMode::Follow;
-            cam.eye.x = kf1.eye.x;
-            cam.eye.y = kf1.eye.y;
-            cam.eye.z = kf1.eye.z;
-            cam.target.x = kf1.target.x;
-            cam.target.y = kf1.target.y;
-            cam.target.z = kf1.target.z;
+            camPos.eye.x = kf1.eye.x;
+            camPos.eye.y = kf1.eye.y;
+            camPos.eye.z = kf1.eye.z;
+            camPos.target.x = kf1.target.x;
+            camPos.target.y = kf1.target.y;
+            camPos.target.z = kf1.target.z;
             break;
         }
 
         int span = kf1.time - kf0.time;
         float t = (span > 0) ? static_cast<float>(pathFrame - kf0.time) / static_cast<float>(span) : 1.0f;
 
-        cam.eye.x = kf0.eye.x + (kf1.eye.x - kf0.eye.x) * t;
-        cam.eye.y = kf0.eye.y + (kf1.eye.y - kf0.eye.y) * t;
-        cam.eye.z = kf0.eye.z + (kf1.eye.z - kf0.eye.z) * t;
-        cam.target.x = kf0.target.x + (kf1.target.x - kf0.target.x) * t;
-        cam.target.y = kf0.target.y + (kf1.target.y - kf0.target.y) * t;
-        cam.target.z = kf0.target.z + (kf1.target.z - kf0.target.z) * t;
+        camPos.eye.x = kf0.eye.x + (kf1.eye.x - kf0.eye.x) * t;
+        camPos.eye.y = kf0.eye.y + (kf1.eye.y - kf0.eye.y) * t;
+        camPos.eye.z = kf0.eye.z + (kf1.eye.z - kf0.eye.z) * t;
+        camPos.target.x = kf0.target.x + (kf1.target.x - kf0.target.x) * t;
+        camPos.target.y = kf0.target.y + (kf1.target.y - kf0.target.y) * t;
+        camPos.target.z = kf0.target.z + (kf1.target.z - kf0.target.z) * t;
         break;
     }
 
@@ -199,5 +223,5 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
         break;
     }
 
-    return cam;
+    ae::BroadcastEvent(camPos);
 }

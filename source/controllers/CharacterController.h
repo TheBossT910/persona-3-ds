@@ -2,11 +2,11 @@
 #include <stdint.h>
 
 #include "controllers/AnimationController.h"
-#include "controllers/CameraController.h"
 #include "core/enums.h"
 #include "core/geometry.h"
 #include "core/globals.h"
 #include "core/structs.h"
+#include "systems/CameraSystem.hpp"
 
 // models
 #include "models/kotone.h"
@@ -60,7 +60,7 @@ class CharacterController
         characterFacingAngle = iCharacterFacingAngle;
     };
 
-    void update(u32 keys, CameraController* camera);
+    void update(u32 keys);
     CharacterPosition isCharacterAt();
     TileType isTileAt();
 

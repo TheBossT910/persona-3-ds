@@ -6,7 +6,7 @@ IwatodaiDormView::IwatodaiDormView()
 }
 
 // Test path
-static const CameraPath dormTestPath = {{
+static CameraPath dormTestPath = {{
     {120, {-0.40f, 0.60f, 2.82f}, {0.4f, 0.1f, 2.80f}},
     {0, {-0.40f, 0.60f, 2.82f}, {0.4f, 0.1f, 2.80f}},
     {60, {0.40f, 0.80f, 1.80f}, {0.4f, 0.1f, 2.80f}},
@@ -15,7 +15,7 @@ static const CameraPath dormTestPath = {{
     {240, {-0.40f, 0.60f, 2.82f}, {0.4f, 0.1f, 2.80f}},
 }};
 
-void IwatodaiDormView::configureCameraController()
+void IwatodaiDormView::setCameraConfig()
 {
     camConfig.mode = CameraMode::Path;
     camConfig.initialAngle = -1.6f;
@@ -23,7 +23,7 @@ void IwatodaiDormView::configureCameraController()
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
     camConfig.angleIncrement = 0.07f;
-    cameraCtrl.setPath(&dormTestPath);
+    ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
 void IwatodaiDormView::setMusic()

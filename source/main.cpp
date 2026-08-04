@@ -45,6 +45,7 @@
 
 // aegis engine
 #include "systems/BattleSystem.hpp"
+#include "systems/CameraSystem.hpp"
 #include <aegis/engine.hpp>
 
 // variables
@@ -230,6 +231,7 @@ int main(int argc, char* argv[])
 
     // register singletons
     engine.RegisterSystem(&BattleSystem::GetInstance());
+    engine.RegisterSystem(&CameraSystem::GetInstance());
 
     // initialize engine
     engine.InitAll();
