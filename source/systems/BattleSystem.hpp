@@ -105,13 +105,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     {
     }
 
-    /**
-     * @brief Checks if an encounter is currently in progress.
-     *
-     * @return true if the BattleSystem is actively running a battle, false otherwise.
-     */
-    bool IsActive();
-
   private:
     friend class Singleton<BattleSystem>;
     BattleSystem() : SystemRouter(kBattleSystemRouterID)
