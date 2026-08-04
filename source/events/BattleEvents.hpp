@@ -18,9 +18,8 @@ namespace Event
 /**
  * @brief Event payload to start the BattleSystem.
  *
- * @details Called before every new battle. At the moment we pass in actual
- * battle participants which isn't ideal. In the future, the goal is to just pass
- * participant profiles so the BattleSystem actually manages everything itself.
+ * @details Called before every new battle. Takes in profiles of BattleParticipants
+ * so the battle can create and manage participants itself.
  *
  * Proceeding this event, the system sets music, initializes variables, and performs
  * various cleanup. Finally, turn order is calculated with the battleStartCondition
