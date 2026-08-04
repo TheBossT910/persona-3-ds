@@ -96,12 +96,10 @@ void SignContractView::init()
 
 ViewState SignContractView::update()
 {
-    scanKeys();
     int key = keyboardUpdate();
-    int pressed = keysDown();
 
     // Bksp (8) or "B"
-    if ((key == 8) || (pressed & KEY_B))
+    if ((key == 8) || (systemKeysDown & KEY_B))
     {
         key = 8;
         cancelSFX();
@@ -153,7 +151,7 @@ ViewState SignContractView::update()
         }
     }
     // Return (10) or "A"
-    else if ((key == 10) || (pressed & KEY_A))
+    else if ((key == 10) || (systemKeysDown & KEY_A))
     {
         key = 10;
         cancelSFX();

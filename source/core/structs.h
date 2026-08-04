@@ -1,3 +1,8 @@
+/**
+ * @file structs.h
+ * @brief Holds structs used game-wide
+ */
+
 #pragma once
 #include "core/enums.h"
 #include "core/geometry.h"

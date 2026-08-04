@@ -7,12 +7,13 @@
 #include "../shoes/Shoe.h"
 #include "../weapons/Weapon.h"
 #include "CharacterProfile.h"
+#include <etl/vector.h>
 #include <nds.h>
 
 struct PartyMember : BattleParticipant
 {
     ArmourType armourType;
-    std::vector<PersonaBase*> personas;
+    etl::vector<PersonaBase*, 13> personas;
     PersonaBase* curPersona;
     WeaponType weaponType;
     Weapon weapon;
@@ -32,7 +33,7 @@ struct PartyMember : BattleParticipant
     float getTeamMultiplier() override;
     void setCurrentTurnOrderAgility(float boost) override;
     BattlePhase getInitalTurnPhase() override;
-    void onDead(BattleResult& battleResult) override;
+    void onDead(Event::BattleResult& battleResult) override;
     bool canParticipateInAllOutAttack();
     virtual bool actorCanUse(ActionBase* action);
 

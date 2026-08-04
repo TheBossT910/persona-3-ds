@@ -7,6 +7,8 @@
 #include "models/kotone.h"
 #include "models/makoto.h"
 
+#include "systems/BattleSystem.hpp"
+
 namespace
 {
 /**
@@ -257,11 +259,6 @@ ViewState EnvironmentView::update()
     bgUpdate();
     oamUpdate(&oamSub);
 
-    scanKeys();
-
-    u32 keys = keysHeld();
-    u32 pressed = keysDown();
-
     switch (phase)
     {
     case ViewPhase::Battle:
@@ -275,9 +272,7 @@ ViewState EnvironmentView::update()
             prevBattleState = true;
         }
 
-        battleController->update(pressed);
-
-        if (!battleController->isActive() && prevBattleState)
+        if (!BattleSystem::GetInstance().IsActive() && prevBattleState)
         {
             prevBattleState = false;
 
@@ -301,7 +296,7 @@ ViewState EnvironmentView::update()
             prevPauseState = true;
         }
 
-        ViewState menuResult = pauseMenuCmpt->update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(systemKeysDown);
 
         if (menuResult != ViewState::KEEP_CURRENT)
         {
@@ -309,7 +304,7 @@ ViewState EnvironmentView::update()
             return menuResult;
         }
 
-        if (pressed & KEY_START)
+        if (systemKeysDown & KEY_START)
         {
             textCtrl->clearScreen(textVideoBufferSub);
             prevPauseState = false;
@@ -342,7 +337,7 @@ ViewState EnvironmentView::update()
             phase = ViewPhase::Environment;
         }
 
-        dialogueCtrl.update(keys);
+        dialogueCtrl.update(systemKeysHeld);
 
         break;
     }
@@ -355,11 +350,11 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
         }
 
-        playerCtrl->update(keys, &cameraCtrl);
+        playerCtrl->update(systemKeysHeld, &cameraCtrl);
         CharacterPosition charPos = playerCtrl->isCharacterAt();
-        camPos = cameraCtrl.update(keys, charPos);
+        camPos = cameraCtrl.update(systemKeysHeld, charPos);
 
-        if (pressed & KEY_START)
+        if (systemKeysDown & KEY_START)
         {
             textCtrl->clearScreen(textVideoBufferSub);
             prevEnvironmentState = false;
@@ -367,7 +362,7 @@ ViewState EnvironmentView::update()
             break;
         }
 
-        if (pressed & KEY_TOUCH)
+        if (systemKeysDown & KEY_TOUCH)
         {
             touchRead(&touch);
 
@@ -379,7 +374,7 @@ ViewState EnvironmentView::update()
             }
         }
 
-        ViewState tileResult = onTileCheck(playerCtrl->isTileAt(), pressed);
+        ViewState tileResult = onTileCheck(playerCtrl->isTileAt(), systemKeysDown);
 
         if (tileResult != ViewState::KEEP_CURRENT)
         {

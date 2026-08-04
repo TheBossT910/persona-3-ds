@@ -123,14 +123,12 @@ void MainMenuView::init()
 
 ViewState MainMenuView::update()
 {
-    scanKeys();
-    int pressed = keysDown();
     musicCtrl->update();
 
     if (isSilhouetteStillMoving)
     {
         // skip the animation if the user skipped it
-        if (pressed != 0)
+        if (systemKeysDown != 0)
         {
             silhouetteX = 0;
             silhouetteY = 0;
@@ -164,7 +162,7 @@ ViewState MainMenuView::update()
     }
 
     // update mainComponent AFTER checking if the sillouhete is still moving
-    ViewState result = mainMenuCmpt.update(pressed);
+    ViewState result = mainMenuCmpt.update(systemKeysDown);
     if (result != ViewState::KEEP_CURRENT)
     {
         musicCtrl->pause();

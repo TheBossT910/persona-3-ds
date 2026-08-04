@@ -43,12 +43,14 @@
 #include "battleActions/skills/SkillDb.h"
 #include "battleActions/weapons/WeaponDb.h"
 
-// debug
-#include "tests/engine/ndsExample.hpp"
-bool testEngine = false;
+// aegis engine
+#include "systems/BattleSystem.hpp"
+#include <aegis/engine.hpp>
 
 // variables
 volatile int frame = 0;
+volatile u32 systemKeysDown = 0;
+volatile u32 systemKeysHeld = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
@@ -95,7 +97,7 @@ void SwitchView(BaseView* newView)
 // fn for the interrupt
 void Vblank()
 {
-    frame++;
+    frame = frame + 1;
 }
 
 void loadModels(bool isFemc)
@@ -124,18 +126,36 @@ void loadModels(bool isFemc)
     }
 }
 
+// aegis engine
+namespace GameEngineConfig
+{
+using LargestMessage = etl::largest_type<Event::BattleResult, Event::ExecuteBattle, Event::SetTextVideoBufferSub>;
+constexpr std::size_t kLargestComponentSize = sizeof(LargestMessage);
+constexpr std::size_t kLargestComponentAlign = alignof(LargestMessage);
+} // namespace GameEngineConfig
+
+using GameEngine = ae::Engine<GameEngineConfig::kLargestComponentSize, GameEngineConfig::kLargestComponentAlign>;
+
+// TODO: add javadoc
+void NDSPollInputCallback()
+{
+    scanKeys();
+    systemKeysDown = keysDown();
+    systemKeysHeld = keysHeld();
+}
+
+// TODO: add javadoc
+void NDSComputeCallback()
+{
+    //...
+}
+
 int main(int argc, char* argv[])
 {
     irqSet(IRQ_VBLANK, Vblank);
+    static GameEngine engine;
 
-    if (testEngine)
-    {
-        ndsExampleTest();
-        while (1)
-            swiWaitForVBlank();
-    }
-
-    // Initialize DLDI/FAT instead
+    // initialize DLDI/FAT
     if (!fatInitDefault())
     {
         consoleDemoInit();
@@ -177,6 +197,7 @@ int main(int argc, char* argv[])
         }
     }
 
+    // set FEMC mode
     prevFemcMode = saveData.femcMode;
 
     // setup character model
@@ -190,7 +211,8 @@ int main(int argc, char* argv[])
     PersonaDb::Initialize();
     EnemyProfileDb::Initialize();
     CharacterProfileDb::Initialize();
-    //Setup globals
+
+    // setup globals
     Globals::enableDebugPrint = false;
     Globals::enableBillboards = true;
     Globals::enableCharacterAnim = true;
@@ -200,12 +222,31 @@ int main(int argc, char* argv[])
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
     srand(TIMER0_DATA);
 
-    // start with DisclaimerView
+    // set platform hooks
+    engine.SetComputeCallback(&NDSComputeCallback);
+    engine.SetComputeEnabled(true);
+    engine.SetPollInputCallback(&NDSPollInputCallback);
+    engine.SetPollingEnabled(true);
+
+    // register singletons
+    engine.RegisterSystem(&BattleSystem::GetInstance());
+
+    // initialize engine
+    engine.InitAll();
+
+    // set up initial game state
+    // Default is DisclaimerView
     SwitchView(new DisclaimerView());
+
+    // TODO: set to constant tied to VBlank
+    const ae::fixed_t dt = ae::fixed_t(1) / 60;
 
     while (1)
     {
         swiWaitForVBlank();
+
+        // Poll Input -> Update Systems -> Update Components -> Process Managers -> Compute
+        engine.Tick(dt);
 
         if (saveData.femcMode != prevFemcMode)
         {
@@ -271,6 +312,8 @@ int main(int argc, char* argv[])
         bgUpdate();
         oamUpdate(&oamMain);
     }
+
+    engine.ShutdownAll();
 
     return 0;
 }

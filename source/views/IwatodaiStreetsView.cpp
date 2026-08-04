@@ -1,4 +1,6 @@
 #include "IwatodaiStreetsView.h"
+#include "events/BattleEvents.hpp"
+#include "events/GenericEvents.hpp"
 
 IwatodaiStreetsView::IwatodaiStreetsView()
 {
@@ -18,8 +20,14 @@ IwatodaiStreetsView::~IwatodaiStreetsView()
 
 void IwatodaiStreetsView::startBattle()
 {
-    battleController->textVideoBufferSub = textVideoBufferSub;
-    battleController->execute(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
+    // set the sub text video buffer
+    Event::SetTextVideoBufferSub vbMsg;
+    vbMsg.textVideoBufferSub = textVideoBufferSub;
+    ae::BroadcastEvent(vbMsg);
+
+    // start battle
+    Event::ExecuteBattle msg(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
+    ae::BroadcastEvent(msg);
 }
 
 // ----------------------------

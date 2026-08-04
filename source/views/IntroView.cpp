@@ -199,11 +199,9 @@ void IntroView::init()
 ViewState IntroView::update()
 {
     musicCtrl->update();
-    scanKeys();
-    int pressed = keysDown();
 
     // transition to menu state on any input
-    if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
+    if ((systemKeysDown & KEY_A) || (systemKeysDown & KEY_START) || (systemKeysDown & KEY_TOUCH))
     {
         musicCtrl->playSFX(SFX_SELECT, 255, 128);
         musicCtrl->pause();
@@ -221,7 +219,7 @@ ViewState IntroView::update()
         }
         return ViewState::MAIN_MENU;
     }
-    else if (pressed & KEY_B)
+    else if (systemKeysDown & KEY_B)
     {
         musicCtrl->playSFX(SFX_CANCEL, 255, 128);
         musicCtrl->pause();

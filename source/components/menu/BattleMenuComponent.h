@@ -4,6 +4,7 @@
 #include "battleActions/personas/PersonaBase.h"
 #include "components/menu/BaseMenu.h"
 #include "components/menu/BattleMenuComponent.h"
+#include <etl/vector.h>
 
 class BattleMenuComponent : public BaseMenu
 {
@@ -14,7 +15,7 @@ class BattleMenuComponent : public BaseMenu
 
     BattleMenuOptions loadedOption = BattleMenuOptions::NONE;
 
-    std::vector<MenuOption> battleOptions;
+    etl::vector<MenuOption, 10> battleOptions;
     int alertStartFrame = 0;
     bool messagePrinted = false;
 
@@ -35,8 +36,8 @@ class BattleMenuComponent : public BaseMenu
     // option loaders
     void loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name);
     void loadSkillOptions(PersonaBase* persona);
-    void loadPersonaOptions(std::vector<PersonaBase*>* personas);
-    void loadTargetOptions(std::vector<BattleParticipant*>* targets, bool healTarget);
+    void loadPersonaOptions(etl::vector<PersonaBase*, 13>* personas);
+    void loadTargetOptions(etl::vector<BattleParticipant*, 13>* targets, bool healTarget);
     void loadAllOutAttackConfirmation();
     void loadAlertOptions(const std::string& text);
     bool isAlertExpired(int durationFrames) const;

@@ -15,7 +15,7 @@
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"
 
-#include <vector>
+#include <etl/vector.h>
 
 class IwatodaiStreetsView : public EnvironmentView
 {
@@ -54,8 +54,8 @@ class IwatodaiStreetsView : public EnvironmentView
     const float characterFacingAngle = 0.0f;
 
     // battle
-    std::vector<CharacterProfile> characterProfiles;
-    std::vector<EnemyProfile> enemyProfiles;
+    etl::vector<CharacterProfile, 4> characterProfiles;
+    etl::vector<EnemyProfile, 8> enemyProfiles;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 };
