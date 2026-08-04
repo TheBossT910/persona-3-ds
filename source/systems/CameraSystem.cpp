@@ -1,23 +1,6 @@
 #include "CameraSystem.hpp"
 #include "core/globals.h"
 
-// TODO: move into MathManager
-// ---
-#include <math.h>
-#include <nds/arm9/trig_lut.h>
-
-static const float RAD_TO_LIBNDS = 32768.0f / (2.0f * 3.14159265f);
-
-static inline float hw_sinf(float r)
-{
-    return sinLerp((s16)(r * RAD_TO_LIBNDS)) / 4096.0f;
-}
-static inline float hw_cosf(float r)
-{
-    return cosLerp((s16)(r * RAD_TO_LIBNDS)) / 4096.0f;
-}
-// ---
-
 void CameraSystem::on_receive(const Event::ConfigureCamera& config)
 {
     isActive = true;
@@ -116,13 +99,13 @@ void CameraSystem::Update(ae::fixed_t)
         if (systemKeysHeld & KEY_R)
             angle += angleIncrement;
 
-        camPos.eye.x = charPos.x + hw_sinf(angle) * distance;
+        camPos.eye.x = charPos.x + math.sin(angle) * distance;
         camPos.eye.y = charPos.y + height;
-        camPos.eye.z = charPos.z - hw_cosf(angle) * distance;
+        camPos.eye.z = charPos.z - math.cos(angle) * distance;
 
-        camPos.target.x = charPos.x - hw_sinf(angle) * lookAhead;
+        camPos.target.x = charPos.x - math.sin(angle) * lookAhead;
         camPos.target.y = charPos.y + 0.1f;
-        camPos.target.z = charPos.z + hw_cosf(angle) * lookAhead;
+        camPos.target.z = charPos.z + math.cos(angle) * lookAhead;
         break;
     }
 
@@ -141,8 +124,8 @@ void CameraSystem::Update(ae::fixed_t)
         if (systemKeysHeld & KEY_R)
             angle += angleIncrement;
 
-        const float fwdX = -hw_sinf(angle) * freeCameraSpeed;
-        const float fwdZ = hw_cosf(angle) * freeCameraSpeed;
+        const float fwdX = -math.sin(angle) * freeCameraSpeed;
+        const float fwdZ = math.cos(angle) * freeCameraSpeed;
 
         if (systemKeysHeld & KEY_UP)
         {
@@ -168,9 +151,9 @@ void CameraSystem::Update(ae::fixed_t)
         camPos.eye.x = currentPos.x;
         camPos.eye.y = currentPos.y;
         camPos.eye.z = currentPos.z;
-        camPos.target.x = currentPos.x - hw_sinf(angle);
+        camPos.target.x = currentPos.x - math.sin(angle);
         camPos.target.y = currentPos.y;
-        camPos.target.z = currentPos.z + hw_cosf(angle);
+        camPos.target.z = currentPos.z + math.cos(angle);
         break;
     }
 

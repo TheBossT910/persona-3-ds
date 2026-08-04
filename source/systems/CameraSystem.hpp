@@ -15,6 +15,7 @@
 #include "core/routerIDs.hpp"
 #include "events/CameraEvents.hpp"
 #include "events/GenericEvents.hpp"
+#include "managers/MathManager.hpp"
 #include <aegis/system.hpp>
 
 #include "core/enums.h"
@@ -148,6 +149,8 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
     CameraSystem() : SystemRouter(kCameraSystemRouterID)
     {
     }
+
+    MathManager& math = MathManager::GetInstance();
 
     CameraMode mode = CameraMode::Follow;
 
