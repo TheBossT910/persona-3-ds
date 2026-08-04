@@ -59,10 +59,6 @@ void CameraSystem::on_receive(const Event::SetCharacterPosition& msg)
     charPos = msg.charPos;
 }
 
-void CameraSystem::on_receive_unknown(const etl::imessage&)
-{
-}
-
 float CameraSystem::getMovementAngle() const
 {
     switch (mode)

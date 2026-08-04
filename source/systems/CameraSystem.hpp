@@ -92,7 +92,9 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      *
      * @param msg The unhandled incoming message (unused).
      */
-    void on_receive_unknown(const etl::imessage& msg);
+    void on_receive_unknown(const etl::imessage& msg)
+    {
+    }
 
     /** @brief Returns the current camera mode. */
     CameraMode getMode() const
