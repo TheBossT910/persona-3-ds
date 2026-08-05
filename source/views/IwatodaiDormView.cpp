@@ -84,3 +84,52 @@ void IwatodaiDormView::onDialogueStart()
     dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
     dialogueCtrl.start(demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub);
 }
+
+void IwatodaiDormView::onEnvironmentUpdate()
+{
+    animator.update(1.0f);
+
+    // restart after each full cycle completes
+    if (!circleHandle.isValid())
+    {
+        circleHandle =
+            animator.sequence()
+                .append(animator.animate(triSize).from(10.0f).to(60.0f).duration(500).ease(uiAnimation::Ease::OutBack))
+                .append(animator.animate(triSize).from(60.0f).to(10.0f).duration(400).ease(uiAnimation::Ease::InBack))
+                .start();
+    }
+
+    // draw an equilateral triangle in eye-space just past the near plane so clip_w ≈ 0.1
+    // and depth ≈ 0 — always in front of the 3D scene regardless of w-buffer values.
+    // S converts triSize pixels → eye-space units: Z * tan(fov/2) / (screenHeight/2)
+    // = 0.101 * tan(27.5°) / 96  (fov=55°, near=0.1, screen 192px tall)
+    static constexpr float Z = 0.101f;
+    static constexpr float S = 5.47e-4f;
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity(); // camera-space: (0,0,-Z) projects to screen centre
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_FOG);
+    glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE | POLY_ID(2));
+    glColor3b(0, 200, 220);
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(0, triSize * S, -Z);                             // top
+    glVertex3f(-triSize * 0.866f * S, -triSize * 0.5f * S, -Z); // bottom-left
+    glVertex3f(+triSize * 0.866f * S, -triSize * 0.5f * S, -Z); // bottom-right
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_FOG);
+
+    glPopMatrix(1);
+}
+
+void IwatodaiDormView::cleanup()
+{
+    circleHandle.cancel();
+    animator.cancelAll();
+    EnvironmentView::cleanup();
+}

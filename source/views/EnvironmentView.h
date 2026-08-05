@@ -92,6 +92,10 @@ class EnvironmentView : public BaseView
     {
     }
 
+    virtual void onEnvironmentUpdate()
+    {
+    }
+
     // -------------------------------------------------
     // Battle
     virtual void startBattle()

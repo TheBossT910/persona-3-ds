@@ -413,6 +413,7 @@ ViewState EnvironmentView::update()
         characterAnimationCtrl->render();
         glPopMatrix(1);
 
+        onEnvironmentUpdate();
         glFlush(0);
 
         if (Globals::enableDebugPrint)

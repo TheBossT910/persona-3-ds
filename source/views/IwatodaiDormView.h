@@ -1,5 +1,6 @@
 #pragma once
 
+#include "animation/Animator.h"
 #include "views/EnvironmentView.h"
 
 // data
@@ -25,6 +26,8 @@ class IwatodaiDormView : public EnvironmentView
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void onDialogueStart() override;
     void configureCameraController() override;
+    void onEnvironmentUpdate() override;
+    void cleanup() override;
 
   private:
     // movement and camera
@@ -35,4 +38,9 @@ class IwatodaiDormView : public EnvironmentView
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
     const float height = 0.0f;
     const float characterFacingAngle = 180.0f;
+
+    // test animation
+    uiAnimation::Animator animator;
+    float triSize = 10.0f;
+    uiAnimation::AnimationHandle circleHandle;
 };
