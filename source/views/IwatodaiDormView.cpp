@@ -99,16 +99,12 @@ void IwatodaiDormView::onEnvironmentUpdate()
                 .start();
     }
 
-    // draw an equilateral triangle in eye-space just past the near plane so clip_w ≈ 0.1
-    // and depth ≈ 0 — always in front of the 3D scene regardless of w-buffer values.
-    // S converts triSize pixels → eye-space units: Z * tan(fov/2) / (screenHeight/2)
-    // = 0.101 * tan(27.5°) / 96  (fov=55°, near=0.1, screen 192px tall)
     static constexpr float Z = 0.101f;
     static constexpr float S = 5.47e-4f;
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-    glLoadIdentity(); // camera-space: (0,0,-Z) projects to screen centre
+    glLoadIdentity();
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_FOG);
@@ -116,9 +112,9 @@ void IwatodaiDormView::onEnvironmentUpdate()
     glColor3b(0, 200, 220);
 
     glBegin(GL_TRIANGLES);
-    glVertex3f(0, triSize * S, -Z);                             // top
-    glVertex3f(-triSize * 0.866f * S, -triSize * 0.5f * S, -Z); // bottom-left
-    glVertex3f(+triSize * 0.866f * S, -triSize * 0.5f * S, -Z); // bottom-right
+    glVertex3f(0, triSize * S, -Z);
+    glVertex3f(-triSize * 0.866f * S, -triSize * 0.5f * S, -Z);
+    glVertex3f(+triSize * 0.866f * S, -triSize * 0.5f * S, -Z);
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
