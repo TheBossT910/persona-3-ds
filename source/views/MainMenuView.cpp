@@ -6,6 +6,13 @@
 
 void MainMenuView::init()
 {
+    if (mainMenu == nullptr)
+    {
+        mainMenu = engine.CreateEntity();
+        graphics = engine.CreateComponent<GraphicsComponent>();
+        mainMenu->AddComponent(graphics);
+    }
+
     // setup music
     musicCtrl->init((fatBasePath + "music/menus/velvetRoom/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
 
@@ -74,10 +81,10 @@ void MainMenuView::init()
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
     // load graphics
-    std::string bgPath = fatBasePath + "graphics/MainMenuView/backgrounds/";
-    GraphicAsset silhouetteBg = graphicsCtrl->loadGrit(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
-    GraphicAsset doorBg = graphicsCtrl->loadGrit(bgPath + "doorBackground/doorBackground");
-    GraphicAsset fogBg = graphicsCtrl->loadGrit(bgPath + "fogBackground/fogBackground");
+    std::string bgPath = "graphics/MainMenuView/backgrounds/";
+    GraphicAsset silhouetteBg = graphics->loadGraphic(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
+    GraphicAsset doorBg = graphics->loadGraphic(bgPath + "doorBackground/doorBackground");
+    GraphicAsset fogBg = graphics->loadGraphic(bgPath + "fogBackground/fogBackground");
 
     dmaCopy(silhouetteBg.tiles, bgGetGfxPtr(bg[0]), silhouetteBg.tilesLen);
     dmaCopy(doorBg.tiles, bgGetGfxPtr(bg[1]), doorBg.tilesLen);
@@ -93,9 +100,9 @@ void MainMenuView::init()
     dmaCopy(fogBg.pal, &VRAM_E_EXT_PALETTE[2][0], fogBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
-    graphicsCtrl->unloadGrit(silhouetteBg);
-    graphicsCtrl->unloadGrit(doorBg);
-    graphicsCtrl->unloadGrit(fogBg);
+    graphics->unloadGraphic(silhouetteBg);
+    graphics->unloadGraphic(doorBg);
+    graphics->unloadGraphic(fogBg);
 
     bgHide(bg[2]);
     bgSetCenter(bg[2], 128, 96); // pivot point on the screen (at the screen's center)
@@ -207,6 +214,20 @@ ViewState MainMenuView::update()
 
 void MainMenuView::cleanup()
 {
+    if (graphics != nullptr)
+    {
+        graphics->unloadAll();
+    }
+
+    if (mainMenu != nullptr)
+    {
+        mainMenu->RemoveComponent<GraphicsComponent>();
+        engine.DestroyEntity(mainMenu);
+
+        mainMenu = nullptr;
+        graphics = nullptr;
+    }
+
     musicCtrl->cleanup();
     BaseView::cleanup();
 }

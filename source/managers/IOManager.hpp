@@ -81,7 +81,7 @@ class IOManager : public ae::Manager, public ae::Singleton<IOManager>
 
     /**
      * @brief Loads an entire file into a buffer.
-     * @param filePath Full path.
+     * @param filePath Path relative to the base path.
      * @param outSize Optional. Receives the loaded size in bytes (0 on failure).
      * @return Pointer to the loaded data, or nullptr on failure.
      */
@@ -92,6 +92,9 @@ class IOManager : public ae::Manager, public ae::Singleton<IOManager>
      * @param buffer Pointer to release. Safe to call with nullptr.
      */
     void unloadFromRAM(void* buffer);
+
+    // TODO: add javadoc
+    std::string getAssetFilePath(const std::string& basePath, const char* suffix);
 
   private:
     friend class Singleton<IOManager>;

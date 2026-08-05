@@ -56,10 +56,6 @@ void PauseMenuComponent::init(int iBgSlot,
     if (pauseMenu == nullptr)
     {
         pauseMenu = engine.CreateEntity();
-    }
-
-    if (pauseMenu != nullptr)
-    {
         dialogue = engine.CreateComponent<DialogueComponent>();
         pauseMenu->AddComponent(dialogue);
     }

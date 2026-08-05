@@ -2,6 +2,7 @@
 #include "components/menu/MainMenuComponent.h"
 #include "views/BaseView.h"
 
+#include "components/GraphicsComponent.hpp"
 #include "managers/MathManager.hpp"
 
 class MainMenuView : public BaseView
@@ -29,8 +30,10 @@ class MainMenuView : public BaseView
     int baseSpeed = 20;
     int fluctuation = 50;
 
+    ae::Entity* mainMenu = nullptr;
+    GraphicsComponent* graphics = nullptr;
+
     MathManager& math = MathManager::GetInstance();
-    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
   public:

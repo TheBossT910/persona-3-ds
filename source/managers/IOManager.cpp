@@ -10,8 +10,7 @@ void IOManager::Init()
 void* IOManager::loadToRAM(const std::string& filePath, u32* outSize)
 {
     // open file
-    // TODO: remove codebase-wide use of fatBasePath so it can automatically be appended in IOManager
-    // std::string path = basePath + filePath;
+    std::string path = basePath + filePath;
     FILE* file = fopen(filePath.c_str(), "rb");
     if (!file)
     {
@@ -63,4 +62,27 @@ void IOManager::unloadFromRAM(void* buffer)
     {
         free(buffer);
     }
+}
+
+std::string IOManager::getAssetFilePath(const std::string& path, const char* suffix)
+{
+    std::string directPath = basePath + path + suffix;
+
+    FILE* file = fopen(directPath.c_str(), "rb");
+    if (file)
+    {
+        fclose(file);
+        return directPath;
+    }
+
+    size_t end = path.find_last_not_of('/');
+    if (end == std::string::npos)
+    {
+        return directPath;
+    }
+
+    size_t slash = path.find_last_of('/', end);
+    std::string leaf =
+        path.substr(slash == std::string::npos ? 0 : slash + 1, end - (slash == std::string::npos ? 0 : slash + 1) + 1);
+    return path.substr(0, end + 1) + "/" + leaf + suffix;
 }

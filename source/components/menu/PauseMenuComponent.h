@@ -2,7 +2,6 @@
 #include "components/DialogueComponent.hpp"
 #include "components/menu/BaseMenu.h"
 #include "controllers/AnimationController.h"
-#include "controllers/GraphicsController.h"
 #include "core/globals.h"
 #include "dialogue/demo_dialogue.h"
 #include "systems/CameraSystem.hpp"
@@ -182,7 +181,6 @@ class PauseMenuComponent : public BaseMenu
 
     ae::Entity* pauseMenu = nullptr;
     DialogueComponent* dialogue = nullptr;
-    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
 
   public:

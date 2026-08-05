@@ -14,10 +14,10 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/AnimationController.h"
-#include "controllers/GraphicsController.h"
 #include "controllers/UIController.h"
 
 #include "components/DialogueComponent.hpp"
+#include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
 #include "systems/CameraSystem.hpp"
 
@@ -125,13 +125,16 @@ class EnvironmentView : public BaseView
     Event::ConfigureCamera camConfig;
 
     // -------------------------------------------------
-    // Controllers
+    // player
     MovementComponent* movement = nullptr;
     DialogueComponent* dialogue = nullptr;
 
+    // view
+    ae::Entity* environment = nullptr;
+    GraphicsComponent* graphics = nullptr;
+
     UIController* uiCtrl = UIController::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
-    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
@@ -156,4 +159,18 @@ class EnvironmentView : public BaseView
     int mass = 1;
     // how far the fog is (0x0000 to 0x8000)
     int depth = 0x6000;
+
+    /**
+     * @brief Loads a single .grit asset and returns its raw tile pointer.
+     *
+     * Stashes the owning GraphicAsset in @p asset so the caller can unload it
+     * once the texture has been uploaded to VRAM.
+     *
+     * @param path  Full path (base path + grit base name) of the asset to load.
+     * @param asset Output parameter that receives the loaded GraphicAsset,
+     *              which the caller is responsible for unloading later.
+     * @return Raw pointer to the asset's tile data, reinterpreted as
+     *         unsigned int, suitable for passing to the texture upload code.
+     */
+    const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset);
 };

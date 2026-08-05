@@ -1,10 +1,11 @@
 #pragma once
 #include "components/ui/UIScreen.h"
-#include "controllers/GraphicsController.h"
 #include "core/enums.h"
 #include "core/globals.h"
 #include "core/structs.h"
 #include <nds.h>
+
+#include "components/GraphicsComponent.hpp"
 
 class MenuHUDScreen : public UIScreen
 {
@@ -33,14 +34,15 @@ class MenuHUDScreen : public UIScreen
 
     // sprites
     Sprite sprites[28]; // enough entries for moon, day, digits, times, and repeated skill markers
-    SpriteRegister moonSprite;
-    SpriteRegister dayOfWeekSprite;
-    SpriteRegister numberSprites[4];
-    SpriteRegister timeSprites[4];
-    SpriteRegister skillSprites[18];
-    SpriteRegister slashSprite;
+    GraphicAsset moonSprite;
+    GraphicAsset dayOfWeekSprite;
+    GraphicAsset numberSprites[4];
+    GraphicAsset timeSprites[4];
+    GraphicAsset skillSprites[18];
+    GraphicAsset slashSprite;
     bool bgLoaded;
     void renderBackground();
 
-    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    ae::Entity* menuHUD = nullptr;
+    GraphicsComponent* graphics = nullptr;
 };

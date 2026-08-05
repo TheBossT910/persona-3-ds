@@ -3,8 +3,9 @@
 #include <nds.h>
 
 #include "components/ui/UIScreen.h"
-#include "controllers/GraphicsController.h"
 #include "core/structs.h"
+
+#include "components/GraphicsComponent.hpp"
 
 #define MENU_BACKGROUND_SCREEN_INVALID_BG_INDEX -1
 
@@ -30,5 +31,6 @@ class MenuBackgroundScreen : public UIScreen
 
     int loadedBgIndex = MENU_BACKGROUND_SCREEN_INVALID_BG_INDEX;
 
-    GraphicsController* graphicsController = GraphicsController::getInstance();
+    ae::Entity* menuBackground = nullptr;
+    GraphicsComponent* graphics = nullptr;
 };

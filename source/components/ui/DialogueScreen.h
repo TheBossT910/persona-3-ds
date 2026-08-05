@@ -5,6 +5,8 @@
 #include "core/structs.h"
 #include <nds.h>
 
+#include "components/GraphicsComponent.hpp"
+
 class DialogueScreen : public UIScreen
 {
   public:
@@ -25,9 +27,12 @@ class DialogueScreen : public UIScreen
     // sprites
     // TODO: reduce allocated sprite/sprite registers
     Sprite sprites[50];
-    SpriteRegister calendarSprite[2];
-    SpriteRegister textBox[10];
-    SpriteRegister nameTag[10];
+    GraphicAsset calendarSprite[2];
+    GraphicAsset textBox[10];
+    GraphicAsset nameTag[10];
+
+    ae::Entity* dialogue = nullptr;
+    GraphicsComponent* graphics = nullptr;
 
     void renderBackground();
 };
