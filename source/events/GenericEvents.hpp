@@ -23,6 +23,9 @@ struct SetTextVideoBufferSub : public etl::message<EventID::SetTextVideoBufferSu
     uint16_t* textVideoBufferSub = nullptr;
 };
 
+/**
+ * @brief Event payload to set the character position data.
+ */
 struct SetCharacterPosition : public etl::message<EventID::SetCharacterPosition>
 {
     CharacterPosition charPos;

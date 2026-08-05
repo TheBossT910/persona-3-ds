@@ -1,0 +1,31 @@
+#include "SaveSystem.hpp"
+#include "core/globals.h"
+#include "core/structs.h"
+
+void SaveSystem::on_receive(const Event::ReadSave)
+{
+    bool success = io.read<Save>(&saveData, "save/save.sav");
+    if (!success)
+    {
+        consoleDemoInit();
+        printf("Failed to read save data!\n");
+        while (1)
+        {
+            swiWaitForVBlank();
+        }
+    }
+}
+
+void SaveSystem::on_receive(const Event::WriteSave)
+{
+    bool success = io.write<Save>(&saveData, "save/save.sav");
+    if (!success)
+    {
+        consoleDemoInit();
+        printf("Failed to write save data!\n");
+        while (1)
+        {
+            swiWaitForVBlank();
+        }
+    }
+}

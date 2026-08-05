@@ -21,9 +21,6 @@
 #include "views/StationView.h"
 #include "views/VideoView.h"
 
-// controllers
-#include "controllers/SaveController.h"
-
 // components
 #include "components/ui/MenuHUDScreen.h"
 
@@ -175,23 +172,6 @@ int main(int argc, char* argv[])
     // initialize maxmod (for sfx)
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
-    // load save data
-    if (!SaveController::getInstance()->read())
-    {
-        consoleDemoInit();
-        printf("Failed to read save data!\n");
-        while (1)
-        {
-            swiWaitForVBlank();
-        }
-    }
-
-    // set FEMC mode
-    prevFemcMode = saveData.femcMode;
-
-    // setup character model
-    loadModels(saveData.femcMode);
-
     // setup db's. DO NOT CHANGE order
     WeaponDb::Initialize();
     SkillDb::Initialize();
@@ -220,14 +200,23 @@ int main(int argc, char* argv[])
     // register singletons
     engine.RegisterSystem(&BattleSystem::GetInstance());
     engine.RegisterSystem(&CameraSystem::GetInstance());
+    engine.RegisterSystem(&SaveSystem::GetInstance());
 
     engine.RegisterManager(&MathManager::GetInstance());
+    engine.RegisterManager(&IOManager::GetInstance());
 
     // initialize engine
     engine.InitAll();
 
     // set up initial game state
+    // load save data
+    ae::BroadcastEvent(Event::ReadSave{});
+    prevFemcMode = saveData.femcMode;
+    loadModels(saveData.femcMode);
+
+    // create player entity
     player = engine.CreateEntity();
+
     // Default is DisclaimerView
     SwitchView(new DisclaimerView());
 
