@@ -84,6 +84,12 @@ void EnvironmentView::setupEnvironment()
 
 void EnvironmentView::init()
 {
+    if (player != nullptr)
+    {
+        movement = engine.CreateComponent<MovementComponent>();
+        player->AddComponent(movement);
+    }
+
     // set modes
     videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
     videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
@@ -171,8 +177,8 @@ void EnvironmentView::init()
     bgSetPriority(bgSharedSub3, 3);
     bgUpdate();
 
-    // setup player controller (room-specific map/tuning, generic call site)
-    playerCtrl = createPlayerController();
+    // setup MovementComponent on player entity (room-specific map/tuning, generic call site)
+    setMovementConfig();
 
     setCameraConfig();
     ae::BroadcastEvent(Event::ConfigureCamera(camConfig));
@@ -349,8 +355,7 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
         }
 
-        playerCtrl->update(systemKeysHeld);
-        CharacterPosition charPos = playerCtrl->isCharacterAt();
+        CharacterPosition charPos = movement->isCharacterAt();
         camPos = CameraSystem::GetInstance().getCameraPosition();
 
         if (systemKeysDown & KEY_START)
@@ -373,7 +378,7 @@ ViewState EnvironmentView::update()
             }
         }
 
-        ViewState tileResult = onTileCheck(playerCtrl->isTileAt(), systemKeysDown);
+        ViewState tileResult = onTileCheck(movement->isTileAt(), systemKeysDown);
 
         if (tileResult != ViewState::KEEP_CURRENT)
         {
@@ -454,6 +459,12 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    if (player != nullptr)
+    {
+        player->RemoveComponent<MovementComponent>();
+        movement = nullptr;
+    }
+
     textCtrl->clearScreen(textVideoBuffer);
     textCtrl->clearScreen(textVideoBufferSub);
     textCtrl->unloadPalette();
@@ -465,7 +476,4 @@ void EnvironmentView::cleanup()
 
     env.cleanup();
     uiCtrl->cleanup();
-
-    delete playerCtrl;
-    playerCtrl = nullptr;
 }

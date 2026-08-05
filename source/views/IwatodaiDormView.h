@@ -20,7 +20,7 @@ class IwatodaiDormView : public EnvironmentView
     {
         return g_environmentDb[0];
     }
-    CharacterController* createPlayerController() override;
+    void setMovementConfig() override;
     void setMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void onDialogueStart() override;

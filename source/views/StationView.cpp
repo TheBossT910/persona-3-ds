@@ -10,19 +10,19 @@ void StationView::setMusic()
         (fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(), 2.002f, 73.939f);
 }
 
-CharacterController* StationView::createPlayerController()
+void StationView::setMovementConfig()
 {
-    return new CharacterController(STATION_MAP_WIDTH,
-                                   STATION_MAP_HEIGHT,
-                                   &station_map[0][0],
-                                   tileSize,
-                                   dbEntry->worldOffsetX,
-                                   dbEntry->worldOffsetZ,
-                                   characterSize,
-                                   speed,
-                                   height,
-                                   characterTranslate,
-                                   characterFacingAngle);
+    movement->configureMovement(MovementConfig(STATION_MAP_WIDTH,
+                                               STATION_MAP_HEIGHT,
+                                               &station_map[0][0],
+                                               tileSize,
+                                               dbEntry->worldOffsetX,
+                                               dbEntry->worldOffsetZ,
+                                               characterSize,
+                                               speed,
+                                               height,
+                                               characterTranslate,
+                                               characterFacingAngle));
 }
 
 ViewState StationView::onTileCheck(TileType tile, u32 pressed)

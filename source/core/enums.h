@@ -349,6 +349,12 @@ enum : etl::message_id_t
 };
 } // namespace EventID
 
+enum class ComponentType : ae::ComponentTypeID
+{
+    None = 0,
+    Movement,
+};
+
 /**
  * @brief Controls how the camera behaves each frame.
  *

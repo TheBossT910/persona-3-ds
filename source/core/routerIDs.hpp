@@ -8,3 +8,4 @@
 
 constexpr etl::message_router_id_t kBattleSystemRouterID = 0;
 constexpr etl::message_router_id_t kCameraSystemRouterID = 1;
+constexpr etl::message_router_id_t kMovementSystemRouterID = 2;

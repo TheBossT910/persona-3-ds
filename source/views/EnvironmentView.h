@@ -14,7 +14,6 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/AnimationController.h"
-#include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
 #include "controllers/UIController.h"
@@ -76,7 +75,7 @@ class EnvironmentView : public BaseView
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 
-    virtual CharacterController* createPlayerController() = 0;
+    virtual void setMovementConfig() = 0;
 
     virtual void setMusic() = 0;
 
@@ -118,7 +117,7 @@ class EnvironmentView : public BaseView
     bool isBattleMenuActive = false;
     bool promptDrawn = false;
 
-    CharacterController* playerCtrl = nullptr;
+    MovementComponent* movement = nullptr;
 
     Event::CameraPosition camPos;
     const float tileSize = 0.062500f;

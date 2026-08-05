@@ -21,7 +21,7 @@ class PaulowniaMallView : public EnvironmentView
     {
         return 0.3f;
     }
-    CharacterController* createPlayerController() override;
+    void setMovementConfig() override;
     void setMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void onDialogueStart() override;

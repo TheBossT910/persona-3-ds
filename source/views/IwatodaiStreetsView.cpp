@@ -46,19 +46,19 @@ void IwatodaiStreetsView::setCameraConfig()
 // ----------------------------
 // Player controller
 // ----------------------------
-CharacterController* IwatodaiStreetsView::createPlayerController()
+void IwatodaiStreetsView::setMovementConfig()
 {
-    return new CharacterController(IWATODAI_STREETS_MAP_WIDTH,
-                                   IWATODAI_STREETS_MAP_HEIGHT,
-                                   &iwatodai_streets_map[0][0],
-                                   tileSize,
-                                   dbEntry->worldOffsetX,
-                                   dbEntry->worldOffsetZ,
-                                   characterSize,
-                                   speed,
-                                   height,
-                                   characterTranslate,
-                                   characterFacingAngle);
+    movement->configureMovement(MovementConfig(IWATODAI_STREETS_MAP_WIDTH,
+                                               IWATODAI_STREETS_MAP_HEIGHT,
+                                               &iwatodai_streets_map[0][0],
+                                               tileSize,
+                                               dbEntry->worldOffsetX,
+                                               dbEntry->worldOffsetZ,
+                                               characterSize,
+                                               speed,
+                                               height,
+                                               characterTranslate,
+                                               characterFacingAngle));
 }
 
 void IwatodaiStreetsView::setMusic()

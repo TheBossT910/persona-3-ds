@@ -7,6 +7,13 @@
 #include "core/structs.h"
 #include <string>
 
+// aegis engine
+#include "components/MovementComponent.hpp"
+#include "managers/MathManager.hpp"
+#include "systems/BattleSystem.hpp"
+#include "systems/CameraSystem.hpp"
+#include <aegis/engine.hpp>
+
 // variables
 extern volatile int frame;
 extern volatile u32 systemKeysDown;
@@ -25,3 +32,24 @@ class Globals
     static bool enableCharacterAnim;
     static bool isPauseMenuActive;
 };
+
+// aegis engine
+namespace GameEngineConfig
+{
+using LargestMessage = etl::largest_type<Event::BattleResult,
+                                         Event::ExecuteBattle,
+                                         Event::SetTextVideoBufferSub,
+                                         Event::SetCharacterPosition,
+                                         Event::CameraPosition,
+                                         Event::ConfigureCamera,
+                                         Event::SetCameraMode,
+                                         Event::SetCameraPath,
+                                         MovementComponent>;
+constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
+constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
+} // namespace GameEngineConfig
+
+using GameEngine = ae::Engine<GameEngineConfig::kLargestComponentSize, GameEngineConfig::kLargestComponentAlign>;
+
+extern GameEngine engine;
+extern ae::Entity* player;

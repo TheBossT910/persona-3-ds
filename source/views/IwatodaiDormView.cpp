@@ -31,19 +31,19 @@ void IwatodaiDormView::setMusic()
     musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.300f, -1.000f);
 }
 
-CharacterController* IwatodaiDormView::createPlayerController()
+void IwatodaiDormView::setMovementConfig()
 {
-    return new CharacterController(IWATODAI_DORM_FLOOR_1_MAP_WIDTH,
-                                   IWATODAI_DORM_FLOOR_1_MAP_HEIGHT,
-                                   &iwatodai_dorm_floor_1_map[0][0],
-                                   tileSize,
-                                   dbEntry->worldOffsetX,
-                                   dbEntry->worldOffsetZ,
-                                   characterSize,
-                                   speed,
-                                   height,
-                                   characterTranslate,
-                                   characterFacingAngle);
+    movement->configureMovement(MovementConfig(IWATODAI_DORM_FLOOR_1_MAP_WIDTH,
+                                               IWATODAI_DORM_FLOOR_1_MAP_HEIGHT,
+                                               &iwatodai_dorm_floor_1_map[0][0],
+                                               tileSize,
+                                               dbEntry->worldOffsetX,
+                                               dbEntry->worldOffsetZ,
+                                               characterSize,
+                                               speed,
+                                               height,
+                                               characterTranslate,
+                                               characterFacingAngle));
 }
 
 ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
