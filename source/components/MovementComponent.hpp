@@ -71,13 +71,12 @@ class MovementComponent : public ae::Component
 
   private:
     MathManager& math = MathManager::GetInstance();
-    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
+    AnimationController* animationCtrl = AnimationController::getInstance();
 
     MovementConfig config;
     CameraMode cameraMode = CameraMode::Static;
-    int characterWalkAnim;
-    ;
-    int characterIdleAnim;
+    int walkAnim;
+    int idleAnim;
 
     /**
      * @brief Get the tile value at the given position.

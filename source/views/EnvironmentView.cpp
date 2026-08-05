@@ -185,16 +185,15 @@ void EnvironmentView::init()
 
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl->loadModel(
-        (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
+    animationCtrl->loadModel((modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        kotone_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
-        makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
     //setup main screen text engine
@@ -409,7 +408,7 @@ ViewState EnvironmentView::update()
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
-        characterAnimationCtrl->render();
+        animationCtrl->render();
         glPopMatrix(1);
 
         glFlush(0);
@@ -451,7 +450,7 @@ ViewState EnvironmentView::update()
     }
     }
 
-    characterAnimationCtrl->update();
+    animationCtrl->update();
     musicCtrl->update();
 
     return ViewState::KEEP_CURRENT;
@@ -470,7 +469,7 @@ void EnvironmentView::cleanup()
     textCtrl->unloadPalette();
     pauseMenuCmpt->cancelSFX();
     musicCtrl->cleanup();
-    characterAnimationCtrl->stop();
+    animationCtrl->stop();
 
     BaseView::cleanup();
 

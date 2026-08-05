@@ -180,7 +180,7 @@ class PauseMenuComponent : public BaseMenu
     ViewState characterAnimOptionSelected();
 
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
-    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
+    AnimationController* animationCtrl = AnimationController::getInstance();
 
   public:
     static void create();

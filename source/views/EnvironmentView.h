@@ -130,7 +130,7 @@ class EnvironmentView : public BaseView
     DialogueController dialogueCtrl;
     UIController* uiCtrl = UIController::getInstance();
 
-    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
+    AnimationController* animationCtrl = AnimationController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();

@@ -251,7 +251,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
 
 ViewState PauseMenuComponent::characterAnimOptionSelected()
 {
-    characterAnimationCtrl->stop();
+    animationCtrl->stop();
 
     ViewState selectedView = ViewState::KEEP_CURRENT;
     switch (static_cast<CharacterAnimOption>(selectedOption))
@@ -260,99 +260,99 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
         Globals::enableCharacterAnim = !Globals::enableCharacterAnim;
         break;
     case CharacterAnimOption::ANIM_1:
-        characterAnimationCtrl->set(0, true);
+        animationCtrl->set(0, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_2:
-        characterAnimationCtrl->set(1, true);
+        animationCtrl->set(1, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_3:
-        characterAnimationCtrl->set(2, true);
+        animationCtrl->set(2, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_4:
-        characterAnimationCtrl->set(3, true);
+        animationCtrl->set(3, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_5:
-        characterAnimationCtrl->set(4, true);
+        animationCtrl->set(4, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_6:
-        characterAnimationCtrl->set(5, true);
+        animationCtrl->set(5, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_7:
-        characterAnimationCtrl->set(6, true);
+        animationCtrl->set(6, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_8:
-        characterAnimationCtrl->set(7, true);
+        animationCtrl->set(7, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_9:
-        characterAnimationCtrl->set(8, true);
+        animationCtrl->set(8, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_10:
-        characterAnimationCtrl->set(9, true);
+        animationCtrl->set(9, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_11:
-        characterAnimationCtrl->set(10, true);
+        animationCtrl->set(10, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_12:
-        characterAnimationCtrl->set(11, true);
+        animationCtrl->set(11, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_13:
-        characterAnimationCtrl->set(12, true);
+        animationCtrl->set(12, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_14:
-        characterAnimationCtrl->set(13, true);
+        animationCtrl->set(13, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_15:
-        characterAnimationCtrl->set(14, true);
+        animationCtrl->set(14, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_16:
-        characterAnimationCtrl->set(15, true);
+        animationCtrl->set(15, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_17:
-        characterAnimationCtrl->set(16, true);
+        animationCtrl->set(16, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_18:
-        characterAnimationCtrl->set(17, true);
+        animationCtrl->set(17, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_19:
-        characterAnimationCtrl->set(18, true);
+        animationCtrl->set(18, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_20:
-        characterAnimationCtrl->set(19, true);
+        animationCtrl->set(19, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_21:
-        characterAnimationCtrl->set(20, true);
+        animationCtrl->set(20, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_22:
-        characterAnimationCtrl->set(21, true);
+        animationCtrl->set(21, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_23:
-        characterAnimationCtrl->set(22, true);
+        animationCtrl->set(22, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_24:
-        characterAnimationCtrl->set(23, true);
+        animationCtrl->set(23, true);
         Globals::enableCharacterAnim = false;
         break;
     default:
@@ -360,6 +360,6 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
     }
 
     *isActivePtr = false;
-    characterAnimationCtrl->play();
+    animationCtrl->play();
     return selectedView;
 }

@@ -10,10 +10,9 @@
 
 void MovementComponent::Init()
 {
-    characterWalkAnim =
+    walkAnim =
         saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION_0002 : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION_0002;
-    characterIdleAnim =
-        saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION;
+    idleAnim = saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION;
 }
 
 void MovementComponent::Update(ae::fixed_t)
@@ -66,9 +65,9 @@ void MovementComponent::Update(ae::fixed_t)
     if (deltaX != 0.0f || deltaZ != 0.0f)
     {
         // set walking animation
-        if (Globals::enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterWalkAnim))
+        if (Globals::enableCharacterAnim && (animationCtrl->getCurrentAnimIndex() != walkAnim))
         {
-            characterAnimationCtrl->set(characterWalkAnim, true);
+            animationCtrl->set(walkAnim, true);
         }
 
         // normalize diagonal movement to prevent faster speed
@@ -82,12 +81,12 @@ void MovementComponent::Update(ae::fixed_t)
     else
     {
         // set idle animation
-        if (Globals::enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterIdleAnim))
+        if (Globals::enableCharacterAnim && (animationCtrl->getCurrentAnimIndex() != idleAnim))
         {
-            characterAnimationCtrl->set(characterIdleAnim, true);
+            animationCtrl->set(idleAnim, true);
         }
     }
-    characterAnimationCtrl->play();
+    animationCtrl->play();
 
     nextX = config.characterTranslate.x + deltaX;
     nextZ = config.characterTranslate.z + deltaZ;
