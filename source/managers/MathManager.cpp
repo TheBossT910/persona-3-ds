@@ -1,6 +1,4 @@
 #include "MathManager.hpp"
-#include <fpm/math.hpp>
-#include <math.h>
 
 float MathManager::sin(float r)
 {
