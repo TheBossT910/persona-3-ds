@@ -101,14 +101,9 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      *
      * @param msg The unhandled incoming message (unused).
      */
-    void on_receive_unknown(const etl::imessage& msg);
-
-    /**
-     * @brief Checks if an encounter is currently in progress.
-     *
-     * @return true if the BattleSystem is actively running a battle, false otherwise.
-     */
-    bool IsActive();
+    void on_receive_unknown(const etl::imessage& msg)
+    {
+    }
 
   private:
     friend class Singleton<BattleSystem>;

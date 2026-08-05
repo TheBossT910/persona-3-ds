@@ -174,8 +174,8 @@ void EnvironmentView::init()
     // setup player controller (room-specific map/tuning, generic call site)
     playerCtrl = createPlayerController();
 
-    configureCameraController();
-    cameraCtrl.configure(camConfig);
+    setCameraConfig();
+    ae::BroadcastEvent(Event::ConfigureCamera(camConfig));
 
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
@@ -212,7 +212,6 @@ void EnvironmentView::init()
 
     // setup pause menu
     pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textVideoBuffer, textVideoBufferSub);
-    pauseMenuCmpt->setCameraController(&cameraCtrl);
 
     // setup battle menu
     battleMenuCmpt->init(-1, &isBattleMenuActive, textVideoBuffer, textVideoBufferSub);
@@ -350,9 +349,9 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
         }
 
-        playerCtrl->update(systemKeysHeld, &cameraCtrl);
+        playerCtrl->update(systemKeysHeld);
         CharacterPosition charPos = playerCtrl->isCharacterAt();
-        camPos = cameraCtrl.update(systemKeysHeld, charPos);
+        camPos = CameraSystem::GetInstance().getCameraPosition();
 
         if (systemKeysDown & KEY_START)
         {
@@ -428,8 +427,10 @@ ViewState EnvironmentView::update()
                 debugText += buf;
                 std::sprintf(buf, "translate(x,z): %d, %d\n", (int)(charPos.x * 100), (int)(charPos.z * 100));
                 debugText += buf;
-                std::sprintf(
-                    buf, "angle(w,c): %d, %d\n", (int)(cameraCtrl.getAngle() * 100), (int)(charPos.facingAngle * 100));
+                std::sprintf(buf,
+                             "angle(w,c): %d, %d\n",
+                             (int)(CameraSystem::GetInstance().getAngle() * 100),
+                             (int)(charPos.facingAngle * 100));
                 debugText += buf;
                 textCtrl->drawText(debugText, cosmeticaFont, textVideoBufferSub, 1, 120, TextColor::Red);
             }

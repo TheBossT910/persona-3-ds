@@ -5,7 +5,7 @@
  */
 
 #pragma once
-#include "core/enums.h"
+#include "core/structs.h"
 #include <aegis/aegis.hpp>
 
 namespace Event
@@ -21,5 +21,13 @@ struct SetTextVideoBufferSub : public etl::message<EventID::SetTextVideoBufferSu
 {
     /// Pointer to the text video buffer
     uint16_t* textVideoBufferSub = nullptr;
+};
+
+struct SetCharacterPosition : public etl::message<EventID::SetCharacterPosition>
+{
+    CharacterPosition charPos;
+    SetCharacterPosition(CharacterPosition iCharPos) : charPos(iCharPos)
+    {
+    }
 };
 } // namespace Event

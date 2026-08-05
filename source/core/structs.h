@@ -6,6 +6,7 @@
 #pragma once
 #include "core/enums.h"
 #include "core/geometry.h"
+#include <etl/vector.h>
 #include <nds.h>
 #include <string>
 #include <vector>
@@ -175,4 +176,27 @@ struct GraphicAsset
     u32 palLen;
     void* map;
     u32 mapLen;
+};
+
+/**
+ * @brief A single keyframe in a camera path.
+ *
+ * @see See CameraPath
+ */
+struct CameraKeyframe
+{
+    int time;           ///< Frame index at which this keyframe is reached.
+    Vec3<float> eye;    ///< Camera eye position.
+    Vec3<float> target; ///< Look-at position.
+};
+
+/**
+ * @brief An ordered list of keyframes defining a camera animation.
+ *
+ * The camera interpolates linearly between consecutive keyframes.
+ * On completion the @ref CameraSystem switches to Follow mode.
+ */
+struct CameraPath
+{
+    etl::vector<CameraKeyframe, 100> keyframes;
 };

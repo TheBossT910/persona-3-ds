@@ -59,9 +59,11 @@ CharacterPosition CharacterController::isCharacterAt()
     return charPos;
 }
 
-void CharacterController::update(u32 keys, CameraController* camera)
+void CharacterController::update(u32 keys)
 {
-    float cameraAngle = camera->getMovementAngle(isCharacterAt());
+    // TODO: don't broadcast on every update (waste cpu cycles). Set it once?
+    ae::BroadcastEvent(Event::SetCharacterPosition{isCharacterAt()});
+    float cameraAngle = CameraSystem::GetInstance().getMovementAngle();
     float forwardX;
     float forwardZ;
     float rightX;
@@ -75,10 +77,10 @@ void CharacterController::update(u32 keys, CameraController* camera)
 
     float angleRad;
 
-    forwardX = -sin(cameraAngle) * speed;
-    forwardZ = cos(cameraAngle) * speed;
-    rightX = cos(cameraAngle) * speed;
-    rightZ = sin(cameraAngle) * speed;
+    forwardX = -math.sin(cameraAngle) * speed;
+    forwardZ = math.cos(cameraAngle) * speed;
+    rightX = math.cos(cameraAngle) * speed;
+    rightZ = math.sin(cameraAngle) * speed;
 
     if (keys & KEY_UP)
     {

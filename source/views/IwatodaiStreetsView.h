@@ -38,7 +38,7 @@ class IwatodaiStreetsView : public EnvironmentView
 
     void onDialogueStart() override;
 
-    void configureCameraController() override;
+    void setCameraConfig() override;
 
     // battle hook
     void startBattle() override;

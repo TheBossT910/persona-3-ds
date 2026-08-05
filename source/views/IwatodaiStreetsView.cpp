@@ -33,7 +33,7 @@ void IwatodaiStreetsView::startBattle()
 // ----------------------------
 // Camera
 // ----------------------------
-void IwatodaiStreetsView::configureCameraController()
+void IwatodaiStreetsView::setCameraConfig()
 {
     camConfig.mode = CameraMode::Follow;
     camConfig.initialAngle = 1.5708f * 2;
