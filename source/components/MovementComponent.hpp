@@ -1,6 +1,6 @@
 /**
  * @file MovementComponent.hpp
- * @brief Manages the character movement & view logic for a 3D environment view.
+ * @brief Orchestrates the movement & view logic for a 3D environment view.
  * @author Taha Rashid (TheBossT910 / thebosst)
  */
 
@@ -22,9 +22,7 @@ class MovementComponent : public ae::Component
     static constexpr ae::ComponentTypeID TYPE_ID = static_cast<ae::ComponentTypeID>(ComponentType::Movement);
     void Init() override;
 
-    void Destroy() override
-    {
-    }
+    void Destroy() override;
 
     /**
      * @brief Core update loop that calculates the character & camera movement
@@ -41,11 +39,23 @@ class MovementComponent : public ae::Component
     /**
      * @brief Configure the movement system
      *
-     * Required to call in order to enable the MovementComponent
+     * Required to call before calling start().
      *
      * @param config The struct containing the movement configuration to apply.
      */
     void configureMovement(const MovementConfig& config);
+
+    /**
+     * @brief Start the Update(ae::fixed_t) loop by setting isActive to true
+     *
+     * Movement must be set by configureMovement() before start() can be called
+     */
+    void start();
+
+    /**
+     * @brief End the Update(ae::fixed_t) loop by setting isActive to false
+     */
+    void end();
 
     /**
      * @brief Get the current character position.

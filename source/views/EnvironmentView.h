@@ -14,10 +14,11 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/AnimationController.h"
-#include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
 #include "controllers/UIController.h"
 
+#include "components/DialogueComponent.hpp"
+#include "components/MovementComponent.hpp"
 #include "systems/CameraSystem.hpp"
 
 class EnvironmentView : public BaseView
@@ -77,11 +78,11 @@ class EnvironmentView : public BaseView
 
     virtual void setMovementConfig() = 0;
 
+    virtual void setDialogueConfig() = 0;
+
     virtual void setMusic() = 0;
 
     virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
-
-    virtual void onDialogueStart() = 0;
 
     virtual void onSetupDialogueAndUI()
     {
@@ -117,8 +118,6 @@ class EnvironmentView : public BaseView
     bool isBattleMenuActive = false;
     bool promptDrawn = false;
 
-    MovementComponent* movement = nullptr;
-
     Event::CameraPosition camPos;
     const float tileSize = 0.062500f;
 
@@ -127,14 +126,17 @@ class EnvironmentView : public BaseView
 
     // -------------------------------------------------
     // Controllers
-    DialogueController dialogueCtrl;
-    UIController* uiCtrl = UIController::getInstance();
+    MovementComponent* movement = nullptr;
+    DialogueComponent* dialogue = nullptr;
 
+    UIController* uiCtrl = UIController::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
+
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
     MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
+
     BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
     PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
 

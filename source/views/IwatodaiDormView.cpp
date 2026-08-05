@@ -1,4 +1,5 @@
 #include "IwatodaiDormView.h"
+#include "core/structs.h"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()
@@ -78,9 +79,9 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiDormView::onDialogueStart()
+void IwatodaiDormView::setDialogueConfig()
 {
     demo_yukari_kenji_argument_load();
-    dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-    dialogueCtrl.start(demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub);
+    dialogue->configureDialogue(DialogueConfig(
+        demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub, demo_yukari_kenji_argument_load_bg));
 }

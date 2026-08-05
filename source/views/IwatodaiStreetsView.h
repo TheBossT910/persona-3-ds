@@ -36,7 +36,7 @@ class IwatodaiStreetsView : public EnvironmentView
 
     ViewState onTileCheck(TileType tile, u32 pressed) override;
 
-    void onDialogueStart() override;
+    void setDialogueConfig() override;
 
     void setCameraConfig() override;
 

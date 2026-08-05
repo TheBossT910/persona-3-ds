@@ -52,7 +52,7 @@ ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void PaulowniaMallView::onDialogueStart()
+void PaulowniaMallView::setDialogueConfig()
 {
     // No dialogue currently
 }

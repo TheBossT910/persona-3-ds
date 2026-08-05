@@ -10,9 +10,15 @@
 
 void MovementComponent::Init()
 {
+    isActive = false;
     walkAnim =
         saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION_0002 : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION_0002;
     idleAnim = saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION;
+}
+
+void MovementComponent::Destroy()
+{
+    isActive = false;
 }
 
 void MovementComponent::Update(ae::fixed_t)
@@ -119,6 +125,16 @@ void MovementComponent::Update(ae::fixed_t)
 void MovementComponent::configureMovement(const MovementConfig& config)
 {
     this->config = config;
+}
+
+void MovementComponent::start()
+{
+    isActive = true;
+}
+
+void MovementComponent::end()
+{
+    isActive = false;
 }
 
 CharacterPosition MovementComponent::isCharacterAt()
