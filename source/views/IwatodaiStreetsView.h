@@ -30,7 +30,7 @@ class IwatodaiStreetsView : public EnvironmentView
         return g_environmentDb[1];
     }
 
-    CharacterController* createPlayerController() override;
+    void setMovementConfig() override;
 
     void setMusic() override;
 

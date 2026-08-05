@@ -122,7 +122,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      * computes atan2 from the fixed eye position toward the character, so
      * movement direction stays correct regardless of where the camera is mounted.
      *
-     * @return Angle in radians to pass to CharacterController::update().
+     * @return Angle in radians.
      */
     float getMovementAngle() const;
 

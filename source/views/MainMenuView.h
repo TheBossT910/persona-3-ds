@@ -2,6 +2,8 @@
 #include "components/menu/MainMenuComponent.h"
 #include "views/BaseView.h"
 
+#include "managers/MathManager.hpp"
+
 class MainMenuView : public BaseView
 {
   private:
@@ -27,6 +29,7 @@ class MainMenuView : public BaseView
     int baseSpeed = 20;
     int fluctuation = 50;
 
+    MathManager& math = MathManager::GetInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 

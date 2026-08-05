@@ -40,6 +40,33 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      */
     float cos(float r);
 
+    /**
+    * @brief Computes the tangent from an angles using an approximation.
+    *
+    * @details Function courtesy of https://yal.cc/fast-atan2/.
+    *
+    * @param x The angle in radians.
+    * @return The tangent of the angle.
+    * @todo Replace with tanLerp?
+    *
+    * @author Vadym Diachenko (yellowafterlife)
+    */
+    float tan(float r);
+
+    /**
+     * @brief Computes the arctangent from two angles using an approximation.
+     *
+     * @details Function courtesy of https://yal.cc/fast-atan2/.
+     * @note Does not handle infinities or NaNs. Has a limited input range (±45deg).
+     *
+     * @param y Angle 2 in radians.
+     * @param x Angle 1 in radians.
+     * @return The arctangent of the two angles.
+     *
+     * @author Vadym Diachenko (yellowafterlife)
+     */
+    float atan2(float y, float x);
+
   private:
     friend class Singleton<MathManager>;
     MathManager() = default;

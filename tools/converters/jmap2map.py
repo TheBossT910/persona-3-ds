@@ -103,7 +103,7 @@ def to_header(rows, height, width, stem):
 
     # CRITICAL FIX: Changed uint8_t to uint16_t to support tile IDs > 255
     lines.append(
-        f"static const uint16_t {stem}_map[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{"
+        f"static uint16_t {stem}_map[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{"
     )
     for r, row in enumerate(rows):
         comma = "," if r < height - 1 else ""

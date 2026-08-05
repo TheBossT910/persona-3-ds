@@ -43,11 +43,9 @@
 #include "battleActions/skills/SkillDb.h"
 #include "battleActions/weapons/WeaponDb.h"
 
-// aegis engine
-#include "managers/MathManager.hpp"
-#include "systems/BattleSystem.hpp"
-#include "systems/CameraSystem.hpp"
-#include <aegis/engine.hpp>
+// game engine
+GameEngine engine;
+ae::Entity* player;
 
 // variables
 volatile int frame = 0;
@@ -128,16 +126,6 @@ void loadModels(bool isFemc)
     }
 }
 
-// aegis engine
-namespace GameEngineConfig
-{
-using LargestMessage = etl::largest_type<Event::BattleResult, Event::ExecuteBattle, Event::SetTextVideoBufferSub>;
-constexpr std::size_t kLargestComponentSize = sizeof(LargestMessage);
-constexpr std::size_t kLargestComponentAlign = alignof(LargestMessage);
-} // namespace GameEngineConfig
-
-using GameEngine = ae::Engine<GameEngineConfig::kLargestComponentSize, GameEngineConfig::kLargestComponentAlign>;
-
 // TODO: add javadoc
 void NDSPollInputCallback()
 {
@@ -155,7 +143,6 @@ void NDSComputeCallback()
 int main(int argc, char* argv[])
 {
     irqSet(IRQ_VBLANK, Vblank);
-    static GameEngine engine;
 
     // initialize DLDI/FAT
     if (!fatInitDefault())
@@ -240,6 +227,7 @@ int main(int argc, char* argv[])
     engine.InitAll();
 
     // set up initial game state
+    player = engine.CreateEntity();
     // Default is DisclaimerView
     SwitchView(new DisclaimerView());
 

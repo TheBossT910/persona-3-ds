@@ -10,19 +10,19 @@ void PaulowniaMallView::setMusic()
         (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
 }
 
-CharacterController* PaulowniaMallView::createPlayerController()
+void PaulowniaMallView::setMovementConfig()
 {
-    return new CharacterController(PAULOWNIA_MALL_MAP_WIDTH,
-                                   PAULOWNIA_MALL_MAP_HEIGHT,
-                                   &paulownia_mall_map[0][0],
-                                   tileSize,
-                                   dbEntry->worldOffsetX,
-                                   dbEntry->worldOffsetZ,
-                                   characterSize,
-                                   speed,
-                                   height,
-                                   characterTranslate,
-                                   characterFacingAngle);
+    movement->configureMovement(MovementConfig(PAULOWNIA_MALL_MAP_WIDTH,
+                                               PAULOWNIA_MALL_MAP_HEIGHT,
+                                               &paulownia_mall_map[0][0],
+                                               tileSize,
+                                               dbEntry->worldOffsetX,
+                                               dbEntry->worldOffsetZ,
+                                               characterSize,
+                                               speed,
+                                               height,
+                                               characterTranslate,
+                                               characterFacingAngle));
 }
 
 ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
