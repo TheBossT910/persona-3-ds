@@ -370,8 +370,9 @@ ViewState IntroView::update()
     if (frame % 4 == 0)
     {
         waveAngle += 50;
-        // NOTE: since DS does not have floating point numbers, sinLerp returns value from -4096 -> 4096, which is why we divide by 4096 (shift >> 12)
-        int rotationSpeed = baseSpeed + ((sinLerp(waveAngle) * fluctuation) >> 12);
+        // NOTE: since DS does not have floating point numbers, sin (which uses sinLerp) returns value from -4096 -> 4096, which is why we divide by 4096 (shift >> 12)
+        int angle = math.sin(waveAngle);
+        int rotationSpeed = baseSpeed + ((angle * fluctuation) >> 12);
         currentRotation += rotationSpeed;
         bgSetRotateScale(bg[3], currentRotation, 256, 256);
     }

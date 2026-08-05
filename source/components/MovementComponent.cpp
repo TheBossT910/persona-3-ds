@@ -111,7 +111,7 @@ void MovementComponent::Update(ae::fixed_t)
     if (deltaX != 0.0f || deltaZ != 0.0f)
     {
         // return angle in radians and convert to degrees
-        angleRad = atan2(deltaX, deltaZ);
+        angleRad = math.atan2(deltaZ, deltaX);
         config.characterFacingAngle = angleRad * (180.0f / 3.14159265f);
     }
 }

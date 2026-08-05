@@ -195,7 +195,8 @@ ViewState MainMenuView::update()
     if (displayFog && frame % 4 == 0)
     {
         waveAngle += 50;
-        int rotationSpeed = baseSpeed + ((sinLerp(waveAngle) * fluctuation) >> 12);
+        int angle = math.sin(waveAngle);
+        int rotationSpeed = baseSpeed + ((angle * fluctuation) >> 12);
         currentRotation += rotationSpeed;
         bgSetRotateScale(bg[2], currentRotation, 256, 256);
     }
