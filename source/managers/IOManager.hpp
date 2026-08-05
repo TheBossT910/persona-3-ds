@@ -97,5 +97,5 @@ class IOManager : public ae::Manager, public ae::Singleton<IOManager>
     friend class Singleton<IOManager>;
     IOManager() = default;
 
-    const std::string basePath;
+    std::string basePath;
 };
