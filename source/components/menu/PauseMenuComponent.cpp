@@ -41,12 +41,6 @@ void PauseMenuComponent::reset()
     BaseMenu::reset();
     options = menuOptions;
     optionCount = MENU_OPTIONS;
-
-    if (pauseMenu != nullptr)
-    {
-        pauseMenu->RemoveComponent<DialogueComponent>();
-        dialogue = nullptr;
-    }
 }
 
 void PauseMenuComponent::init(int iBgSlot,
