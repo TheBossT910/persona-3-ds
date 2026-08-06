@@ -1,4 +1,5 @@
 #pragma once
+#include "components/DialogueComponent.hpp"
 #include "components/menu/BaseMenu.h"
 #include "controllers/AnimationController.h"
 #include "controllers/GraphicsController.h"
@@ -179,6 +180,8 @@ class PauseMenuComponent : public BaseMenu
     ViewState systemOptionSelected();
     ViewState characterAnimOptionSelected();
 
+    ae::Entity* pauseMenu = nullptr;
+    DialogueComponent* dialogue = nullptr;
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
 

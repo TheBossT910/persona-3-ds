@@ -36,8 +36,6 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
     return instance;
 }
 
-DialogueController dialogueCtrl;
-
 void PauseMenuComponent::reset()
 {
     BaseMenu::reset();
@@ -54,14 +52,24 @@ void PauseMenuComponent::init(int iBgSlot,
     BaseMenu::init(iBgSlot, isActive, iTextVideoBuffer, iTextVideoBufferSub, iPauseMessage);
     options = menuOptions;
     optionCount = MENU_OPTIONS;
+
+    if (pauseMenu == nullptr)
+    {
+        pauseMenu = engine.CreateEntity();
+    }
+
+    if (pauseMenu != nullptr)
+    {
+        dialogue = engine.CreateComponent<DialogueComponent>();
+        pauseMenu->AddComponent(dialogue);
+    }
 }
 
 ViewState PauseMenuComponent::update(int keys)
 {
     // dialogue controller takes full control when active
-    if (dialogueCtrl.isActive())
+    if (dialogue->IsActive())
     {
-        dialogueCtrl.update(keys);
         return ViewState::KEEP_CURRENT;
     }
 
@@ -215,8 +223,9 @@ ViewState PauseMenuComponent::debugOptionSelected()
     case DebugOption::DEBUG_DIALOGUE:
         textCtrl->clearScreen(textVideoBufferSub);
         demo_yukari_kenji_argument_load();
-        dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-        dialogueCtrl.start(demo_yukari_kenji_argument_first(), font, textVideoBufferSub);
+        dialogue->configureDialogue(DialogueConfig(
+            demo_yukari_kenji_argument_first(), font, textVideoBufferSub, demo_yukari_kenji_argument_load_bg));
+        dialogue->start();
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_BILLBOARDS:

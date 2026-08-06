@@ -10,6 +10,8 @@
 #include <nds.h>
 #include <string>
 #include <vector>
+
+#include "controllers/TextController.h"
 class BaseMenu;
 
 struct SpriteRegister
@@ -240,4 +242,19 @@ struct MovementConfig
         characterTranslate = iCharacterTranslate;
         characterFacingAngle = iCharacterFacingAngle;
     };
+};
+
+struct DialogueConfig
+{
+    Dialogue* firstLine = nullptr;
+    Font* font = nullptr;
+    uint16_t* textVideoBufferSub = nullptr;
+    void (*loader)(int bgIndex) = nullptr;
+
+    DialogueConfig() = default;
+
+    DialogueConfig(Dialogue* iFirstLine, Font* iFont, uint16_t* iTextVideoBufferSub, void (*iLoader)(int bgIndex))
+        : firstLine(iFirstLine), font(iFont), textVideoBufferSub(iTextVideoBufferSub), loader(iLoader)
+    {
+    }
 };

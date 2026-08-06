@@ -87,7 +87,10 @@ void EnvironmentView::init()
     if (player != nullptr)
     {
         movement = engine.CreateComponent<MovementComponent>();
+        dialogue = engine.CreateComponent<DialogueComponent>();
+
         player->AddComponent(movement);
+        player->AddComponent(dialogue);
     }
 
     // set modes
@@ -179,6 +182,7 @@ void EnvironmentView::init()
 
     // setup MovementComponent on player entity (room-specific map/tuning, generic call site)
     setMovementConfig();
+    movement->start();
 
     setCameraConfig();
     ae::BroadcastEvent(Event::ConfigureCamera(camConfig));
@@ -321,13 +325,14 @@ ViewState EnvironmentView::update()
 
     case ViewPhase::Dialogue:
     {
-        bool isActive = dialogueCtrl.isActive();
+        bool isActive = dialogue->IsActive();
 
         if (!isActive && !prevDialogueState)
         {
             uiCtrl->show(dialogueScreen, false);
 
-            onDialogueStart();
+            setDialogueConfig();
+            dialogue->start();
 
             prevDialogueState = true;
         }
@@ -340,8 +345,6 @@ ViewState EnvironmentView::update()
 
             phase = ViewPhase::Environment;
         }
-
-        dialogueCtrl.update(systemKeysHeld);
 
         break;
     }
@@ -461,7 +464,9 @@ void EnvironmentView::cleanup()
     if (player != nullptr)
     {
         player->RemoveComponent<MovementComponent>();
+        player->RemoveComponent<DialogueComponent>();
         movement = nullptr;
+        dialogue = nullptr;
     }
 
     textCtrl->clearScreen(textVideoBuffer);

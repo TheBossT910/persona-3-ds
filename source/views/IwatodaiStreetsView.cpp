@@ -110,7 +110,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiStreetsView::onDialogueStart()
+void IwatodaiStreetsView::setDialogueConfig()
 {
     // No dialogue currently
 }

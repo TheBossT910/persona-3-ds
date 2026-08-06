@@ -38,7 +38,7 @@ ViewState StationView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void StationView::onDialogueStart()
+void StationView::setDialogueConfig()
 {
     // No dialogue currently
 }
