@@ -43,7 +43,6 @@ namespace GameEngineConfig
 {
 using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::ExecuteBattle,
-                                         Event::SetTextComponent,
                                          Event::SetCharacterPosition,
                                          Event::CameraPosition,
                                          Event::ConfigureCamera,

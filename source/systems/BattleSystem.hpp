@@ -85,16 +85,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     void on_receive(const Event::ExecuteBattle& msg);
 
     /**
-     * @brief ETL message handler to configure the text component.
-     *
-     * @details Receives a pointer to the text component and stores it
-     * so the BattleSystem can render text to the screen.
-     *
-     * @param msg The event payload containing the text component pointer.
-     */
-    void on_receive(const Event::SetTextComponent& msg);
-
-    /**
      * @brief Fallback handler for unhandled ETL messages.
      *
      * @details Required by the ETL message router interface. Safely ignores
@@ -116,8 +106,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     static constexpr u32 ACTION_GUARD = 1;
     static constexpr u32 ACTION_PERSONA = 2;
     static constexpr u32 ACTION_SWITCH = 3;
-
-    TextComponent* text = nullptr;
 
     u32 turnsTaken = 0;
 

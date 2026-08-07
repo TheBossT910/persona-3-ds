@@ -52,11 +52,6 @@ void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
     phase = currentParticipantTurn->getInitalTurnPhase();
 }
 
-void BattleSystem::on_receive(const Event::SetTextComponent& msg)
-{
-    text = msg.text;
-}
-
 void BattleSystem::Init()
 {
     isActive = false;
@@ -77,7 +72,6 @@ void BattleSystem::Update(ae::fixed_t)
 
         if ((menuIndex != -1) && (systemKeysDown & KEY_A) && actor->actorCanUse(actions[menuIndex]))
         {
-            text->clearScreen();
             if (menuIndex == ACTION_ATTACK)
             {
                 selectedSkill = actor->baseAttackAction;
@@ -350,7 +344,6 @@ void BattleSystem::Update(ae::fixed_t)
 
 void BattleSystem::Shutdown()
 {
-    text->clearScreen();
     musicCtrl->pause();
 
     isActive = false;

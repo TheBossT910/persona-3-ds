@@ -76,23 +76,31 @@ class EnvironmentView : public BaseView
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 
-    virtual void setMovementConfig() = 0;
-
-    virtual void setDialogueConfig() = 0;
-
     virtual void setTextConfig() = 0;
 
     virtual void setMusic() = 0;
 
-    virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
+    virtual void setupUI()
+    {
+    }
 
-    virtual void onSetupDialogueAndUI()
+    virtual void setMovementConfig()
+    {
+    }
+
+    virtual void setDialogueConfig()
     {
     }
 
     virtual void setCameraConfig()
     {
     }
+
+    virtual void hookCleanup()
+    {
+    }
+
+    virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
 
     // -------------------------------------------------
     // Battle
@@ -144,11 +152,10 @@ class EnvironmentView : public BaseView
     AnimationController* animationCtrl = AnimationController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
-    DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
-    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
-
-    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
-    PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
+    DialogueScreen* dialogueScreen = nullptr;
+    MenuHUDScreen* menuHUDScreen = nullptr;
+    BattleMenuComponent* battleMenuCmpt = nullptr;
+    PauseMenuComponent* pauseMenuCmpt = nullptr;
 
     // Environment
     Environment env;

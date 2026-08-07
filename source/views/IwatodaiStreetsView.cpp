@@ -20,9 +20,6 @@ IwatodaiStreetsView::~IwatodaiStreetsView()
 
 void IwatodaiStreetsView::startBattle()
 {
-    // set the sub text component
-    ae::BroadcastEvent(Event::SetTextComponent(textSub));
-
     // start battle
     Event::ExecuteBattle msg(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
     ae::BroadcastEvent(msg);
@@ -108,13 +105,39 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiStreetsView::setDialogueConfig()
-{
-    // No dialogue currently
-}
-
 void IwatodaiStreetsView::setTextConfig()
 {
     text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
     textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+}
+
+void IwatodaiStreetsView::setupUI()
+{
+    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+
+    battleMenuCmpt = BattleMenuComponent::getInstance();
+    pauseMenuCmpt = PauseMenuComponent::getInstance();
+
+    // setup pause menu
+    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
+
+    // setup battle menu
+    battleMenuCmpt->init(-1, &isBattleMenuActive, textMenu);
+
+    // TODO: replace this. We shouldn't be calling MenuBackgroundScreen here
+    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
+    MenuBackgroundScreen::getInstance()->load();
+
+    menuHUDScreen = MenuHUDScreen::getInstance();
+
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
+}
+
+void IwatodaiStreetsView::hookCleanup()
+{
+    if (pauseMenuCmpt != nullptr)
+    {
+        pauseMenuCmpt->cancelSFX();
+    }
 }

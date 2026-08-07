@@ -38,13 +38,35 @@ ViewState StationView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void StationView::setDialogueConfig()
-{
-    // No dialogue currently
-}
-
 void StationView::setTextConfig()
 {
     text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
     textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+}
+
+void StationView::setupUI()
+{
+    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+
+    pauseMenuCmpt = PauseMenuComponent::getInstance();
+
+    // setup pause menu
+    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
+
+    // TODO: replace this. We shouldn't be calling MenuBackgroundScreen here
+    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
+    MenuBackgroundScreen::getInstance()->load();
+
+    menuHUDScreen = MenuHUDScreen::getInstance();
+
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
+}
+
+void StationView::hookCleanup()
+{
+    if (pauseMenuCmpt != nullptr)
+    {
+        pauseMenuCmpt->cancelSFX();
+    }
 }

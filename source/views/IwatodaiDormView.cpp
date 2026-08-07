@@ -83,11 +83,43 @@ void IwatodaiDormView::setDialogueConfig()
 {
     demo_yukari_kenji_argument_load();
     dialogue->configureDialogue(
-        DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, textSub));
+        DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, textMenu));
 }
 
 void IwatodaiDormView::setTextConfig()
 {
     text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
     textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+}
+
+void IwatodaiDormView::setupUI()
+{
+    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+
+    // setup dialogue rendering target (which sub-bg the dialogue box uses)
+    demo_dialogue_bg_slot = bgSharedSub1;
+
+    pauseMenuCmpt = PauseMenuComponent::getInstance();
+
+    // setup pause menu
+    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
+
+    // TODO: replace this. We shouldn't be calling MenuBackgroundScreen here
+    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
+    MenuBackgroundScreen::getInstance()->load();
+
+    dialogueScreen = DialogueScreen::getInstance();
+    menuHUDScreen = MenuHUDScreen::getInstance();
+
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->registerScreen(dialogueScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
+}
+
+void IwatodaiDormView::hookCleanup()
+{
+    if (pauseMenuCmpt != nullptr)
+    {
+        pauseMenuCmpt->cancelSFX();
+    }
 }

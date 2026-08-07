@@ -26,6 +26,8 @@ class IwatodaiDormView : public EnvironmentView
     void setDialogueConfig() override;
     void setCameraConfig() override;
     void setTextConfig() override;
+    void setupUI() override;
+    void hookCleanup() override;
 
   private:
     // movement and camera

@@ -209,26 +209,11 @@ void EnvironmentView::init()
     textVideoBufferSub = (uint16_t*)bgGetGfxPtr(bgTextSub);
     bgSetPriority(bgTextSub, 0);
 
-    // TODO: config text/textSub
+    // config text/textSub
     setTextConfig();
-    // TODO: note that the textMenu is hardcoded here because the menu components themseleves are hardcoded
-    // This needs to change; menus cannot be hardcoded
-    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // setup environment geometry/textures (fully generic, data-driven)
     setupEnvironment();
-
-    // setup dialogue rendering target (which sub-bg the dialogue box uses)
-    demo_dialogue_bg_slot = bgSharedSub1;
-
-    // setup pause menu
-    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
-
-    // setup battle menu
-    battleMenuCmpt->init(-1, &isBattleMenuActive, textMenu);
-
-    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
-    MenuBackgroundScreen::getInstance()->load();
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -241,14 +226,10 @@ void EnvironmentView::init()
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
     uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl->registerScreen(menuHUDScreen, false);
-    // uiCtrl->registerScreen(dialogueScreen, false);
-    uiCtrl->show(menuHUDScreen, false);
+    setupUI();
 
     // setup music (room-specific path/loop points)
     setMusic();
-
-    onSetupDialogueAndUI();
 
     // setup view phases
     prevPauseState = false;
@@ -463,6 +444,8 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    hookCleanup();
+
     if (text != nullptr)
     {
         text->clearScreen();
@@ -503,7 +486,6 @@ void EnvironmentView::cleanup()
         textSub = nullptr;
     }
 
-    pauseMenuCmpt->cancelSFX();
     musicCtrl->cleanup();
     animationCtrl->stop();
 

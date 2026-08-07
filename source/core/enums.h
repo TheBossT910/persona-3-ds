@@ -340,7 +340,6 @@ enum : etl::message_id_t
 {
     ExecuteBattle = 0,
     BattleResult,
-    SetTextComponent,
     CameraPosition,
     ConfigureCamera,
     SetCameraMode,
