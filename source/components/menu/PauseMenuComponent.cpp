@@ -43,13 +43,9 @@ void PauseMenuComponent::reset()
     optionCount = MENU_OPTIONS;
 }
 
-void PauseMenuComponent::init(int iBgSlot,
-                              bool* isActive,
-                              uint16_t* iTextVideoBuffer,
-                              uint16_t* iTextVideoBufferSub,
-                              const std::string& iPauseMessage)
+void PauseMenuComponent::init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage)
 {
-    BaseMenu::init(iBgSlot, isActive, iTextVideoBuffer, iTextVideoBufferSub, iPauseMessage);
+    BaseMenu::init(iBgSlot, isActive, iText, iPauseMessage);
     options = menuOptions;
     optionCount = MENU_OPTIONS;
 
@@ -217,10 +213,10 @@ ViewState PauseMenuComponent::debugOptionSelected()
         selectedView = ViewState::CUTSCENE_2;
         break;
     case DebugOption::DEBUG_DIALOGUE:
-        textCtrl->clearScreen(textVideoBufferSub);
+        text->clearScreen();
         demo_yukari_kenji_argument_load();
-        dialogue->configureDialogue(DialogueConfig(
-            demo_yukari_kenji_argument_first(), font, textVideoBufferSub, demo_yukari_kenji_argument_load_bg));
+        dialogue->configureDialogue(
+            DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, text));
         dialogue->start();
         selectedView = ViewState::KEEP_CURRENT;
         break;

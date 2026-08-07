@@ -56,3 +56,9 @@ void PaulowniaMallView::setDialogueConfig()
 {
     // No dialogue currently
 }
+
+void PaulowniaMallView::setTextConfig()
+{
+    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+}

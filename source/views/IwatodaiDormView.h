@@ -25,6 +25,7 @@ class IwatodaiDormView : public EnvironmentView
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void setDialogueConfig() override;
     void setCameraConfig() override;
+    void setTextConfig() override;
 
   private:
     // movement and camera

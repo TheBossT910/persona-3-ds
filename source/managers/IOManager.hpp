@@ -1,7 +1,9 @@
 /**
  * @file IOManager.hpp
  * @brief Manager for IO functions
+ *
  * @author Taha Rashid (TheBossT910 / thebosst)
+ * @author Gregory Munroo (ggmini)
  */
 
 #pragma once
@@ -92,6 +94,22 @@ class IOManager : public ae::Manager, public ae::Singleton<IOManager>
      * @param buffer Pointer to release. Safe to call with nullptr.
      */
     void unloadFromRAM(void* buffer);
+
+    /**
+     * @brief Open a file and return a pointer to its contents.
+     * @param path The path to the file to open.
+     * @return Pointer to the contents of the file, or nullptr if opening failed.
+     */
+    void* openFile(const std::string& path);
+
+    /**
+     * @brief Open a file and return a pointer to its contents, along with the size of the file.
+     * @param path The path to the file to open.
+     * @param size Reference to a variable to store the size of the file.
+     * @return Pointer to the contents of the file, or nullptr if opening failed.
+     * @note This function is useful when you need to know the size of the file being opened.
+     */
+    void* openFile(const std::string& path, u32& size);
 
     // TODO: add javadoc
     std::string getAssetFilePath(const std::string& basePath, const char* suffix);

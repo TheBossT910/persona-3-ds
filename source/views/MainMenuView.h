@@ -3,6 +3,7 @@
 #include "views/BaseView.h"
 
 #include "components/GraphicsComponent.hpp"
+#include "components/TextComponent.hpp"
 #include "managers/MathManager.hpp"
 
 class MainMenuView : public BaseView
@@ -30,8 +31,13 @@ class MainMenuView : public BaseView
     int baseSpeed = 20;
     int fluctuation = 50;
 
+    // text
+    std::string FONT_NAME = "cosmetica";
+    int FONT_SIZE = 12;
+
     ae::Entity* mainMenu = nullptr;
     GraphicsComponent* graphics = nullptr;
+    TextComponent* textMenu = nullptr;
 
     MathManager& math = MathManager::GetInstance();
     MusicController* musicCtrl = MusicController::getInstance();

@@ -20,10 +20,8 @@ IwatodaiStreetsView::~IwatodaiStreetsView()
 
 void IwatodaiStreetsView::startBattle()
 {
-    // set the sub text video buffer
-    Event::SetTextVideoBufferSub vbMsg;
-    vbMsg.textVideoBufferSub = textVideoBufferSub;
-    ae::BroadcastEvent(vbMsg);
+    // set the sub text component
+    ae::BroadcastEvent(Event::SetTextComponent(textSub));
 
     // start battle
     Event::ExecuteBattle msg(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
@@ -86,7 +84,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     {
         if (!promptDrawn)
         {
-            textCtrl->drawText("Battle Zone", cosmeticaFont, textVideoBufferSub, 0, 0, TextColor::White);
+            textSub->drawText("Battle Zone", 0, 0, TextColor::White);
             promptDrawn = true;
         }
         if (pressed & KEY_A)
@@ -101,7 +99,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     default:
         if (promptDrawn)
         {
-            textCtrl->clearScreen(textVideoBufferSub);
+            textSub->clearScreen();
             promptDrawn = false;
         }
         break;
@@ -113,4 +111,10 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
 void IwatodaiStreetsView::setDialogueConfig()
 {
     // No dialogue currently
+}
+
+void IwatodaiStreetsView::setTextConfig()
+{
+    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 }

@@ -21,6 +21,7 @@ class StationView : public EnvironmentView
     void setMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void setDialogueConfig() override;
+    void setTextConfig() override;
 
   private:
     // movement and camera

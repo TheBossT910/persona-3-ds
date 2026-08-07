@@ -14,7 +14,10 @@ void IntroView::init()
     {
         intro = engine.CreateEntity();
         graphics = engine.CreateComponent<GraphicsComponent>();
+        text = engine.CreateComponent<TextComponent>();
+
         intro->AddComponent(graphics);
+        intro->AddComponent(text);
     }
 
     // set video mode for 3 text layers and 1 extended rotation layer
@@ -114,7 +117,8 @@ void IntroView::init()
     dmaCopy(attribution.pal, &VRAM_H_EXT_PALETTE[0][0], attribution.palLen);
     dmaCopy(skySub.pal, &VRAM_H_EXT_PALETTE[1][0], skySub.palLen);
 
-    textCtrl->loadDefaultPalette();
+    // configure text component
+    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // map vram to extended palette
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
@@ -271,7 +275,7 @@ ViewState IntroView::update()
 
     if (animateText)
     {
-        textCtrl->drawText("Press Any Button", font, textVideoBufferSub, 80, 88, TextColor::White);
+        text->drawText("Press Any Button", 80, 88, TextColor::White);
 
         durationCounter++;
 
@@ -397,10 +401,12 @@ void IntroView::cleanup()
     if (intro != nullptr)
     {
         intro->RemoveComponent<GraphicsComponent>();
+        intro->RemoveComponent<TextComponent>();
         engine.DestroyEntity(intro);
 
         intro = nullptr;
         graphics = nullptr;
+        text = nullptr;
     }
 
     musicCtrl->cleanup();

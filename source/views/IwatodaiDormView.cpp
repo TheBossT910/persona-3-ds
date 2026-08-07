@@ -59,7 +59,7 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
         // start dialogue
         if (!promptDrawn)
         {
-            textCtrl->drawText("Talk", cosmeticaFont, textVideoBufferSub, 0, 0, TextColor::White);
+            textSub->drawText("Talk", 0, 0, TextColor::White);
             promptDrawn = true;
         }
         if (pressed & KEY_A)
@@ -71,7 +71,7 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
     default:
         if (promptDrawn)
         {
-            textCtrl->clearScreen(textVideoBufferSub);
+            textSub->clearScreen();
             promptDrawn = false;
         }
         break;
@@ -82,6 +82,12 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
 void IwatodaiDormView::setDialogueConfig()
 {
     demo_yukari_kenji_argument_load();
-    dialogue->configureDialogue(DialogueConfig(
-        demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub, demo_yukari_kenji_argument_load_bg));
+    dialogue->configureDialogue(
+        DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, textSub));
+}
+
+void IwatodaiDormView::setTextConfig()
+{
+    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 }

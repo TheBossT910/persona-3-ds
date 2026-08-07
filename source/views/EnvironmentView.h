@@ -80,6 +80,8 @@ class EnvironmentView : public BaseView
 
     virtual void setDialogueConfig() = 0;
 
+    virtual void setTextConfig() = 0;
+
     virtual void setMusic() = 0;
 
     virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
@@ -127,11 +129,16 @@ class EnvironmentView : public BaseView
     // -------------------------------------------------
     // player
     MovementComponent* movement = nullptr;
+    // TODO: move dialogue, text component to actual actors!
+    // In this case, it would be the Akihiko billboard
     DialogueComponent* dialogue = nullptr;
+    TextComponent* text = nullptr;
+    TextComponent* textSub = nullptr;
 
     // view
     ae::Entity* environment = nullptr;
     GraphicsComponent* graphics = nullptr;
+    TextComponent* textMenu = nullptr;
 
     UIController* uiCtrl = UIController::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
@@ -147,10 +154,11 @@ class EnvironmentView : public BaseView
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
 
+    // text
     uint16_t* textVideoBuffer;
     uint16_t* textVideoBufferSub;
-    Font* cosmeticaFont = nullptr;
-    TextController* textCtrl = TextController::getInstance();
+    std::string FONT_NAME = "cosmetica";
+    int FONT_SIZE = 12;
 
   private:
     // fog properties

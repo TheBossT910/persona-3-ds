@@ -4,12 +4,13 @@
 
 #include "components/ui/MenuBackgroundScreen.h"
 #include "controllers/MusicController.h"
-#include "controllers/TextController.h"
 #include "core/structs.h"
 #include <maxmod9.h>
 #include <nds.h>
 #include <stack>
 #include <string>
+
+#include "components/TextComponent.hpp"
 
 class BaseMenu
 {
@@ -36,11 +37,7 @@ class BaseMenu
     ViewState nextViewState = ViewState::KEEP_CURRENT;
 
   public:
-    virtual void init(int iBgSlot,
-                      bool* isActive,
-                      uint16_t* iTextVideoBuffer,
-                      uint16_t* iTextVideoBufferSub,
-                      const std::string& iPauseMessage = "Pause");
+    virtual void init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage = "Pause");
     /**
      * @brief Resets the menu to its initial state.
      */
@@ -52,9 +49,7 @@ class BaseMenu
 
   protected:
     MusicController* musicCtrl = MusicController::getInstance();
-    TextController* textCtrl = TextController::getInstance();
     MenuBackgroundScreen* menuBgScreen = MenuBackgroundScreen::getInstance();
-    Font* font = textCtrl->loadFont("cosmetica", 12);
-    uint16_t* textVideoBuffer = nullptr;
-    uint16_t* textVideoBufferSub = nullptr;
+
+    TextComponent* text = nullptr;
 };

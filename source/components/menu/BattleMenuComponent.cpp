@@ -29,13 +29,9 @@ BattleMenuComponent* BattleMenuComponent::getInstance()
     return instance;
 }
 
-void BattleMenuComponent::init(int iBgSlot,
-                               bool* isActive,
-                               uint16_t* iTextVideoBuffer,
-                               uint16_t* iTextVideoBufferSub,
-                               const std::string& iPauseMessage)
+void BattleMenuComponent::init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage)
 {
-    BaseMenu::init(iBgSlot, isActive, iTextVideoBuffer, iTextVideoBufferSub, iPauseMessage);
+    BaseMenu::init(iBgSlot, isActive, iText, iPauseMessage);
 
     options = nullptr;
     optionCount = 0;
@@ -45,7 +41,7 @@ void BattleMenuComponent::init(int iBgSlot,
 // option loaders
 void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
 {
-    textCtrl->clearScreen(textVideoBufferSub);
+    text->clearScreen();
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::ACTION)
     {
@@ -72,7 +68,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
 
 void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 {
-    textCtrl->clearScreen(textVideoBufferSub);
+    text->clearScreen();
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::SKILL)
     {
@@ -100,7 +96,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 
 void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* personas)
 {
-    textCtrl->clearScreen(textVideoBufferSub);
+    text->clearScreen();
     if (loadedOption == BattleMenuOptions::PERSONA)
         return;
 
@@ -121,7 +117,7 @@ void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* pers
 
 void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>* targets, bool healTarget)
 {
-    textCtrl->clearScreen(textVideoBufferSub);
+    text->clearScreen();
     BattleMenuOptions targetLoadedOption =
         healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
 
@@ -145,7 +141,7 @@ void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>*
 
 void BattleMenuComponent::loadAllOutAttackConfirmation()
 {
-    textCtrl->clearScreen(textVideoBufferSub);
+    text->clearScreen();
     if (loadedOption == BattleMenuOptions::ALL_OUT_ATTACK)
     {
         return;
@@ -201,9 +197,9 @@ ViewState BattleMenuComponent::update(int keys)
     {
         if (!messagePrinted)
         {
-            textCtrl->clearScreen(textVideoBufferSub);
+            text->clearScreen();
             messagePrinted = true;
-            textCtrl->drawText(pauseMessage, font, textVideoBufferSub, 0, 0, 2);
+            text->drawText(pauseMessage, 0, 0, 2);
         }
         return ViewState::KEEP_CURRENT;
     }

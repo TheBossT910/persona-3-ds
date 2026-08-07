@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "components/TextComponent.hpp"
 #include "core/enums.h"
 #include "core/routerIDs.hpp"
 #include "events/BattleEvents.hpp"
@@ -84,14 +85,14 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     void on_receive(const Event::ExecuteBattle& msg);
 
     /**
-     * @brief ETL message handler to configure the sub-screen text buffer.
+     * @brief ETL message handler to configure the text component.
      *
-     * @details Receives a pointer to the hardware video buffer and stores it
-     * so the BattleSystem can render text to the sub screen.
+     * @details Receives a pointer to the text component and stores it
+     * so the BattleSystem can render text to the screen.
      *
-     * @param msg The event payload containing the video buffer pointer.
+     * @param msg The event payload containing the text component pointer.
      */
-    void on_receive(const Event::SetTextVideoBufferSub& msg);
+    void on_receive(const Event::SetTextComponent& msg);
 
     /**
      * @brief Fallback handler for unhandled ETL messages.
@@ -116,7 +117,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     static constexpr u32 ACTION_PERSONA = 2;
     static constexpr u32 ACTION_SWITCH = 3;
 
-    uint16_t* textVideoBufferSub;
+    TextComponent* text = nullptr;
 
     u32 turnsTaken = 0;
 

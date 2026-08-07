@@ -57,12 +57,8 @@ void EnvironmentView::setupEnvironment()
 
     if (!env.load(dbEntry, bitmapsEnv))
     {
-        textCtrl->drawText("EnvironmentView: failed to load environment " + std::string(dbEntry->name),
-                           cosmeticaFont,
-                           textVideoBufferSub,
-                           0,
-                           0,
-                           TextColor::Red);
+        textSub->drawText(
+            "EnvironmentView: failed to load environment " + std::string(dbEntry->name), 0, 0, TextColor::Red);
     }
 
     for (int i = 0; i < dbEntry->textureCount; ++i)
@@ -77,16 +73,23 @@ void EnvironmentView::init()
     {
         environment = engine.CreateEntity();
         graphics = engine.CreateComponent<GraphicsComponent>();
+        textMenu = engine.CreateComponent<TextComponent>();
+
         environment->AddComponent(graphics);
+        environment->AddComponent(textMenu);
     }
 
     if (player != nullptr)
     {
         movement = engine.CreateComponent<MovementComponent>();
         dialogue = engine.CreateComponent<DialogueComponent>();
+        text = engine.CreateComponent<TextComponent>();
+        textSub = engine.CreateComponent<TextComponent>();
 
         player->AddComponent(movement);
         player->AddComponent(dialogue);
+        player->AddComponent(text);
+        player->AddComponent(textSub);
     }
 
     // set modes
@@ -206,8 +209,11 @@ void EnvironmentView::init()
     textVideoBufferSub = (uint16_t*)bgGetGfxPtr(bgTextSub);
     bgSetPriority(bgTextSub, 0);
 
-    cosmeticaFont = textCtrl->loadFont("cosmetica", 12);
-    textCtrl->loadDefaultPalette();
+    // TODO: config text/textSub
+    setTextConfig();
+    // TODO: note that the textMenu is hardcoded here because the menu components themseleves are hardcoded
+    // This needs to change; menus cannot be hardcoded
+    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // setup environment geometry/textures (fully generic, data-driven)
     setupEnvironment();
@@ -216,10 +222,10 @@ void EnvironmentView::init()
     demo_dialogue_bg_slot = bgSharedSub1;
 
     // setup pause menu
-    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textVideoBuffer, textVideoBufferSub);
+    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
 
     // setup battle menu
-    battleMenuCmpt->init(-1, &isBattleMenuActive, textVideoBuffer, textVideoBufferSub);
+    battleMenuCmpt->init(-1, &isBattleMenuActive, textMenu);
 
     MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
     MenuBackgroundScreen::getInstance()->load();
@@ -310,7 +316,7 @@ ViewState EnvironmentView::update()
 
         if (systemKeysDown & KEY_START)
         {
-            textCtrl->clearScreen(textVideoBufferSub);
+            textSub->clearScreen();
             prevPauseState = false;
             phase = ViewPhase::Environment;
             prevEnvironmentState = false;
@@ -358,7 +364,7 @@ ViewState EnvironmentView::update()
 
         if (systemKeysDown & KEY_START)
         {
-            textCtrl->clearScreen(textVideoBufferSub);
+            textSub->clearScreen();
             prevEnvironmentState = false;
             phase = ViewPhase::Pause;
             break;
@@ -416,7 +422,7 @@ ViewState EnvironmentView::update()
         {
             if (frame % 60 == 30) //restricting this 2Hz otherwise it tanks performance
             {
-                textCtrl->clearArea(textVideoBufferSub, 1, 120, 128, 72);
+                textSub->clearArea(1, 120, 128, 72);
                 char buf[128];
                 std::string debugText = "";
                 std::sprintf(buf, "Touch x = %04X, %04X\n", touch.rawx, touch.px);
@@ -435,7 +441,7 @@ ViewState EnvironmentView::update()
                              (int)(CameraSystem::GetInstance().getAngle() * 100),
                              (int)(charPos.facingAngle * 100));
                 debugText += buf;
-                textCtrl->drawText(debugText, cosmeticaFont, textVideoBufferSub, 1, 120, TextColor::Red);
+                textSub->drawText(debugText, 1, 120, TextColor::Red);
             }
         }
 
@@ -457,32 +463,46 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    if (text != nullptr)
+    {
+        text->clearScreen();
+    }
+
+    if (textSub != nullptr)
+    {
+        textSub->clearScreen();
+    }
+
     if (graphics != nullptr)
     {
         graphics->unloadAll();
     }
 
+    // entity
     if (environment != nullptr)
     {
         environment->RemoveComponent<GraphicsComponent>();
+        environment->RemoveComponent<TextComponent>();
         engine.DestroyEntity(environment);
 
         environment = nullptr;
         graphics = nullptr;
+        textMenu = nullptr;
     }
 
+    // entity
     if (player != nullptr)
     {
         player->RemoveComponent<MovementComponent>();
         player->RemoveComponent<DialogueComponent>();
+        player->RemoveComponent<TextComponent>();
 
         movement = nullptr;
         dialogue = nullptr;
+        text = nullptr;
+        textSub = nullptr;
     }
 
-    textCtrl->clearScreen(textVideoBuffer);
-    textCtrl->clearScreen(textVideoBufferSub);
-    textCtrl->unloadPalette();
     pauseMenuCmpt->cancelSFX();
     musicCtrl->cleanup();
     animationCtrl->stop();

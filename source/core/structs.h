@@ -6,13 +6,14 @@
 #pragma once
 #include "core/enums.h"
 #include "core/geometry.h"
+#include "core/tags.hpp"
 #include <etl/vector.h>
 #include <nds.h>
 #include <string>
 #include <vector>
 
-#include "controllers/TextController.h"
 class BaseMenu;
+class TextComponent;
 
 struct SpriteDBEntry
 {
@@ -164,11 +165,11 @@ struct Save
 struct GraphicAsset
 {
     int id;
-    void* tiles;
+    void* tiles = nullptr;
     u32 tilesLen;
-    void* pal;
+    void* pal = nullptr;
     u32 palLen;
-    void* map;
+    void* map = nullptr;
     u32 mapLen;
 };
 
@@ -195,6 +196,9 @@ struct CameraPath
     etl::vector<CameraKeyframe, 100> keyframes;
 };
 
+/**
+ * @brief A struct that holds initial config values for the MovementComponent
+ */
 struct MovementConfig
 {
     // 3D environment
@@ -236,17 +240,121 @@ struct MovementConfig
     };
 };
 
+/**
+ * @brief A struct that holds initial config values for the DialogueComponent
+ */
 struct DialogueConfig
 {
     Dialogue* firstLine = nullptr;
-    Font* font = nullptr;
-    uint16_t* textVideoBufferSub = nullptr;
     void (*loader)(int bgIndex) = nullptr;
+    TextComponent* text = nullptr;
 
     DialogueConfig() = default;
 
-    DialogueConfig(Dialogue* iFirstLine, Font* iFont, uint16_t* iTextVideoBufferSub, void (*iLoader)(int bgIndex))
-        : firstLine(iFirstLine), font(iFont), textVideoBufferSub(iTextVideoBufferSub), loader(iLoader)
+    DialogueConfig(Dialogue* iFirstLine, void (*iLoader)(int bgIndex), TextComponent* iText)
+        : firstLine(iFirstLine), loader(iLoader), text(iText)
+    {
+    }
+};
+
+/**
+ * @brief Stores data for a single glyph (character) in a font.
+ */
+struct Glyph
+{
+    int xPos;
+    int yPos;
+    int width = 0; /// Used to check if the glyph was read in correctly. Setting it to 0 here wipes any old data
+    int height;
+    int xOffset;
+    int yOffset;
+};
+
+/**
+ * @brief Stores data for a font.
+ * @note Assumes that the regular and bold (if present) font bitmaps are the same size.
+ */
+struct Font
+{
+    std::uint8_t* bitmap = nullptr;
+    std::uint8_t* bitmapBold = nullptr;
+    int bitmapWidth = 256;
+    int bitmapHeight = 256;
+    int lineHeight = 32;
+    Glyph glyphs[256];
+    Glyph boldGlyphs[256];
+    bool boldLoaded = false;
+};
+
+/**
+ * @brief A struct that represents a block of text being rendered on the screen.
+ */
+struct Text
+{
+    int cursorX;
+    int cursorY;
+    int startX;
+    int startY;
+    std::string content;
+    Font* font;
+    uint16_t* videoBuffer;
+    int cursorPos;
+    int baseColor;
+    int activeColor;
+    int counter;
+    bool bold;
+    bool italic;
+    bool underline;
+};
+
+/**
+ * @brief A struct that holds initial config values for the TextComponent
+ */
+struct TextConfig
+{
+    uint16_t* videoBuffer = nullptr;
+
+    /// for loadFont
+    std::string* fontNamePath = nullptr;
+    int fontSize;
+
+    /// for loadFontBitmap
+    std::string* fontBitmapPath = nullptr;
+
+    /// for loadPalette
+    std::string* fontPalettePath = nullptr;
+    bool isSub;
+
+    /// for loadFontMetadata
+    std::string* fontMetadataPath = nullptr;
+    bool isBoldBitmap;
+
+    TextConfig() = default;
+
+    /// load font (loads font, font bitmap, font metadata. NOT font palette)
+    TextConfig(TextConfigTag::LoadFont, uint16_t* iVideoBuffer, std::string* iFontNamePath, int iFontSize)
+        : videoBuffer(iVideoBuffer), fontNamePath(iFontNamePath), fontSize(iFontSize)
+    {
+    }
+
+    /// load font bitmap
+    TextConfig(TextConfigTag::LoadFontBitmap, uint16_t* iVideoBuffer, std::string* iFontBitmapPath)
+        : videoBuffer(iVideoBuffer), fontBitmapPath(iFontBitmapPath)
+    {
+    }
+
+    /// load font palette
+    TextConfig(TextConfigTag::LoadFontPalette, uint16_t* iVideoBuffer, std::string* iFontPalettePath, bool iIsSub)
+        : videoBuffer(iVideoBuffer), fontPalettePath(iFontPalettePath), isSub(iIsSub)
+    {
+    }
+
+    /// load font metadata
+    TextConfig(TextConfigTag::LoadFontMetadata,
+               uint16_t* iVideoBuffer,
+               std::string* iFontMetadataPath,
+               bool iIsBoldBitmap)
+        : videoBuffer(iVideoBuffer), fontMetadataPath(iFontMetadataPath), isBoldBitmap(iIsBoldBitmap)
     {
     }
 };

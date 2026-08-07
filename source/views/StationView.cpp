@@ -42,3 +42,9 @@ void StationView::setDialogueConfig()
 {
     // No dialogue currently
 }
+
+void StationView::setTextConfig()
+{
+    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+}

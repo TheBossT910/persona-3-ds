@@ -10,7 +10,10 @@ void MainMenuView::init()
     {
         mainMenu = engine.CreateEntity();
         graphics = engine.CreateComponent<GraphicsComponent>();
+        textMenu = engine.CreateComponent<TextComponent>();
+
         mainMenu->AddComponent(graphics);
+        mainMenu->AddComponent(textMenu);
     }
 
     // setup music
@@ -49,11 +52,11 @@ void MainMenuView::init()
     int bgTextSub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 4, 0);
     uint16_t* textVideoBufferSub = bgGetGfxPtr(bgTextSub);
     bgSetPriority(bgTextSub, 0);
-    TextController::getInstance()->loadDefaultPalette();
+    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // setup menu
     isMainMenuCmptActive = true;
-    mainMenuCmpt.init(-1, &isMainMenuCmptActive, nullptr, textVideoBufferSub);
+    mainMenuCmpt.init(-1, &isMainMenuCmptActive, textMenu);
 
     // setup console
     consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
@@ -222,10 +225,12 @@ void MainMenuView::cleanup()
     if (mainMenu != nullptr)
     {
         mainMenu->RemoveComponent<GraphicsComponent>();
+        mainMenu->RemoveComponent<TextComponent>();
         engine.DestroyEntity(mainMenu);
 
         mainMenu = nullptr;
         graphics = nullptr;
+        textMenu = nullptr;
     }
 
     musicCtrl->cleanup();

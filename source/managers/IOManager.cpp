@@ -86,3 +86,56 @@ std::string IOManager::getAssetFilePath(const std::string& path, const char* suf
         path.substr(slash == std::string::npos ? 0 : slash + 1, end - (slash == std::string::npos ? 0 : slash + 1) + 1);
     return path.substr(0, end + 1) + "/" + leaf + suffix;
 }
+
+// TODO: update to not use malloc/free
+void* IOManager::openFile(const std::string& filePath)
+{
+    std::string path = basePath + filePath;
+    FILE* file = fopen(path.c_str(), "rb");
+    if (!file)
+        return nullptr;
+
+    //get file size
+    fseek(file, 0, SEEK_END);
+    u32 size = ftell(file);
+    rewind(file);
+
+    if (size == 0)
+    {
+        fclose(file);
+        return nullptr;
+    }
+
+    void* buffer = malloc(size);
+    if (buffer)
+        fread(buffer, 1, size, file);
+    fclose(file);
+
+    return buffer;
+}
+
+// TODO: update to not use malloc/free
+void* IOManager::openFile(const std::string& filePath, u32& size)
+{
+    std::string path = basePath + filePath;
+    FILE* file = fopen(path.c_str(), "rb");
+    if (!file)
+        return nullptr;
+
+    fseek(file, 0, SEEK_END);
+    size = ftell(file);
+    rewind(file);
+
+    if (size == 0)
+    {
+        fclose(file);
+        return nullptr;
+    }
+
+    void* buffer = malloc(size);
+    if (buffer)
+        fread(buffer, 1, size, file);
+    fclose(file);
+
+    return buffer;
+}

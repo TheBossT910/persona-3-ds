@@ -11,16 +11,18 @@
 namespace Event
 {
 /**
- * @brief Event payload to set the subscreen text video buffer.
+ * @brief Event payload to set the text component.
  *
- * @details A lot of systems require the text video buffer to be
+ * @details A lot of systems require the text componen to be
  * set before they print any text. Otherwise, it is possible for such
  * systems to throw errors.
  */
-struct SetTextVideoBufferSub : public etl::message<EventID::SetTextVideoBufferSub>
+struct SetTextComponent : public etl::message<EventID::SetTextComponent>
 {
-    /// Pointer to the text video buffer
-    uint16_t* textVideoBufferSub = nullptr;
+    TextComponent* text = nullptr;
+    SetTextComponent(TextComponent* iText) : text(iText)
+    {
+    }
 };
 
 /**
