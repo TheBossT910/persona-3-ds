@@ -1,7 +1,7 @@
 #include "SignContractView.h"
-#include "controllers/SaveController.h"
 #include "core/enums.h"
 #include "core/globals.h"
+#include "events/SaveEvents.hpp"
 #include <nds.h>
 #include <stdio.h>
 
@@ -258,15 +258,7 @@ ViewState SignContractView::update()
 void SignContractView::cleanup()
 {
     // update save data (names)
-    if (!SaveController::getInstance()->write())
-    {
-        consoleDemoInit();
-        printf("Failed to write save data!\n");
-        while (1)
-        {
-            swiWaitForVBlank();
-        }
-    }
+    ae::BroadcastEvent(Event::WriteSave{});
     musicCtrl->cleanup();
     BaseView::cleanup();
 }

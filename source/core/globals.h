@@ -8,10 +8,13 @@
 #include <string>
 
 // aegis engine
+#include "components/DialogueComponent.hpp"
 #include "components/MovementComponent.hpp"
+#include "managers/IOManager.hpp"
 #include "managers/MathManager.hpp"
 #include "systems/BattleSystem.hpp"
 #include "systems/CameraSystem.hpp"
+#include "systems/SaveSystem.hpp"
 #include <aegis/engine.hpp>
 
 // variables
@@ -44,7 +47,10 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::ConfigureCamera,
                                          Event::SetCameraMode,
                                          Event::SetCameraPath,
-                                         MovementComponent>;
+                                         MovementComponent,
+                                         DialogueComponent,
+                                         Event::ReadSave,
+                                         Event::WriteSave>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
 constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
 } // namespace GameEngineConfig

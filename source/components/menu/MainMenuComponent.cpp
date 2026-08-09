@@ -1,6 +1,6 @@
 #include "MainMenuComponent.h"
-#include "controllers/SaveController.h"
 #include "core/globals.h"
+#include "events/SaveEvents.hpp"
 #include <string>
 
 void MainMenuComponent::init(int iBgSlot,
@@ -115,13 +115,5 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
 
 void MainMenuComponent::updateSave()
 {
-    if (!SaveController::getInstance()->write())
-    {
-        consoleDemoInit();
-        printf("Failed to write save data!\n");
-        while (1)
-        {
-            swiWaitForVBlank();
-        }
-    }
+    ae::BroadcastEvent(Event::WriteSave{});
 }

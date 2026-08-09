@@ -345,7 +345,9 @@ enum : etl::message_id_t
     ConfigureCamera,
     SetCameraMode,
     SetCameraPath,
-    SetCharacterPosition
+    SetCharacterPosition,
+    WriteSave,
+    ReadSave
 };
 } // namespace EventID
 
