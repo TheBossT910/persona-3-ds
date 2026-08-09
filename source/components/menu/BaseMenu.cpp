@@ -82,7 +82,7 @@ ViewState BaseMenu::update(int keys)
                 nextViewState = result;
                 *isActivePtr = false;
                 if (bgSlot >= 0)
-                    bgHide(bgSlot);
+                    render.hideBg(bgSlot);
             }
 
             // if we changed options, push current state to stack
@@ -125,11 +125,11 @@ ViewState BaseMenu::update(int keys)
         if (bgIndex != -1)
         {
             menuBgScreen->showBackground(bgIndex);
-            bgShow(bgSlot);
+            render.showBg(bgSlot);
         }
         else
         {
-            bgHide(bgSlot);
+            render.hideBg(bgSlot);
         }
     }
 
@@ -166,6 +166,8 @@ void BaseMenu::prevOption()
         // otherwise, close the menu
         *isActivePtr = false;
         if (bgSlot >= 0)
-            bgHide(bgSlot);
+        {
+            render.hideBg(bgSlot);
+        }
     }
 }

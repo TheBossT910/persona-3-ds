@@ -97,7 +97,7 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
     msg.screen->renderSprites();
 
     /// display background on screen
-    bgShow(msg.screen->bgId);
+    render.showBg(msg.screen->bgId);
 
     // update the "least recently updated" index
     lruUpdate(msg.screen->bgId, msg.screen->isMain);
@@ -207,7 +207,7 @@ void UISystem::hideAllScreens()
         {
             continue;
         }
-        bgHide(val->bgId);
+        render.hideBg(val->bgId);
         val->removeSprites();
     }
 
@@ -219,7 +219,7 @@ void UISystem::hideAllScreens()
         {
             continue;
         }
-        bgHide(val->bgId);
+        render.hideBg(val->bgId);
         val->removeSprites();
     }
 }

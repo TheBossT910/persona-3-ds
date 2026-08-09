@@ -14,6 +14,7 @@
 #include "components/TextComponent.hpp"
 #include "managers/IOManager.hpp"
 #include "managers/MathManager.hpp"
+#include "managers/RenderManager.hpp"
 #include "systems/BattleSystem.hpp"
 #include "systems/CameraSystem.hpp"
 #include "systems/SaveSystem.hpp"

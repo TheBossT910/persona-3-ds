@@ -363,7 +363,7 @@ class CodeGenerator:
                     "            vramSetBankH(VRAM_H_LCD);",
                     "            dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);",
                     "            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);",
-                    f"            bgShow({s}_dialogue_bg_slot);",
+                    f"            RenderManager::GetInstance().showBg({s}_dialogue_bg_slot);",
                     "            genericGraphics->unloadGraphic(bg);",
                     "        }",
                     "    };",

@@ -208,6 +208,7 @@ int main(int argc, char* argv[])
     engine.RegisterManager(&MathManager::GetInstance());
     engine.RegisterManager(&IOManager::GetInstance());
     engine.RegisterManager(&TextManager::GetInstance());
+    engine.RegisterManager(&RenderManager::GetInstance());
 
     // initialize engine
     engine.InitAll();

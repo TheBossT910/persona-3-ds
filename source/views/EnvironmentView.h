@@ -18,6 +18,7 @@
 #include "components/DialogueComponent.hpp"
 #include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
+#include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
 #include "systems/UISystem.hpp"
 
@@ -169,6 +170,8 @@ class EnvironmentView : public BaseView
     uint16_t* textVideoBufferSub;
     std::string FONT_NAME = "cosmetica";
     int FONT_SIZE = 12;
+
+    RenderManager& render = RenderManager::GetInstance();
 
   private:
     // fog properties

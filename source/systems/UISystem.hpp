@@ -13,6 +13,7 @@
 #include <aegis/system.hpp>
 
 #include "components/ui/UIScreen.h"
+#include "managers/RenderManager.hpp"
 
 // TODO: add persistence support
 // TODO: add a way to pass in -1, indicating reduced # of bg slots
@@ -117,6 +118,8 @@ class UISystem : public ae::SystemRouter<UISystem, Event::ConfigureUI, Event::Sh
      * @brief Unloads and cleans up all registered screens. Used to reset previous configs
      */
     void cleanup();
+
+    RenderManager& render = RenderManager::GetInstance();
 
     OamState* oamSub = nullptr;
     OamState* oamMain = nullptr;

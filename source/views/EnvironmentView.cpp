@@ -319,7 +319,7 @@ ViewState EnvironmentView::update()
         }
         else if (!isActive && prevDialogueState)
         {
-            bgHide(bgSharedSub1);
+            render.hideBg(bgSharedSub1);
 
             prevDialogueState = false;
             prevEnvironmentState = false;
