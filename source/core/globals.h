@@ -1,9 +1,26 @@
+/**
+ * @file globals.h
+ * @brief Holds global variables used game-wide
+ */
+
 #pragma once
 #include "core/structs.h"
 #include <string>
 
+// aegis engine
+#include "components/DialogueComponent.hpp"
+#include "components/MovementComponent.hpp"
+#include "managers/IOManager.hpp"
+#include "managers/MathManager.hpp"
+#include "systems/BattleSystem.hpp"
+#include "systems/CameraSystem.hpp"
+#include "systems/SaveSystem.hpp"
+#include <aegis/engine.hpp>
+
 // variables
 extern volatile int frame;
+extern volatile u32 systemKeysDown;
+extern volatile u32 systemKeysHeld;
 extern int fps;
 extern int fpsTimer;
 extern std::string fatBasePath;
@@ -18,3 +35,27 @@ class Globals
     static bool enableCharacterAnim;
     static bool isPauseMenuActive;
 };
+
+// aegis engine
+namespace GameEngineConfig
+{
+using LargestMessage = etl::largest_type<Event::BattleResult,
+                                         Event::ExecuteBattle,
+                                         Event::SetTextVideoBufferSub,
+                                         Event::SetCharacterPosition,
+                                         Event::CameraPosition,
+                                         Event::ConfigureCamera,
+                                         Event::SetCameraMode,
+                                         Event::SetCameraPath,
+                                         MovementComponent,
+                                         DialogueComponent,
+                                         Event::ReadSave,
+                                         Event::WriteSave>;
+constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
+constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
+} // namespace GameEngineConfig
+
+using GameEngine = ae::Engine<GameEngineConfig::kLargestComponentSize, GameEngineConfig::kLargestComponentAlign>;
+
+extern GameEngine engine;
+extern ae::Entity* player;

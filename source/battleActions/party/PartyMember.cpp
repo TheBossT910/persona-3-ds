@@ -48,7 +48,7 @@ BattlePhase PartyMember::getInitalTurnPhase()
     return BattlePhase::ChooseAction;
 }
 
-void PartyMember::onDead(BattleResult& battleResult)
+void PartyMember::onDead(Event::BattleResult& battleResult)
 {
     //TODO: clear ailments, buffs etc in the future as they get wiped when revived
 }

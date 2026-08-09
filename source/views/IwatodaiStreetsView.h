@@ -15,7 +15,7 @@
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"
 
-#include <vector>
+#include <etl/vector.h>
 
 class IwatodaiStreetsView : public EnvironmentView
 {
@@ -30,15 +30,15 @@ class IwatodaiStreetsView : public EnvironmentView
         return g_environmentDb[1];
     }
 
-    CharacterController* createPlayerController() override;
+    void setMovementConfig() override;
 
     void setMusic() override;
 
     ViewState onTileCheck(TileType tile, u32 pressed) override;
 
-    void onDialogueStart() override;
+    void setDialogueConfig() override;
 
-    void configureCameraController() override;
+    void setCameraConfig() override;
 
     // battle hook
     void startBattle() override;
@@ -54,8 +54,8 @@ class IwatodaiStreetsView : public EnvironmentView
     const float characterFacingAngle = 0.0f;
 
     // battle
-    std::vector<CharacterProfile> characterProfiles;
-    std::vector<EnemyProfile> enemyProfiles;
+    etl::vector<CharacterProfile, 4> characterProfiles;
+    etl::vector<EnemyProfile, 8> enemyProfiles;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 };

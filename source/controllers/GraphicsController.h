@@ -1,5 +1,6 @@
 #pragma once
 #include "core/structs.h"
+#include "managers/IOManager.hpp"
 #include <nds.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,9 +13,6 @@ class GraphicsController
     static void destroy();
     static GraphicsController* getInstance();
 
-    void* loadToRAM(const std::string& filepath, u32* outSize = NULL);
-    void unloadFromRAM(void* buffer);
-
     GraphicAsset loadGrit(const std::string& basePath);
     void unloadGrit(GraphicAsset& asset);
 
@@ -22,4 +20,5 @@ class GraphicsController
     GraphicsController() {};
     ~GraphicsController() {};
     static GraphicsController* instance;
+    IOManager& io = IOManager::GetInstance();
 };

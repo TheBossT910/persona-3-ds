@@ -1,4 +1,5 @@
 #include "IwatodaiDormView.h"
+#include "core/structs.h"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()
@@ -6,7 +7,7 @@ IwatodaiDormView::IwatodaiDormView()
 }
 
 // Test path
-static const CameraPath dormTestPath = {{
+static CameraPath dormTestPath = {{
     {120, {-0.40f, 0.60f, 2.82f}, {0.4f, 0.1f, 2.80f}},
     {0, {-0.40f, 0.60f, 2.82f}, {0.4f, 0.1f, 2.80f}},
     {60, {0.40f, 0.80f, 1.80f}, {0.4f, 0.1f, 2.80f}},
@@ -15,7 +16,7 @@ static const CameraPath dormTestPath = {{
     {240, {-0.40f, 0.60f, 2.82f}, {0.4f, 0.1f, 2.80f}},
 }};
 
-void IwatodaiDormView::configureCameraController()
+void IwatodaiDormView::setCameraConfig()
 {
     camConfig.mode = CameraMode::Path;
     camConfig.initialAngle = -1.6f;
@@ -23,7 +24,7 @@ void IwatodaiDormView::configureCameraController()
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
     camConfig.angleIncrement = 0.07f;
-    cameraCtrl.setPath(&dormTestPath);
+    ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
 void IwatodaiDormView::setMusic()
@@ -31,19 +32,19 @@ void IwatodaiDormView::setMusic()
     musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.300f, -1.000f);
 }
 
-CharacterController* IwatodaiDormView::createPlayerController()
+void IwatodaiDormView::setMovementConfig()
 {
-    return new CharacterController(IWATODAI_DORM_FLOOR_1_MAP_WIDTH,
-                                   IWATODAI_DORM_FLOOR_1_MAP_HEIGHT,
-                                   &iwatodai_dorm_floor_1_map[0][0],
-                                   tileSize,
-                                   dbEntry->worldOffsetX,
-                                   dbEntry->worldOffsetZ,
-                                   characterSize,
-                                   speed,
-                                   height,
-                                   characterTranslate,
-                                   characterFacingAngle);
+    movement->configureMovement(MovementConfig(IWATODAI_DORM_FLOOR_1_MAP_WIDTH,
+                                               IWATODAI_DORM_FLOOR_1_MAP_HEIGHT,
+                                               &iwatodai_dorm_floor_1_map[0][0],
+                                               tileSize,
+                                               dbEntry->worldOffsetX,
+                                               dbEntry->worldOffsetZ,
+                                               characterSize,
+                                               speed,
+                                               height,
+                                               characterTranslate,
+                                               characterFacingAngle));
 }
 
 ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
@@ -78,14 +79,14 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiDormView::onDialogueStart()
+void IwatodaiDormView::setDialogueConfig()
 {
     demo_yukari_kenji_argument_load();
-    dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-    dialogueCtrl.start(demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub);
+    dialogue->configureDialogue(DialogueConfig(
+        demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub, demo_yukari_kenji_argument_load_bg));
 }
 
-void IwatodaiDormView::onEnvironmentUpdate()
+ViewState IwatodaiDormView::update()
 {
     animator.update(1.0f);
 
@@ -121,6 +122,8 @@ void IwatodaiDormView::onEnvironmentUpdate()
     glEnable(GL_FOG);
 
     glPopMatrix(1);
+
+    return ViewState::KEEP_CURRENT;
 }
 
 void IwatodaiDormView::cleanup()

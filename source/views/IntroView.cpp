@@ -199,11 +199,9 @@ void IntroView::init()
 ViewState IntroView::update()
 {
     musicCtrl->update();
-    scanKeys();
-    int pressed = keysDown();
 
     // transition to menu state on any input
-    if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
+    if ((systemKeysDown & KEY_A) || (systemKeysDown & KEY_START) || (systemKeysDown & KEY_TOUCH))
     {
         musicCtrl->playSFX(SFX_SELECT, 255, 128);
         musicCtrl->pause();
@@ -221,7 +219,7 @@ ViewState IntroView::update()
         }
         return ViewState::MAIN_MENU;
     }
-    else if (pressed & KEY_B)
+    else if (systemKeysDown & KEY_B)
     {
         musicCtrl->playSFX(SFX_CANCEL, 255, 128);
         musicCtrl->pause();
@@ -372,8 +370,9 @@ ViewState IntroView::update()
     if (frame % 4 == 0)
     {
         waveAngle += 50;
-        // NOTE: since DS does not have floating point numbers, sinLerp returns value from -4096 -> 4096, which is why we divide by 4096 (shift >> 12)
-        int rotationSpeed = baseSpeed + ((sinLerp(waveAngle) * fluctuation) >> 12);
+        // NOTE: since DS does not have floating point numbers, sin (which uses sinLerp) returns value from -4096 -> 4096, which is why we divide by 4096 (shift >> 12)
+        int angle = math.sin(waveAngle);
+        int rotationSpeed = baseSpeed + ((angle * fluctuation) >> 12);
         currentRotation += rotationSpeed;
         bgSetRotateScale(bg[3], currentRotation, 256, 256);
     }

@@ -14,12 +14,12 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/AnimationController.h"
-#include "controllers/BattleController.h"
-#include "controllers/CameraController.h"
-#include "controllers/CharacterController.h"
-#include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
 #include "controllers/UIController.h"
+
+#include "components/DialogueComponent.hpp"
+#include "components/MovementComponent.hpp"
+#include "systems/CameraSystem.hpp"
 
 class EnvironmentView : public BaseView
 {
@@ -76,19 +76,19 @@ class EnvironmentView : public BaseView
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 
-    virtual CharacterController* createPlayerController() = 0;
+    virtual void setMovementConfig() = 0;
+
+    virtual void setDialogueConfig() = 0;
 
     virtual void setMusic() = 0;
 
     virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
 
-    virtual void onDialogueStart() = 0;
-
     virtual void onSetupDialogueAndUI()
     {
     }
 
-    virtual void configureCameraController()
+    virtual void setCameraConfig()
     {
     }
 
@@ -122,27 +122,25 @@ class EnvironmentView : public BaseView
     bool isBattleMenuActive = false;
     bool promptDrawn = false;
 
-    CharacterController* playerCtrl = nullptr;
-
-    CameraController cameraCtrl;
-
-    CameraPosition camPos;
+    Event::CameraPosition camPos;
     const float tileSize = 0.062500f;
 
-    // Override fields in configureCameraController() — same struct for all modes
-    CameraConfig camConfig;
+    // Override fields in setCameraConfig() — same struct for all modes
+    Event::ConfigureCamera camConfig;
 
     // -------------------------------------------------
     // Controllers
-    DialogueController dialogueCtrl;
-    UIController* uiCtrl = UIController::getInstance();
+    MovementComponent* movement = nullptr;
+    DialogueComponent* dialogue = nullptr;
 
-    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
+    UIController* uiCtrl = UIController::getInstance();
+    AnimationController* animationCtrl = AnimationController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
+
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
     MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
-    BattleController* battleController = BattleController::getInstance();
+
     BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
     PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
 

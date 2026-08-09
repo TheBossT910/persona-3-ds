@@ -7,6 +7,8 @@
 #include "models/kotone.h"
 #include "models/makoto.h"
 
+#include "systems/BattleSystem.hpp"
+
 namespace
 {
 /**
@@ -82,6 +84,15 @@ void EnvironmentView::setupEnvironment()
 
 void EnvironmentView::init()
 {
+    if (player != nullptr)
+    {
+        movement = engine.CreateComponent<MovementComponent>();
+        dialogue = engine.CreateComponent<DialogueComponent>();
+
+        player->AddComponent(movement);
+        player->AddComponent(dialogue);
+    }
+
     // set modes
     videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
     videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
@@ -169,24 +180,24 @@ void EnvironmentView::init()
     bgSetPriority(bgSharedSub3, 3);
     bgUpdate();
 
-    // setup player controller (room-specific map/tuning, generic call site)
-    playerCtrl = createPlayerController();
+    // setup MovementComponent on player entity (room-specific map/tuning, generic call site)
+    setMovementConfig();
+    movement->start();
 
-    configureCameraController();
-    cameraCtrl.configure(camConfig);
+    setCameraConfig();
+    ae::BroadcastEvent(Event::ConfigureCamera(camConfig));
 
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl->loadModel(
-        (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
+    animationCtrl->loadModel((modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        kotone_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
-        makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
     //setup main screen text engine
@@ -210,7 +221,6 @@ void EnvironmentView::init()
 
     // setup pause menu
     pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textVideoBuffer, textVideoBufferSub);
-    pauseMenuCmpt->setCameraController(&cameraCtrl);
 
     // setup battle menu
     battleMenuCmpt->init(-1, &isBattleMenuActive, textVideoBuffer, textVideoBufferSub);
@@ -257,11 +267,6 @@ ViewState EnvironmentView::update()
     bgUpdate();
     oamUpdate(&oamSub);
 
-    scanKeys();
-
-    u32 keys = keysHeld();
-    u32 pressed = keysDown();
-
     switch (phase)
     {
     case ViewPhase::Battle:
@@ -275,9 +280,7 @@ ViewState EnvironmentView::update()
             prevBattleState = true;
         }
 
-        battleController->update(pressed);
-
-        if (!battleController->isActive() && prevBattleState)
+        if (!BattleSystem::GetInstance().IsActive() && prevBattleState)
         {
             prevBattleState = false;
 
@@ -301,7 +304,7 @@ ViewState EnvironmentView::update()
             prevPauseState = true;
         }
 
-        ViewState menuResult = pauseMenuCmpt->update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(systemKeysDown);
 
         if (menuResult != ViewState::KEEP_CURRENT)
         {
@@ -309,7 +312,7 @@ ViewState EnvironmentView::update()
             return menuResult;
         }
 
-        if (pressed & KEY_START)
+        if (systemKeysDown & KEY_START)
         {
             textCtrl->clearScreen(textVideoBufferSub);
             prevPauseState = false;
@@ -322,13 +325,14 @@ ViewState EnvironmentView::update()
 
     case ViewPhase::Dialogue:
     {
-        bool isActive = dialogueCtrl.isActive();
+        bool isActive = dialogue->IsActive();
 
         if (!isActive && !prevDialogueState)
         {
             uiCtrl->show(dialogueScreen, false);
 
-            onDialogueStart();
+            setDialogueConfig();
+            dialogue->start();
 
             prevDialogueState = true;
         }
@@ -342,8 +346,6 @@ ViewState EnvironmentView::update()
             phase = ViewPhase::Environment;
         }
 
-        dialogueCtrl.update(keys);
-
         break;
     }
 
@@ -355,11 +357,10 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
         }
 
-        playerCtrl->update(keys, &cameraCtrl);
-        CharacterPosition charPos = playerCtrl->isCharacterAt();
-        camPos = cameraCtrl.update(keys, charPos);
+        CharacterPosition charPos = movement->isCharacterAt();
+        camPos = CameraSystem::GetInstance().getCameraPosition();
 
-        if (pressed & KEY_START)
+        if (systemKeysDown & KEY_START)
         {
             textCtrl->clearScreen(textVideoBufferSub);
             prevEnvironmentState = false;
@@ -367,7 +368,7 @@ ViewState EnvironmentView::update()
             break;
         }
 
-        if (pressed & KEY_TOUCH)
+        if (systemKeysDown & KEY_TOUCH)
         {
             touchRead(&touch);
 
@@ -379,7 +380,7 @@ ViewState EnvironmentView::update()
             }
         }
 
-        ViewState tileResult = onTileCheck(playerCtrl->isTileAt(), pressed);
+        ViewState tileResult = onTileCheck(movement->isTileAt(), systemKeysDown);
 
         if (tileResult != ViewState::KEEP_CURRENT)
         {
@@ -410,7 +411,7 @@ ViewState EnvironmentView::update()
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
-        characterAnimationCtrl->render();
+        animationCtrl->render();
         glPopMatrix(1);
 
         onEnvironmentUpdate();
@@ -434,8 +435,10 @@ ViewState EnvironmentView::update()
                 debugText += buf;
                 std::sprintf(buf, "translate(x,z): %d, %d\n", (int)(charPos.x * 100), (int)(charPos.z * 100));
                 debugText += buf;
-                std::sprintf(
-                    buf, "angle(w,c): %d, %d\n", (int)(cameraCtrl.getAngle() * 100), (int)(charPos.facingAngle * 100));
+                std::sprintf(buf,
+                             "angle(w,c): %d, %d\n",
+                             (int)(CameraSystem::GetInstance().getAngle() * 100),
+                             (int)(charPos.facingAngle * 100));
                 debugText += buf;
                 textCtrl->drawText(debugText, cosmeticaFont, textVideoBufferSub, 1, 120, TextColor::Red);
             }
@@ -451,7 +454,7 @@ ViewState EnvironmentView::update()
     }
     }
 
-    characterAnimationCtrl->update();
+    animationCtrl->update();
     musicCtrl->update();
 
     return ViewState::KEEP_CURRENT;
@@ -459,18 +462,23 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    if (player != nullptr)
+    {
+        player->RemoveComponent<MovementComponent>();
+        player->RemoveComponent<DialogueComponent>();
+        movement = nullptr;
+        dialogue = nullptr;
+    }
+
     textCtrl->clearScreen(textVideoBuffer);
     textCtrl->clearScreen(textVideoBufferSub);
     textCtrl->unloadPalette();
     pauseMenuCmpt->cancelSFX();
     musicCtrl->cleanup();
-    characterAnimationCtrl->stop();
+    animationCtrl->stop();
 
     BaseView::cleanup();
 
     env.cleanup();
     uiCtrl->cleanup();
-
-    delete playerCtrl;
-    playerCtrl = nullptr;
 }

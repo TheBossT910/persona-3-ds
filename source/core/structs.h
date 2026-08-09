@@ -1,9 +1,17 @@
+/**
+ * @file structs.h
+ * @brief Holds structs used game-wide
+ */
+
 #pragma once
 #include "core/enums.h"
 #include "core/geometry.h"
+#include <etl/vector.h>
 #include <nds.h>
 #include <string>
 #include <vector>
+
+#include "controllers/TextController.h"
 class BaseMenu;
 
 struct SpriteRegister
@@ -170,4 +178,83 @@ struct GraphicAsset
     u32 palLen;
     void* map;
     u32 mapLen;
+};
+
+/**
+ * @brief A single keyframe in a camera path.
+ *
+ * @see See CameraPath
+ */
+struct CameraKeyframe
+{
+    int time;           ///< Frame index at which this keyframe is reached.
+    Vec3<float> eye;    ///< Camera eye position.
+    Vec3<float> target; ///< Look-at position.
+};
+
+/**
+ * @brief An ordered list of keyframes defining a camera animation.
+ *
+ * The camera interpolates linearly between consecutive keyframes.
+ * On completion the @ref CameraSystem switches to Follow mode.
+ */
+struct CameraPath
+{
+    etl::vector<CameraKeyframe, 100> keyframes;
+};
+
+struct MovementConfig
+{
+    // 3D environment
+    int mapWidth;
+    int mapHeight;
+    uint16_t* collisionMap;
+
+    // world
+    float tileSize;
+    float worldOffsetX;
+    float worldOffsetZ;
+    Point2D<float> characterSize;
+
+    // translation
+    float speed;
+    float height;
+    Point2D<float> characterTranslate;
+    float characterFacingAngle;
+
+    MovementConfig() = default;
+
+    MovementConfig(int iMapWidth,
+                   int iMapHeight,
+                   uint16_t* iCollisionMap,
+                   float iTileSize,
+                   float iWorldOffsetX,
+                   float iWorldOffsetZ,
+                   Point2D<float> iCharacterSize,
+                   float iSpeed,
+                   float iHeight,
+                   Point2D<float> iCharacterTranslate,
+                   float iCharacterFacingAngle)
+        : mapWidth(iMapWidth), mapHeight(iMapHeight), collisionMap(iCollisionMap), tileSize(iTileSize),
+          worldOffsetX(iWorldOffsetX), worldOffsetZ(iWorldOffsetZ), characterSize(iCharacterSize), speed(iSpeed)
+    {
+        height = iHeight;
+        characterTranslate = iCharacterTranslate;
+        characterFacingAngle = iCharacterFacingAngle;
+    };
+};
+
+struct DialogueConfig
+{
+    Dialogue* firstLine = nullptr;
+    Font* font = nullptr;
+    uint16_t* textVideoBufferSub = nullptr;
+    void (*loader)(int bgIndex) = nullptr;
+
+    DialogueConfig() = default;
+
+    DialogueConfig(Dialogue* iFirstLine, Font* iFont, uint16_t* iTextVideoBufferSub, void (*iLoader)(int bgIndex))
+        : firstLine(iFirstLine), font(iFont), textVideoBufferSub(iTextVideoBufferSub), loader(iLoader)
+    {
+    }
 };

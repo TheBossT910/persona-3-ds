@@ -1,10 +1,11 @@
 #pragma once
+#include "components/DialogueComponent.hpp"
 #include "components/menu/BaseMenu.h"
 #include "controllers/AnimationController.h"
-#include "controllers/CameraController.h"
 #include "controllers/GraphicsController.h"
 #include "core/globals.h"
 #include "dialogue/demo_dialogue.h"
+#include "systems/CameraSystem.hpp"
 #include <array>
 
 #define MENU_OPTIONS 8
@@ -26,7 +27,7 @@ class PauseMenuComponent : public BaseMenu
     virtual ~PauseMenuComponent() = default;
     static PauseMenuComponent* instance;
 
-    CameraController* cameraCtrl = nullptr;
+    CameraSystem& cameraSystem = CameraSystem::GetInstance();
 
     std::array<CameraMode, 4> cameraModes = {
         CameraMode::Free, CameraMode::Static, CameraMode::CCTV, CameraMode::Follow};
@@ -179,8 +180,10 @@ class PauseMenuComponent : public BaseMenu
     ViewState systemOptionSelected();
     ViewState characterAnimOptionSelected();
 
+    ae::Entity* pauseMenu = nullptr;
+    DialogueComponent* dialogue = nullptr;
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
-    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
+    AnimationController* animationCtrl = AnimationController::getInstance();
 
   public:
     static void create();
@@ -198,9 +201,4 @@ class PauseMenuComponent : public BaseMenu
      * @brief Resets the pause menu to its initial state.
      */
     void reset() override;
-
-    void setCameraController(CameraController* ctrl)
-    {
-        cameraCtrl = ctrl;
-    }
 };

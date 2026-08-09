@@ -1,3 +1,8 @@
+/**
+ * @file geometry.h
+ * @brief Holds geometry structures & operations
+ */
+
 #ifndef Geometry_h
 #define Geometry_h
 

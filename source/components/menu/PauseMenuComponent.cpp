@@ -36,8 +36,6 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
     return instance;
 }
 
-DialogueController dialogueCtrl;
-
 void PauseMenuComponent::reset()
 {
     BaseMenu::reset();
@@ -54,14 +52,24 @@ void PauseMenuComponent::init(int iBgSlot,
     BaseMenu::init(iBgSlot, isActive, iTextVideoBuffer, iTextVideoBufferSub, iPauseMessage);
     options = menuOptions;
     optionCount = MENU_OPTIONS;
+
+    if (pauseMenu == nullptr)
+    {
+        pauseMenu = engine.CreateEntity();
+    }
+
+    if (pauseMenu != nullptr)
+    {
+        dialogue = engine.CreateComponent<DialogueComponent>();
+        pauseMenu->AddComponent(dialogue);
+    }
 }
 
 ViewState PauseMenuComponent::update(int keys)
 {
     // dialogue controller takes full control when active
-    if (dialogueCtrl.isActive())
+    if (dialogue->IsActive())
     {
-        dialogueCtrl.update(keys);
         return ViewState::KEEP_CURRENT;
     }
 
@@ -72,29 +80,26 @@ ViewState PauseMenuComponent::update(int keys)
 
 ViewState PauseMenuComponent::openDebugMenu()
 {
-    if (cameraCtrl)
+    switch (cameraSystem.getMode())
     {
-        switch (cameraCtrl->getMode())
-        {
-        case CameraMode::Follow:
-            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Follow";
-            break;
-        case CameraMode::Static:
-            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Static";
-            break;
-        case CameraMode::CCTV:
-            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: CCTV";
-            break;
-        case CameraMode::Free:
-            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Free";
-            break;
-        case CameraMode::Path:
-            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Path";
-            break;
-        default:
-            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: ?";
-            break;
-        }
+    case CameraMode::Follow:
+        debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Follow";
+        break;
+    case CameraMode::Static:
+        debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Static";
+        break;
+    case CameraMode::CCTV:
+        debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: CCTV";
+        break;
+    case CameraMode::Free:
+        debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Free";
+        break;
+    case CameraMode::Path:
+        debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Path";
+        break;
+    default:
+        debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: ?";
+        break;
     }
     return changeMenu(debugOptions, DEBUG_OPTIONS);
 }
@@ -218,8 +223,9 @@ ViewState PauseMenuComponent::debugOptionSelected()
     case DebugOption::DEBUG_DIALOGUE:
         textCtrl->clearScreen(textVideoBufferSub);
         demo_yukari_kenji_argument_load();
-        dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-        dialogueCtrl.start(demo_yukari_kenji_argument_first(), font, textVideoBufferSub);
+        dialogue->configureDialogue(DialogueConfig(
+            demo_yukari_kenji_argument_first(), font, textVideoBufferSub, demo_yukari_kenji_argument_load_bg));
+        dialogue->start();
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_BILLBOARDS:
@@ -233,16 +239,14 @@ ViewState PauseMenuComponent::debugOptionSelected()
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::CYCLE_CAMERA_MODE:
-        if (cameraCtrl)
+        if (cameraSystem.getMode() == CameraMode::Path)
         {
-            if (cameraCtrl->getMode() == CameraMode::Path)
-            {
-                cameraCtrl->setMode(CameraMode::Follow);
-            }
-            else
-            {
-                cameraCtrl->setMode(cameraModes[(static_cast<int>(cameraCtrl->getMode()) + 1) % cameraModes.size()]);
-            }
+            ae::BroadcastEvent(Event::SetCameraMode{CameraMode::Follow});
+        }
+        else
+        {
+            CameraMode mode = cameraModes[(static_cast<int>(cameraSystem.getMode()) + 1) % cameraModes.size()];
+            ae::BroadcastEvent(Event::SetCameraMode{mode});
         }
         *isActivePtr = false;
         openDebugMenu();
@@ -256,7 +260,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
 
 ViewState PauseMenuComponent::characterAnimOptionSelected()
 {
-    characterAnimationCtrl->stop();
+    animationCtrl->stop();
 
     ViewState selectedView = ViewState::KEEP_CURRENT;
     switch (static_cast<CharacterAnimOption>(selectedOption))
@@ -265,99 +269,99 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
         Globals::enableCharacterAnim = !Globals::enableCharacterAnim;
         break;
     case CharacterAnimOption::ANIM_1:
-        characterAnimationCtrl->set(0, true);
+        animationCtrl->set(0, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_2:
-        characterAnimationCtrl->set(1, true);
+        animationCtrl->set(1, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_3:
-        characterAnimationCtrl->set(2, true);
+        animationCtrl->set(2, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_4:
-        characterAnimationCtrl->set(3, true);
+        animationCtrl->set(3, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_5:
-        characterAnimationCtrl->set(4, true);
+        animationCtrl->set(4, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_6:
-        characterAnimationCtrl->set(5, true);
+        animationCtrl->set(5, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_7:
-        characterAnimationCtrl->set(6, true);
+        animationCtrl->set(6, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_8:
-        characterAnimationCtrl->set(7, true);
+        animationCtrl->set(7, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_9:
-        characterAnimationCtrl->set(8, true);
+        animationCtrl->set(8, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_10:
-        characterAnimationCtrl->set(9, true);
+        animationCtrl->set(9, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_11:
-        characterAnimationCtrl->set(10, true);
+        animationCtrl->set(10, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_12:
-        characterAnimationCtrl->set(11, true);
+        animationCtrl->set(11, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_13:
-        characterAnimationCtrl->set(12, true);
+        animationCtrl->set(12, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_14:
-        characterAnimationCtrl->set(13, true);
+        animationCtrl->set(13, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_15:
-        characterAnimationCtrl->set(14, true);
+        animationCtrl->set(14, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_16:
-        characterAnimationCtrl->set(15, true);
+        animationCtrl->set(15, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_17:
-        characterAnimationCtrl->set(16, true);
+        animationCtrl->set(16, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_18:
-        characterAnimationCtrl->set(17, true);
+        animationCtrl->set(17, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_19:
-        characterAnimationCtrl->set(18, true);
+        animationCtrl->set(18, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_20:
-        characterAnimationCtrl->set(19, true);
+        animationCtrl->set(19, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_21:
-        characterAnimationCtrl->set(20, true);
+        animationCtrl->set(20, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_22:
-        characterAnimationCtrl->set(21, true);
+        animationCtrl->set(21, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_23:
-        characterAnimationCtrl->set(22, true);
+        animationCtrl->set(22, true);
         Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_24:
-        characterAnimationCtrl->set(23, true);
+        animationCtrl->set(23, true);
         Globals::enableCharacterAnim = false;
         break;
     default:
@@ -365,6 +369,6 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
     }
 
     *isActivePtr = false;
-    characterAnimationCtrl->play();
+    animationCtrl->play();
     return selectedView;
 }

@@ -11,10 +11,7 @@ void VideoView::init()
 
 ViewState VideoView::update()
 {
-    scanKeys();
-    int pressed = keysDown();
-
-    if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
+    if ((systemKeysDown & KEY_A) || (systemKeysDown & KEY_START) || (systemKeysDown & KEY_TOUCH))
     {
         musicCtrl->pause();
         for (int i = 0; i <= 16; i++)

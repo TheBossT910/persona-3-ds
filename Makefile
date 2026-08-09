@@ -216,7 +216,7 @@ else
 # Debug flags
 ifeq ($(DEBUG),1)
 CFLAGS   := -O0 -ggdb
-CXXFLAGS := -O0 -ggdb
+CXXFLAGS := -O0 -ggdb -Wno-psabi -fno-rtti -fno-exceptions
 endif
 
 # Default makefile includes arm7_maxmod as ARM7 elf

@@ -2,8 +2,8 @@
 #include "../BattleParticipant.h"
 #include "../TurnResult.h"
 #include "EnemyProfile.h"
+#include <etl/vector.h>
 #include <nds.h>
-#include <vector>
 
 struct Enemy : BattleParticipant
 {
@@ -16,7 +16,7 @@ struct Enemy : BattleParticipant
     Enemy(const EnemyProfile& iEnemyProfile);
 
     Skill* pickSkill();
-    BattleParticipant* pickTarget(std::vector<BattleParticipant*>& partyMembers);
+    BattleParticipant* pickTarget(etl::vector<BattleParticipant*, 13>& partyMembers);
     TurnResult resolve(BattleParticipant* target, Skill* skill);
 
     BattleStats* getBattleStats() override
@@ -27,7 +27,7 @@ struct Enemy : BattleParticipant
     float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
     float getTeamMultiplier() override;
     BattlePhase getInitalTurnPhase() override;
-    void onDead(BattleResult& battleResult) override;
+    void onDead(Event::BattleResult& battleResult) override;
     void setCurrentTurnOrderAgility(float boost);
 
     virtual ~Enemy() = default;

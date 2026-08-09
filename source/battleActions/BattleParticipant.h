@@ -1,11 +1,12 @@
 #pragma once
 #include "BattlePhase.h"
-#include "BattleResult.h"
 #include "BattleStats.h"
 #include "ParticipantType.h"
 #include "armours/Armour.h"
 #include "shoes/Shoe.h"
 #include "skills/Skill.h"
+
+#include "events/BattleEvents.hpp"
 
 #include <nds.h>
 #include <vector>
@@ -50,7 +51,7 @@ struct BattleParticipant
     virtual float getTeamMultiplier() = 0;
     virtual void setCurrentTurnOrderAgility(float boost) = 0;
     virtual BattlePhase getInitalTurnPhase() = 0;
-    virtual void onDead(BattleResult& battleResult) = 0;
+    virtual void onDead(Event::BattleResult& battleResult) = 0;
 
     virtual ~BattleParticipant() = default;
 };

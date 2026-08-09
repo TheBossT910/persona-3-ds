@@ -21,9 +21,6 @@
 #include "views/StationView.h"
 #include "views/VideoView.h"
 
-// controllers
-#include "controllers/SaveController.h"
-
 // components
 #include "components/ui/MenuHUDScreen.h"
 
@@ -43,12 +40,14 @@
 #include "battleActions/skills/SkillDb.h"
 #include "battleActions/weapons/WeaponDb.h"
 
-// debug
-#include "tests/engine/ndsExample.hpp"
-bool testEngine = false;
+// game engine
+GameEngine engine;
+ae::Entity* player;
 
 // variables
 volatile int frame = 0;
+volatile u32 systemKeysDown = 0;
+volatile u32 systemKeysHeld = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
@@ -95,7 +94,7 @@ void SwitchView(BaseView* newView)
 // fn for the interrupt
 void Vblank()
 {
-    frame++;
+    frame = frame + 1;
 }
 
 void loadModels(bool isFemc)
@@ -124,18 +123,25 @@ void loadModels(bool isFemc)
     }
 }
 
+// TODO: add javadoc
+void NDSPollInputCallback()
+{
+    scanKeys();
+    systemKeysDown = keysDown();
+    systemKeysHeld = keysHeld();
+}
+
+// TODO: add javadoc
+void NDSComputeCallback()
+{
+    //...
+}
+
 int main(int argc, char* argv[])
 {
     irqSet(IRQ_VBLANK, Vblank);
 
-    if (testEngine)
-    {
-        ndsExampleTest();
-        while (1)
-            swiWaitForVBlank();
-    }
-
-    // Initialize DLDI/FAT instead
+    // initialize DLDI/FAT
     if (!fatInitDefault())
     {
         consoleDemoInit();
@@ -166,22 +172,6 @@ int main(int argc, char* argv[])
     // initialize maxmod (for sfx)
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
-    // load save data
-    if (!SaveController::getInstance()->read())
-    {
-        consoleDemoInit();
-        printf("Failed to read save data!\n");
-        while (1)
-        {
-            swiWaitForVBlank();
-        }
-    }
-
-    prevFemcMode = saveData.femcMode;
-
-    // setup character model
-    loadModels(saveData.femcMode);
-
     // setup db's. DO NOT CHANGE order
     WeaponDb::Initialize();
     SkillDb::Initialize();
@@ -190,7 +180,8 @@ int main(int argc, char* argv[])
     PersonaDb::Initialize();
     EnemyProfileDb::Initialize();
     CharacterProfileDb::Initialize();
-    //Setup globals
+
+    // setup globals
     Globals::enableDebugPrint = false;
     Globals::enableBillboards = true;
     Globals::enableCharacterAnim = true;
@@ -200,12 +191,44 @@ int main(int argc, char* argv[])
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
     srand(TIMER0_DATA);
 
-    // start with DisclaimerView
+    // set platform hooks
+    engine.SetComputeCallback(&NDSComputeCallback);
+    engine.SetComputeEnabled(true);
+    engine.SetPollInputCallback(&NDSPollInputCallback);
+    engine.SetPollingEnabled(true);
+
+    // register singletons
+    engine.RegisterSystem(&BattleSystem::GetInstance());
+    engine.RegisterSystem(&CameraSystem::GetInstance());
+    engine.RegisterSystem(&SaveSystem::GetInstance());
+
+    engine.RegisterManager(&MathManager::GetInstance());
+    engine.RegisterManager(&IOManager::GetInstance());
+
+    // initialize engine
+    engine.InitAll();
+
+    // set up initial game state
+    // load save data
+    ae::BroadcastEvent(Event::ReadSave{});
+    prevFemcMode = saveData.femcMode;
+    loadModels(saveData.femcMode);
+
+    // create player entity
+    player = engine.CreateEntity();
+
+    // Default is DisclaimerView
     SwitchView(new DisclaimerView());
+
+    // TODO: set to constant tied to VBlank
+    const ae::fixed_t dt = ae::fixed_t(1) / 60;
 
     while (1)
     {
         swiWaitForVBlank();
+
+        // Poll Input -> Update Systems -> Update Components -> Process Managers -> Compute
+        engine.Tick(dt);
 
         if (saveData.femcMode != prevFemcMode)
         {
@@ -270,6 +293,8 @@ int main(int argc, char* argv[])
         bgUpdate();
         oamUpdate(&oamMain);
     }
+
+    engine.ShutdownAll();
 
     return 0;
 }

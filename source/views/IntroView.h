@@ -5,6 +5,8 @@
 #include "core/globals.h"
 #include "views/BaseView.h"
 
+#include "managers/MathManager.hpp"
+
 class IntroView : public BaseView
 {
   private:
@@ -41,6 +43,7 @@ class IntroView : public BaseView
     int baseSpeed = 20;
     int fluctuation = 50;
 
+    MathManager& math = MathManager::GetInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
     Font* font = textCtrl->loadFont("cosmetica", 16);

@@ -1,0 +1,101 @@
+/**
+ * @file IOManager.hpp
+ * @brief Manager for IO functions
+ * @author Taha Rashid (TheBossT910 / thebosst)
+ */
+
+#pragma once
+#include <aegis/manager.hpp>
+#include <nds.h>
+
+class IOManager : public ae::Manager, public ae::Singleton<IOManager>
+{
+  public:
+    void Init() override;
+
+    void Process() override
+    {
+    }
+
+    void Shutdown() override
+    {
+    }
+
+    /**
+     * @brief Reads raw data of type T from a file into @p data.
+     * @tparam T Trivially-copyable type to read into.
+     * @param data Object to read into.
+     * @param filePath Path relative to the base path.
+     * @return true on success, false if the file could not be opened.
+     */
+    template <typename T> bool readFile(T* data, std::string filePath)
+    {
+        // open file
+        std::string path = basePath + filePath;
+        FILE* file = fopen(path.c_str(), "rb");
+        if (!file)
+        {
+            return false;
+        }
+
+        // read data
+        fread(data, sizeof(T), 1, file);
+
+        // close file
+        fclose(file);
+
+        return true;
+    }
+
+    /**
+     * @brief Writes raw data of type T to a file, atomically via a temp file.
+     * @tparam T Trivially-copyable type to write.
+     * @param data Object to write.
+     * @param filePath Path relative to the base path.
+     * @return true on success, false if the temp file could not be opened.
+     */
+    template <typename T> bool writeFile(T* data, std::string filePath)
+    {
+        // open file
+        std::string tempPath = basePath + filePath + ".tmp";
+        std::string path = basePath + filePath;
+
+        FILE* file = fopen(tempPath.c_str(), "wb");
+        if (!file)
+        {
+            return false;
+        }
+
+        // write data
+        fwrite(data, sizeof(T), 1, file);
+
+        // close file
+        fclose(file);
+
+        // replace old file with new file
+        remove(path.c_str());
+        rename(tempPath.c_str(), path.c_str());
+
+        return true;
+    }
+
+    /**
+     * @brief Loads an entire file into a buffer.
+     * @param filePath Full path.
+     * @param outSize Optional. Receives the loaded size in bytes (0 on failure).
+     * @return Pointer to the loaded data, or nullptr on failure.
+     */
+    void* loadToRAM(const std::string& filePath, u32* outSize);
+
+    /**
+     * @brief Releases a buffer previously returned by loadToRAM().
+     * @param buffer Pointer to release. Safe to call with nullptr.
+     */
+    void unloadFromRAM(void* buffer);
+
+  private:
+    friend class Singleton<IOManager>;
+    IOManager() = default;
+
+    std::string basePath;
+};
