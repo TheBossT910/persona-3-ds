@@ -34,5 +34,5 @@ class DialogueScreen : public UIScreen
     ae::Entity* dialogue = nullptr;
     GraphicsComponent* graphics = nullptr;
 
-    void renderBackground();
+    void loadBackground();
 };

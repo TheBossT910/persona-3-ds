@@ -92,7 +92,11 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
 
     // load screen
     hideAllScreens();
+
+    /// display sprites on screen
     msg.screen->renderSprites();
+
+    /// display background on screen
     bgShow(msg.screen->bgId);
 
     // update the "least recently updated" index

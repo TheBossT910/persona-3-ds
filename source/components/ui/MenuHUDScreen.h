@@ -41,7 +41,7 @@ class MenuHUDScreen : public UIScreen
     GraphicAsset skillSprites[18];
     GraphicAsset slashSprite;
     bool bgLoaded;
-    void renderBackground();
+    void loadBackground();
 
     ae::Entity* menuHUD = nullptr;
     GraphicsComponent* graphics = nullptr;

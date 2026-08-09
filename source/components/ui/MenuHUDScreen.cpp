@@ -29,7 +29,7 @@ MenuHUDScreen* MenuHUDScreen::getInstance()
 }
 
 // helper
-void MenuHUDScreen::renderBackground()
+void MenuHUDScreen::loadBackground()
 {
     if (bgLoaded)
         return;
@@ -196,7 +196,7 @@ void MenuHUDScreen::load()
     // slash
     dmaCopy(slashSprite.tiles, sprites[11].gfx, slashSprite.tilesLen);
 
-    renderBackground();
+    loadBackground();
 };
 
 void MenuHUDScreen::unload()
