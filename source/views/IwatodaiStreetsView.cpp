@@ -124,13 +124,10 @@ void IwatodaiStreetsView::setupUI()
     // setup battle menu
     battleMenuCmpt->init(-1, &isBattleMenuActive, textMenu);
 
-    // TODO: replace this. We shouldn't be calling MenuBackgroundScreen here
-    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
-    MenuBackgroundScreen::getInstance()->load();
-
     menuHUDScreen = MenuHUDScreen::getInstance();
+    menuBackgroundScreen = MenuBackgroundScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen};
+    std::array<UIScreen*, 7> screens = {menuHUDScreen, menuBackgroundScreen};
     ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, &oamMain, screens});
     ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
 }

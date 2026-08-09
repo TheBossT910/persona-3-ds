@@ -281,7 +281,7 @@ ViewState EnvironmentView::update()
     {
         if (!prevPauseState)
         {
-            ae::BroadcastEvent(Event::HideAllScreens{});
+            ae::BroadcastEvent(Event::ShowScreen{menuBackgroundScreen});
             pauseMenuCmpt->reset();
             prevPauseState = true;
         }
