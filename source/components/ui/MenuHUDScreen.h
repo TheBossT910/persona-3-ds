@@ -21,7 +21,7 @@ class MenuHUDScreen : public UIScreen
     int onTouch(touchPosition* touch) override;
 
   private:
-    MenuHUDScreen() {};
+    MenuHUDScreen() : UIScreen(false) {};
     ~MenuHUDScreen() {};
     static MenuHUDScreen* instance;
 

@@ -8,6 +8,7 @@ class UIScreen
   public:
     // TODO: ensure bgId, oam is set before calling load()
     int bgId = -1;
+    bool isMain = false;
     OamState* oam = nullptr;
     bool isLoaded = false;
 
@@ -20,6 +21,9 @@ class UIScreen
     virtual void removeSprites(); // TODO: make protected
     virtual int onTouch(touchPosition* touch);
     virtual ~UIScreen() = default;
+    UIScreen(bool iIsMain) : isMain(iIsMain)
+    {
+    }
 
   protected:
     // void loadSprite();

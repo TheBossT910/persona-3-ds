@@ -203,6 +203,7 @@ int main(int argc, char* argv[])
     engine.RegisterSystem(&CameraSystem::GetInstance());
     engine.RegisterSystem(&SaveSystem::GetInstance());
     engine.RegisterSystem(&TextSystem::GetInstance());
+    engine.RegisterSystem(&UISystem::GetInstance());
 
     engine.RegisterManager(&MathManager::GetInstance());
     engine.RegisterManager(&IOManager::GetInstance());

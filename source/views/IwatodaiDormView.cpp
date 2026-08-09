@@ -108,12 +108,11 @@ void IwatodaiDormView::setupUI()
     MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
     MenuBackgroundScreen::getInstance()->load();
 
-    dialogueScreen = DialogueScreen::getInstance();
     menuHUDScreen = MenuHUDScreen::getInstance();
+    dialogueScreen = DialogueScreen::getInstance();
 
-    uiCtrl->registerScreen(menuHUDScreen, false);
-    uiCtrl->registerScreen(dialogueScreen, false);
-    uiCtrl->show(menuHUDScreen, false);
+    std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen};
+    ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, nullptr, screens});
 }
 
 void IwatodaiDormView::hookCleanup()

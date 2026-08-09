@@ -217,15 +217,14 @@ void EnvironmentView::init()
 
     // setup UI
     // NOTE: bg 0 is the 3D view
-    int bgMain[3] = {1, 2, 3};
+    bgMain = {1, 2, 3};
     // TODO: Setting the first index to anything other than bgSharedSub results in black bg (but sprites still load)
     // This might be okay/intended, as long as we create 4 seperate bg to pass in
-    int bgSub[4] = {bgSharedSub2, bgSharedSub3, 2, 3};
+    bgSub = {bgSharedSub2, bgSharedSub3, 4, 5};
 
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
     setupUI();
 
     // setup music (room-specific path/loop points)
@@ -256,7 +255,7 @@ ViewState EnvironmentView::update()
     {
         if (!prevBattleState)
         {
-            uiCtrl->hideAll();
+            ae::BroadcastEvent(Event::HideAllScreens{});
 
             startBattle();
 
@@ -267,7 +266,7 @@ ViewState EnvironmentView::update()
         {
             prevBattleState = false;
 
-            uiCtrl->show(menuHUDScreen, false);
+            ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
 
             prevEnvironmentState = true;
             phase = ViewPhase::Environment;
@@ -282,7 +281,7 @@ ViewState EnvironmentView::update()
     {
         if (!prevPauseState)
         {
-            uiCtrl->hideAll();
+            ae::BroadcastEvent(Event::HideAllScreens{});
             pauseMenuCmpt->reset();
             prevPauseState = true;
         }
@@ -312,8 +311,7 @@ ViewState EnvironmentView::update()
 
         if (!isActive && !prevDialogueState)
         {
-            uiCtrl->show(dialogueScreen, false);
-
+            ae::BroadcastEvent(Event::ShowScreen{dialogueScreen});
             setDialogueConfig();
             dialogue->start();
 
@@ -336,7 +334,7 @@ ViewState EnvironmentView::update()
     {
         if (!prevEnvironmentState)
         {
-            uiCtrl->show(menuHUDScreen, false);
+            ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
             prevEnvironmentState = true;
         }
 
@@ -492,5 +490,4 @@ void EnvironmentView::cleanup()
     BaseView::cleanup();
 
     env.cleanup();
-    uiCtrl->cleanup();
 }

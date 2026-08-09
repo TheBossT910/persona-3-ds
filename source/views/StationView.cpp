@@ -59,8 +59,9 @@ void StationView::setupUI()
 
     menuHUDScreen = MenuHUDScreen::getInstance();
 
-    uiCtrl->registerScreen(menuHUDScreen, false);
-    uiCtrl->show(menuHUDScreen, false);
+    std::array<UIScreen*, 7> screens = {menuHUDScreen};
+    ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, &oamMain, screens});
+    ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
 }
 
 void StationView::hookCleanup()

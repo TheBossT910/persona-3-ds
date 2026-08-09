@@ -20,7 +20,7 @@ class DialogueScreen : public UIScreen
     void removeSprites() override;
 
   private:
-    DialogueScreen() {};
+    DialogueScreen() : UIScreen(false) {};
     ~DialogueScreen() {};
     static DialogueScreen* instance;
 
