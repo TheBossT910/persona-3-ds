@@ -4,7 +4,7 @@
 
 void SaveSystem::on_receive(const Event::ReadSave)
 {
-    bool success = io.read<Save>(&saveData, "save/save.sav");
+    bool success = io.readFile<Save>(&saveData, "save/save.sav");
     if (!success)
     {
         consoleDemoInit();
@@ -18,7 +18,7 @@ void SaveSystem::on_receive(const Event::ReadSave)
 
 void SaveSystem::on_receive(const Event::WriteSave)
 {
-    bool success = io.write<Save>(&saveData, "save/save.sav");
+    bool success = io.writeFile<Save>(&saveData, "save/save.sav");
     if (!success)
     {
         consoleDemoInit();
