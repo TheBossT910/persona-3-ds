@@ -30,7 +30,7 @@ class IOManager : public ae::Manager, public ae::Singleton<IOManager>
      * @param filePath Path relative to the base path.
      * @return true on success, false if the file could not be opened.
      */
-    template <typename T> bool read(T* data, std::string filePath)
+    template <typename T> bool readFile(T* data, std::string filePath)
     {
         // open file
         std::string path = basePath + filePath;
@@ -56,7 +56,7 @@ class IOManager : public ae::Manager, public ae::Singleton<IOManager>
      * @param filePath Path relative to the base path.
      * @return true on success, false if the temp file could not be opened.
      */
-    template <typename T> bool write(T* data, std::string filePath)
+    template <typename T> bool writeFile(T* data, std::string filePath)
     {
         // open file
         std::string tempPath = basePath + filePath + ".tmp";
