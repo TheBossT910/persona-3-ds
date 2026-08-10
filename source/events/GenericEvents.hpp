@@ -11,19 +11,6 @@
 namespace Event
 {
 /**
- * @brief Event payload to set the subscreen text video buffer.
- *
- * @details A lot of systems require the text video buffer to be
- * set before they print any text. Otherwise, it is possible for such
- * systems to throw errors.
- */
-struct SetTextVideoBufferSub : public etl::message<EventID::SetTextVideoBufferSub>
-{
-    /// Pointer to the text video buffer
-    uint16_t* textVideoBufferSub = nullptr;
-};
-
-/**
  * @brief Event payload to set the character position data.
  */
 struct SetCharacterPosition : public etl::message<EventID::SetCharacterPosition>

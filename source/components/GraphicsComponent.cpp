@@ -9,7 +9,7 @@ void GraphicsComponent::Destroy()
 
 GraphicAsset GraphicsComponent::loadGraphic(const std::string& path)
 {
-    GraphicAsset asset = {NULL, 0, NULL, 0, NULL, 0};
+    GraphicAsset asset;
 
     asset.id = ++id;
     asset.tiles = io.loadToRAM(io.getAssetFilePath(path, ".img.bin"), &asset.tilesLen);

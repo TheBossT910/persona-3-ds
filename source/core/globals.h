@@ -11,6 +11,7 @@
 #include "components/DialogueComponent.hpp"
 #include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
+#include "components/TextComponent.hpp"
 #include "managers/IOManager.hpp"
 #include "managers/MathManager.hpp"
 #include "systems/BattleSystem.hpp"
@@ -42,7 +43,6 @@ namespace GameEngineConfig
 {
 using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::ExecuteBattle,
-                                         Event::SetTextVideoBufferSub,
                                          Event::SetCharacterPosition,
                                          Event::CameraPosition,
                                          Event::ConfigureCamera,
@@ -52,7 +52,8 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          DialogueComponent,
                                          Event::ReadSave,
                                          Event::WriteSave,
-                                         GraphicsComponent>;
+                                         GraphicsComponent,
+                                         TextComponent>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
 constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
 } // namespace GameEngineConfig

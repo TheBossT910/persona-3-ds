@@ -76,21 +76,31 @@ class EnvironmentView : public BaseView
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 
-    virtual void setMovementConfig() = 0;
-
-    virtual void setDialogueConfig() = 0;
+    virtual void setTextConfig() = 0;
 
     virtual void setMusic() = 0;
 
-    virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
+    virtual void setupUI()
+    {
+    }
 
-    virtual void onSetupDialogueAndUI()
+    virtual void setMovementConfig()
+    {
+    }
+
+    virtual void setDialogueConfig()
     {
     }
 
     virtual void setCameraConfig()
     {
     }
+
+    virtual void hookCleanup()
+    {
+    }
+
+    virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
 
     // -------------------------------------------------
     // Battle
@@ -127,30 +137,35 @@ class EnvironmentView : public BaseView
     // -------------------------------------------------
     // player
     MovementComponent* movement = nullptr;
+    // TODO: move dialogue, text component to actual actors!
+    // In this case, it would be the Akihiko billboard
     DialogueComponent* dialogue = nullptr;
+    TextComponent* text = nullptr;
+    TextComponent* textSub = nullptr;
 
     // view
     ae::Entity* environment = nullptr;
     GraphicsComponent* graphics = nullptr;
+    TextComponent* textMenu = nullptr;
 
     UIController* uiCtrl = UIController::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
-    DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
-    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
-
-    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
-    PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
+    DialogueScreen* dialogueScreen = nullptr;
+    MenuHUDScreen* menuHUDScreen = nullptr;
+    BattleMenuComponent* battleMenuCmpt = nullptr;
+    PauseMenuComponent* pauseMenuCmpt = nullptr;
 
     // Environment
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
 
+    // text
     uint16_t* textVideoBuffer;
     uint16_t* textVideoBufferSub;
-    Font* cosmeticaFont = nullptr;
-    TextController* textCtrl = TextController::getInstance();
+    std::string FONT_NAME = "cosmetica";
+    int FONT_SIZE = 12;
 
   private:
     // fog properties

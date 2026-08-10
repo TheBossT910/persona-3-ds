@@ -52,7 +52,35 @@ ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void PaulowniaMallView::setDialogueConfig()
+void PaulowniaMallView::setTextConfig()
 {
-    // No dialogue currently
+    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+}
+
+void PaulowniaMallView::setupUI()
+{
+    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+
+    pauseMenuCmpt = PauseMenuComponent::getInstance();
+
+    // setup pause menu
+    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
+
+    // TODO: replace this. We shouldn't be calling MenuBackgroundScreen here
+    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
+    MenuBackgroundScreen::getInstance()->load();
+
+    menuHUDScreen = MenuHUDScreen::getInstance();
+
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
+}
+
+void PaulowniaMallView::hookCleanup()
+{
+    if (pauseMenuCmpt != nullptr)
+    {
+        pauseMenuCmpt->cancelSFX();
+    }
 }
