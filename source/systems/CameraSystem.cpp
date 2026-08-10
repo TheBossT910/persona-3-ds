@@ -56,7 +56,7 @@ float CameraSystem::getMovementAngle() const
 
 void CameraSystem::Init()
 {
-    isActive = false;
+    isActive = true;
 }
 
 void CameraSystem::Shutdown()
