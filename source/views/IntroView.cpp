@@ -118,7 +118,7 @@ void IntroView::init()
     dmaCopy(skySub.pal, &VRAM_H_EXT_PALETTE[1][0], skySub.palLen);
 
     // configure text component
-    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // map vram to extended palette
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);

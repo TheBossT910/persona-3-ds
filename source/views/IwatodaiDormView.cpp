@@ -88,13 +88,13 @@ void IwatodaiDormView::setDialogueConfig()
 
 void IwatodaiDormView::setTextConfig()
 {
-    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 }
 
 void IwatodaiDormView::setupUI()
 {
-    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // setup dialogue rendering target (which sub-bg the dialogue box uses)
     demo_dialogue_bg_slot = bgSharedSub1;
