@@ -10,6 +10,13 @@
 
 void IntroView::init()
 {
+    if (intro == nullptr)
+    {
+        intro = engine.CreateEntity();
+        graphics = engine.CreateComponent<GraphicsComponent>();
+        intro->AddComponent(graphics);
+    }
+
     // set video mode for 3 text layers and 1 extended rotation layer
     videoSetMode(MODE_3_2D);
     videoSetModeSub(MODE_3_2D);
@@ -64,21 +71,20 @@ void IntroView::init()
     dmaFillHalfWords(0, bgGetMapPtr(bgSubSky), 2048);
 
     bool femc = saveData.femcMode;
-    std::string bgPath = fatBasePath + "graphics/IntroView/backgrounds/";
-    std::string spritePath = fatBasePath + "graphics/IntroView/sprites/";
+    std::string bgPath = "graphics/IntroView/backgrounds/";
+    std::string spritePath = "graphics/IntroView/sprites/";
     std::string suffix = femc ? "FEMC" : "";
 
     GraphicAsset silhouette =
-        graphicsCtrl->loadGrit(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
-    GraphicAsset room = graphicsCtrl->loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
-    GraphicAsset sky = graphicsCtrl->loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
-    GraphicAsset overlay =
-        graphicsCtrl->loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
-    GraphicAsset skySub = graphicsCtrl->loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
+        graphics->loadGraphic(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
+    GraphicAsset room = graphics->loadGraphic(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
+    GraphicAsset sky = graphics->loadGraphic(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
+    GraphicAsset overlay = graphics->loadGraphic(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
+    GraphicAsset skySub = graphics->loadGraphic(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
 
-    GraphicAsset attribution = graphicsCtrl->loadGrit(bgPath + "attributionBackground/attributionBackground");
-    GraphicAsset logoLeft = graphicsCtrl->loadGrit(spritePath + "logoSpriteLeft/logoSpriteLeft");
-    GraphicAsset logoRight = graphicsCtrl->loadGrit(spritePath + "logoSpriteRight/logoSpriteRight");
+    GraphicAsset attribution = graphics->loadGraphic(bgPath + "attributionBackground/attributionBackground");
+    GraphicAsset logoLeft = graphics->loadGraphic(spritePath + "logoSpriteLeft/logoSpriteLeft");
+    GraphicAsset logoRight = graphics->loadGraphic(spritePath + "logoSpriteRight/logoSpriteRight");
 
     // copy graphics to vram
     dmaCopy(silhouette.tiles, bgGetGfxPtr(bg[0]), silhouette.tilesLen);
@@ -145,14 +151,14 @@ void IntroView::init()
     bgUpdate();
 
     // unload all graphics now that it's copied to vram
-    graphicsCtrl->unloadGrit(silhouette);
-    graphicsCtrl->unloadGrit(room);
-    graphicsCtrl->unloadGrit(sky);
-    graphicsCtrl->unloadGrit(overlay);
-    graphicsCtrl->unloadGrit(attribution);
-    graphicsCtrl->unloadGrit(skySub);
-    graphicsCtrl->unloadGrit(logoLeft);
-    graphicsCtrl->unloadGrit(logoRight);
+    graphics->unloadGraphic(silhouette);
+    graphics->unloadGraphic(room);
+    graphics->unloadGraphic(sky);
+    graphics->unloadGraphic(overlay);
+    graphics->unloadGraphic(attribution);
+    graphics->unloadGraphic(skySub);
+    graphics->unloadGraphic(logoLeft);
+    graphics->unloadGraphic(logoRight);
 
     // point to music
     musicCtrl->loadSFX(SFX_SELECT);
@@ -383,6 +389,20 @@ ViewState IntroView::update()
 
 void IntroView::cleanup()
 {
+    if (graphics != nullptr)
+    {
+        graphics->unloadAll();
+    }
+
+    if (intro != nullptr)
+    {
+        intro->RemoveComponent<GraphicsComponent>();
+        engine.DestroyEntity(intro);
+
+        intro = nullptr;
+        graphics = nullptr;
+    }
+
     musicCtrl->cleanup();
     BaseView::cleanup();
 

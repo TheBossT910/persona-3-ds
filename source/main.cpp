@@ -43,6 +43,8 @@
 // game engine
 GameEngine engine;
 ae::Entity* player;
+ae::Entity* generic;
+GraphicsComponent* genericGraphics;
 
 // variables
 volatile int frame = 0;
@@ -63,9 +65,8 @@ static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
 static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
 {
     std::string basePath = fatBasePath + "models/" + (isFemc ? "kotone/" : "makoto/");
-    GraphicAsset asset = GraphicsController::getInstance()->loadGrit(basePath + name);
+    GraphicAsset asset = genericGraphics->loadGraphic(basePath + name);
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
-    // GraphicsController::getInstance()->unloadGrit(asset);
     return tiles;
 }
 
@@ -209,13 +210,18 @@ int main(int argc, char* argv[])
     engine.InitAll();
 
     // set up initial game state
+    // create entity
+    player = engine.CreateEntity();
+
+    // TODO: replace this temporary workaround for graphics
+    generic = engine.CreateEntity();
+    genericGraphics = engine.CreateComponent<GraphicsComponent>();
+    generic->AddComponent(genericGraphics);
+
     // load save data
     ae::BroadcastEvent(Event::ReadSave{});
     prevFemcMode = saveData.femcMode;
     loadModels(saveData.femcMode);
-
-    // create player entity
-    player = engine.CreateEntity();
 
     // Default is DisclaimerView
     SwitchView(new DisclaimerView());

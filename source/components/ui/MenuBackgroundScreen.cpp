@@ -35,12 +35,33 @@ MenuBackgroundScreen* MenuBackgroundScreen::getInstance()
 
 void MenuBackgroundScreen::load()
 {
+    if (menuBackground == nullptr)
+    {
+        menuBackground = engine.CreateEntity();
+        graphics = engine.CreateComponent<GraphicsComponent>();
+        menuBackground->AddComponent(graphics);
+    }
+
     loadedBgIndex = MENU_BACKGROUND_SCREEN_INVALID_BG_INDEX;
 }
 
 void MenuBackgroundScreen::unload()
 {
     loadedBgIndex = MENU_BACKGROUND_SCREEN_INVALID_BG_INDEX;
+
+    if (graphics != nullptr)
+    {
+        graphics->unloadAll();
+    }
+
+    if (menuBackground != nullptr)
+    {
+        menuBackground->RemoveComponent<GraphicsComponent>();
+        engine.DestroyEntity(menuBackground);
+
+        menuBackground = nullptr;
+        graphics = nullptr;
+    }
 }
 
 std::string MenuBackgroundScreen::resolveBgName(int bgIndex) const
@@ -74,9 +95,9 @@ void MenuBackgroundScreen::showBackground(int bgIndex)
         return;
     }
 
-    std::string bgPath = fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName;
+    std::string bgPath = "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName;
 
-    GraphicAsset bg = this->graphicsController->loadGrit(bgPath);
+    GraphicAsset bg = this->graphics->loadGraphic(bgPath);
 
     dmaCopy(bg.tiles, bgGetGfxPtr(bgId), bg.tilesLen);
     dmaCopy(bg.map, bgGetMapPtr(bgId), bg.mapLen);
@@ -87,7 +108,7 @@ void MenuBackgroundScreen::showBackground(int bgIndex)
 
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
-    this->graphicsController->unloadGrit(bg);
+    this->graphics->unloadGraphic(bg);
 
     this->loadedBgIndex = bgIndex;
 }

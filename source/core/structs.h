@@ -14,15 +14,6 @@
 #include "controllers/TextController.h"
 class BaseMenu;
 
-struct SpriteRegister
-{
-    int id;
-    void* tiles;
-    u32 tilesLen;
-    void* pal;
-    u32 palLen;
-};
-
 struct SpriteDBEntry
 {
     SpriteType type;
@@ -172,6 +163,7 @@ struct Save
 
 struct GraphicAsset
 {
+    int id;
     void* tiles;
     u32 tilesLen;
     void* pal;

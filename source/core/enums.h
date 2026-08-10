@@ -355,7 +355,8 @@ enum class ComponentType : ae::ComponentTypeID
 {
     None = 0,
     Movement,
-    Dialogue
+    Dialogue,
+    Graphics,
 };
 
 /**

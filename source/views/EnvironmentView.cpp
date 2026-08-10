@@ -11,23 +11,6 @@
 
 namespace
 {
-/**
- * @brief Loads a single .grit asset and returns its raw tile pointer.
- *
- * Stashes the owning GraphicAsset in @p asset so the caller can unload it
- * once the texture has been uploaded to VRAM.
- *
- * @param path  Full path (base path + grit base name) of the asset to load.
- * @param asset Output parameter that receives the loaded GraphicAsset,
- *              which the caller is responsible for unloading later.
- * @return Raw pointer to the asset's tile data, reinterpreted as
- *         unsigned int, suitable for passing to the texture upload code.
- */
-const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
-{
-    asset = GraphicsController::getInstance()->loadGrit(path);
-    return reinterpret_cast<const unsigned int*>(asset.tiles);
-}
 
 /**
  * @brief Strips the compiled ".img.bin" suffix from a texture filename to
@@ -54,6 +37,12 @@ std::string gritBaseName(const char* compiledFileName)
 }
 } // namespace
 
+const unsigned int* EnvironmentView::loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
+{
+    asset = graphics->loadGraphic(path);
+    return reinterpret_cast<const unsigned int*>(asset.tiles);
+}
+
 void EnvironmentView::setupEnvironment()
 {
     GraphicAsset envTextures[MAX_ENVIRONMENT_TEXTURES] = {};
@@ -78,12 +67,19 @@ void EnvironmentView::setupEnvironment()
 
     for (int i = 0; i < dbEntry->textureCount; ++i)
     {
-        graphicsCtrl->unloadGrit(envTextures[i]);
+        graphics->unloadGraphic(envTextures[i]);
     }
 }
 
 void EnvironmentView::init()
 {
+    if (environment == nullptr)
+    {
+        environment = engine.CreateEntity();
+        graphics = engine.CreateComponent<GraphicsComponent>();
+        environment->AddComponent(graphics);
+    }
+
     if (player != nullptr)
     {
         movement = engine.CreateComponent<MovementComponent>();
@@ -240,7 +236,7 @@ void EnvironmentView::init()
 
     uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
     uiCtrl->registerScreen(menuHUDScreen, false);
-    uiCtrl->registerScreen(dialogueScreen, false);
+    // uiCtrl->registerScreen(dialogueScreen, false);
     uiCtrl->show(menuHUDScreen, false);
 
     // setup music (room-specific path/loop points)
@@ -461,10 +457,25 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    if (graphics != nullptr)
+    {
+        graphics->unloadAll();
+    }
+
+    if (environment != nullptr)
+    {
+        environment->RemoveComponent<GraphicsComponent>();
+        engine.DestroyEntity(environment);
+
+        environment = nullptr;
+        graphics = nullptr;
+    }
+
     if (player != nullptr)
     {
         player->RemoveComponent<MovementComponent>();
         player->RemoveComponent<DialogueComponent>();
+
         movement = nullptr;
         dialogue = nullptr;
     }

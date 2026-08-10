@@ -9,6 +9,7 @@
 
 // aegis engine
 #include "components/DialogueComponent.hpp"
+#include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
 #include "managers/IOManager.hpp"
 #include "managers/MathManager.hpp"
@@ -50,7 +51,8 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          MovementComponent,
                                          DialogueComponent,
                                          Event::ReadSave,
-                                         Event::WriteSave>;
+                                         Event::WriteSave,
+                                         GraphicsComponent>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
 constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
 } // namespace GameEngineConfig
@@ -59,3 +61,7 @@ using GameEngine = ae::Engine<GameEngineConfig::kLargestComponentSize, GameEngin
 
 extern GameEngine engine;
 extern ae::Entity* player;
+
+// temporary solution to get some weird graphics implementations working
+extern ae::Entity* generic;
+extern GraphicsComponent* genericGraphics;
