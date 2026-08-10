@@ -40,13 +40,13 @@ ViewState StationView::onTileCheck(TileType tile, u32 pressed)
 
 void StationView::setTextConfig()
 {
-    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 }
 
 void StationView::setupUI()
 {
-    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     pauseMenuCmpt = PauseMenuComponent::getInstance();
 

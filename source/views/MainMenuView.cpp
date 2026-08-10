@@ -52,7 +52,7 @@ void MainMenuView::init()
     int bgTextSub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 4, 0);
     uint16_t* textVideoBufferSub = bgGetGfxPtr(bgTextSub);
     bgSetPriority(bgTextSub, 0);
-    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // setup menu
     isMainMenuCmptActive = true;

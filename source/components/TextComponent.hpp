@@ -42,6 +42,7 @@ class TextComponent : public ae::Component
      * font palette, and font metadata information
      *
      * @param config The struct containing the text configuration to apply.
+     * @param loadDefaultPalette Flag to load the default font palette if true
      */
     void configureText(const TextConfig& config, bool loadDefaultPalette = true);
 

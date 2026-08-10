@@ -107,13 +107,13 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
 
 void IwatodaiStreetsView::setTextConfig()
 {
-    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 }
 
 void IwatodaiStreetsView::setupUI()
 {
-    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     battleMenuCmpt = BattleMenuComponent::getInstance();
     pauseMenuCmpt = PauseMenuComponent::getInstance();

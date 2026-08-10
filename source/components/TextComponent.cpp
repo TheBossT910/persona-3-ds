@@ -31,45 +31,30 @@ void TextComponent::Destroy()
 void TextComponent::configureText(const TextConfig& config, bool loadDefaultPalette)
 {
     isActive = true;
-    videoBuffer = config.videoBuffer;
+
+    // set video buffer
+    if (config.videoBuffer != nullptr)
+    {
+        videoBuffer = config.videoBuffer;
+    }
+
+    /// @note Loading a font and loading a font palette are mutually exclusive
+    // load font
     if (config.fontNamePath != nullptr)
     {
         font = tm.loadFont(config.fontNamePath, config.fontSize);
     }
-    else
-    {
-        // TODO: show error message
-    }
-
-    if (config.fontBitmapPath != nullptr)
-    {
-        tm.loadFontBitmap(config.fontBitmapPath);
-    }
-    else
-    {
-        // TODO: show error message
-    }
-
-    if (config.fontPalettePath != nullptr)
+    // load font palette
+    else if (config.fontPalettePath != nullptr)
     {
         tm.loadPalette(config.fontPalettePath, config.isSub);
     }
-    else
-    {
-        // TODO: show error message
-    }
 
-    if ((config.fontMetadataPath != nullptr) && (font != nullptr))
-    {
-        tm.loadFontMetadata(config.fontMetadataPath, font, config.isBoldBitmap);
-    }
-    else
-    {
-        // TODO: show error message
-    }
-
+    // load default font palette
     if (loadDefaultPalette)
     {
+        sassert(font != nullptr, "Cannot load a font palette if a font has not been loaded first!");
+        sassert(font != nullptr, "Cannot load a font palette if a font has not been loaded first!");
         tm.loadDefaultPalette();
     }
 }

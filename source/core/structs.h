@@ -6,7 +6,6 @@
 #pragma once
 #include "core/enums.h"
 #include "core/geometry.h"
-#include "core/tags.hpp"
 #include <etl/vector.h>
 #include <nds.h>
 #include <string>
@@ -332,29 +331,14 @@ struct TextConfig
     TextConfig() = default;
 
     /// load font (loads font, font bitmap, font metadata. NOT font palette)
-    TextConfig(TextConfigTag::LoadFont, uint16_t* iVideoBuffer, std::string* iFontNamePath, int iFontSize)
+    TextConfig(uint16_t* iVideoBuffer, std::string* iFontNamePath, int iFontSize)
         : videoBuffer(iVideoBuffer), fontNamePath(iFontNamePath), fontSize(iFontSize)
     {
     }
 
-    /// load font bitmap
-    TextConfig(TextConfigTag::LoadFontBitmap, uint16_t* iVideoBuffer, std::string* iFontBitmapPath)
-        : videoBuffer(iVideoBuffer), fontBitmapPath(iFontBitmapPath)
-    {
-    }
-
     /// load font palette
-    TextConfig(TextConfigTag::LoadFontPalette, uint16_t* iVideoBuffer, std::string* iFontPalettePath, bool iIsSub)
+    TextConfig(uint16_t* iVideoBuffer, std::string* iFontPalettePath, bool iIsSub)
         : videoBuffer(iVideoBuffer), fontPalettePath(iFontPalettePath), isSub(iIsSub)
-    {
-    }
-
-    /// load font metadata
-    TextConfig(TextConfigTag::LoadFontMetadata,
-               uint16_t* iVideoBuffer,
-               std::string* iFontMetadataPath,
-               bool iIsBoldBitmap)
-        : videoBuffer(iVideoBuffer), fontMetadataPath(iFontMetadataPath), isBoldBitmap(iIsBoldBitmap)
     {
     }
 };

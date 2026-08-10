@@ -54,13 +54,13 @@ ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
 
 void PaulowniaMallView::setTextConfig()
 {
-    text->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 }
 
 void PaulowniaMallView::setupUI()
 {
-    textMenu->configureText(TextConfig(TextConfigTag::LoadFont{}, textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     pauseMenuCmpt = PauseMenuComponent::getInstance();
 
