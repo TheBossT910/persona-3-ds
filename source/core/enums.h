@@ -351,9 +351,10 @@ enum : etl::message_id_t
     ConfigureUIScreen,
     ShowScreen,
     HideAllScreens,
-    SetUIMenu,
-    ToggleMenu,
-    SwitchView
+    ConfigureUIMenu,
+    SwitchView,
+    ShowMenu,
+    HideAllMenus
 };
 } // namespace EventID
 

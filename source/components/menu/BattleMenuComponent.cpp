@@ -29,20 +29,6 @@ BattleMenuComponent* BattleMenuComponent::getInstance()
     return instance;
 }
 
-void BattleMenuComponent::configureMenu(bool* isActive, const std::string& iPauseMessage)
-{
-    BaseMenu::configureMenu(isActive, iPauseMessage);
-
-    options = nullptr;
-    optionCount = 0;
-    startIndex = 0;
-}
-
-void BattleMenuComponent::setText(TextComponent* iText)
-{
-    text = iText;
-}
-
 // option loaders
 void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
 {
@@ -194,9 +180,13 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
 void BattleMenuComponent::resetMenu()
 {
     loadedOption = BattleMenuOptions::NONE;
-    *isActivePtr = false;
-    pauseMessage = "";
+    isActive = false;
     messagePrinted = false;
+
+    pauseMessage = "";
+
+    options = nullptr;
+    optionCount = 0;
     selectedOption = 0;
     startIndex = 0;
 }

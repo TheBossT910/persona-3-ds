@@ -2,7 +2,6 @@
 #include "battleActions/BattleParticipant.h"
 #include "battleActions/actions/ActionBase.h"
 #include "battleActions/personas/PersonaBase.h"
-#include "components/TextComponent.hpp"
 #include "components/menu/BaseMenu.h"
 #include "components/menu/BattleMenuComponent.h"
 #include <etl/vector.h>
@@ -19,7 +18,6 @@ class BattleMenuComponent : public BaseMenu
     etl::vector<MenuOption, 10> battleOptions;
     int alertStartFrame = 0;
     bool messagePrinted = false;
-    TextComponent* text = nullptr;
 
     // option handlers
     int battleOptionSelected();
@@ -29,12 +27,8 @@ class BattleMenuComponent : public BaseMenu
     static void destroy();
     static BattleMenuComponent* getInstance();
 
-    void configureMenu(bool* isActive, const std::string& iPauseMessage) override;
     void resetMenu() override;
     ViewState updateHook() override;
-
-    // helper
-    void setText(TextComponent* iText);
 
     // option loaders
     void loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name);

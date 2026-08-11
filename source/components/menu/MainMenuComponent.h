@@ -46,5 +46,5 @@ class MainMenuComponent : public BaseMenu
     void updateSave();
 
   public:
-    void configureMenu(bool* isActive, const std::string& iPauseMessage) override;
+    void resetMenu() override;
 };

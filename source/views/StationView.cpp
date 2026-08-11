@@ -49,8 +49,6 @@ void StationView::setupUI()
     textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     pauseMenuCmpt = PauseMenuComponent::getInstance();
-    pauseMenuCmpt->configureMenu(&Globals::isPauseMenuActive, "Pause");
-    pauseMenuCmpt->setText(textMenu);
 
     menuHUDScreen = MenuHUDScreen::getInstance();
 
@@ -58,5 +56,5 @@ void StationView::setupUI()
     std::array<BaseMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::SetUIMenu{textMenu, menus});
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
 }

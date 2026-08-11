@@ -17,7 +17,7 @@ void UISystem::Update(ae::fixed_t dt)
     for (BaseMenu*& menu : menus)
     {
         // skip if nullptr or not active
-        if ((menu == nullptr) || !*menu->isActivePtr)
+        if ((menu == nullptr) || !menu->isActive)
         {
             continue;
         }
@@ -69,7 +69,7 @@ void UISystem::Update(ae::fixed_t dt)
                 if (result != ViewState::KEEP_CURRENT)
                 {
                     menu->nextViewState = result;
-                    *menu->isActivePtr = false;
+                    menu->isActive = false;
                 }
 
                 // if we changed options, push current state to stack
@@ -157,11 +157,23 @@ void UISystem::on_receive(const Event::ConfigureUIScreen& config)
     }
 }
 
-void UISystem::on_receive(const Event::SetUIMenu& config)
+void UISystem::on_receive(const Event::ConfigureUIMenu& config)
 {
     isActive = true;
     menus = config.menus;
     text = config.text;
+
+    for (BaseMenu*& menu : menus)
+    {
+        // skip if nullptr
+        if (menu == nullptr)
+        {
+            continue;
+        }
+
+        menu->isActive = false;
+        menu->text = text;
+    }
 }
 
 void UISystem::on_receive(const Event::ShowScreen& msg)
@@ -396,4 +408,22 @@ void UISystem::cancelSFX()
     musicCtrl->stopSFX(sfxMenuHandle);
     musicCtrl->stopSFX(sfxSelectHandle);
     musicCtrl->stopSFX(sfxCancelHandle);
+}
+
+void UISystem::on_receive(const Event::ShowMenu& msg)
+{
+    if (activeMenu != nullptr)
+    {
+        activeMenu->isActive = false;
+    }
+
+    activeMenu = msg.menu;
+    activeMenu->resetMenu();
+    activeMenu->isActive = true;
+}
+
+void UISystem::on_receive(const Event::HideAllMenus& /*msg*/)
+{
+    activeMenu->isActive = false;
+    activeMenu = nullptr;
 }

@@ -255,12 +255,12 @@ ViewState EnvironmentView::update()
     {
         if (!prevBattleState)
         {
+            prevBattleState = true;
+
             ae::BroadcastEvent(Event::HideAllScreens{});
-            isBattleMenuActive = true;
+            ae::BroadcastEvent(Event::ShowMenu{battleMenuCmpt});
 
             startBattle();
-
-            prevBattleState = true;
         }
 
         if (!BattleSystem::GetInstance().IsActive() && prevBattleState)
@@ -268,7 +268,7 @@ ViewState EnvironmentView::update()
             prevBattleState = false;
 
             ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
-            isBattleMenuActive = false;
+            ae::BroadcastEvent(Event::HideAllMenus{});
 
             prevEnvironmentState = true;
             phase = ViewPhase::Environment;
@@ -283,11 +283,10 @@ ViewState EnvironmentView::update()
     {
         if (!prevPauseState)
         {
-            pauseMenuCmpt->resetMenu();
             prevPauseState = true;
 
-            Globals::isPauseMenuActive = true;
             ae::BroadcastEvent(Event::HideAllScreens{});
+            ae::BroadcastEvent(Event::ShowMenu{pauseMenuCmpt});
         }
 
         ViewState menuResult = ViewState::KEEP_CURRENT;
@@ -300,12 +299,13 @@ ViewState EnvironmentView::update()
 
         if (systemKeysDown & KEY_START)
         {
-            textSub->clearScreen();
             prevPauseState = false;
-            Globals::isPauseMenuActive = false;
+            textSub->clearScreen();
 
-            phase = ViewPhase::Environment;
+            ae::BroadcastEvent(Event::HideAllMenus{});
+
             prevEnvironmentState = false;
+            phase = ViewPhase::Environment;
         }
 
         break;

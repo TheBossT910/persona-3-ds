@@ -1,22 +1,5 @@
 #include "BaseMenu.h"
 
-void BaseMenu::configureMenu(bool* isActive, const std::string& iPauseMessage)
-{
-    // set default options
-    selectedOption = 0;
-    startIndex = 0;
-    while (!prevOptions.empty())
-    {
-        prevOptions.pop();
-    }
-
-    pauseMessage = iPauseMessage;
-    isActivePtr = isActive;
-
-    // initialize view state
-    nextViewState = ViewState::KEEP_CURRENT;
-}
-
 void BaseMenu::resetMenu()
 {
     selectedOption = 0;
@@ -50,7 +33,7 @@ void BaseMenu::prevOption()
     else
     {
         // otherwise, close the menu
-        *isActivePtr = false;
+        isActive = false;
     }
 }
 

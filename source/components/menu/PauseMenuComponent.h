@@ -27,7 +27,6 @@ class PauseMenuComponent : public BaseMenu
     static PauseMenuComponent* instance;
 
     CameraSystem& cameraSystem = CameraSystem::GetInstance();
-    TextComponent* text = nullptr;
 
     std::array<CameraMode, 4> cameraModes = {
         CameraMode::Free, CameraMode::Static, CameraMode::CCTV, CameraMode::Follow};
@@ -189,10 +188,6 @@ class PauseMenuComponent : public BaseMenu
     static void destroy();
     static PauseMenuComponent* getInstance();
 
-    void configureMenu(bool* isActive, const std::string& iPauseMessage) override;
     void resetMenu() override;
     ViewState updateHook() override;
-
-    // helper
-    void setText(TextComponent* iText);
 };

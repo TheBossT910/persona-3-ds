@@ -39,13 +39,7 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
 void PauseMenuComponent::resetMenu()
 {
     BaseMenu::resetMenu();
-    options = menuOptions;
-    optionCount = MENU_OPTIONS;
-}
-
-void PauseMenuComponent::configureMenu(bool* isActive, const std::string& iPauseMessage)
-{
-    BaseMenu::configureMenu(isActive, iPauseMessage);
+    pauseMessage = "Pause";
     options = menuOptions;
     optionCount = MENU_OPTIONS;
 
@@ -223,12 +217,12 @@ ViewState PauseMenuComponent::debugOptionSelected()
         break;
     case DebugOption::TOGGLE_BILLBOARDS:
         Globals::enableBillboards = !Globals::enableBillboards;
-        *isActivePtr = false;
+        isActive = false;
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_DEBUG_PRINT:
         Globals::enableDebugPrint = !Globals::enableDebugPrint;
-        *isActivePtr = false;
+        isActive = false;
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::CYCLE_CAMERA_MODE:
@@ -241,7 +235,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
             CameraMode mode = cameraModes[(static_cast<int>(cameraSystem.getMode()) + 1) % cameraModes.size()];
             ae::BroadcastEvent(Event::SetCameraMode{mode});
         }
-        *isActivePtr = false;
+        isActive = false;
         openDebugMenu();
         selectedView = ViewState::KEEP_CURRENT;
         break;
@@ -361,12 +355,7 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
         break;
     }
 
-    *isActivePtr = false;
+    isActive = false;
     animationCtrl->play();
     return selectedView;
-}
-
-void PauseMenuComponent::setText(TextComponent* iText)
-{
-    text = iText;
 }

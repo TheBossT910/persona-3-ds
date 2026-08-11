@@ -18,10 +18,14 @@
 #include "managers/RenderManager.hpp"
 
 // TODO: add a way to indicate reduced # of bg slots
-class UISystem
-    : public ae::
-          SystemRouter<UISystem, Event::ConfigureUIScreen, Event::SetUIMenu, Event::ShowScreen, Event::HideAllScreens>,
-      public ae::Singleton<UISystem>
+class UISystem : public ae::SystemRouter<UISystem,
+                                         Event::ConfigureUIScreen,
+                                         Event::ConfigureUIMenu,
+                                         Event::ShowMenu,
+                                         Event::HideAllMenus,
+                                         Event::ShowScreen,
+                                         Event::HideAllScreens>,
+                 public ae::Singleton<UISystem>
 {
   public:
     void Init() override;
@@ -34,7 +38,7 @@ class UISystem
     void Update(ae::fixed_t /*dt*/) override;
 
     /**
-     * @brief ETL message handler to configure the UISystem
+     * @brief ETL message handler to configure screens
      *
      * @details First, it resets any previous configs via cleanup. Second, it sets
      * the background pointers to render screens to. The arrays passed into
@@ -49,7 +53,18 @@ class UISystem
     void on_receive(const Event::ConfigureUIScreen& config);
 
     // TODO: add doxygen docs
-    void on_receive(const Event::SetUIMenu& config);
+    /**
+     * @brief
+     *
+     * @param config
+     */
+    void on_receive(const Event::ConfigureUIMenu& config);
+
+    // TODO: add doxygen docs
+    void on_receive(const Event::ShowMenu& msg);
+
+    // TODO: add doxygen docs
+    void on_receive(const Event::HideAllMenus& /*msg*/);
 
     /**
      * @brief ETL message handler to switch to the specified screen
@@ -147,6 +162,7 @@ class UISystem
 
     // menu
     std::array<BaseMenu*, 10> menus = {};
+    BaseMenu* activeMenu = nullptr;
     TextComponent* text = nullptr;
     MusicController* musicCtrl = MusicController::getInstance();
 

@@ -12,13 +12,12 @@
 #include "components/TextComponent.hpp"
 #include "managers/RenderManager.hpp"
 
-// TODO: create template component registery system?
-
 class BaseMenu
 {
   protected:
-    bool* isActivePtr;
     std::string pauseMessage = "Pause";
+    bool isActive = false;
+    TextComponent* text = nullptr;
 
     // options
     MenuOption* options;
@@ -49,15 +48,6 @@ class BaseMenu
     void prevOption();
 
   public:
-    // TODO: add doxygen
-    /**
-     * @brief
-     *
-     * @param isActive
-     * @param iPauseMessage
-     */
-    virtual void configureMenu(bool* isActive, const std::string& iPauseMessage);
-
     /**
      * @brief Resets the menu to its initial state.
      */

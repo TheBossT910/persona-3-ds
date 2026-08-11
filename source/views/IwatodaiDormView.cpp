@@ -101,8 +101,6 @@ void IwatodaiDormView::setupUI()
 
     // setup pause menu
     pauseMenuCmpt = PauseMenuComponent::getInstance();
-    pauseMenuCmpt->configureMenu(&Globals::isPauseMenuActive, "Pause");
-    pauseMenuCmpt->setText(textMenu);
 
     menuHUDScreen = MenuHUDScreen::getInstance();
     dialogueScreen = DialogueScreen::getInstance();
@@ -110,6 +108,6 @@ void IwatodaiDormView::setupUI()
     std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen};
     std::array<BaseMenu*, 10> menus = {pauseMenuCmpt};
 
-    ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, nullptr, screens});
-    ae::BroadcastEvent(Event::SetUIMenu{textMenu, menus});
+    ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
 }

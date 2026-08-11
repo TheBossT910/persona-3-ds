@@ -3,9 +3,9 @@
 #include "events/SaveEvents.hpp"
 #include <string>
 
-void MainMenuComponent::configureMenu(bool* isActive, const std::string& iPauseMessage)
+void MainMenuComponent::resetMenu()
 {
-    BaseMenu::configureMenu(isActive, iPauseMessage);
+    pauseMessage = "";
     options = mainMenuOptions;
     optionCount = MAIN_MENU_OPTIONS;
 }

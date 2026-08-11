@@ -43,14 +43,28 @@ struct ConfigureUIScreen : public etl::message<EventID::ConfigureUIScreen>
 };
 
 // TODO: add doxygen docs
-struct SetUIMenu : public etl::message<EventID::SetUIMenu>
+struct ConfigureUIMenu : public etl::message<EventID::ConfigureUIMenu>
 {
     TextComponent* text = nullptr;
     std::array<BaseMenu*, 10> menus = {};
 
-    SetUIMenu(TextComponent* iText, std::array<BaseMenu*, 10> iMenus) : text(iText), menus(iMenus)
+    ConfigureUIMenu(TextComponent* iText, std::array<BaseMenu*, 10> iMenus) : text(iText), menus(iMenus)
     {
     }
+};
+
+// TODO: add doxygen docs
+struct ShowMenu : public etl::message<EventID::ShowMenu>
+{
+    BaseMenu* menu;
+    ShowMenu(BaseMenu* iMenu) : menu(iMenu)
+    {
+    }
+};
+
+// TODO: add doxygen docs
+struct HideAllMenus : public etl::message<EventID::HideAllMenus>
+{
 };
 
 /**
