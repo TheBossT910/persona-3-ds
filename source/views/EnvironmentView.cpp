@@ -69,7 +69,7 @@ void EnvironmentView::setupEnvironment()
 
 void EnvironmentView::init()
 {
-    // clear 3D buffer so nothing from the previous room shows during load
+    // clearing so nothing from the previous enviorment shows during load
     glClearColor(0, 0, 0, 31);
     glClearDepth(0x7FFF);
     glFlush(0);
