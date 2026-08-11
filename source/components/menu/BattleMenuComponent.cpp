@@ -29,19 +29,25 @@ BattleMenuComponent* BattleMenuComponent::getInstance()
     return instance;
 }
 
-void BattleMenuComponent::init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage)
+void BattleMenuComponent::configureMenu(bool* isActive, const std::string& iPauseMessage)
 {
-    BaseMenu::init(iBgSlot, isActive, iText, iPauseMessage);
+    BaseMenu::configureMenu(isActive, iPauseMessage);
 
     options = nullptr;
     optionCount = 0;
     startIndex = 0;
 }
 
+void BattleMenuComponent::setText(TextComponent* iText)
+{
+    text = iText;
+}
+
 // option loaders
 void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
 {
     text->clearScreen();
+
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::ACTION)
     {
@@ -69,6 +75,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
 void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 {
     text->clearScreen();
+
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::SKILL)
     {
@@ -97,6 +104,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* personas)
 {
     text->clearScreen();
+
     if (loadedOption == BattleMenuOptions::PERSONA)
         return;
 
@@ -118,6 +126,7 @@ void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* pers
 void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>* targets, bool healTarget)
 {
     text->clearScreen();
+
     BattleMenuOptions targetLoadedOption =
         healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
 
@@ -142,6 +151,7 @@ void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>*
 void BattleMenuComponent::loadAllOutAttackConfirmation()
 {
     text->clearScreen();
+
     if (loadedOption == BattleMenuOptions::ALL_OUT_ATTACK)
     {
         return;
@@ -181,7 +191,7 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
     return (frame - alertStartFrame) >= durationFrames;
 }
 
-void BattleMenuComponent::reset()
+void BattleMenuComponent::resetMenu()
 {
     loadedOption = BattleMenuOptions::NONE;
     *isActivePtr = false;
@@ -191,7 +201,7 @@ void BattleMenuComponent::reset()
     startIndex = 0;
 }
 
-ViewState BattleMenuComponent::update(int keys)
+ViewState BattleMenuComponent::updateHook()
 {
     if (loadedOption == BattleMenuOptions::ALERT)
     {
@@ -204,13 +214,13 @@ ViewState BattleMenuComponent::update(int keys)
         return ViewState::KEEP_CURRENT;
     }
 
-    return BaseMenu::update(keys);
+    return ViewState::DEFAULT;
 }
 
 // option handlers
 int BattleMenuComponent::battleOptionSelected()
 {
     int returnSelectedOption = selectedOption;
-    reset();
+    resetMenu();
     return returnSelectedOption;
 }

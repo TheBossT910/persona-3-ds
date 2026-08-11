@@ -99,23 +99,17 @@ void IwatodaiDormView::setupUI()
     // setup dialogue rendering target (which sub-bg the dialogue box uses)
     demo_dialogue_bg_slot = bgSharedSub1;
 
-    pauseMenuCmpt = PauseMenuComponent::getInstance();
-
     // setup pause menu
-    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
+    pauseMenuCmpt = PauseMenuComponent::getInstance();
+    pauseMenuCmpt->configureMenu(&Globals::isPauseMenuActive, "Pause");
+    pauseMenuCmpt->setText(textMenu);
 
     menuHUDScreen = MenuHUDScreen::getInstance();
-    menuBackgroundScreen = MenuBackgroundScreen::getInstance();
     dialogueScreen = DialogueScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen, menuBackgroundScreen};
-    ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, nullptr, screens});
-}
+    std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen};
+    std::array<BaseMenu*, 10> menus = {pauseMenuCmpt};
 
-void IwatodaiDormView::hookCleanup()
-{
-    if (pauseMenuCmpt != nullptr)
-    {
-        pauseMenuCmpt->cancelSFX();
-    }
+    ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, nullptr, screens});
+    ae::BroadcastEvent(Event::SetUIMenu{textMenu, menus});
 }

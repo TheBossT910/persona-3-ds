@@ -1,14 +1,137 @@
 #include "UISystem.hpp"
+#include "core/globals.h"
+#include "events/GenericEvents.hpp"
+
+void UISystem::Init()
+{
+    isActive = false;
+
+    // load sfx
+    musicCtrl->loadSFX(SFX_MENU);
+    musicCtrl->loadSFX(SFX_SELECT);
+    musicCtrl->loadSFX(SFX_CANCEL);
+}
+
+void UISystem::Update(ae::fixed_t dt)
+{
+    for (BaseMenu*& menu : menus)
+    {
+        // skip if nullptr or not active
+        if ((menu == nullptr) || !*menu->isActivePtr)
+        {
+            continue;
+        }
+
+        // run the hook
+        ViewState updateHookState = menu->updateHook();
+        if (updateHookState != ViewState::DEFAULT)
+        {
+            ae::BroadcastEvent(Event::SwitchView{updateHookState});
+            continue;
+        }
+
+        // navigate options
+        if (systemKeysDown & KEY_DOWN)
+        {
+            sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
+            menu->selectedOption = (menu->selectedOption + 1) % menu->optionCount;
+        }
+        else if (systemKeysDown & KEY_UP)
+        {
+            sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
+            menu->selectedOption = (menu->selectedOption + menu->optionCount - 1) % menu->optionCount;
+        }
+
+        // Adjust scroll position
+        if (menu->selectedOption < menu->startIndex)
+        {
+            menu->startIndex = menu->selectedOption;
+            text->clearScreen();
+        }
+
+        if (menu->selectedOption >= menu->startIndex + menu->visibleOptions)
+        {
+            menu->startIndex = menu->selectedOption - menu->visibleOptions + 1;
+            text->clearScreen();
+        }
+        else if (systemKeysDown & KEY_A)
+        {
+            cancelSFX();
+            sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
+
+            MenuState currentState = {menu->options, menu->optionCount, menu->selectedOption, menu->startIndex};
+
+            text->clearScreen();
+
+            if (menu->options[menu->selectedOption].onSelect != nullptr)
+            {
+                ViewState result = (menu->*(menu->options[menu->selectedOption].onSelect))();
+                if (result != ViewState::KEEP_CURRENT)
+                {
+                    menu->nextViewState = result;
+                    *menu->isActivePtr = false;
+                }
+
+                // if we changed options, push current state to stack
+                if (menu->options != currentState.options)
+                {
+                    menu->prevOptions.push(currentState);
+                }
+            }
+        }
+
+        if (systemKeysDown & KEY_B)
+        {
+            cancelSFX();
+            musicCtrl->playSFX(SFX_CANCEL, 255, 128);
+            menu->selectedOption = 0;
+            menu->startIndex = 0;
+            text->clearScreen();
+            menu->prevOption();
+        }
+
+        // blink the "Pause" text
+        if (frame % 60 < 30)
+        {
+            text->drawText(menu->pauseMessage, 0, 0, 2);
+        }
+        else
+        {
+            text->clearArea(0, 0, 256, text->getFontSize());
+        }
+
+        // display options
+        for (int i = 0; i < menu->visibleOptions && menu->startIndex + i < menu->optionCount; i++)
+        {
+            int option = menu->startIndex + i;
+            if (option == menu->selectedOption)
+            {
+                text->drawText(menu->options[option].name, 10, 8 + i * 9, TextColor::Blue);
+            }
+            else
+            {
+                text->drawText(menu->options[option].name, 10, 8 + i * 9, TextColor::White);
+            }
+        }
+
+        if (menu->nextViewState != ViewState::KEEP_CURRENT)
+        {
+            ae::BroadcastEvent(Event::SwitchView{menu->nextViewState});
+        }
+    }
+}
 
 void UISystem::Shutdown()
 {
-    cleanup();
+    cancelSFX();
+    cleanupScreens();
+    isActive = false;
 }
 
-void UISystem::on_receive(const Event::ConfigureUI& config)
+void UISystem::on_receive(const Event::ConfigureUIScreen& config)
 {
     // reset previous config
-    cleanup();
+    cleanupScreens();
 
     // set background
     oamSub = config.oamSub;
@@ -32,6 +155,13 @@ void UISystem::on_receive(const Event::ConfigureUI& config)
 
         registerScreen(screen);
     }
+}
+
+void UISystem::on_receive(const Event::SetUIMenu& config)
+{
+    isActive = true;
+    menus = config.menus;
+    text = config.text;
 }
 
 void UISystem::on_receive(const Event::ShowScreen& msg)
@@ -224,7 +354,7 @@ void UISystem::hideAllScreens()
     }
 }
 
-void UISystem::cleanup()
+void UISystem::cleanupScreens()
 {
     // reset all bg ids, UIScreens
     // sub
@@ -259,4 +389,11 @@ void UISystem::cleanup()
 
     screenMainCount = 0;
     screenSubCount = 0;
+}
+
+void UISystem::cancelSFX()
+{
+    musicCtrl->stopSFX(sfxMenuHandle);
+    musicCtrl->stopSFX(sfxSelectHandle);
+    musicCtrl->stopSFX(sfxCancelHandle);
 }

@@ -97,7 +97,7 @@ class EnvironmentView : public BaseView
     {
     }
 
-    virtual void hookCleanup()
+    virtual void cleanupHook()
     {
     }
 
@@ -155,9 +155,11 @@ class EnvironmentView : public BaseView
     // ui
     DialogueScreen* dialogueScreen = nullptr;
     MenuHUDScreen* menuHUDScreen = nullptr;
-    MenuBackgroundScreen* menuBackgroundScreen = nullptr;
+    // MenuBackgroundScreen* menuBackgroundScreen = nullptr;
+
     BattleMenuComponent* battleMenuCmpt = nullptr;
     PauseMenuComponent* pauseMenuCmpt = nullptr;
+
     std::array<int, 3> bgMain;
     std::array<int, 4> bgSub;
 

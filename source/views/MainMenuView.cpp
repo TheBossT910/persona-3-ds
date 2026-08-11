@@ -56,7 +56,7 @@ void MainMenuView::init()
 
     // setup menu
     isMainMenuCmptActive = true;
-    mainMenuCmpt.init(-1, &isMainMenuCmptActive, textMenu);
+    // mainMenuCmpt.init(-1, &isMainMenuCmptActive, textMenu);
 
     // setup console
     consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
@@ -172,7 +172,8 @@ ViewState MainMenuView::update()
     }
 
     // update mainComponent AFTER checking if the sillouhete is still moving
-    ViewState result = mainMenuCmpt.update(systemKeysDown);
+    // ViewState result = mainMenuCmpt.update(systemKeysDown);
+    ViewState result = ViewState::KEEP_CURRENT;
     if (result != ViewState::KEEP_CURRENT)
     {
         musicCtrl->pause();

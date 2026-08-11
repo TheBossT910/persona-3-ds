@@ -109,6 +109,12 @@ class TextComponent : public ae::Component
      */
     void clearScreen();
 
+    /**
+     * @brief A getter to return the font size
+     * @return The font size
+     */
+    int getFontSize();
+
   protected:
     void SubmitToManager() override
     {
@@ -121,6 +127,7 @@ class TextComponent : public ae::Component
     Text* appearingText = nullptr;
     Font* font = nullptr;
     uint16_t* videoBuffer = nullptr;
+    int fontSize = 0;
 
     /**
      * @brief A wrapper for testBitmap in TextSystem

@@ -56,7 +56,7 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::WriteSave,
                                          GraphicsComponent,
                                          TextComponent,
-                                         Event::ConfigureUI,
+                                         Event::ConfigureUIScreen,
                                          Event::ShowScreen,
                                          Event::HideAllScreens>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);

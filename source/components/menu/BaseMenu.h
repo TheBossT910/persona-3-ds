@@ -2,7 +2,6 @@
 
 #define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (BaseMenu::*)()>(&ClassName::Method)
 
-#include "components/ui/MenuBackgroundScreen.h"
 #include "controllers/MusicController.h"
 #include "core/structs.h"
 #include <maxmod9.h>
@@ -13,11 +12,12 @@
 #include "components/TextComponent.hpp"
 #include "managers/RenderManager.hpp"
 
+// TODO: create template component registery system?
+
 class BaseMenu
 {
   protected:
     bool* isActivePtr;
-    int bgSlot = 0;
     std::string pauseMessage = "Pause";
 
     // options
@@ -26,33 +26,47 @@ class BaseMenu
     int selectedOption = 0;
     int startIndex = 0;
 
-  private:
-    RenderManager& render = RenderManager::GetInstance();
+    /**
+     * @brief Changes the active menu.
+     *
+     * @param newOptions the new menu options.
+     * @param newOptionCount the number of new menu options.
+     * @return ViewState the View to switch to
+     */
+    ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
 
-    // sfx
-    mm_sfxhand sfxMenuHandle;
-    mm_sfxhand sfxSelectHandle;
-    mm_sfxhand sfxCancelHandle;
+  private:
+    friend class UISystem;
 
     // options
-    int visibleOptions = 23;
+    const int visibleOptions = 23;
     std::stack<MenuState> prevOptions;
     ViewState nextViewState = ViewState::KEEP_CURRENT;
 
+    /**
+     * @brief Changes the current options to the previous options
+     */
+    void prevOption();
+
   public:
-    virtual void init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage = "Pause");
+    // TODO: add doxygen
+    /**
+     * @brief
+     *
+     * @param isActive
+     * @param iPauseMessage
+     */
+    virtual void configureMenu(bool* isActive, const std::string& iPauseMessage);
+
     /**
      * @brief Resets the menu to its initial state.
      */
-    virtual void reset();
-    virtual ViewState update(int keys);
-    void cancelSFX();
-    ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
-    void prevOption();
+    virtual void resetMenu();
 
-  protected:
-    MusicController* musicCtrl = MusicController::getInstance();
-    MenuBackgroundScreen* menuBgScreen = MenuBackgroundScreen::getInstance();
-
-    TextComponent* text = nullptr;
+    /**
+     * @brief Optional hook to call during the update loop
+     *
+     * Can override the return from the standard update loop
+     */
+    virtual ViewState updateHook();
 };

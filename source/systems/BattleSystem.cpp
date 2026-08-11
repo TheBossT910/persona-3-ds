@@ -68,7 +68,7 @@ void BattleSystem::Update(ae::fixed_t)
         // render battleMenu
         battleMenuCmpt->loadActionOptions(&actions, actor->name);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
+        // menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
         if ((menuIndex != -1) && (systemKeysDown & KEY_A) && actor->actorCanUse(actions[menuIndex]))
         {
@@ -108,7 +108,7 @@ void BattleSystem::Update(ae::fixed_t)
         //TODO: why not just return nullptr if nothing happens instead of setting -1 manually everywhere?
 
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
+        // menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
         if ((menuIndex != -1) && (systemKeysDown & KEY_A))
         {
@@ -132,7 +132,7 @@ void BattleSystem::Update(ae::fixed_t)
             {
                 pendingAlert = (s->skillRace == SkillRace::mag) ? "Not enough SP\n" : "Not enough HP\n";
                 alertReturnPhase = BattlePhase::ChooseSkill;
-                battleMenuCmpt->reset();
+                battleMenuCmpt->resetMenu();
                 phase = BattlePhase::ShowAlert;
             }
         }
@@ -155,7 +155,7 @@ void BattleSystem::Update(ae::fixed_t)
 
         battleMenuCmpt->loadPersonaOptions(&actor->personas);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
+        // menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
         if ((menuIndex != -1) && (systemKeysDown & KEY_A))
         {
@@ -172,7 +172,7 @@ void BattleSystem::Update(ae::fixed_t)
                 alertReturnPhase = BattlePhase::ChooseAction;
             }
 
-            battleMenuCmpt->reset();
+            battleMenuCmpt->resetMenu();
             phase = BattlePhase::ShowAlert;
         }
 
@@ -209,7 +209,7 @@ void BattleSystem::Update(ae::fixed_t)
 
         battleMenuCmpt->loadTargetOptions(&targets, healTarget);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
+        // menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
         if (menuIndex != -1 && (systemKeysDown & KEY_A))
         {
@@ -262,7 +262,7 @@ void BattleSystem::Update(ae::fixed_t)
     {
         battleMenuCmpt->loadAllOutAttackConfirmation();
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
+        // menuIndex = (int)battleMenuCmpt->update(systemKeysDown);
 
         if (menuIndex != -1 && (systemKeysDown & KEY_A))
         {
@@ -295,7 +295,7 @@ void BattleSystem::Update(ae::fixed_t)
             else
             {
                 currentParticipantTurn->oneMore = false;
-                battleMenuCmpt->reset();
+                battleMenuCmpt->resetMenu();
                 phase = BattlePhase::ChooseAction;
             }
         }
@@ -305,11 +305,11 @@ void BattleSystem::Update(ae::fixed_t)
     case BattlePhase::ShowAlert:
     {
         battleMenuCmpt->loadAlertOptions(pendingAlert);
-        battleMenuCmpt->update(systemKeysDown);
+        // battleMenuCmpt->update(systemKeysDown);
         if (battleMenuCmpt->isAlertExpired(120))
         {
             pendingAlert.clear();
-            battleMenuCmpt->reset();
+            battleMenuCmpt->resetMenu();
             phase = alertReturnPhase;
         }
         break;
@@ -417,7 +417,7 @@ void BattleSystem::advanceTurn()
     if (allEnemiesKnockedDown() && !allOutAttackWasPossibleThisKnockDown)
     {
         alertReturnPhase = BattlePhase::ChooseAction;
-        battleMenuCmpt->reset();
+        battleMenuCmpt->resetMenu();
         setNextPhase(BattlePhase::ConfirmAllOutAttack);
         return;
     }
@@ -462,7 +462,7 @@ void BattleSystem::setNextPhase(BattlePhase nextPhase)
     if (!pendingAlert.empty())
     {
         alertReturnPhase = nextPhase;
-        battleMenuCmpt->reset();
+        battleMenuCmpt->resetMenu();
         phase = BattlePhase::ShowAlert;
     }
     else

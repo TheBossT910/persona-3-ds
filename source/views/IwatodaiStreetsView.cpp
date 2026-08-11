@@ -116,26 +116,18 @@ void IwatodaiStreetsView::setupUI()
     textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     battleMenuCmpt = BattleMenuComponent::getInstance();
+    battleMenuCmpt->configureMenu(&isBattleMenuActive, "Pause");
+    battleMenuCmpt->setText(textMenu);
+
     pauseMenuCmpt = PauseMenuComponent::getInstance();
-
-    // setup pause menu
-    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
-
-    // setup battle menu
-    battleMenuCmpt->init(-1, &isBattleMenuActive, textMenu);
+    pauseMenuCmpt->configureMenu(&Globals::isPauseMenuActive, "Pause");
+    pauseMenuCmpt->setText(textMenu);
 
     menuHUDScreen = MenuHUDScreen::getInstance();
-    menuBackgroundScreen = MenuBackgroundScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen, menuBackgroundScreen};
-    ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
-}
+    std::array<UIScreen*, 7> screens = {menuHUDScreen};
+    std::array<BaseMenu*, 10> menus = {pauseMenuCmpt, battleMenuCmpt};
 
-void IwatodaiStreetsView::hookCleanup()
-{
-    if (pauseMenuCmpt != nullptr)
-    {
-        pauseMenuCmpt->cancelSFX();
-    }
+    ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
+    ae::BroadcastEvent(Event::SetUIMenu{textMenu, menus});
 }

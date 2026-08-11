@@ -42,8 +42,6 @@ class IwatodaiStreetsView : public EnvironmentView
 
     void setupUI() override;
 
-    void hookCleanup() override;
-
     // battle hook
     void startBattle() override;
 

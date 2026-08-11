@@ -10,29 +10,28 @@
 #include "core/enums.h"
 #include "core/routerIDs.hpp"
 #include "events/UIEvents.hpp"
+#include "soundbank.h"
 #include <aegis/system.hpp>
 
+#include "components/menu/BaseMenu.h"
 #include "components/ui/UIScreen.h"
 #include "managers/RenderManager.hpp"
 
-// TODO: add persistence support
-// TODO: add a way to pass in -1, indicating reduced # of bg slots
-class UISystem : public ae::SystemRouter<UISystem, Event::ConfigureUI, Event::ShowScreen, Event::HideAllScreens>,
-                 public ae::Singleton<UISystem>
+// TODO: add a way to indicate reduced # of bg slots
+class UISystem
+    : public ae::
+          SystemRouter<UISystem, Event::ConfigureUIScreen, Event::SetUIMenu, Event::ShowScreen, Event::HideAllScreens>,
+      public ae::Singleton<UISystem>
 {
   public:
-    void Init() override
-    {
-    }
+    void Init() override;
 
     /**
      * @brief Unloads and cleans up all registered screens. Wrapper for cleanup
      */
     void Shutdown() override;
 
-    void Update(ae::fixed_t /*dt*/) override
-    {
-    }
+    void Update(ae::fixed_t /*dt*/) override;
 
     /**
      * @brief ETL message handler to configure the UISystem
@@ -47,7 +46,10 @@ class UISystem : public ae::SystemRouter<UISystem, Event::ConfigureUI, Event::Sh
      *
      * @param config The event payload containing the camera configuration to apply.
      */
-    void on_receive(const Event::ConfigureUI& config);
+    void on_receive(const Event::ConfigureUIScreen& config);
+
+    // TODO: add doxygen docs
+    void on_receive(const Event::SetUIMenu& config);
 
     /**
      * @brief ETL message handler to switch to the specified screen
@@ -117,7 +119,12 @@ class UISystem : public ae::SystemRouter<UISystem, Event::ConfigureUI, Event::Sh
     /**
      * @brief Unloads and cleans up all registered screens. Used to reset previous configs
      */
-    void cleanup();
+    void cleanupScreens();
+
+    /**
+     * @brief Stops playing the current sound effect, if any.
+     */
+    void cancelSFX();
 
     RenderManager& render = RenderManager::GetInstance();
 
@@ -137,4 +144,14 @@ class UISystem : public ae::SystemRouter<UISystem, Event::ConfigureUI, Event::Sh
     int screenSubCount = 0;
     std::array<UIScreen*, 4> loadedSub{nullptr, nullptr, nullptr, nullptr};
     std::array<UIScreen*, 3> loadedMain = {nullptr, nullptr, nullptr};
+
+    // menu
+    std::array<BaseMenu*, 10> menus = {};
+    TextComponent* text = nullptr;
+    MusicController* musicCtrl = MusicController::getInstance();
+
+    // menu sfx
+    mm_sfxhand sfxMenuHandle;
+    mm_sfxhand sfxSelectHandle;
+    mm_sfxhand sfxCancelHandle;
 };

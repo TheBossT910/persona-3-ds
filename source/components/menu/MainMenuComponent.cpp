@@ -3,9 +3,9 @@
 #include "events/SaveEvents.hpp"
 #include <string>
 
-void MainMenuComponent::init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage)
+void MainMenuComponent::configureMenu(bool* isActive, const std::string& iPauseMessage)
 {
-    BaseMenu::init(iBgSlot, isActive, iText, iPauseMessage);
+    BaseMenu::configureMenu(isActive, iPauseMessage);
     options = mainMenuOptions;
     optionCount = MAIN_MENU_OPTIONS;
 }

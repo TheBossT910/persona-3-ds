@@ -36,16 +36,16 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
     return instance;
 }
 
-void PauseMenuComponent::reset()
+void PauseMenuComponent::resetMenu()
 {
-    BaseMenu::reset();
+    BaseMenu::resetMenu();
     options = menuOptions;
     optionCount = MENU_OPTIONS;
 }
 
-void PauseMenuComponent::init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage)
+void PauseMenuComponent::configureMenu(bool* isActive, const std::string& iPauseMessage)
 {
-    BaseMenu::init(iBgSlot, isActive, iText, iPauseMessage);
+    BaseMenu::configureMenu(isActive, iPauseMessage);
     options = menuOptions;
     optionCount = MENU_OPTIONS;
 
@@ -57,7 +57,7 @@ void PauseMenuComponent::init(int iBgSlot, bool* isActive, TextComponent* iText,
     }
 }
 
-ViewState PauseMenuComponent::update(int keys)
+ViewState PauseMenuComponent::updateHook()
 {
     // dialogue controller takes full control when active
     if (dialogue->IsActive())
@@ -65,7 +65,7 @@ ViewState PauseMenuComponent::update(int keys)
         return ViewState::KEEP_CURRENT;
     }
 
-    return BaseMenu::update(keys);
+    return ViewState::DEFAULT;
 }
 
 // menu navigation handlers
@@ -179,7 +179,8 @@ ViewState PauseMenuComponent::debugOptionSelected()
     switch (static_cast<DebugOption>(selectedOption))
     {
     case DebugOption::DISCLAIMER_VIEW:
-        musicCtrl->pause();
+        // TODO: check if musicCtrl is needed
+        // musicCtrl->pause();
         selectedView = ViewState::DISCLAIMER;
         break;
     case DebugOption::INTRO_VIEW:
@@ -363,4 +364,9 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
     *isActivePtr = false;
     animationCtrl->play();
     return selectedView;
+}
+
+void PauseMenuComponent::setText(TextComponent* iText)
+{
+    text = iText;
 }

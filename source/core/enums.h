@@ -8,6 +8,7 @@
 
 enum class ViewState
 {
+    DEFAULT,
     KEEP_CURRENT,
     DISCLAIMER,
     INTRO_VIDEO,
@@ -347,9 +348,12 @@ enum : etl::message_id_t
     SetCharacterPosition,
     WriteSave,
     ReadSave,
-    ConfigureUI,
+    ConfigureUIScreen,
     ShowScreen,
-    HideAllScreens
+    HideAllScreens,
+    SetUIMenu,
+    ToggleMenu,
+    SwitchView
 };
 } // namespace EventID
 
