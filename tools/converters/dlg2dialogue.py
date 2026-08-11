@@ -355,7 +355,7 @@ class CodeGenerator:
                 out += [
                     f"    {vp}_bg_loaders[{i}] = []()",
                     "    {",
-                    f'        GraphicAsset bg = genericGraphics->loadGraphic("graphics/dialogue/backgrounds/{nm}");',
+                    f'        GraphicAsset bg = genericGraphics->loadGraphic("graphics/dialogue/backgrounds/{nm}/{nm}");',
                     "        if (bg.tiles)",
                     "        {",
                     f"            dmaCopy(bg.tiles, bgGetGfxPtr({s}_dialogue_bg_slot), bg.tilesLen);",

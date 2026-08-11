@@ -46,9 +46,5 @@ class MainMenuComponent : public BaseMenu
     void updateSave();
 
   public:
-    void init(int iBgSlot,
-              bool* isActive,
-              uint16_t* iTextVideoBuffer,
-              uint16_t* iTextVideoBufferSub,
-              const std::string& iPauseMessage = "") override;
+    void init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage = "") override;
 };

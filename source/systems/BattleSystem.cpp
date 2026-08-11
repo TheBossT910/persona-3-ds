@@ -52,11 +52,6 @@ void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
     phase = currentParticipantTurn->getInitalTurnPhase();
 }
 
-void BattleSystem::on_receive(const Event::SetTextVideoBufferSub& msg)
-{
-    textVideoBufferSub = msg.textVideoBufferSub;
-}
-
 void BattleSystem::Init()
 {
     isActive = false;
@@ -77,7 +72,6 @@ void BattleSystem::Update(ae::fixed_t)
 
         if ((menuIndex != -1) && (systemKeysDown & KEY_A) && actor->actorCanUse(actions[menuIndex]))
         {
-            TextController::getInstance()->clearScreen(textVideoBufferSub);
             if (menuIndex == ACTION_ATTACK)
             {
                 selectedSkill = actor->baseAttackAction;
@@ -350,7 +344,6 @@ void BattleSystem::Update(ae::fixed_t)
 
 void BattleSystem::Shutdown()
 {
-    TextController::getInstance()->clearScreen(textVideoBufferSub);
     musicCtrl->pause();
 
     isActive = false;

@@ -27,11 +27,7 @@ class BattleMenuComponent : public BaseMenu
     static void destroy();
     static BattleMenuComponent* getInstance();
 
-    void init(int iBgSlot,
-              bool* isActive,
-              uint16_t* iTextVideoBuffer,
-              uint16_t* iTextVideoBufferSub,
-              const std::string& iPauseMessage = "") override;
+    void init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage = "") override;
     ViewState update(int keys) override;
     // option loaders
     void loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name);

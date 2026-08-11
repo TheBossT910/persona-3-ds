@@ -202,9 +202,11 @@ int main(int argc, char* argv[])
     engine.RegisterSystem(&BattleSystem::GetInstance());
     engine.RegisterSystem(&CameraSystem::GetInstance());
     engine.RegisterSystem(&SaveSystem::GetInstance());
+    engine.RegisterSystem(&TextSystem::GetInstance());
 
     engine.RegisterManager(&MathManager::GetInstance());
     engine.RegisterManager(&IOManager::GetInstance());
+    engine.RegisterManager(&TextManager::GetInstance());
 
     // initialize engine
     engine.InitAll();

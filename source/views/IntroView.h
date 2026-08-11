@@ -1,10 +1,10 @@
 #pragma once
 #include "controllers/MusicController.h"
-#include "controllers/TextController.h"
 #include "core/globals.h"
 #include "views/BaseView.h"
 
 #include "components/GraphicsComponent.hpp"
+#include "components/TextComponent.hpp"
 #include "managers/MathManager.hpp"
 
 class IntroView : public BaseView
@@ -43,13 +43,16 @@ class IntroView : public BaseView
     int baseSpeed = 20;
     int fluctuation = 50;
 
+    // text
+    std::string FONT_NAME = "cosmetica";
+    int FONT_SIZE = 16;
+
     ae::Entity* intro = nullptr;
     GraphicsComponent* graphics = nullptr;
+    TextComponent* text = nullptr;
 
     MathManager& math = MathManager::GetInstance();
     MusicController* musicCtrl = MusicController::getInstance();
-    Font* font = textCtrl->loadFont("cosmetica", 16);
-    TextController* textCtrl = TextController::getInstance();
 
   public:
     void init() override;
