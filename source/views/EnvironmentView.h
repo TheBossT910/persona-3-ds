@@ -128,7 +128,6 @@ class EnvironmentView : public BaseView
     // player
     MovementComponent* movement = nullptr;
     DialogueComponent* dialogue = nullptr;
-    CameraSystem* camera = nullptr;
 
     // view
     ae::Entity* environment = nullptr;

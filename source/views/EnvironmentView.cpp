@@ -89,8 +89,6 @@ void EnvironmentView::init()
         player->AddComponent(dialogue);
     }
 
-    camera = &CameraSystem::GetInstance();
-
     // set modes
     videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
     videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
@@ -273,8 +271,8 @@ ViewState EnvironmentView::update()
         {
             uiCtrl->hideAll();
 
-            movement->end();
-            camera->Shutdown();
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
 
             startBattle();
 
@@ -290,7 +288,7 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
 
             movement->start();
-            camera->Init();
+            ae::BroadcastEvent(Event::StartCamera{});
 
             phase = ViewPhase::Environment;
 
@@ -306,8 +304,8 @@ ViewState EnvironmentView::update()
         {
             uiCtrl->hideAll();
 
-            movement->end();
-            camera->Shutdown();
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
 
             pauseMenuCmpt->reset();
             prevPauseState = true;
@@ -327,7 +325,7 @@ ViewState EnvironmentView::update()
             prevPauseState = false;
 
             movement->start();
-            camera->Init();
+            ae::BroadcastEvent(Event::StartCamera{});
 
             phase = ViewPhase::Environment;
             prevEnvironmentState = false;
@@ -344,8 +342,8 @@ ViewState EnvironmentView::update()
         {
             uiCtrl->show(dialogueScreen, false);
 
-            movement->end();
-            camera->Shutdown();
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
 
             setDialogueConfig();
             dialogue->start();
@@ -360,7 +358,7 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = false;
 
             movement->start();
-            camera->Init();
+            ae::BroadcastEvent(Event::StartCamera{});
 
             phase = ViewPhase::Environment;
         }
@@ -377,15 +375,15 @@ ViewState EnvironmentView::update()
         }
 
         CharacterPosition charPos = movement->isCharacterAt();
-        camPos = camera->getCameraPosition();
+        camPos = CameraSystem::GetInstance().getCameraPosition();
 
         if (systemKeysDown & KEY_START)
         {
             textCtrl->clearScreen(textVideoBufferSub);
             prevEnvironmentState = false;
 
-            movement->end();
-            camera->Shutdown();
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
 
             phase = ViewPhase::Pause;
             break;
@@ -399,8 +397,8 @@ ViewState EnvironmentView::update()
             {
                 prevEnvironmentState = false;
 
-                movement->end();
-                camera->Shutdown();
+                movement->stop();
+                ae::BroadcastEvent(Event::StopCamera{});
 
                 phase = ViewPhase::Pause;
                 break;
@@ -411,8 +409,8 @@ ViewState EnvironmentView::update()
 
         if (tileResult != ViewState::KEEP_CURRENT)
         {
-            movement->end();
-            camera->Shutdown();
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
 
             musicCtrl->pause();
             return tileResult;
@@ -464,8 +462,10 @@ ViewState EnvironmentView::update()
                 debugText += buf;
                 std::sprintf(buf, "translate(x,z): %d, %d\n", (int)(charPos.x * 100), (int)(charPos.z * 100));
                 debugText += buf;
-                std::sprintf(
-                    buf, "angle(w,c): %d, %d\n", (int)(camera->getAngle() * 100), (int)(charPos.facingAngle * 100));
+                std::sprintf(buf,
+                             "angle(w,c): %d, %d\n",
+                             (int)(CameraSystem::GetInstance().getAngle() * 100),
+                             (int)(charPos.facingAngle * 100));
                 debugText += buf;
                 textCtrl->drawText(debugText, cosmeticaFont, textVideoBufferSub, 1, 120, TextColor::Red);
             }
