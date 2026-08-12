@@ -106,7 +106,7 @@ void IwatodaiDormView::setupUI()
     dialogueScreen = DialogueScreen::getInstance();
 
     std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen};
-    std::array<BaseMenu*, 10> menus = {pauseMenuCmpt};
+    std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
     ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});

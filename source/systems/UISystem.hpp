@@ -15,7 +15,7 @@
 
 #include "events/GenericEvents.hpp"
 
-#include "components/menu/BaseMenu.h"
+#include "components/menu/UIMenu.h"
 #include "components/ui/UIScreen.h"
 #include "controllers/MusicController.h"
 #include "managers/RenderManager.hpp"
@@ -168,8 +168,8 @@ class UISystem : public ae::SystemRouter<UISystem,
     std::array<UIScreen*, 3> loadedMain = {nullptr, nullptr, nullptr};
 
     // menu
-    std::array<BaseMenu*, 10> menus = {};
-    BaseMenu* activeMenu = nullptr;
+    std::array<UIMenu*, 10> menus = {};
+    UIMenu* activeMenu = nullptr;
     TextComponent* text = nullptr;
     MusicController* musicCtrl = MusicController::getInstance();
 

@@ -56,7 +56,7 @@ void MainMenuView::init()
 
     // setup main menu
     mainMenuCmpt = MainMenuComponent::getInstance();
-    std::array<BaseMenu*, 10> menus = {mainMenuCmpt};
+    std::array<UIMenu*, 10> menus = {mainMenuCmpt};
     ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
     ae::BroadcastEvent(Event::ShowMenu{mainMenuCmpt});
 

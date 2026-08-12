@@ -14,7 +14,7 @@ void UISystem::Init()
 
 void UISystem::Update(ae::fixed_t dt)
 {
-    for (BaseMenu*& menu : menus)
+    for (UIMenu*& menu : menus)
     {
         // skip if nullptr or not active
         if ((menu == nullptr) || !menu->isActive)
@@ -162,7 +162,7 @@ void UISystem::on_receive(const Event::ConfigureUIMenu& config)
     menus = config.menus;
     text = config.text;
 
-    for (BaseMenu*& menu : menus)
+    for (UIMenu*& menu : menus)
     {
         // skip if nullptr
         if (menu == nullptr)

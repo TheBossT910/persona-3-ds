@@ -1,11 +1,11 @@
-#include "components/menu/BaseMenu.h"
+#include "components/menu/UIMenu.h"
 
 #define MAIN_MENU_OPTIONS 3
 #define LEVEL_OPTIONS 6
 #define SETTING_OPTIONS 3
 #define SETTING_INTRO_OPTIONS 4
 
-class MainMenuComponent : public BaseMenu
+class MainMenuComponent : public UIMenu
 {
   private:
     MainMenuComponent() {};

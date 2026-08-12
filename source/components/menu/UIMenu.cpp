@@ -1,6 +1,6 @@
-#include "BaseMenu.h"
+#include "UIMenu.h"
 
-void BaseMenu::resetMenu()
+void UIMenu::resetMenu()
 {
     selectedOption = 0;
     startIndex = 0;
@@ -15,7 +15,7 @@ void BaseMenu::resetMenu()
     }
 }
 
-ViewState BaseMenu::changeMenu(MenuOption* newOptions, int newOptionCount)
+ViewState UIMenu::changeMenu(MenuOption* newOptions, int newOptionCount)
 {
     // add to prevOptions
     MenuState currentState = {options, optionCount, selectedOption, startIndex};
@@ -30,7 +30,7 @@ ViewState BaseMenu::changeMenu(MenuOption* newOptions, int newOptionCount)
     return ViewState::KEEP_CURRENT;
 }
 
-void BaseMenu::prevOption()
+void UIMenu::prevOption()
 {
     // if we're in a submenu, return to main menu
     if (!prevOptions.empty())
@@ -50,7 +50,7 @@ void BaseMenu::prevOption()
     }
 }
 
-ViewState BaseMenu::updateHook()
+ViewState UIMenu::updateHook()
 {
     return ViewState::DEFAULT;
 }

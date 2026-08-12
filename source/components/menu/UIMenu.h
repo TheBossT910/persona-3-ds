@@ -1,6 +1,6 @@
 #pragma once
 
-#define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (BaseMenu::*)()>(&ClassName::Method)
+#define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (UIMenu::*)()>(&ClassName::Method)
 
 #include "core/structs.h"
 #include <maxmod9.h>
@@ -10,7 +10,7 @@
 
 #include "components/TextComponent.hpp"
 
-class BaseMenu
+class UIMenu
 {
   protected:
     std::string pauseMessage = "Pause";

@@ -2,11 +2,11 @@
 #include "battleActions/BattleParticipant.h"
 #include "battleActions/actions/ActionBase.h"
 #include "battleActions/personas/PersonaBase.h"
-#include "components/menu/BaseMenu.h"
 #include "components/menu/BattleMenuComponent.h"
+#include "components/menu/UIMenu.h"
 #include <etl/vector.h>
 
-class BattleMenuComponent : public BaseMenu
+class BattleMenuComponent : public UIMenu
 {
   private:
     friend class BattleSystem;

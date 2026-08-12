@@ -67,7 +67,7 @@ void PaulowniaMallView::setupUI()
     menuHUDScreen = MenuHUDScreen::getInstance();
 
     std::array<UIScreen*, 7> screens = {menuHUDScreen};
-    std::array<BaseMenu*, 10> menus = {pauseMenuCmpt};
+    std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
     ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});

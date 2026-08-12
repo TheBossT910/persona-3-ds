@@ -1,6 +1,6 @@
 #pragma once
 #include "components/DialogueComponent.hpp"
-#include "components/menu/BaseMenu.h"
+#include "components/menu/UIMenu.h"
 #include "controllers/AnimationController.h"
 #include "core/globals.h"
 #include "dialogue/demo_dialogue.h"
@@ -19,7 +19,7 @@
 #define CHARACTER_ANIM_OPTIONS 25
 #define SKILLS 2
 
-class PauseMenuComponent : public BaseMenu
+class PauseMenuComponent : public UIMenu
 {
   private:
     PauseMenuComponent() {};

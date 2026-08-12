@@ -121,7 +121,7 @@ void IwatodaiStreetsView::setupUI()
     menuHUDScreen = MenuHUDScreen::getInstance();
 
     std::array<UIScreen*, 7> screens = {menuHUDScreen};
-    std::array<BaseMenu*, 10> menus = {pauseMenuCmpt, battleMenuCmpt};
+    std::array<UIMenu*, 10> menus = {pauseMenuCmpt, battleMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
     ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});

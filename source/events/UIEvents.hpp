@@ -46,9 +46,9 @@ struct ConfigureUIScreen : public etl::message<EventID::ConfigureUIScreen>
 struct ConfigureUIMenu : public etl::message<EventID::ConfigureUIMenu>
 {
     TextComponent* text = nullptr;
-    std::array<BaseMenu*, 10> menus = {};
+    std::array<UIMenu*, 10> menus = {};
 
-    ConfigureUIMenu(TextComponent* iText, std::array<BaseMenu*, 10> iMenus) : text(iText), menus(iMenus)
+    ConfigureUIMenu(TextComponent* iText, std::array<UIMenu*, 10> iMenus) : text(iText), menus(iMenus)
     {
     }
 };
@@ -56,8 +56,8 @@ struct ConfigureUIMenu : public etl::message<EventID::ConfigureUIMenu>
 // TODO: add doxygen docs
 struct ShowMenu : public etl::message<EventID::ShowMenu>
 {
-    BaseMenu* menu;
-    ShowMenu(BaseMenu* iMenu) : menu(iMenu)
+    UIMenu* menu;
+    ShowMenu(UIMenu* iMenu) : menu(iMenu)
     {
     }
 };
