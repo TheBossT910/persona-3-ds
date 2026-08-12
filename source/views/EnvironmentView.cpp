@@ -299,8 +299,6 @@ ViewState EnvironmentView::update()
     {
         if (!prevPauseState)
         {
-            ae::BroadcastEvent(Event::ShowScreen{menuBackgroundScreen});
-
             movement->stop();
             ae::BroadcastEvent(Event::StopCamera{});
 
@@ -353,7 +351,11 @@ ViewState EnvironmentView::update()
         }
         else if (!isActive && prevDialogueState)
         {
+            // TODO: remove manually managed dialogue backgrounds
+            // the demo_dialogue loader function manually calls bgShow, which is bad!
             render.hideBg(bgSharedSub1);
+
+            ae::BroadcastEvent(Event::HideAllScreens{});
 
             prevDialogueState = false;
             prevEnvironmentState = false;
