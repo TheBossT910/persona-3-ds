@@ -14,13 +14,14 @@ class BattleMenuComponent : public BaseMenu
     static BattleMenuComponent* instance;
 
     BattleMenuOptions loadedOption = BattleMenuOptions::NONE;
+    int selectedBattleOption = -1;
 
     etl::vector<MenuOption, 10> battleOptions;
     int alertStartFrame = 0;
     bool messagePrinted = false;
 
     // option handlers
-    int battleOptionSelected();
+    ViewState battleOptionSelected();
 
   public:
     static void create();
@@ -29,6 +30,8 @@ class BattleMenuComponent : public BaseMenu
 
     void resetMenu() override;
     ViewState updateHook() override;
+    int getSelectedBattleOption();
+    void resetSelectedBattleOption();
 
     // option loaders
     void loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name);

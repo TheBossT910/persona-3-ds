@@ -189,6 +189,7 @@ void BattleMenuComponent::resetMenu()
     optionCount = 0;
     selectedOption = 0;
     startIndex = 0;
+    selectedBattleOption = -1;
 }
 
 ViewState BattleMenuComponent::updateHook()
@@ -208,9 +209,26 @@ ViewState BattleMenuComponent::updateHook()
 }
 
 // option handlers
-int BattleMenuComponent::battleOptionSelected()
+ViewState BattleMenuComponent::battleOptionSelected()
 {
-    int returnSelectedOption = selectedOption;
-    resetMenu();
-    return returnSelectedOption;
+    selectedBattleOption = selectedOption;
+
+    // reset
+    loadedOption = BattleMenuOptions::NONE;
+    pauseMessage = "";
+    messagePrinted = false;
+    selectedOption = 0;
+    startIndex = 0;
+
+    return ViewState::KEEP_CURRENT;
+}
+
+int BattleMenuComponent::getSelectedBattleOption()
+{
+    return selectedBattleOption;
+}
+
+void BattleMenuComponent::resetSelectedBattleOption()
+{
+    selectedBattleOption = -1;
 }
