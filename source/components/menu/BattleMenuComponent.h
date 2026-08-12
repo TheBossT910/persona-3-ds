@@ -9,6 +9,7 @@
 class BattleMenuComponent : public BaseMenu
 {
   private:
+    friend class BattleSystem;
     BattleMenuComponent() {};
     virtual ~BattleMenuComponent() = default;
     static BattleMenuComponent* instance;
@@ -21,6 +22,8 @@ class BattleMenuComponent : public BaseMenu
     int alertStartFrame = 0;
     bool messagePrinted = false;
 
+    void resetHook();
+
     // option handlers
     ViewState battleOptionSelected();
 
@@ -29,13 +32,10 @@ class BattleMenuComponent : public BaseMenu
     static void destroy();
     static BattleMenuComponent* getInstance();
 
-    void resetMenu() override;
     ViewState updateHook() override;
     void prevOption() override;
 
-    // protected:
-    // TODO: move all below functions to protected
-
+  protected:
     // helpers
     void resetLoadedOptions();
     int consumeSelectedBattleOption();

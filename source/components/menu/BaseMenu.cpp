@@ -7,6 +7,8 @@ void BaseMenu::resetMenu()
     isActive = false;
     nextViewState = ViewState::KEEP_CURRENT;
 
+    resetHook();
+
     while (!prevOptions.empty())
     {
         prevOptions.pop();

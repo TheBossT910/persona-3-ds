@@ -183,11 +183,12 @@ class PauseMenuComponent : public BaseMenu
     DialogueComponent* dialogue = nullptr;
     AnimationController* animationCtrl = AnimationController::getInstance();
 
+    void resetHook() override;
+
   public:
     static void create();
     static void destroy();
     static PauseMenuComponent* getInstance();
 
-    void resetMenu() override;
     ViewState updateHook() override;
 };

@@ -2,7 +2,6 @@
 
 #define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (BaseMenu::*)()>(&ClassName::Method)
 
-#include "controllers/MusicController.h"
 #include "core/structs.h"
 #include <maxmod9.h>
 #include <nds.h>
@@ -10,7 +9,6 @@
 #include <string>
 
 #include "components/TextComponent.hpp"
-#include "managers/RenderManager.hpp"
 
 class BaseMenu
 {
@@ -49,11 +47,14 @@ class BaseMenu
      */
     virtual void prevOption();
 
+    /**
+     * @brief Used to set the default pauseMessage, options, and optionCount values
+     */
+    virtual void resetHook() = 0;
+
   public:
     /**
      * @brief Resets the menu to its initial state.
-     *
-     * @note override to set the default pauseMessage, options, and optionCount values
      */
     virtual void resetMenu();
 

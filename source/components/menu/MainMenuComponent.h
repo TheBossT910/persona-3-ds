@@ -45,6 +45,8 @@ class MainMenuComponent : public BaseMenu
     ViewState settingOptionSelected();
     ViewState settingIntroOptionSelected();
 
+    void resetHook() override;
+
     // helper
     void updateSave();
 
@@ -52,6 +54,4 @@ class MainMenuComponent : public BaseMenu
     static void create();
     static void destroy();
     static MainMenuComponent* getInstance();
-
-    void resetMenu() override;
 };

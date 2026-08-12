@@ -31,10 +31,8 @@ MainMenuComponent* MainMenuComponent::getInstance()
     return instance;
 }
 
-void MainMenuComponent::resetMenu()
+void MainMenuComponent::resetHook()
 {
-    BaseMenu::resetMenu();
-
     pauseMessage = "";
     options = mainMenuOptions;
     optionCount = MAIN_MENU_OPTIONS;

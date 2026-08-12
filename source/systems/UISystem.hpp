@@ -17,6 +17,7 @@
 
 #include "components/menu/BaseMenu.h"
 #include "components/ui/UIScreen.h"
+#include "controllers/MusicController.h"
 #include "managers/RenderManager.hpp"
 
 // TODO: add a way to indicate reduced # of bg slots

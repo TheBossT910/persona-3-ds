@@ -177,10 +177,8 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
     return (frame - alertStartFrame) >= durationFrames;
 }
 
-void BattleMenuComponent::resetMenu()
+void BattleMenuComponent::resetHook()
 {
-    BaseMenu::resetMenu();
-
     pauseMessage = "";
     options = nullptr;
     optionCount = 0;

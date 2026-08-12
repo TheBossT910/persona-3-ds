@@ -4,6 +4,7 @@
 
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
+#include "controllers/MusicController.h"
 #include "managers/MathManager.hpp"
 #include "managers/RenderManager.hpp"
 
