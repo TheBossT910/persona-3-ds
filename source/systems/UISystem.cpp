@@ -425,6 +425,6 @@ void UISystem::on_receive(const Event::ShowMenu& msg)
 
 void UISystem::on_receive(const Event::HideAllMenus& /*msg*/)
 {
-    activeMenu->isActive = false;
+    activeMenu->resetMenu();
     activeMenu = nullptr;
 }

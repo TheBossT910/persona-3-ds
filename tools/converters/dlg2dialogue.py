@@ -320,7 +320,7 @@ class CodeGenerator:
             '#include "core/globals.h"',
             "#include <nds.h>",
             "",
-            f"int {s}_dialogue_bg_slot = 0;",
+            f"int {s}_dialogue_bg_slot = -1;",
             "",
         ]
 

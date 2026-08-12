@@ -225,6 +225,9 @@ void EnvironmentView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
+    // setup dialogue rendering target (which sub-bg the dialogue box uses)
+    demo_dialogue_bg_slot = bgSharedSub1;
+
     setupUI();
 
     // setup music (room-specific path/loop points)

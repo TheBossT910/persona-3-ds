@@ -42,6 +42,11 @@ void PauseMenuComponent::resetHook()
     options = menuOptions;
     optionCount = MENU_OPTIONS;
 
+    if (demo_dialogue_bg_slot != -1)
+    {
+        rm.hideBg(demo_dialogue_bg_slot);
+    }
+
     if (pauseMenu == nullptr)
     {
         pauseMenu = engine.CreateEntity();
@@ -52,10 +57,23 @@ void PauseMenuComponent::resetHook()
 
 ViewState PauseMenuComponent::updateHook()
 {
+    // dialogue should be started, but has not
+    if (isDialogueStarted && !dialogue->IsActive())
+    {
+        text->clearScreen();
+        dialogue->start();
+        isDialogueStarted = false;
+    }
+
     // dialogue controller takes full control when active
     if (dialogue->IsActive())
     {
         return ViewState::KEEP_CURRENT;
+    }
+
+    if (demo_dialogue_bg_slot != -1)
+    {
+        rm.hideBg(demo_dialogue_bg_slot);
     }
 
     return ViewState::DEFAULT;
@@ -172,8 +190,6 @@ ViewState PauseMenuComponent::debugOptionSelected()
     switch (static_cast<DebugOption>(selectedOption))
     {
     case DebugOption::DISCLAIMER_VIEW:
-        // TODO: check if musicCtrl is needed
-        // musicCtrl->pause();
         selectedView = ViewState::DISCLAIMER;
         break;
     case DebugOption::INTRO_VIEW:
@@ -207,11 +223,10 @@ ViewState PauseMenuComponent::debugOptionSelected()
         selectedView = ViewState::CUTSCENE_2;
         break;
     case DebugOption::DEBUG_DIALOGUE:
-        text->clearScreen();
         demo_yukari_kenji_argument_load();
         dialogue->configureDialogue(
             DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, text));
-        dialogue->start();
+        isDialogueStarted = true;
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_BILLBOARDS:

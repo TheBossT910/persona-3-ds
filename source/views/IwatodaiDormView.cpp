@@ -96,9 +96,6 @@ void IwatodaiDormView::setupUI()
 {
     textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
-    // setup dialogue rendering target (which sub-bg the dialogue box uses)
-    demo_dialogue_bg_slot = bgSharedSub1;
-
     // setup pause menu
     pauseMenuCmpt = PauseMenuComponent::getInstance();
 
