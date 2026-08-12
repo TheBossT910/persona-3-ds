@@ -32,13 +32,13 @@ BattleMenuComponent* BattleMenuComponent::getInstance()
 // option loaders
 void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
 {
-    text->clearScreen();
-
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::ACTION)
     {
         return;
     };
+
+    text->clearScreen();
 
     // set new options
     battleOptions.clear();
@@ -60,13 +60,13 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
 
 void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 {
-    text->clearScreen();
-
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::SKILL)
     {
         return;
     };
+
+    text->clearScreen();
 
     // set new options
     battleOptions.clear();
@@ -89,11 +89,12 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 
 void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* personas)
 {
-    text->clearScreen();
-
     if (loadedOption == BattleMenuOptions::PERSONA)
+    {
         return;
+    }
 
+    text->clearScreen();
     battleOptions.clear();
     loadedOption = BattleMenuOptions::PERSONA;
     pauseMessage = "Persona";
@@ -111,11 +112,15 @@ void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* pers
 
 void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>* targets, bool healTarget)
 {
-    text->clearScreen();
-
     BattleMenuOptions targetLoadedOption =
         healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
 
+    if ((loadedOption == BattleMenuOptions::TARGET_HEAL) || (loadedOption == BattleMenuOptions::TARGET_ENEMY))
+    {
+        return;
+    }
+
+    text->clearScreen();
     battleOptions.clear();
     loadedOption = targetLoadedOption;
     pauseMessage = "Target";
@@ -136,13 +141,12 @@ void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>*
 
 void BattleMenuComponent::loadAllOutAttackConfirmation()
 {
-    text->clearScreen();
-
     if (loadedOption == BattleMenuOptions::ALL_OUT_ATTACK)
     {
         return;
     };
 
+    text->clearScreen();
     battleOptions.clear();
     loadedOption = BattleMenuOptions::ALL_OUT_ATTACK;
     pauseMessage = "Confirm All-out-attack?";
@@ -192,6 +196,7 @@ void BattleMenuComponent::resetLoadedOptions()
 {
     loadedOption = BattleMenuOptions::NONE;
     messagePrinted = false;
+    text->clearScreen();
 
     pauseMessage = "";
 

@@ -27,6 +27,8 @@ void UISystem::Update(ae::fixed_t dt)
         if (updateHookState != ViewState::DEFAULT)
         {
             ae::BroadcastEvent(Event::SwitchView{updateHookState});
+            // TODO: remove after musicCtrl refactor for aegis engine compliance
+            musicCtrl->update();
             continue;
         }
 
