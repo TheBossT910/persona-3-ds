@@ -4,9 +4,13 @@ void BaseMenu::resetMenu()
 {
     selectedOption = 0;
     startIndex = 0;
+    isActive = false;
+    nextViewState = ViewState::KEEP_CURRENT;
 
     while (!prevOptions.empty())
+    {
         prevOptions.pop();
+    }
 }
 
 ViewState BaseMenu::changeMenu(MenuOption* newOptions, int newOptionCount)

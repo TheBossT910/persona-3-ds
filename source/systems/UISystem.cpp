@@ -82,13 +82,16 @@ void UISystem::Update(ae::fixed_t dt)
         }
 
         // blink the "Pause" text
-        if (frame % 60 < 30)
+        if (menu->pauseMessage.length() != 0)
         {
-            text->drawText(menu->pauseMessage, 0, 0, 2);
-        }
-        else
-        {
-            text->clearArea(0, 0, 256, text->getFontSize());
+            if (frame % 60 < 30)
+            {
+                text->drawText(menu->pauseMessage, 0, 0, 2);
+            }
+            else
+            {
+                text->clearArea(0, 0, 256, text->getFontSize());
+            }
         }
 
         // display options

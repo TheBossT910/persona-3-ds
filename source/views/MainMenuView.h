@@ -11,8 +11,7 @@ class MainMenuView : public BaseView
 {
   private:
     PrintConsole console;
-    MainMenuComponent mainMenuCmpt;
-    bool isMainMenuCmptActive;
+    MainMenuComponent* mainMenuCmpt = nullptr;
     int bg[3];
 
     // for silhouette animation

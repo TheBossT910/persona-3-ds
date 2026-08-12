@@ -181,25 +181,22 @@ void BattleMenuComponent::resetMenu()
 {
     BaseMenu::resetMenu();
 
-    // soft reset
-    loadedOption = BattleMenuOptions::NONE;
     pauseMessage = "";
-    messagePrinted = false;
+    options = nullptr;
     optionCount = 0;
 
-    // hard reset
-    isActive = false;
-    options = nullptr;
+    loadedOption = BattleMenuOptions::NONE;
+    messagePrinted = false;
     selectedBattleOption = -1;
 }
 
 void BattleMenuComponent::resetLoadedOptions()
 {
-    // soft reset
     loadedOption = BattleMenuOptions::NONE;
-    pauseMessage = "";
     messagePrinted = false;
-    optionCount = 0; // TODO: ensure this doesn't break stuff
+
+    pauseMessage = "";
+
     selectedOption = 0;
     startIndex = 0;
 }

@@ -44,12 +44,16 @@ class BaseMenu
 
     /**
      * @brief Changes the current options to the previous options
+     *
+     * @note Override if a menu manually manages its state (doesn't use changeMenu, default prevOption functions)
      */
     virtual void prevOption();
 
   public:
     /**
      * @brief Resets the menu to its initial state.
+     *
+     * @note override to set the default pauseMessage, options, and optionCount values
      */
     virtual void resetMenu();
 

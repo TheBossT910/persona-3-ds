@@ -20,7 +20,6 @@
 #include "components/MovementComponent.hpp"
 #include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
-#include "systems/UISystem.hpp"
 
 class EnvironmentView : public BaseView
 {

@@ -3,8 +3,38 @@
 #include "events/SaveEvents.hpp"
 #include <string>
 
+MainMenuComponent* MainMenuComponent::instance = nullptr;
+
+void MainMenuComponent::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new MainMenuComponent();
+    }
+}
+
+void MainMenuComponent::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+MainMenuComponent* MainMenuComponent::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 void MainMenuComponent::resetMenu()
 {
+    BaseMenu::resetMenu();
+
     pauseMessage = "";
     options = mainMenuOptions;
     optionCount = MAIN_MENU_OPTIONS;

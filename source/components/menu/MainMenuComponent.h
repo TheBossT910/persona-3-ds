@@ -8,6 +8,9 @@
 class MainMenuComponent : public BaseMenu
 {
   private:
+    MainMenuComponent() {};
+    virtual ~MainMenuComponent() = default;
+    static MainMenuComponent* instance;
     MenuOption mainMenuOptions[MAIN_MENU_OPTIONS] = {
         {"Load Game", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
         {"Settings", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
@@ -46,5 +49,9 @@ class MainMenuComponent : public BaseMenu
     void updateSave();
 
   public:
+    static void create();
+    static void destroy();
+    static MainMenuComponent* getInstance();
+
     void resetMenu() override;
 };

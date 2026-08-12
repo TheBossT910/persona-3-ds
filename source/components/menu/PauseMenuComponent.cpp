@@ -39,6 +39,7 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
 void PauseMenuComponent::resetMenu()
 {
     BaseMenu::resetMenu();
+
     pauseMessage = "Pause";
     options = menuOptions;
     optionCount = MENU_OPTIONS;

@@ -490,6 +490,10 @@ void EnvironmentView::cleanup()
         textSub = nullptr;
     }
 
+    // hide UI screens/menus
+    ae::BroadcastEvent(Event::HideAllScreens{});
+    ae::BroadcastEvent(Event::HideAllMenus{});
+
     musicCtrl->cleanup();
     animationCtrl->stop();
 
