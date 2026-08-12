@@ -137,7 +137,7 @@ void BattleSystem::Update(ae::fixed_t)
             }
         }
 
-        if (systemKeysDown & KEY_B)
+        if (battleMenuCmpt->consumeCancel())
             phase = BattlePhase::ChooseAction;
         break;
     }
@@ -176,7 +176,7 @@ void BattleSystem::Update(ae::fixed_t)
             phase = BattlePhase::ShowAlert;
         }
 
-        if (systemKeysDown & KEY_B)
+        if (battleMenuCmpt->consumeCancel())
             phase = BattlePhase::ChooseAction;
         break;
     }
@@ -250,7 +250,7 @@ void BattleSystem::Update(ae::fixed_t)
             advanceTurn();
         }
 
-        if (systemKeysDown & KEY_B)
+        if (battleMenuCmpt->consumeCancel())
         {
             phase = (selectedSkill == actor->baseAttackAction) ? BattlePhase::ChooseAction : BattlePhase::ChooseSkill;
             selectedBattleOption = -1;

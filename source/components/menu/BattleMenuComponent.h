@@ -15,6 +15,7 @@ class BattleMenuComponent : public BaseMenu
 
     BattleMenuOptions loadedOption = BattleMenuOptions::NONE;
     int selectedBattleOption = -1;
+    bool isCancelled = false;
 
     etl::vector<MenuOption, 10> battleOptions;
     int alertStartFrame = 0;
@@ -30,13 +31,15 @@ class BattleMenuComponent : public BaseMenu
 
     void resetMenu() override;
     ViewState updateHook() override;
+    void prevOption() override;
 
     // protected:
-    // TODO: move all below options to protected
+    // TODO: move all below functions to protected
 
     // helpers
-    int consumeSelectedBattleOption();
     void resetLoadedOptions();
+    int consumeSelectedBattleOption();
+    bool consumeCancel();
 
     // option loaders
     void loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name);

@@ -45,7 +45,7 @@ class BaseMenu
     /**
      * @brief Changes the current options to the previous options
      */
-    void prevOption();
+    virtual void prevOption();
 
   public:
     /**

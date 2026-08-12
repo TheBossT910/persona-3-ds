@@ -179,13 +179,13 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
 
 void BattleMenuComponent::resetMenu()
 {
+    BaseMenu::resetMenu();
+
     // soft reset
     loadedOption = BattleMenuOptions::NONE;
     pauseMessage = "";
     messagePrinted = false;
     optionCount = 0;
-    selectedOption = 0;
-    startIndex = 0;
 
     // hard reset
     isActive = false;
@@ -233,4 +233,18 @@ int BattleMenuComponent::consumeSelectedBattleOption()
     int battleOption = selectedBattleOption;
     selectedBattleOption = -1;
     return battleOption;
+}
+
+bool BattleMenuComponent::consumeCancel()
+{
+    bool result = isCancelled;
+    isCancelled = false;
+    return result;
+}
+
+void BattleMenuComponent::prevOption()
+{
+    isCancelled = true;
+    selectedBattleOption = -1;
+    resetLoadedOptions();
 }

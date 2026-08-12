@@ -58,9 +58,6 @@ void UISystem::Update(ae::fixed_t dt)
         {
             cancelSFX();
             sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
-
-            MenuState currentState = {menu->options, menu->optionCount, menu->selectedOption, menu->startIndex};
-
             text->clearScreen();
 
             if (menu->options[menu->selectedOption].onSelect != nullptr)
@@ -70,12 +67,6 @@ void UISystem::Update(ae::fixed_t dt)
                 {
                     menu->nextViewState = result;
                     menu->isActive = false;
-                }
-
-                // if we changed options, push current state to stack
-                if (menu->options != currentState.options)
-                {
-                    menu->prevOptions.push(currentState);
                 }
             }
         }
