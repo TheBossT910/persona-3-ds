@@ -7,38 +7,38 @@
 #include <stdlib.h>
 #include <string>
 
-#include "core/enums.h"
+#include "core/enums.hpp"
 
 // states
-#include "views/BaseView.h"
-#include "views/DisclaimerView.h"
-#include "views/IntroView.h"
-#include "views/IwatodaiDormView.h"
-#include "views/IwatodaiStreetsView.h"
-#include "views/MainMenuView.h"
-#include "views/PaulowniaMallView.h"
-#include "views/SignContractView.h"
-#include "views/StationView.h"
-#include "views/VideoView.h"
+#include "views/BaseView.hpp"
+#include "views/DisclaimerView.hpp"
+#include "views/IntroView.hpp"
+#include "views/IwatodaiDormView.hpp"
+#include "views/IwatodaiStreetsView.hpp"
+#include "views/MainMenuView.hpp"
+#include "views/PaulowniaMallView.hpp"
+#include "views/SignContractView.hpp"
+#include "views/StationView.hpp"
+#include "views/VideoView.hpp"
 
 // components
-#include "components/ui/MenuHUDScreen.h"
+#include "components/ui/MenuHUDScreen.hpp"
 
 // sfx
 #include "soundbank_bin.h"
 
 // character models
-#include "models/kotone.h"
-#include "models/makoto.h"
+#include "models/kotone.hpp"
+#include "models/makoto.hpp"
 
 // DBs
-#include "battleActions/armours/ArmourDb.h"
-#include "battleActions/enemies/EnemyProfileDb.h"
-#include "battleActions/party/CharacterProfileDb.h"
-#include "battleActions/personas/PersonaDb.h"
-#include "battleActions/shoes/ShoeDb.h"
-#include "battleActions/skills/SkillDb.h"
-#include "battleActions/weapons/WeaponDb.h"
+#include "battleActions/armours/ArmourDb.hpp"
+#include "battleActions/enemies/EnemyProfileDb.hpp"
+#include "battleActions/party/CharacterProfileDb.hpp"
+#include "battleActions/personas/PersonaDb.hpp"
+#include "battleActions/shoes/ShoeDb.hpp"
+#include "battleActions/skills/SkillDb.hpp"
+#include "battleActions/weapons/WeaponDb.hpp"
 
 // game engine
 GameEngine engine;

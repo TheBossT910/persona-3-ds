@@ -10,12 +10,12 @@ def convert(input_file, output_file, config):
 
       1. Run obj2model to produce:
             <output_file>            (.bin  — geometry + animation data)
-            <output_file stem>.h     (animation enum + inline texture loader)
+            <output_file stem>.hpp     (animation enum + inline texture loader)
             <output_file stem>_textures.txt   (absolute PNG paths for grit)
 
       2. For every PNG listed in _textures.txt, write a .grit sidecar file
          next to the PNG so the Makefile rule
-             %.s %.h : %.png %.grit
+             %.s %.hpp : %.png %.grit
          can convert it to a linked bitmap array.
 
       3. Delete _textures.txt — it is a transient build artefact.

@@ -1,5 +1,5 @@
-#include "IwatodaiDormView.h"
-#include "core/structs.h"
+#include "IwatodaiDormView.hpp"
+#include "core/structs.hpp"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()

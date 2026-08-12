@@ -1,5 +1,5 @@
 #include "CameraSystem.hpp"
-#include "core/globals.h"
+#include "core/globals.hpp"
 
 void CameraSystem::on_receive(const Event::ConfigureCamera& config)
 {

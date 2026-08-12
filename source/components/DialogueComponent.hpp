@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "core/enums.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 #include <aegis/component.hpp>
 
-#include "controllers/TextController.h"
+#include "controllers/TextController.hpp"
 
 class DialogueComponent : public ae::Component
 {

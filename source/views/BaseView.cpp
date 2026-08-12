@@ -1,5 +1,5 @@
-#include "BaseView.h"
-#include "core/globals.h"
+#include "BaseView.hpp"
+#include "core/globals.hpp"
 
 void BaseView::cleanup()
 {

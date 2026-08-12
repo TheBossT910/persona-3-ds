@@ -1,4 +1,4 @@
-#include "controllers/AnimationController.h"
+#include "controllers/AnimationController.hpp"
 #include <stdio.h>
 #include <string.h>
 

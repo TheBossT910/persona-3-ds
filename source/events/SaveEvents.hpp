@@ -5,9 +5,9 @@
  */
 
 #pragma once
-#include "core/enums.h"
-#include "core/geometry.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/geometry.hpp"
+#include "core/structs.hpp"
 #include <aegis/aegis.hpp>
 
 namespace Event

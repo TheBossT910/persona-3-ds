@@ -1,4 +1,4 @@
-#include "PaulowniaMallView.h"
+#include "PaulowniaMallView.hpp"
 
 PaulowniaMallView::PaulowniaMallView()
 {

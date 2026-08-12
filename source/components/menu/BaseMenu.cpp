@@ -1,5 +1,5 @@
-#include "BaseMenu.h"
-#include "core/globals.h"
+#include "BaseMenu.hpp"
+#include "core/globals.hpp"
 #include "soundbank.h"
 
 void BaseMenu::cancelSFX()

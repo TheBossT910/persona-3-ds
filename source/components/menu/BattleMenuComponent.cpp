@@ -1,5 +1,5 @@
-#include "BattleMenuComponent.h"
-#include "core/globals.h"
+#include "BattleMenuComponent.hpp"
+#include "core/globals.hpp"
 
 BattleMenuComponent* BattleMenuComponent::instance = nullptr;
 

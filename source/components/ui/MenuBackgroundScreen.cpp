@@ -1,5 +1,5 @@
-#include "MenuBackgroundScreen.h"
-#include "core/globals.h"
+#include "MenuBackgroundScreen.hpp"
+#include "core/globals.hpp"
 
 #include <string>
 

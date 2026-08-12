@@ -1,4 +1,4 @@
-#include "DialogueScreen.h"
+#include "DialogueScreen.hpp"
 
 DialogueScreen* DialogueScreen::instance = nullptr;
 

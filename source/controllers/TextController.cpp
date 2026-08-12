@@ -1,6 +1,6 @@
-#include "TextController.h"
+#include "TextController.hpp"
 
-#include "core/globals.h"
+#include "core/globals.hpp"
 #include <fstream>
 #include <sstream>
 
