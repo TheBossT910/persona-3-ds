@@ -69,6 +69,12 @@ void EnvironmentView::setupEnvironment()
 
 void EnvironmentView::init()
 {
+    // clearing so nothing from the previous enviorment shows during load
+    glClearColor(0, 0, 0, 31);
+    glClearDepth(0x7FFF);
+    glFlush(0);
+    swiWaitForVBlank();
+
     if (environment == nullptr)
     {
         environment = engine.CreateEntity();
@@ -257,6 +263,9 @@ ViewState EnvironmentView::update()
         {
             ae::BroadcastEvent(Event::HideAllScreens{});
 
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
+
             startBattle();
 
             prevBattleState = true;
@@ -269,6 +278,10 @@ ViewState EnvironmentView::update()
             ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
 
             prevEnvironmentState = true;
+
+            movement->start();
+            ae::BroadcastEvent(Event::StartCamera{});
+
             phase = ViewPhase::Environment;
 
             setMusic();
@@ -282,6 +295,10 @@ ViewState EnvironmentView::update()
         if (!prevPauseState)
         {
             ae::BroadcastEvent(Event::ShowScreen{menuBackgroundScreen});
+
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
+
             pauseMenuCmpt->reset();
             prevPauseState = true;
         }
@@ -298,6 +315,10 @@ ViewState EnvironmentView::update()
         {
             textSub->clearScreen();
             prevPauseState = false;
+
+            movement->start();
+            ae::BroadcastEvent(Event::StartCamera{});
+
             phase = ViewPhase::Environment;
             prevEnvironmentState = false;
         }
@@ -312,6 +333,9 @@ ViewState EnvironmentView::update()
         if (!isActive && !prevDialogueState)
         {
             ae::BroadcastEvent(Event::ShowScreen{dialogueScreen});
+
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
             setDialogueConfig();
             dialogue->start();
 
@@ -323,6 +347,9 @@ ViewState EnvironmentView::update()
 
             prevDialogueState = false;
             prevEnvironmentState = false;
+
+            movement->start();
+            ae::BroadcastEvent(Event::StartCamera{});
 
             phase = ViewPhase::Environment;
         }
@@ -345,6 +372,10 @@ ViewState EnvironmentView::update()
         {
             textSub->clearScreen();
             prevEnvironmentState = false;
+
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
+
             phase = ViewPhase::Pause;
             break;
         }
@@ -356,6 +387,10 @@ ViewState EnvironmentView::update()
             if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
+
+                movement->stop();
+                ae::BroadcastEvent(Event::StopCamera{});
+
                 phase = ViewPhase::Pause;
                 break;
             }
@@ -365,6 +400,9 @@ ViewState EnvironmentView::update()
 
         if (tileResult != ViewState::KEEP_CURRENT)
         {
+            movement->stop();
+            ae::BroadcastEvent(Event::StopCamera{});
+
             musicCtrl->pause();
             return tileResult;
         }

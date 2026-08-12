@@ -344,6 +344,8 @@ enum : etl::message_id_t
     ConfigureCamera,
     SetCameraMode,
     SetCameraPath,
+    StartCamera,
+    StopCamera,
     SetCharacterPosition,
     WriteSave,
     ReadSave,
