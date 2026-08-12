@@ -86,7 +86,7 @@ void IwatodaiDormView::setDialogueConfig()
         demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub, demo_yukari_kenji_argument_load_bg));
 }
 
-ViewState IwatodaiDormView::update()
+void IwatodaiDormView::onEnvironmentUpdate()
 {
     animator.update(1.0f);
 
@@ -122,8 +122,6 @@ ViewState IwatodaiDormView::update()
     glEnable(GL_FOG);
 
     glPopMatrix(1);
-
-    return ViewState::KEEP_CURRENT;
 }
 
 void IwatodaiDormView::cleanup()
