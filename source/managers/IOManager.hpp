@@ -111,7 +111,7 @@ class IOManager : public ae::Manager, public ae::Singleton<IOManager>
      */
     void* openFile(const std::string& path, u32& size);
 
-    // TODO: add javadoc
+    // TODO: add doxyen docs
     std::string getAssetFilePath(const std::string& basePath, const char* suffix);
 
   private:

@@ -125,7 +125,7 @@ void loadModels(bool isFemc)
     }
 }
 
-// TODO: add javadoc
+// TODO: add doxyen docs
 void NDSPollInputCallback()
 {
     scanKeys();
@@ -133,7 +133,7 @@ void NDSPollInputCallback()
     systemKeysHeld = keysHeld();
 }
 
-// TODO: add javadoc
+// TODO: add doxyen docs
 void NDSComputeCallback()
 {
     //...
