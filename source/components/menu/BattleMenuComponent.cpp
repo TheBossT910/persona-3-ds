@@ -179,17 +179,29 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
 
 void BattleMenuComponent::resetMenu()
 {
+    // soft reset
     loadedOption = BattleMenuOptions::NONE;
-    isActive = false;
-    messagePrinted = false;
-
     pauseMessage = "";
-
-    options = nullptr;
+    messagePrinted = false;
     optionCount = 0;
     selectedOption = 0;
     startIndex = 0;
+
+    // hard reset
+    isActive = false;
+    options = nullptr;
     selectedBattleOption = -1;
+}
+
+void BattleMenuComponent::resetLoadedOptions()
+{
+    // soft reset
+    loadedOption = BattleMenuOptions::NONE;
+    pauseMessage = "";
+    messagePrinted = false;
+    optionCount = 0; // TODO: ensure this doesn't break stuff
+    selectedOption = 0;
+    startIndex = 0;
 }
 
 ViewState BattleMenuComponent::updateHook()
@@ -212,23 +224,13 @@ ViewState BattleMenuComponent::updateHook()
 ViewState BattleMenuComponent::battleOptionSelected()
 {
     selectedBattleOption = selectedOption;
-
-    // reset
-    loadedOption = BattleMenuOptions::NONE;
-    pauseMessage = "";
-    messagePrinted = false;
-    selectedOption = 0;
-    startIndex = 0;
-
+    resetLoadedOptions();
     return ViewState::KEEP_CURRENT;
 }
 
-int BattleMenuComponent::getSelectedBattleOption()
+int BattleMenuComponent::consumeSelectedBattleOption()
 {
-    return selectedBattleOption;
-}
-
-void BattleMenuComponent::resetSelectedBattleOption()
-{
+    int battleOption = selectedBattleOption;
     selectedBattleOption = -1;
+    return battleOption;
 }

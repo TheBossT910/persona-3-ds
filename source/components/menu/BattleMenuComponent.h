@@ -30,8 +30,13 @@ class BattleMenuComponent : public BaseMenu
 
     void resetMenu() override;
     ViewState updateHook() override;
-    int getSelectedBattleOption();
-    void resetSelectedBattleOption();
+
+    // protected:
+    // TODO: move all below options to protected
+
+    // helpers
+    int consumeSelectedBattleOption();
+    void resetLoadedOptions();
 
     // option loaders
     void loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name);
