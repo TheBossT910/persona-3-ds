@@ -29,7 +29,7 @@ MenuHUDScreen* MenuHUDScreen::getInstance()
 }
 
 // helper
-void MenuHUDScreen::renderBackground()
+void MenuHUDScreen::loadBackground()
 {
     if (bgLoaded)
         return;
@@ -40,8 +40,9 @@ void MenuHUDScreen::renderBackground()
 
     dmaCopy(bgHUD.tiles, bgGetGfxPtr(bgId), bgHUD.tilesLen);
     dmaCopy(bgHUD.map, bgGetMapPtr(bgId), bgHUD.mapLen);
+
     vramSetBankH(VRAM_H_LCD);
-    dmaCopy(bgHUD.pal, &VRAM_H_EXT_PALETTE[2][0], bgHUD.palLen);
+    dmaCopy(bgHUD.pal, &VRAM_H_EXT_PALETTE[bgId % 4][0], bgHUD.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
     graphics->unloadGraphic(bgHUD);
@@ -195,7 +196,7 @@ void MenuHUDScreen::load()
     // slash
     dmaCopy(slashSprite.tiles, sprites[11].gfx, slashSprite.tilesLen);
 
-    renderBackground();
+    loadBackground();
 };
 
 void MenuHUDScreen::unload()

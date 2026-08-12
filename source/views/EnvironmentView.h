@@ -14,12 +14,13 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/AnimationController.h"
-#include "controllers/UIController.h"
 
 #include "components/DialogueComponent.hpp"
 #include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
+#include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
+#include "systems/UISystem.hpp"
 
 class EnvironmentView : public BaseView
 {
@@ -148,14 +149,17 @@ class EnvironmentView : public BaseView
     GraphicsComponent* graphics = nullptr;
     TextComponent* textMenu = nullptr;
 
-    UIController* uiCtrl = UIController::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
+    // ui
     DialogueScreen* dialogueScreen = nullptr;
     MenuHUDScreen* menuHUDScreen = nullptr;
+    MenuBackgroundScreen* menuBackgroundScreen = nullptr;
     BattleMenuComponent* battleMenuCmpt = nullptr;
     PauseMenuComponent* pauseMenuCmpt = nullptr;
+    std::array<int, 3> bgMain;
+    std::array<int, 4> bgSub;
 
     // Environment
     Environment env;
@@ -166,6 +170,8 @@ class EnvironmentView : public BaseView
     uint16_t* textVideoBufferSub;
     std::string FONT_NAME = "cosmetica";
     int FONT_SIZE = 12;
+
+    RenderManager& render = RenderManager::GetInstance();
 
   private:
     // fog properties

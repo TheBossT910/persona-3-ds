@@ -20,7 +20,7 @@ class DialogueScreen : public UIScreen
     void removeSprites() override;
 
   private:
-    DialogueScreen() {};
+    DialogueScreen() : UIScreen(false) {};
     ~DialogueScreen() {};
     static DialogueScreen* instance;
 
@@ -34,5 +34,5 @@ class DialogueScreen : public UIScreen
     ae::Entity* dialogue = nullptr;
     GraphicsComponent* graphics = nullptr;
 
-    void renderBackground();
+    void loadBackground();
 };

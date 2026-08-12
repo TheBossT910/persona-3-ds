@@ -107,7 +107,7 @@ void MainMenuView::init()
     graphics->unloadGraphic(doorBg);
     graphics->unloadGraphic(fogBg);
 
-    bgHide(bg[2]);
+    render.hideBg(bg[2]);
     bgSetCenter(bg[2], 128, 96); // pivot point on the screen (at the screen's center)
     bgSetScroll(bg[2], 128, 96); // pivot point on the image (at the image's center)
 
@@ -191,7 +191,7 @@ ViewState MainMenuView::update()
     {
         displayFog = true;
         REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_DST_BACKDROP | BLEND_DST_BG1;
-        bgShow(bg[2]);
+        render.showBg(bg[2]);
     }
 
     // fade in fog

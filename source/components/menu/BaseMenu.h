@@ -11,6 +11,7 @@
 #include <string>
 
 #include "components/TextComponent.hpp"
+#include "managers/RenderManager.hpp"
 
 class BaseMenu
 {
@@ -26,6 +27,8 @@ class BaseMenu
     int startIndex = 0;
 
   private:
+    RenderManager& render = RenderManager::GetInstance();
+
     // sfx
     mm_sfxhand sfxMenuHandle;
     mm_sfxhand sfxSelectHandle;

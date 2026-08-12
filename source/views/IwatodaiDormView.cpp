@@ -104,16 +104,12 @@ void IwatodaiDormView::setupUI()
     // setup pause menu
     pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
 
-    // TODO: replace this. We shouldn't be calling MenuBackgroundScreen here
-    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
-    MenuBackgroundScreen::getInstance()->load();
-
-    dialogueScreen = DialogueScreen::getInstance();
     menuHUDScreen = MenuHUDScreen::getInstance();
+    menuBackgroundScreen = MenuBackgroundScreen::getInstance();
+    dialogueScreen = DialogueScreen::getInstance();
 
-    uiCtrl->registerScreen(menuHUDScreen, false);
-    uiCtrl->registerScreen(dialogueScreen, false);
-    uiCtrl->show(menuHUDScreen, false);
+    std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen, menuBackgroundScreen};
+    ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, nullptr, screens});
 }
 
 void IwatodaiDormView::hookCleanup()

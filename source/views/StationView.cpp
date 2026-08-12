@@ -53,14 +53,12 @@ void StationView::setupUI()
     // setup pause menu
     pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
 
-    // TODO: replace this. We shouldn't be calling MenuBackgroundScreen here
-    MenuBackgroundScreen::getInstance()->bgId = bgSharedSub1;
-    MenuBackgroundScreen::getInstance()->load();
-
     menuHUDScreen = MenuHUDScreen::getInstance();
+    menuBackgroundScreen = MenuBackgroundScreen::getInstance();
 
-    uiCtrl->registerScreen(menuHUDScreen, false);
-    uiCtrl->show(menuHUDScreen, false);
+    std::array<UIScreen*, 7> screens = {menuHUDScreen, menuBackgroundScreen};
+    ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, &oamMain, screens});
+    ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
 }
 
 void StationView::hookCleanup()

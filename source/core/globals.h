@@ -14,9 +14,11 @@
 #include "components/TextComponent.hpp"
 #include "managers/IOManager.hpp"
 #include "managers/MathManager.hpp"
+#include "managers/RenderManager.hpp"
 #include "systems/BattleSystem.hpp"
 #include "systems/CameraSystem.hpp"
 #include "systems/SaveSystem.hpp"
+#include "systems/UISystem.hpp"
 #include <aegis/engine.hpp>
 
 // variables
@@ -53,7 +55,10 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::ReadSave,
                                          Event::WriteSave,
                                          GraphicsComponent,
-                                         TextComponent>;
+                                         TextComponent,
+                                         Event::ConfigureUI,
+                                         Event::ShowScreen,
+                                         Event::HideAllScreens>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
 constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
 } // namespace GameEngineConfig

@@ -348,7 +348,10 @@ enum : etl::message_id_t
     StopCamera,
     SetCharacterPosition,
     WriteSave,
-    ReadSave
+    ReadSave,
+    ConfigureUI,
+    ShowScreen,
+    HideAllScreens
 };
 } // namespace EventID
 

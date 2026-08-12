@@ -24,7 +24,7 @@ class MenuBackgroundScreen : public UIScreen
     std::string resolveBgName(int bgIndex) const;
 
   private:
-    MenuBackgroundScreen() {};
+    MenuBackgroundScreen() : UIScreen(false) {};
     ~MenuBackgroundScreen() {};
 
     static MenuBackgroundScreen* instance;

@@ -6,6 +6,7 @@
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
 #include "managers/MathManager.hpp"
+#include "managers/RenderManager.hpp"
 
 class IntroView : public BaseView
 {
@@ -52,6 +53,7 @@ class IntroView : public BaseView
     TextComponent* text = nullptr;
 
     MathManager& math = MathManager::GetInstance();
+    RenderManager& render = RenderManager::GetInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
   public:
