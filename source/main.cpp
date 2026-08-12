@@ -54,6 +54,10 @@ int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
 Save saveData;
+ViewState nextView = ViewState::DEFAULT;
+
+BaseView* currentView = nullptr;
+bool prevFemcMode;
 
 // models
 unsigned int** bitmapsCharacter = nullptr;
@@ -69,9 +73,6 @@ static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
     return tiles;
 }
-
-BaseView* currentView = nullptr;
-bool prevFemcMode;
 
 void SwitchView(BaseView* newView)
 {
@@ -249,7 +250,17 @@ int main(int argc, char* argv[])
         // check state of currentView
         if (currentView != nullptr)
         {
-            ViewState nextState = currentView->update();
+            ViewState nextState;
+            if (nextView != ViewState::DEFAULT)
+            {
+                nextState = nextView;
+                nextView = ViewState::DEFAULT;
+            }
+            else
+            {
+                nextState = currentView->update();
+            }
+
             switch (nextState)
             {
             case ViewState::INTRO:

@@ -13,6 +13,8 @@
 #include "soundbank.h"
 #include <aegis/system.hpp>
 
+#include "events/GenericEvents.hpp"
+
 #include "components/menu/BaseMenu.h"
 #include "components/ui/UIScreen.h"
 #include "managers/RenderManager.hpp"
@@ -24,7 +26,8 @@ class UISystem : public ae::SystemRouter<UISystem,
                                          Event::ShowMenu,
                                          Event::HideAllMenus,
                                          Event::ShowScreen,
-                                         Event::HideAllScreens>,
+                                         Event::HideAllScreens,
+                                         Event::SwitchView>,
                  public ae::Singleton<UISystem>
 {
   public:
@@ -36,6 +39,9 @@ class UISystem : public ae::SystemRouter<UISystem,
     void Shutdown() override;
 
     void Update(ae::fixed_t /*dt*/) override;
+
+    // TODO: move out of UISystem. Only here as a temporary fix
+    void on_receive(const Event::SwitchView& msg);
 
     /**
      * @brief ETL message handler to configure screens

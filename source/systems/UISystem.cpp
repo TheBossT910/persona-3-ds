@@ -128,6 +128,11 @@ void UISystem::Shutdown()
     isActive = false;
 }
 
+void UISystem::on_receive(const Event::SwitchView& msg)
+{
+    nextView = msg.view;
+}
+
 void UISystem::on_receive(const Event::ConfigureUIScreen& config)
 {
     // reset previous config
