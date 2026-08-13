@@ -45,43 +45,61 @@ class UISystem : public ae::SystemRouter<UISystem,
     void on_receive(const Event::SwitchView& msg);
 
     /**
-     * @brief ETL message handler to configure screens
+     * @brief ETL message handler to configure UIScreens
      *
-     * @details First, it resets any previous configs via cleanup. Second, it sets
+     * @details First, it resets any previous configs via cleanupScreens. Second, it sets
      * the background pointers to render screens to. The arrays passed into
      * setGraphics() must contain the actual libnds hardware background layer IDs
-     * (e.g., 0, 1, 2, 3). Third, it register screens via egisterScreen to have them
+     * (e.g., 0, 1, 2, 3). Third, it register screens via registerScreen to have them
      * pre-loaded before calling show.
      *
-     * @note Required to call in order to enable the CameraSystem
+     * @note Required to call in order to use UIScreens
      *
-     * @param config The event payload containing the camera configuration to apply.
+     * @param config The event payload containing the UIScreen configuration to apply.
      */
     void on_receive(const Event::ConfigureUIScreen& config);
 
-    // TODO: add doxygen docs
     /**
-     * @brief
+     * @brief ETL message handler to configure UIMenus
      *
-     * @param config
+     * @details First, it resets any previous configs via cleanupMenus. Second, it sets
+     * all menus to be deactivated, and sets their text component pointer.
+     *
+     * @note Required to call in order to enable & use UIMenus
+     *
+     * @param config The event payload containing the UIMenu configuration to apply.
      */
     void on_receive(const Event::ConfigureUIMenu& config);
 
-    // TODO: add doxygen docs
+    /**
+     * @brief ETL message handler to switch to the specified menu
+     *
+     * @details If another menu  is already loaded & hidden, it deactivates that menu and activates
+     * the supplied menu pointer instead
+     *
+     * @note Cannot load multiple menus at one time.
+     *
+     * @param msg The event payload containing the UIMenu to switch to.
+     */
     void on_receive(const Event::ShowMenu& msg);
 
-    // TODO: add doxygen docs
+    /**
+     * @brief ETL message handler to hide all menus
+     *
+     * @param msg The event trigger.
+     */
     void on_receive(const Event::HideAllMenus& /*msg*/);
 
     /**
      * @brief ETL message handler to switch to the specified screen
      *
-     * If the screen is already loaded & hidden, it displays screen. If the screen
+     * @details If the screen is already loaded & hidden, it displays screen. If the screen
      * is not loaded, it loads and displays the screen.
      *
-     * @note Cannot load the same screen on both sub and main
+     * @note Cannot load the same UIScreen on both sub and main. Cannot load multiple
+     * UIScreens on the same physical screen (main or sub)
      *
-     * @param msg The event payload containing the...
+     * @param msg The event payload containing the UIScreen to switch to.
      */
     void on_receive(const Event::ShowScreen& msg);
 
@@ -113,7 +131,7 @@ class UISystem : public ae::SystemRouter<UISystem,
     /**
      * @brief Updates the order of lruBgSub/lruBgMain for the "least recently updated" id
      *
-     * The lruBgMain/lruBgSub arrays dynamically shuffle to track the Least Recently Used
+     * @details The lruBgMain/lruBgSub arrays dynamically shuffle to track the Least Recently Used
      * (LRU) hardware layer at index [0], ensuring the oldest visible screen is
      * the one overwritten when capacity is reached.
      *
@@ -125,7 +143,7 @@ class UISystem : public ae::SystemRouter<UISystem,
     /**
      * @brief Registers screens to UISystem to have them pre-loaded before calling show
      *
-     * When a screen is registered, it is assigned an available hardware bgId. Persistent
+     * @details When a screen is registered, it is assigned an available hardware bgId. Persistent
      * = is always loaded into memory. Paged (swappable) = can be loaded/unloaded into
      * memory.
      *
@@ -142,6 +160,11 @@ class UISystem : public ae::SystemRouter<UISystem,
      * @brief Unloads and cleans up all registered screens. Used to reset previous configs
      */
     void cleanupScreens();
+
+    /**
+     * @brief Unloads and cleans up all registered menus. Used to reset previous configs
+     */
+    void cleanupMenus();
 
     /**
      * @brief Stops playing the current sound effect, if any.

@@ -121,6 +121,11 @@ void UISystem::Shutdown()
 {
     cancelSFX();
     cleanupScreens();
+    if (activeMenu != nullptr)
+    {
+        activeMenu->resetMenu();
+        activeMenu = nullptr;
+    }
     isActive = false;
 }
 
@@ -160,6 +165,9 @@ void UISystem::on_receive(const Event::ConfigureUIScreen& config)
 
 void UISystem::on_receive(const Event::ConfigureUIMenu& config)
 {
+    // reset previous config
+    cleanupMenus();
+
     isActive = true;
     menus = config.menus;
     text = config.text;
@@ -249,6 +257,27 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
 void UISystem::on_receive(const Event::HideAllScreens& /*msg*/)
 {
     hideAllScreens();
+}
+
+void UISystem::on_receive(const Event::ShowMenu& msg)
+{
+    if (activeMenu != nullptr)
+    {
+        activeMenu->isActive = false;
+    }
+
+    activeMenu = msg.menu;
+    activeMenu->resetMenu();
+    activeMenu->isActive = true;
+}
+
+void UISystem::on_receive(const Event::HideAllMenus& /*msg*/)
+{
+    if (activeMenu != nullptr)
+    {
+        activeMenu->resetMenu();
+        activeMenu = nullptr;
+    }
 }
 
 void UISystem::lruUpdate(int id, bool isMain)
@@ -411,20 +440,13 @@ void UISystem::cancelSFX()
     musicCtrl->stopSFX(sfxCancelHandle);
 }
 
-void UISystem::on_receive(const Event::ShowMenu& msg)
+void UISystem::cleanupMenus()
 {
+    menus = {};
+    text = nullptr;
     if (activeMenu != nullptr)
     {
-        activeMenu->isActive = false;
+        activeMenu->resetMenu();
+        activeMenu = nullptr;
     }
-
-    activeMenu = msg.menu;
-    activeMenu->resetMenu();
-    activeMenu->isActive = true;
-}
-
-void UISystem::on_receive(const Event::HideAllMenus& /*msg*/)
-{
-    activeMenu->resetMenu();
-    activeMenu = nullptr;
 }
