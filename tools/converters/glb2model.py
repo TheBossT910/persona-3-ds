@@ -11,7 +11,7 @@ MAX_16_BIT_INT = 32767
 # NDS GPU Commands
 FIFO_BEGIN = 0x40
 FIFO_TEXCOORD = 0x22
-FIFO_VERTEX = 0x24
+FIFO_VERTEX16 = 0x23
 FIFO_END = 0x41
 GL_TRIANGLES = 0
 
@@ -34,12 +34,15 @@ def float_to_v16(val):
 
 
 def pack_uv_t16(u, v, tex_w, tex_h):
-    """Packs UV into DS TEXTURE_PACK t16 format."""
-    u_p = min(tex_w - 1, max(0, int(u * (tex_w - 1))))
-    v_p = min(tex_h - 1, max(0, int((1.0 - v) * (tex_h - 1))))
-    u_t16 = (u_p << 4) & 0xFFFF  # TODO: split into float_to_t16 func
-    v_t16 = (v_p << 4) & 0xFFFF
-    return u_t16 | (v_t16 << 16)
+    """Packs UV into DS TEXTURE_PACK t16 format.
+
+    Use the same convention as obj2model: TEXCOORD values are stored as
+    (u * tex_w) and (1-v) * tex_h then multiplied by 16 (4 fractional bits).
+    """
+    # scale into texel space and 4 fractional bits (equivalent to <<4)
+    u_t16 = int(round(u * float(tex_w) * 16.0)) & 0xFFFF
+    v_t16 = int(round((1.0 - v) * float(tex_h) * 16.0)) & 0xFFFF
+    return (u_t16 & 0xFFFF) | ((v_t16 & 0xFFFF) << 16)
 
 
 def read_accessor_data(gltf, accessor_index):
@@ -98,13 +101,13 @@ def build_nds_display_list(positions, uvs, indices, tex_w, tex_h):
 
             # Pack Vertex Command
             vx, vy, vz = positions[v_idx]
-            v16_x = (
-                float_to_v16(vx) & 0xFFFF
-            )  # TODO: move 0xFFFF in conversion function?
+            # Convert floats to 4.12 fixed-point (signed), then mask to 16-bit words
+            v16_x = float_to_v16(vx) & 0xFFFF
             v16_y = float_to_v16(vy) & 0xFFFF
             v16_z = float_to_v16(vz) & 0xFFFF
 
-            dl_words.append(FIFO_VERTEX)
+            # Use FIFO_VERTEX16 and pack (y << 16) | x followed by z
+            dl_words.append(FIFO_VERTEX16)
             dl_words.append(v16_x | (v16_y << 16))
             dl_words.append(v16_z)
 
