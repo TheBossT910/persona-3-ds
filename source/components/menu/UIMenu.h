@@ -32,6 +32,13 @@ class UIMenu
      */
     ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
 
+    /**
+     * @brief Closes the root menu.
+     *
+     * @return ViewState the View to switch to
+     */
+    virtual ViewState closeMenu();
+
   private:
     friend class UISystem;
 

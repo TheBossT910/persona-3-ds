@@ -30,6 +30,12 @@ ViewState UIMenu::changeMenu(MenuOption* newOptions, int newOptionCount)
     return ViewState::KEEP_CURRENT;
 }
 
+ViewState UIMenu::closeMenu()
+{
+    isActive = false;
+    return ViewState::KEEP_CURRENT;
+}
+
 void UIMenu::prevOption()
 {
     // if we're in a submenu, return to main menu
@@ -46,7 +52,7 @@ void UIMenu::prevOption()
     else
     {
         // otherwise, close the menu
-        isActive = false;
+        nextViewState = closeMenu();
     }
 }
 
