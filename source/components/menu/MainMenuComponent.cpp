@@ -38,6 +38,12 @@ void MainMenuComponent::resetHook()
     optionCount = MAIN_MENU_OPTIONS;
 }
 
+ViewState MainMenuComponent::closeMenu()
+{
+    UIMenu::closeMenu();
+    return ViewState::INTRO;
+}
+
 // option handlers
 ViewState MainMenuComponent::mainMenuOptionSelected()
 {

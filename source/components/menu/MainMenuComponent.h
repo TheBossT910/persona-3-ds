@@ -54,4 +54,7 @@ class MainMenuComponent : public UIMenu
     static void create();
     static void destroy();
     static MainMenuComponent* getInstance();
+
+  protected:
+    ViewState closeMenu() override;
 };
