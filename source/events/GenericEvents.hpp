@@ -20,4 +20,15 @@ struct SetCharacterPosition : public etl::message<EventID::SetCharacterPosition>
     {
     }
 };
+
+/**
+ * @brief Event payload to switch the ViewState.
+ */
+struct SwitchView : public etl::message<EventID::SwitchView>
+{
+    ViewState view;
+    SwitchView(ViewState iView) : view(iView)
+    {
+    }
+};
 } // namespace Event

@@ -64,21 +64,11 @@ void PaulowniaMallView::setupUI()
 
     pauseMenuCmpt = PauseMenuComponent::getInstance();
 
-    // setup pause menu
-    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textMenu);
-
     menuHUDScreen = MenuHUDScreen::getInstance();
-    menuBackgroundScreen = MenuBackgroundScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen, menuBackgroundScreen};
-    ae::BroadcastEvent(Event::ConfigureUI{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
-}
+    std::array<UIScreen*, 7> screens = {menuHUDScreen};
+    std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
-void PaulowniaMallView::hookCleanup()
-{
-    if (pauseMenuCmpt != nullptr)
-    {
-        pauseMenuCmpt->cancelSFX();
-    }
+    ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
 }

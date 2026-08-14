@@ -231,6 +231,9 @@ void EnvironmentView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
+    // setup dialogue rendering target (which sub-bg the dialogue box uses)
+    demo_dialogue_bg_slot = bgSharedSub1;
+
     setupUI();
 
     // setup music (room-specific path/loop points)
@@ -261,14 +264,15 @@ ViewState EnvironmentView::update()
     {
         if (!prevBattleState)
         {
+            prevBattleState = true;
+
             ae::BroadcastEvent(Event::HideAllScreens{});
+            ae::BroadcastEvent(Event::ShowMenu{battleMenuCmpt});
 
             movement->stop();
             ae::BroadcastEvent(Event::StopCamera{});
 
             startBattle();
-
-            prevBattleState = true;
         }
 
         if (!BattleSystem::GetInstance().IsActive() && prevBattleState)
@@ -276,6 +280,7 @@ ViewState EnvironmentView::update()
             prevBattleState = false;
 
             ae::BroadcastEvent(Event::ShowScreen{menuHUDScreen});
+            ae::BroadcastEvent(Event::HideAllMenus{});
 
             prevEnvironmentState = true;
 
@@ -294,16 +299,16 @@ ViewState EnvironmentView::update()
     {
         if (!prevPauseState)
         {
-            ae::BroadcastEvent(Event::ShowScreen{menuBackgroundScreen});
-
             movement->stop();
             ae::BroadcastEvent(Event::StopCamera{});
 
-            pauseMenuCmpt->reset();
             prevPauseState = true;
+
+            ae::BroadcastEvent(Event::HideAllScreens{});
+            ae::BroadcastEvent(Event::ShowMenu{pauseMenuCmpt});
         }
 
-        ViewState menuResult = pauseMenuCmpt->update(systemKeysDown);
+        ViewState menuResult = ViewState::KEEP_CURRENT;
 
         if (menuResult != ViewState::KEEP_CURRENT)
         {
@@ -313,14 +318,17 @@ ViewState EnvironmentView::update()
 
         if (systemKeysDown & KEY_START)
         {
-            textSub->clearScreen();
             prevPauseState = false;
+            textSub->clearScreen();
+
+            ae::BroadcastEvent(Event::HideAllMenus{});
+
+            prevEnvironmentState = false;
 
             movement->start();
             ae::BroadcastEvent(Event::StartCamera{});
 
             phase = ViewPhase::Environment;
-            prevEnvironmentState = false;
         }
 
         break;
@@ -343,7 +351,11 @@ ViewState EnvironmentView::update()
         }
         else if (!isActive && prevDialogueState)
         {
+            // TODO: remove manually managed dialogue backgrounds
+            // the demo_dialogue loader function manually calls bgShow, which is bad!
             render.hideBg(bgSharedSub1);
+
+            ae::BroadcastEvent(Event::HideAllScreens{});
 
             prevDialogueState = false;
             prevEnvironmentState = false;
@@ -480,7 +492,7 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
-    hookCleanup();
+    cleanupHook();
 
     if (text != nullptr)
     {
@@ -521,6 +533,10 @@ void EnvironmentView::cleanup()
         text = nullptr;
         textSub = nullptr;
     }
+
+    // hide UI screens/menus
+    ae::BroadcastEvent(Event::HideAllScreens{});
+    ae::BroadcastEvent(Event::HideAllMenus{});
 
     musicCtrl->cleanup();
     animationCtrl->stop();

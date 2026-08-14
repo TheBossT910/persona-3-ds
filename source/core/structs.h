@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-class BaseMenu;
+class UIMenu;
 class TextComponent;
 
 struct SpriteDBEntry
@@ -37,7 +37,7 @@ struct MenuOption
 {
     const char* name;
     int bgIndex;
-    ViewState (BaseMenu::*onSelect)();
+    ViewState (UIMenu::*onSelect)();
 };
 
 struct MenuState

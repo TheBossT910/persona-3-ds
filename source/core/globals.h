@@ -23,6 +23,7 @@
 
 // variables
 extern volatile int frame;
+extern ViewState nextView;
 extern volatile u32 systemKeysDown;
 extern volatile u32 systemKeysHeld;
 extern int fps;
@@ -56,9 +57,11 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::WriteSave,
                                          GraphicsComponent,
                                          TextComponent,
-                                         Event::ConfigureUI,
+                                         Event::ConfigureUIScreen,
                                          Event::ShowScreen,
-                                         Event::HideAllScreens>;
+                                         Event::HideAllScreens,
+                                         Event::ConfigureUIMenu,
+                                         Event::HideAllMenus>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
 constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
 } // namespace GameEngineConfig

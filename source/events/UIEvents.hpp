@@ -15,7 +15,7 @@ namespace Event
 /**
  * @brief All parameters needed to configure the UISystem in one call.
  */
-struct ConfigureUI : public etl::message<EventID::ConfigureUI>
+struct ConfigureUIScreen : public etl::message<EventID::ConfigureUIScreen>
 {
     /// Array of sub screen background ids
     std::array<int, 4> bgSub;
@@ -32,14 +32,39 @@ struct ConfigureUI : public etl::message<EventID::ConfigureUI>
     /// The screens to register
     std::array<UIScreen*, 7> screens;
 
-    ConfigureUI(std::array<int, 4> iBgSub,
-                std::array<int, 3> iBgMain,
-                OamState* iOamSub,
-                OamState* iOamMain,
-                std::array<UIScreen*, 7> iScreens)
+    ConfigureUIScreen(std::array<int, 4> iBgSub,
+                      std::array<int, 3> iBgMain,
+                      OamState* iOamSub,
+                      OamState* iOamMain,
+                      std::array<UIScreen*, 7> iScreens)
         : bgSub(iBgSub), bgMain(iBgMain), oamSub(iOamSub), oamMain(iOamMain), screens(iScreens)
     {
     }
+};
+
+// TODO: add doxygen docs
+struct ConfigureUIMenu : public etl::message<EventID::ConfigureUIMenu>
+{
+    TextComponent* text = nullptr;
+    std::array<UIMenu*, 10> menus = {};
+
+    ConfigureUIMenu(TextComponent* iText, std::array<UIMenu*, 10> iMenus) : text(iText), menus(iMenus)
+    {
+    }
+};
+
+// TODO: add doxygen docs
+struct ShowMenu : public etl::message<EventID::ShowMenu>
+{
+    UIMenu* menu;
+    ShowMenu(UIMenu* iMenu) : menu(iMenu)
+    {
+    }
+};
+
+// TODO: add doxygen docs
+struct HideAllMenus : public etl::message<EventID::HideAllMenus>
+{
 };
 
 /**

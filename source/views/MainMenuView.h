@@ -4,6 +4,7 @@
 
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
+#include "controllers/MusicController.h"
 #include "managers/MathManager.hpp"
 #include "managers/RenderManager.hpp"
 
@@ -11,8 +12,7 @@ class MainMenuView : public BaseView
 {
   private:
     PrintConsole console;
-    MainMenuComponent mainMenuCmpt;
-    bool isMainMenuCmptActive;
+    MainMenuComponent* mainMenuCmpt = nullptr;
     int bg[3];
 
     // for silhouette animation

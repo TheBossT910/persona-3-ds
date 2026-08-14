@@ -115,7 +115,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     BattleParticipant* currentParticipantTurn = nullptr;
     u32 currentParticipantIndex = 0;
 
-    int menuIndex = 0;
+    int selectedBattleOption = -1;
     Skill* selectedSkill = nullptr;
 
     bool pendingPersonaSwitch = false;

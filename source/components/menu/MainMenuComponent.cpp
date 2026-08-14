@@ -3,9 +3,37 @@
 #include "events/SaveEvents.hpp"
 #include <string>
 
-void MainMenuComponent::init(int iBgSlot, bool* isActive, TextComponent* iText, const std::string& iPauseMessage)
+MainMenuComponent* MainMenuComponent::instance = nullptr;
+
+void MainMenuComponent::create()
 {
-    BaseMenu::init(iBgSlot, isActive, iText, iPauseMessage);
+    if (instance == nullptr)
+    {
+        instance = new MainMenuComponent();
+    }
+}
+
+void MainMenuComponent::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+MainMenuComponent* MainMenuComponent::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
+void MainMenuComponent::resetHook()
+{
+    pauseMessage = "";
     options = mainMenuOptions;
     optionCount = MAIN_MENU_OPTIONS;
 }

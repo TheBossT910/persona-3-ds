@@ -43,6 +43,7 @@ void TextComponent::configureText(const TextConfig& config, bool loadDefaultPale
     if (config.fontNamePath != nullptr)
     {
         font = tm.loadFont(config.fontNamePath, config.fontSize);
+        fontSize = config.fontSize;
     }
     // load font palette
     else if (config.fontPalettePath != nullptr)
@@ -92,6 +93,11 @@ void TextComponent::clearArea(int x, int y, int width, int height)
 void TextComponent::clearScreen()
 {
     tm.clearScreen(videoBuffer);
+}
+
+int TextComponent::getFontSize()
+{
+    return fontSize;
 }
 
 void TextComponent::testBitmap()

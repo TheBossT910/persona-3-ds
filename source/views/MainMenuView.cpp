@@ -54,9 +54,11 @@ void MainMenuView::init()
     bgSetPriority(bgTextSub, 0);
     textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
-    // setup menu
-    isMainMenuCmptActive = true;
-    mainMenuCmpt.init(-1, &isMainMenuCmptActive, textMenu);
+    // setup main menu
+    mainMenuCmpt = MainMenuComponent::getInstance();
+    std::array<UIMenu*, 10> menus = {mainMenuCmpt};
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::BroadcastEvent(Event::ShowMenu{mainMenuCmpt});
 
     // setup console
     consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
@@ -171,8 +173,8 @@ ViewState MainMenuView::update()
         return ViewState::KEEP_CURRENT;
     }
 
-    // update mainComponent AFTER checking if the sillouhete is still moving
-    ViewState result = mainMenuCmpt.update(systemKeysDown);
+    // show mainComponent AFTER checking if the sillouhete is still moving
+    ViewState result = ViewState::KEEP_CURRENT;
     if (result != ViewState::KEEP_CURRENT)
     {
         musicCtrl->pause();
@@ -233,6 +235,7 @@ void MainMenuView::cleanup()
         textMenu = nullptr;
     }
 
+    ae::BroadcastEvent(Event::HideAllMenus{});
     musicCtrl->cleanup();
     BaseView::cleanup();
 }
