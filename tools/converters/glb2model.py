@@ -1,9 +1,12 @@
+import os
 import sys
-import re
 import struct
+import tempfile
+import subprocess
 
 import numpy as np
 import pygltflib
+from PIL import Image
 
 MAGIC = b"MDL2"
 MAX_16_BIT_INT = 32767
@@ -13,6 +16,7 @@ FIFO_BEGIN = 0x40
 FIFO_TEXCOORD = 0x22
 FIFO_VERTEX16 = 0x23
 FIFO_END = 0x41
+FIFO_NOP = 0x00
 GL_TRIANGLES = 0
 
 # Component type mappings from GLTF to numpy dtypes
@@ -36,13 +40,30 @@ def float_to_v16(val):
 def pack_uv_t16(u, v, tex_w, tex_h):
     """Packs UV into DS TEXTURE_PACK t16 format.
 
-    Use the same convention as obj2model: TEXCOORD values are stored as
-    (u * tex_w) and (1-v) * tex_h then multiplied by 16 (4 fractional bits).
+    glTF UVs are passed through directly: TEXCOORD values are stored as
+        (u * tex_w) and (v * tex_h) then multiplied by 16 (4 fractional bits).
     """
     # scale into texel space and 4 fractional bits (equivalent to <<4)
     u_t16 = int(round(u * float(tex_w) * 16.0)) & 0xFFFF
-    v_t16 = int(round((1.0 - v) * float(tex_h) * 16.0)) & 0xFFFF
+    v_t16 = int(round(v * float(tex_h) * 16.0)) & 0xFFFF
     return (u_t16 & 0xFFFF) | ((v_t16 & 0xFFFF) << 16)
+
+
+# TODO: consider pack cmd function
+
+
+def next_pow2(x):
+    return 1 << (x - 1).bit_length() if x > 8 else 8
+
+
+# TODO: Try to remove?
+def get_prop(obj, key, default=None):
+    """Helper to read attributes safely from either pygltflib objects or dicts."""
+    if obj is None:
+        return default
+    if isinstance(obj, dict):  # Dictionary Check
+        return obj.get(key, default)
+    return getattr(obj, key, default)  # Object Check
 
 
 def read_accessor_data(gltf, accessor_index):
@@ -75,6 +96,117 @@ def read_accessor_data(gltf, accessor_index):
     if num_components > 1:
         return raw_array.reshape(count, num_components)
     return raw_array
+
+
+def apply_texture_transform(uvs, transform):
+    """Apply KHR_texture_transform (offset, scale, rotation) to UVs."""
+    if uvs is None or transform is None:
+        return uvs
+
+    offset = get_prop(transform, "offset", [0.0, 0.0]) or [0.0, 0.0]
+    scale = get_prop(transform, "scale", [1.0, 1.0]) or [1.0, 1.0]
+    rotation = float(get_prop(transform, "rotation", 0.0) or 0.0)
+
+    # Small threshold to avoid unnecessary transformations
+    if (
+        abs(offset[0]) < 1e-8
+        and abs(offset[1]) < 1e-8
+        and abs(scale[0] - 1.0) < 1e-8
+        and abs(scale[1] - 1.0) < 1e-8
+        and abs(rotation) < 1e-8
+    ):
+        return uvs
+
+    transformed = np.array(uvs, copy=True)
+    transformed[:, 0] *= float(scale[0])
+    transformed[:, 1] *= float(scale[1])
+
+    if abs(rotation) >= 1e-8:
+        cos_r = float(np.cos(rotation))
+        sin_r = float(np.sin(rotation))
+        u = transformed[:, 0].copy()
+        v = transformed[:, 1].copy()
+        transformed[:, 0] = (u * cos_r) - (v * sin_r)
+        transformed[:, 1] = (u * sin_r) + (v * cos_r)
+
+    transformed[:, 0] += float(offset[0])
+    transformed[:, 1] += float(offset[1])
+    return transformed
+
+
+def process_texture(gltf, image_index, tmp_dir, output_dir):
+    """Extracts glTF image, resizes to NDS power-of-two dimensions, and runs GRIT on it."""
+    image = gltf.images[image_index]
+    texture_base_name = f"tex_{image_index}"
+
+    # Extract raw image bytes from GLTF
+    buffer_view_index = get_prop(image, "bufferView")
+    if buffer_view_index is not None:
+        bv = gltf.bufferViews[buffer_view_index]
+        buffer = gltf.buffers[get_prop(bv, "buffer")]
+        blob = (
+            gltf.binary_blob()
+            if get_prop(buffer, "uri") is None
+            else gltf.get_data_from_buffer_uri(get_prop(buffer, "uri"))
+        )
+        offset = get_prop(bv, "byteOffset", 0) or 0
+        length = get_prop(bv, "byteLength")
+        img_bytes = blob[offset : offset + length]
+
+        # Save temporary input png
+        # TODO: arg for non_temp output? for debugging
+        temp_png_path = os.path.join(tmp_dir, f"tex_{image_index}.png")
+        with open(temp_png_path, "wb") as f:
+            f.write(img_bytes)
+    else:
+        raise ValueError(
+            f"Image {image_index} has no bufferView; cannot extract image data."
+        )
+
+    # Enforce NDS texture size constraints (power-of-two)
+    img = Image.open(temp_png_path).convert("RGBA")  # TODO: support for non RGBA?
+
+    target_w = min(1024, next_pow2(img.width))
+    target_h = min(1024, next_pow2(img.height))
+    if img.width != target_w or img.height != target_h:
+        img = img.resize((target_w, target_h), Image.Resample.LANCZOS)
+        img.save(temp_png_path)
+
+    # Run GRIT command to convert PNG to NDS texture format
+    # TODO: Leave here ot pass it to outside script ? (similar to whatever obj2model was doing idk)
+    # -gt: Texture mode | -gB16: 16-bit A1BGR555 | -ftb: Binary output | -fh!: No C header
+    grit_output_base = os.path.join(output_dir, texture_base_name)
+    print(
+        f"Running GRIT for texture {image_index} (output base: {grit_output_base})..."
+    )
+    grit_cmd = [
+        "/opt/wonderful/thirdparty/blocksds/core/tools/grit/grit",  # TODO: shorten this monstrousity with env var or something
+        temp_png_path,
+        "-gb",
+        "-gB16",
+        "-ftb",
+        "-fh!",
+        "-o",
+        grit_output_base,
+    ]
+
+    try:
+        subprocess.run(
+            grit_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        print(f"Error running GRIT for image {image_index}: {e}")
+        raise e
+
+    texture_base_name = f"tex_{image_index}"
+    tex_name = texture_base_name[:63].ljust(64, "\0")
+
+    return {
+        "name": tex_name,
+        "w": target_w,
+        "h": target_h,
+        "isRGBA": 1,
+    }
 
 
 def build_nds_display_list(positions, uvs, indices, tex_w, tex_h):
@@ -133,30 +265,25 @@ def build_nds_display_list(positions, uvs, indices, tex_w, tex_h):
 # texSlot == -1 means "no texture bound for this sub-list".
 
 
-# TODO: Try to remove?
-def get_prop(obj, key, default=None):
-    """Helper to read attributes safely from either pygltflib objects or dicts."""
-    if obj is None:
-        return default
-    if isinstance(obj, dict):  # Dictionary Check
-        return obj.get(key, default)
-    return getattr(obj, key, default)  # Object Check
-
-
 # TODO: Add support for animations
 # TODO: Refactor into subfunctions for readability
 def convert_glb_to_mdl2(glb_path, output_path):
     gltf = pygltflib.GLTF2().load(glb_path)
 
+    output_dir = os.path.dirname(output_path) or "."
+    os.makedirs(output_dir, exist_ok=True)
+    print(f"Exporting texture files to: '{os.path.abspath(output_dir)}'")
+
     # Textures table
     textures = []
-    for image in gltf.images:
-        tex_name = get_prop(image, "name", "texture")
-        clean_name = re.sub(r"[^a-zA-Z0-9_]", "_", tex_name)[:63]
-        textures.append(
-            {"name": clean_name.ljust(64, "\0"), "w": 128, "h": 128, "isRGBA": 0}
-        )
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        for index in range(len(gltf.images)):
+            print(f"Processing texture {index}...")
+            tex_info = process_texture(gltf, index, tmp_dir, output_dir)
+            textures.append(tex_info)
     tex_count = len(textures)
+
+    gltf_textures = get_prop(gltf, "textures", []) or []
 
     # Base Mesh Hierarchy Nodes
     nodes = []
@@ -192,11 +319,49 @@ def convert_glb_to_mdl2(glb_path, output_path):
                 indices = read_accessor_data(gltf, indices_index)
                 uvs = read_accessor_data(gltf, uv_index)
 
-                tex_slot = (
-                    mat_index if mat_index is not None and mat_index < tex_count else -1
+                # Resolve material to texture index
+                tex_slot = -1
+                uv_set = 0
+                if mat_index is not None and mat_index < len(gltf.materials):
+                    mat = gltf.materials[mat_index]
+                    pbr = get_prop(mat, "pbrMetallicRoughness", {})
+                    base_tex = get_prop(pbr, "baseColorTexture", {})
+                    uv_set = int(get_prop(base_tex, "texCoord", 0) or 0)
+
+                    extension = get_prop(mat, "extensions", {}) or {}
+                    texture_transform = get_prop(
+                        extension, "KHR_texture_transform", None
+                    )
+                    if texture_transform is not None:
+                        uv_set = int(
+                            get_prop(texture_transform, "texCoord", uv_set) or uv_set
+                        )
+
+                    gltf_tex_index = get_prop(base_tex, "index", -1)
+                    if gltf_tex_index is not None and 0 <= gltf_tex_index < len(
+                        gltf.textures
+                    ):
+                        gltf_tex = gltf_textures[gltf_tex_index]
+                        source_image_index = get_prop(gltf_tex, "source", -1)
+                        if source_image_index is not None:
+                            tex_slot = source_image_index
+
+                uv_index = get_prop(attrs, f"TEXCOORD_{uv_set}")
+                if uv_index is None and uv_set != 0:
+                    uv_index = get_prop(attrs, "TEXCOORD_0")
+                uvs = read_accessor_data(gltf, uv_index)
+                uvs = apply_texture_transform(uvs, texture_transform)
+
+                tex_w = (
+                    textures[tex_slot]["w"]
+                    if tex_slot >= 0 and tex_slot < tex_count
+                    else 128
                 )
-                tex_w = textures[tex_slot]["w"] if tex_slot >= 0 else 128
-                tex_h = textures[tex_slot]["h"] if tex_slot >= 0 else 128
+                tex_h = (
+                    textures[tex_slot]["h"]
+                    if tex_slot >= 0 and tex_slot < tex_count
+                    else 128
+                )
 
                 dl_words = build_nds_display_list(positions, uvs, indices, tex_w, tex_h)
 
