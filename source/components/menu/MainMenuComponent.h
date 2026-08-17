@@ -46,6 +46,7 @@ class MainMenuComponent : public UIMenu
     ViewState settingIntroOptionSelected();
 
     void resetHook() override;
+    void closeHook() override;
 
     // helper
     void updateSave();
@@ -54,7 +55,4 @@ class MainMenuComponent : public UIMenu
     static void create();
     static void destroy();
     static MainMenuComponent* getInstance();
-
-  protected:
-    ViewState closeMenu() override;
 };

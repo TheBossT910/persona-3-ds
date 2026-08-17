@@ -32,13 +32,6 @@ class UIMenu
      */
     ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
 
-    /**
-     * @brief Closes the root menu.
-     *
-     * @return ViewState the view to switch to.
-     */
-    virtual ViewState closeMenu();
-
   private:
     friend class UISystem;
 
@@ -58,6 +51,11 @@ class UIMenu
      * @brief Used to set the default pauseMessage, options, and optionCount values
      */
     virtual void resetHook() = 0;
+
+    /**
+     * @brief Execute logic after the root menu is exited.
+     */
+    virtual void closeHook() = 0;
 
   public:
     /**
