@@ -10,6 +10,7 @@
 #include "core/enums.h"
 #include "core/structs.h"
 #include "managers/IOManager.hpp"
+#include "types/SpriteTypes.hpp"
 #include <aegis/component.hpp>
 #include <etl/vector.h>
 

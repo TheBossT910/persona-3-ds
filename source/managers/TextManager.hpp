@@ -5,7 +5,7 @@
  */
 
 #pragma once
-#include "core/structs.h"
+#include "types/TextTypes.hpp"
 #include <aegis/manager.hpp>
 
 #include "managers/IOManager.hpp"

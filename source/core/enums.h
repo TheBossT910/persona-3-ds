@@ -23,18 +23,6 @@ enum class ViewState
     PAULOWNIA_MALL,
 };
 
-enum class SpriteType
-{
-    NONE = 0,
-    MOON,
-    DAY_OF_WEEK,
-    DIGIT,
-    TIME,
-    SKILL_SPRITE,
-    DIALOGUE,
-    CUSTOM,
-};
-
 enum class MoonSprite
 {
     MOON_0 = 0,
@@ -367,65 +355,4 @@ enum class ComponentType : ae::ComponentTypeID
     Dialogue,
     Graphics,
     Text
-};
-
-/**
- * @brief Controls how the camera behaves each frame.
- *
- * - Free   : first-person fly cam, d-pad moves, L/R rotates.
- * - Static : fixed eye and target, ignores all input.
- * - CCTV   : fixed eye position, target tracks the character.
- * - Follow : orbits behind the character, L/R adjusts orbit angle.
- * - Path   : plays back a @ref CameraPath keyframe sequence, then
- *            automatically returns to Follow when complete.
- */
-enum class CameraMode
-{
-    Free,
-    Static,
-    CCTV,
-    Follow,
-    Path
-};
-
-/**
- * @brief Human Readable enum for text colors.
- */
-enum TextColor
-{
-    Transparent = 0,
-    Black = 1,
-    White = 2,
-    DualGreen = 3,
-    DualGreen2 = 4,
-    DarkGreen = 5,
-    DarkerGreen = 6,
-    DarkestGreen = 7,
-    LightBlue = 8,
-    RichBlue = 9,
-    DarkBlue = 10,
-    NavyBlue = 11,
-    DarkestBlue = 12,
-    LightOrange = 13,
-    LightPurple = 14,
-    Red = 15,
-    Green = 16,
-    Blue = 17,
-    Yellow = 18,
-    Magenta = 19,
-    Cyan = 20,
-    Gray = 21
-};
-
-/**
- * @brief Human readable enum for text instructions.
- */
-enum TextInstruction
-{
-    ColorChange = 0x01,
-    StyleChange = 0x02,
-    StyleBold = 0x01,
-    StyleItalic = 0x02,
-    StyleUnderline = 0x04,
-    Reset = 0xFF
 };

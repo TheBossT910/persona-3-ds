@@ -20,7 +20,7 @@
 
 #include "core/enums.h"
 #include "core/geometry.h"
-#include "core/structs.h"
+#include "types/CameraTypes.hpp"
 #include <etl/vector.h>
 
 // !Todo replace floats with fixed point math for camera position and target position.

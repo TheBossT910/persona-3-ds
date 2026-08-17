@@ -9,7 +9,7 @@
 #pragma once
 
 #include "core/enums.h"
-#include "core/structs.h"
+#include "types/TextTypes.hpp"
 #include <aegis/component.hpp>
 
 #include "managers/TextManager.hpp"

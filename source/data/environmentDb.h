@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/structs.h"
+#include "types/EnvironmentTypes.hpp"
 
 // External DB access
 extern const EnvironmentDbEntry* g_environmentDb[];

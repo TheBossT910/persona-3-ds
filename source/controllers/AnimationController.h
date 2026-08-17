@@ -1,5 +1,6 @@
 #pragma once
-#include "core/structs.h"
+#include "core/enums.h"
+#include "types/AnimationTypes.hpp"
 #include <nds.h>
 #include <vector>
 

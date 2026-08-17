@@ -8,7 +8,7 @@
 
 #include "components/TextComponent.hpp"
 #include "core/enums.h"
-#include "core/structs.h"
+#include "types/DialogueTypes.hpp"
 #include <aegis/component.hpp>
 
 class DialogueComponent : public ae::Component

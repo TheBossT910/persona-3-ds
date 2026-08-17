@@ -7,7 +7,8 @@
 #pragma once
 
 #include "core/enums.h"
-#include "core/structs.h"
+#include "types/CameraTypes.hpp"
+#include "types/MovementTypes.hpp"
 
 #include "core/routerIDs.hpp"
 #include <aegis/component.hpp>

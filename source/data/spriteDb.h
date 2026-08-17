@@ -1,6 +1,6 @@
 #pragma once
 #include "core/enums.h"
-#include "core/structs.h"
+#include "types/SpriteTypes.hpp"
 #include <string>
 
 std::string getSpriteFilename(SpriteType type, int id);
