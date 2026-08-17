@@ -24,7 +24,7 @@ void IwatodaiDormView::setCameraConfig()
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
     camConfig.angleIncrement = 0.07f;
-    ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
+    ae::broadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
 void IwatodaiDormView::setMusic()
@@ -105,6 +105,6 @@ void IwatodaiDormView::setupUI()
     std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen};
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
-    ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::broadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
+    ae::broadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
 }

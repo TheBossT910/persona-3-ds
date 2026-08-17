@@ -55,6 +55,6 @@ void StationView::setupUI()
     std::array<UIScreen*, 7> screens = {menuHUDScreen};
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
-    ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::broadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
+    ae::broadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
 }

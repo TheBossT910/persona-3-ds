@@ -175,13 +175,13 @@ int main(int argc, char* argv[])
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // setup db's. DO NOT CHANGE order
-    WeaponDb::Initialize();
-    SkillDb::Initialize();
-    ArmourDb::Initialize();
-    ShoeDb::Initialize();
-    PersonaDb::Initialize();
-    EnemyProfileDb::Initialize();
-    CharacterProfileDb::Initialize();
+    WeaponDb::initialize();
+    SkillDb::initialize();
+    ArmourDb::initialize();
+    ShoeDb::initialize();
+    PersonaDb::initialize();
+    EnemyProfileDb::initialize();
+    CharacterProfileDb::initialize();
 
     // setup globals
     Globals::enableDebugPrint = false;
@@ -194,37 +194,37 @@ int main(int argc, char* argv[])
     srand(TIMER0_DATA);
 
     // set platform hooks
-    engine.SetComputeCallback(&NDSComputeCallback);
-    engine.SetComputeEnabled(true);
-    engine.SetPollInputCallback(&NDSPollInputCallback);
-    engine.SetPollingEnabled(true);
+    engine.setComputeCallback(&NDSComputeCallback);
+    engine.setComputeEnabled(true);
+    engine.setPollInputCallback(&NDSPollInputCallback);
+    engine.setPollingEnabled(true);
 
     // register singletons
-    engine.RegisterSystem(&BattleSystem::GetInstance());
-    engine.RegisterSystem(&CameraSystem::GetInstance());
-    engine.RegisterSystem(&SaveSystem::GetInstance());
-    engine.RegisterSystem(&TextSystem::GetInstance());
-    engine.RegisterSystem(&UISystem::GetInstance());
+    engine.registerSystem(&BattleSystem::getInstance());
+    engine.registerSystem(&CameraSystem::getInstance());
+    engine.registerSystem(&SaveSystem::getInstance());
+    engine.registerSystem(&TextSystem::getInstance());
+    engine.registerSystem(&UISystem::getInstance());
 
-    engine.RegisterManager(&MathManager::GetInstance());
-    engine.RegisterManager(&IOManager::GetInstance());
-    engine.RegisterManager(&TextManager::GetInstance());
-    engine.RegisterManager(&RenderManager::GetInstance());
+    engine.registerManager(&MathManager::getInstance());
+    engine.registerManager(&IOManager::getInstance());
+    engine.registerManager(&TextManager::getInstance());
+    engine.registerManager(&RenderManager::getInstance());
 
     // initialize engine
-    engine.InitAll();
+    engine.initAll();
 
     // set up initial game state
     // create entity
-    player = engine.CreateEntity();
+    player = engine.createEntity();
 
     // TODO: replace this temporary workaround for graphics
-    generic = engine.CreateEntity();
-    genericGraphics = engine.CreateComponent<GraphicsComponent>();
-    generic->AddComponent(genericGraphics);
+    generic = engine.createEntity();
+    genericGraphics = engine.createComponent<GraphicsComponent>();
+    generic->addComponent(genericGraphics);
 
     // load save data
-    ae::BroadcastEvent(Event::ReadSave{});
+    ae::broadcastEvent(Event::ReadSave{});
     prevFemcMode = saveData.femcMode;
     loadModels(saveData.femcMode);
 
@@ -239,7 +239,7 @@ int main(int argc, char* argv[])
         swiWaitForVBlank();
 
         // Poll Input -> Update Systems -> Update Components -> Process Managers -> Compute
-        engine.Tick(dt);
+        engine.tick(dt);
 
         if (saveData.femcMode != prevFemcMode)
         {
@@ -316,7 +316,7 @@ int main(int argc, char* argv[])
         oamUpdate(&oamMain);
     }
 
-    engine.ShutdownAll();
+    engine.shutdownAll();
 
     return 0;
 }

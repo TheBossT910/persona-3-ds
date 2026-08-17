@@ -12,15 +12,15 @@
 class MathManager : public ae::Manager, public ae::Singleton<MathManager>
 {
   public:
-    void Init() override
+    void init() override
     {
     }
 
-    void Process() override
+    void process() override
     {
     }
 
-    void Shutdown() override
+    void shutdown() override
     {
     }
 

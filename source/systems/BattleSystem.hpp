@@ -41,9 +41,9 @@
 class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>, public ae::Singleton<BattleSystem>
 {
   public:
-    void Init() override;
+    void init() override;
 
-    void Shutdown() override;
+    void shutdown() override;
 
     /**
      * @brief Core update loop that processes the battle state machine and turn resolution.
@@ -63,7 +63,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      *
      * @param dt Fixed-point delta time passed from the aegis engine loop (currently unused).
      */
-    void Update(ae::fixed_t /*dt*/) override;
+    void update(ae::fixed_t /*dt*/) override;
 
     /**
      * @brief ETL message handler that initializes and starts a new battle.

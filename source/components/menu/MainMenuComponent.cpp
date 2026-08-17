@@ -139,5 +139,5 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
 
 void MainMenuComponent::updateSave()
 {
-    ae::BroadcastEvent(Event::WriteSave{});
+    ae::broadcastEvent(Event::WriteSave{});
 }

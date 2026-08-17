@@ -32,14 +32,14 @@ class UISystem : public ae::SystemRouter<UISystem,
                  public ae::Singleton<UISystem>
 {
   public:
-    void Init() override;
+    void init() override;
 
     /**
      * @brief Unloads and cleans up all registered screens. Wrapper for cleanup
      */
-    void Shutdown() override;
+    void shutdown() override;
 
-    void Update(ae::fixed_t /*dt*/) override;
+    void update(ae::fixed_t /*dt*/) override;
 
     // TODO: move out of UISystem. Only here as a temporary fix
     void on_receive(const Event::SwitchView& msg);
@@ -171,7 +171,7 @@ class UISystem : public ae::SystemRouter<UISystem,
      */
     void cancelSFX();
 
-    RenderManager& render = RenderManager::GetInstance();
+    RenderManager& render = RenderManager::getInstance();
 
     OamState* oamSub = nullptr;
     OamState* oamMain = nullptr;

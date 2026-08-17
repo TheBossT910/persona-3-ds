@@ -172,7 +172,7 @@ class EnvironmentView : public BaseView
     std::string FONT_NAME = "cosmetica";
     int FONT_SIZE = 12;
 
-    RenderManager& render = RenderManager::GetInstance();
+    RenderManager& render = RenderManager::getInstance();
 
   private:
     // fog properties

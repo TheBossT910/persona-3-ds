@@ -3,7 +3,7 @@
 
 void CameraSystem::on_receive(const Event::ConfigureCamera& config)
 {
-    isActive = true;
+    active = true;
     mode = config.mode;
     currentPos = config.eye;
     targetPos = config.target;
@@ -44,12 +44,12 @@ void CameraSystem::on_receive(const Event::SetCharacterPosition& msg)
 
 void CameraSystem::on_receive(const Event::StartCamera& msg)
 {
-    isActive = true;
+    active = true;
 }
 
 void CameraSystem::on_receive(const Event::StopCamera& msg)
 {
-    isActive = false;
+    active = false;
 }
 
 float CameraSystem::getMovementAngle() const
@@ -64,17 +64,17 @@ float CameraSystem::getMovementAngle() const
     }
 }
 
-void CameraSystem::Init()
+void CameraSystem::init()
 {
-    isActive = false;
+    active = false;
 }
 
-void CameraSystem::Shutdown()
+void CameraSystem::shutdown()
 {
-    isActive = false;
+    active = false;
 }
 
-void CameraSystem::Update(ae::fixed_t)
+void CameraSystem::update(ae::fixed_t)
 {
     camPos.up.y = 1.0f;
 
@@ -212,5 +212,5 @@ void CameraSystem::Update(ae::fixed_t)
         break;
     }
 
-    ae::BroadcastEvent(camPos);
+    ae::broadcastEvent(camPos);
 }

@@ -8,24 +8,24 @@
 // TODO: decouple camera with movement (so that movement can be used by other entities) (make a seperate component?)
 // TODO: decouple animation controller with movement (make a seperate component?)
 
-void MovementComponent::Init()
+void MovementComponent::init()
 {
-    isActive = false;
+    active = false;
     walkAnim =
         saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION_0002 : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION_0002;
     idleAnim = saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION;
 }
 
-void MovementComponent::Destroy()
+void MovementComponent::destroy()
 {
-    isActive = false;
+    active = false;
 }
 
-void MovementComponent::Update(ae::fixed_t)
+void MovementComponent::update(ae::fixed_t)
 {
     // TODO: don't broadcast on every update (waste cpu cycles). Set it once?
-    ae::BroadcastEvent(Event::SetCharacterPosition{isCharacterAt()});
-    float cameraAngle = CameraSystem::GetInstance().getMovementAngle();
+    ae::broadcastEvent(Event::SetCharacterPosition{isCharacterAt()});
+    float cameraAngle = CameraSystem::getInstance().getMovementAngle();
     float forwardX;
     float forwardZ;
     float rightX;
@@ -129,12 +129,12 @@ void MovementComponent::configureMovement(const MovementConfig& config)
 
 void MovementComponent::start()
 {
-    isActive = true;
+    active = true;
 }
 
 void MovementComponent::stop()
 {
-    isActive = false;
+    active = false;
 }
 
 CharacterPosition MovementComponent::isCharacterAt()

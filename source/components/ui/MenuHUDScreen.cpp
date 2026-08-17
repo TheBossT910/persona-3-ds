@@ -104,9 +104,9 @@ void MenuHUDScreen::load()
 {
     if (menuHUD == nullptr)
     {
-        menuHUD = engine.CreateEntity();
-        graphics = engine.CreateComponent<GraphicsComponent>();
-        menuHUD->AddComponent(graphics);
+        menuHUD = engine.createEntity();
+        graphics = engine.createComponent<GraphicsComponent>();
+        menuHUD->addComponent(graphics);
     }
 
     // load graphics
@@ -208,8 +208,8 @@ void MenuHUDScreen::unload()
 
     if (menuHUD != nullptr)
     {
-        menuHUD->RemoveComponent<GraphicsComponent>();
-        engine.DestroyEntity(menuHUD);
+        menuHUD->removeComponent<GraphicsComponent>();
+        engine.destroyEntity(menuHUD);
 
         menuHUD = nullptr;
         graphics = nullptr;

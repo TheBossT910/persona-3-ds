@@ -1,7 +1,7 @@
 #include "IOManager.hpp"
 
 extern std::string fatBasePath;
-void IOManager::Init()
+void IOManager::init()
 {
     basePath = fatBasePath;
 }

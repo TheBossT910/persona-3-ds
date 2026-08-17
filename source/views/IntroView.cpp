@@ -12,12 +12,12 @@ void IntroView::init()
 {
     if (intro == nullptr)
     {
-        intro = engine.CreateEntity();
-        graphics = engine.CreateComponent<GraphicsComponent>();
-        text = engine.CreateComponent<TextComponent>();
+        intro = engine.createEntity();
+        graphics = engine.createComponent<GraphicsComponent>();
+        text = engine.createComponent<TextComponent>();
 
-        intro->AddComponent(graphics);
-        intro->AddComponent(text);
+        intro->addComponent(graphics);
+        intro->addComponent(text);
     }
 
     // set video mode for 3 text layers and 1 extended rotation layer
@@ -400,9 +400,9 @@ void IntroView::cleanup()
 
     if (intro != nullptr)
     {
-        intro->RemoveComponent<GraphicsComponent>();
-        intro->RemoveComponent<TextComponent>();
-        engine.DestroyEntity(intro);
+        intro->removeComponent<GraphicsComponent>();
+        intro->removeComponent<TextComponent>();
+        engine.destroyEntity(intro);
 
         intro = nullptr;
         graphics = nullptr;

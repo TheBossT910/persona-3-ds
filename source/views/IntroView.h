@@ -52,8 +52,8 @@ class IntroView : public BaseView
     GraphicsComponent* graphics = nullptr;
     TextComponent* text = nullptr;
 
-    MathManager& math = MathManager::GetInstance();
-    RenderManager& render = RenderManager::GetInstance();
+    MathManager& math = MathManager::getInstance();
+    RenderManager& render = RenderManager::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
   public:

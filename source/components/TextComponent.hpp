@@ -19,18 +19,18 @@ class TextComponent : public ae::Component
 {
   public:
     static constexpr ae::ComponentTypeID TYPE_ID = static_cast<ae::ComponentTypeID>(ComponentType::Text);
-    void Init() override
+    void init() override
     {
     }
 
     /**
      * @brief Sets isActive to false on component destruction
      */
-    void Destroy() override;
+    void destroy() override;
 
-    void Update(ae::fixed_t /*dt*/) override;
+    void update(ae::fixed_t /*dt*/) override;
 
-    ae::ComponentTypeID GetType() const override
+    ae::ComponentTypeID getType() const override
     {
         return TYPE_ID;
     }
@@ -116,13 +116,13 @@ class TextComponent : public ae::Component
     int getFontSize();
 
   protected:
-    void SubmitToManager() override
+    void submitToManager() override
     {
     }
 
   private:
-    TextSystem& ts = TextSystem::GetInstance();
-    TextManager& tm = TextManager::GetInstance();
+    TextSystem& ts = TextSystem::getInstance();
+    TextManager& tm = TextManager::getInstance();
 
     Text* appearingText = nullptr;
     Font* font = nullptr;

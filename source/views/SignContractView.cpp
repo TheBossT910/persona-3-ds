@@ -19,9 +19,9 @@ void SignContractView::init()
 {
     if (signContract == nullptr)
     {
-        signContract = engine.CreateEntity();
-        graphics = engine.CreateComponent<GraphicsComponent>();
-        signContract->AddComponent(graphics);
+        signContract = engine.createEntity();
+        graphics = engine.createComponent<GraphicsComponent>();
+        signContract->addComponent(graphics);
     }
 
     // set both screens to black
@@ -270,15 +270,15 @@ void SignContractView::cleanup()
 
     if (signContract != nullptr)
     {
-        signContract->RemoveComponent<GraphicsComponent>();
-        engine.DestroyEntity(signContract);
+        signContract->removeComponent<GraphicsComponent>();
+        engine.destroyEntity(signContract);
 
         signContract = nullptr;
         graphics = nullptr;
     }
 
     // update save data (names)
-    ae::BroadcastEvent(Event::WriteSave{});
+    ae::broadcastEvent(Event::WriteSave{});
     musicCtrl->cleanup();
     BaseView::cleanup();
 }

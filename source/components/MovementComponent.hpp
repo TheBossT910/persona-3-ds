@@ -20,18 +20,18 @@ class MovementComponent : public ae::Component
 {
   public:
     static constexpr ae::ComponentTypeID TYPE_ID = static_cast<ae::ComponentTypeID>(ComponentType::Movement);
-    void Init() override;
+    void init() override;
 
-    void Destroy() override;
+    void destroy() override;
 
     /**
      * @brief Core update loop that calculates the character & camera movement
      *
      * @param dt Fixed-point delta time passed from the aegis engine loop (currently unused).
      */
-    void Update(ae::fixed_t /*dt*/) override;
+    void update(ae::fixed_t /*dt*/) override;
 
-    ae::ComponentTypeID GetType() const override
+    ae::ComponentTypeID getType() const override
     {
         return TYPE_ID;
     }
@@ -75,12 +75,12 @@ class MovementComponent : public ae::Component
     TileType isTileAt();
 
   protected:
-    void SubmitToManager() override
+    void submitToManager() override
     {
     }
 
   private:
-    MathManager& math = MathManager::GetInstance();
+    MathManager& math = MathManager::getInstance();
     AnimationController* animationCtrl = AnimationController::getInstance();
 
     MovementConfig config;

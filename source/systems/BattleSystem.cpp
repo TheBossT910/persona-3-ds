@@ -8,7 +8,7 @@
 
 void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
 {
-    isActive = true;
+    active = true;
 
     std::string path =
         fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
@@ -52,12 +52,12 @@ void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
     phase = currentParticipantTurn->getInitalTurnPhase();
 }
 
-void BattleSystem::Init()
+void BattleSystem::init()
 {
-    isActive = false;
+    active = false;
 }
 
-void BattleSystem::Update(ae::fixed_t)
+void BattleSystem::update(ae::fixed_t)
 {
     switch (phase)
     {
@@ -341,11 +341,11 @@ void BattleSystem::Update(ae::fixed_t)
     return;
 }
 
-void BattleSystem::Shutdown()
+void BattleSystem::shutdown()
 {
     musicCtrl->pause();
 
-    isActive = false;
+    active = false;
 
     turnsTaken = 0;
     currentParticipantIndex = 0;
@@ -535,7 +535,7 @@ void BattleSystem::handleDeadParticipants()
         if (battleResult.playerDied)
         {
             /// Don't display any battle results
-            Shutdown();
+            shutdown();
             return;
         }
     }
@@ -553,8 +553,8 @@ void BattleSystem::handleDeadParticipants()
     if (!enemiesAlive)
     {
         /// Display battle results
-        ae::BroadcastEvent(battleResult);
-        Shutdown();
+        ae::broadcastEvent(battleResult);
+        shutdown();
         return;
     }
 }

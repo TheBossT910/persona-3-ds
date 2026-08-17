@@ -27,8 +27,8 @@ class PauseMenuComponent : public UIMenu
     virtual ~PauseMenuComponent() = default;
     static PauseMenuComponent* instance;
 
-    CameraSystem& cameraSystem = CameraSystem::GetInstance();
-    RenderManager& rm = RenderManager::GetInstance();
+    CameraSystem& cameraSystem = CameraSystem::getInstance();
+    RenderManager& rm = RenderManager::getInstance();
 
     std::array<CameraMode, 4> cameraModes = {
         CameraMode::Free, CameraMode::Static, CameraMode::CCTV, CameraMode::Follow};

@@ -18,7 +18,7 @@ struct EnemyProfileDb
     static EnemyProfile cowardlyMaya;
 
     /// @brief Initialize all static EnemyProfiles with their stats, call once before first use
-    static void Initialize();
+    static void initialize();
 
   private:
     static Skill* mercilessMayaSkills[1];

@@ -2,7 +2,7 @@
 #include "core/globals.h"
 #include "data/spriteDb.h"
 
-void GraphicsComponent::Destroy()
+void GraphicsComponent::destroy()
 {
     unloadAll();
 }

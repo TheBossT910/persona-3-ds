@@ -1,6 +1,6 @@
 #include "TextComponent.hpp"
 
-void TextComponent::Update(ae::fixed_t)
+void TextComponent::update(ae::fixed_t)
 {
     if (appearingText != nullptr)
     {
@@ -23,14 +23,14 @@ void TextComponent::Update(ae::fixed_t)
     }
 }
 
-void TextComponent::Destroy()
+void TextComponent::destroy()
 {
-    isActive = false;
+    active = false;
 }
 
 void TextComponent::configureText(const TextConfig& config, bool loadDefaultPalette)
 {
-    isActive = true;
+    active = true;
 
     // set video buffer
     if (config.videoBuffer != nullptr)

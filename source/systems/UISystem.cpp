@@ -2,9 +2,9 @@
 #include "core/globals.h"
 #include "events/GenericEvents.hpp"
 
-void UISystem::Init()
+void UISystem::init()
 {
-    isActive = false;
+    active = false;
 
     // load sfx
     musicCtrl->loadSFX(SFX_MENU);
@@ -12,7 +12,7 @@ void UISystem::Init()
     musicCtrl->loadSFX(SFX_CANCEL);
 }
 
-void UISystem::Update(ae::fixed_t dt)
+void UISystem::update(ae::fixed_t dt)
 {
     for (UIMenu*& menu : menus)
     {
@@ -26,7 +26,7 @@ void UISystem::Update(ae::fixed_t dt)
         ViewState updateHookState = menu->updateHook();
         if (updateHookState != ViewState::DEFAULT)
         {
-            ae::BroadcastEvent(Event::SwitchView{updateHookState});
+            ae::broadcastEvent(Event::SwitchView{updateHookState});
             // TODO: remove after musicCtrl refactor for aegis engine compliance
             musicCtrl->update();
             continue;
@@ -112,12 +112,12 @@ void UISystem::Update(ae::fixed_t dt)
 
         if (menu->nextViewState != ViewState::KEEP_CURRENT)
         {
-            ae::BroadcastEvent(Event::SwitchView{menu->nextViewState});
+            ae::broadcastEvent(Event::SwitchView{menu->nextViewState});
         }
     }
 }
 
-void UISystem::Shutdown()
+void UISystem::shutdown()
 {
     cancelSFX();
     cleanupScreens();
@@ -126,7 +126,7 @@ void UISystem::Shutdown()
         activeMenu->resetMenu();
         activeMenu = nullptr;
     }
-    isActive = false;
+    active = false;
 }
 
 void UISystem::on_receive(const Event::SwitchView& msg)
@@ -168,7 +168,7 @@ void UISystem::on_receive(const Event::ConfigureUIMenu& config)
     // reset previous config
     cleanupMenus();
 
-    isActive = true;
+    active = true;
     menus = config.menus;
     text = config.text;
 

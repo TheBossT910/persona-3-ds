@@ -1,16 +1,16 @@
 #include "DialogueComponent.hpp"
 #include "core/globals.h"
 
-void DialogueComponent::Init()
+void DialogueComponent::init()
 {
-    isActive = false;
+    active = false;
 }
 
-void DialogueComponent::Update(ae::fixed_t)
+void DialogueComponent::update(ae::fixed_t)
 {
-    if (!isActive || current == nullptr)
+    if (!active || current == nullptr)
     {
-        isActive = false;
+        active = false;
         return;
     }
 
@@ -119,9 +119,9 @@ void DialogueComponent::Update(ae::fixed_t)
     }
 }
 
-void DialogueComponent::Destroy()
+void DialogueComponent::destroy()
 {
-    isActive = false;
+    active = false;
 }
 
 void DialogueComponent::configureDialogue(const DialogueConfig& config)
@@ -135,13 +135,13 @@ void DialogueComponent::configureDialogue(const DialogueConfig& config)
 
 void DialogueComponent::start()
 {
-    isActive = true;
+    active = true;
 }
 
 void DialogueComponent::end()
 {
     text->clearScreen();
-    isActive = false;
+    active = false;
 }
 
 void DialogueComponent::advanceTo(Dialogue* next)

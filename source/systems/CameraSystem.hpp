@@ -35,9 +35,9 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
                      public ae::Singleton<CameraSystem>
 {
   public:
-    void Init() override;
+    void init() override;
 
-    void Shutdown() override;
+    void shutdown() override;
 
     /**
      * @brief Core update loop that advances camera state and broadcasts the
@@ -45,7 +45,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      *
      * @param dt Fixed-point delta time passed from the aegis engine loop (currently unused).
      */
-    void Update(ae::fixed_t /*dt*/) override;
+    void update(ae::fixed_t /*dt*/) override;
 
     /**
      * @brief ETL message handler to configure the camera settings.
@@ -166,7 +166,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
     {
     }
 
-    MathManager& math = MathManager::GetInstance();
+    MathManager& math = MathManager::getInstance();
 
     CameraMode mode = CameraMode::Follow;
 

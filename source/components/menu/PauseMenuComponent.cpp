@@ -49,16 +49,16 @@ void PauseMenuComponent::resetHook()
 
     if (pauseMenu == nullptr)
     {
-        pauseMenu = engine.CreateEntity();
-        dialogue = engine.CreateComponent<DialogueComponent>();
-        pauseMenu->AddComponent(dialogue);
+        pauseMenu = engine.createEntity();
+        dialogue = engine.createComponent<DialogueComponent>();
+        pauseMenu->addComponent(dialogue);
     }
 }
 
 ViewState PauseMenuComponent::updateHook()
 {
     // dialogue should be started, but has not
-    if (isDialogueStarted && !dialogue->IsActive())
+    if (isDialogueStarted && !dialogue->isActive())
     {
         text->clearScreen();
         dialogue->start();
@@ -66,7 +66,7 @@ ViewState PauseMenuComponent::updateHook()
     }
 
     // dialogue controller takes full control when active
-    if (dialogue->IsActive())
+    if (dialogue->isActive())
     {
         return ViewState::KEEP_CURRENT;
     }
@@ -242,12 +242,12 @@ ViewState PauseMenuComponent::debugOptionSelected()
     case DebugOption::CYCLE_CAMERA_MODE:
         if (cameraSystem.getMode() == CameraMode::Path)
         {
-            ae::BroadcastEvent(Event::SetCameraMode{CameraMode::Follow});
+            ae::broadcastEvent(Event::SetCameraMode{CameraMode::Follow});
         }
         else
         {
             CameraMode mode = cameraModes[(static_cast<int>(cameraSystem.getMode()) + 1) % cameraModes.size()];
-            ae::BroadcastEvent(Event::SetCameraMode{mode});
+            ae::broadcastEvent(Event::SetCameraMode{mode});
         }
         isActive = false;
         openDebugMenu();

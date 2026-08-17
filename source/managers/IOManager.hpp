@@ -13,13 +13,13 @@
 class IOManager : public ae::Manager, public ae::Singleton<IOManager>
 {
   public:
-    void Init() override;
+    void init() override;
 
-    void Process() override
+    void process() override
     {
     }
 
-    void Shutdown() override
+    void shutdown() override
     {
     }
 

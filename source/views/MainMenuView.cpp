@@ -8,12 +8,12 @@ void MainMenuView::init()
 {
     if (mainMenu == nullptr)
     {
-        mainMenu = engine.CreateEntity();
-        graphics = engine.CreateComponent<GraphicsComponent>();
-        textMenu = engine.CreateComponent<TextComponent>();
+        mainMenu = engine.createEntity();
+        graphics = engine.createComponent<GraphicsComponent>();
+        textMenu = engine.createComponent<TextComponent>();
 
-        mainMenu->AddComponent(graphics);
-        mainMenu->AddComponent(textMenu);
+        mainMenu->addComponent(graphics);
+        mainMenu->addComponent(textMenu);
     }
 
     // setup music
@@ -57,8 +57,8 @@ void MainMenuView::init()
     // setup main menu
     mainMenuCmpt = MainMenuComponent::getInstance();
     std::array<UIMenu*, 10> menus = {mainMenuCmpt};
-    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
-    ae::BroadcastEvent(Event::ShowMenu{mainMenuCmpt});
+    ae::broadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::broadcastEvent(Event::ShowMenu{mainMenuCmpt});
 
     // setup console
     consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
@@ -226,16 +226,16 @@ void MainMenuView::cleanup()
 
     if (mainMenu != nullptr)
     {
-        mainMenu->RemoveComponent<GraphicsComponent>();
-        mainMenu->RemoveComponent<TextComponent>();
-        engine.DestroyEntity(mainMenu);
+        mainMenu->removeComponent<GraphicsComponent>();
+        mainMenu->removeComponent<TextComponent>();
+        engine.destroyEntity(mainMenu);
 
         mainMenu = nullptr;
         graphics = nullptr;
         textMenu = nullptr;
     }
 
-    ae::BroadcastEvent(Event::HideAllMenus{});
+    ae::broadcastEvent(Event::HideAllMenus{});
     musicCtrl->cleanup();
     BaseView::cleanup();
 }

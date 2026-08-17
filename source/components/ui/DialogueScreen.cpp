@@ -206,9 +206,9 @@ void DialogueScreen::load()
 {
     if (dialogue == nullptr)
     {
-        dialogue = engine.CreateEntity();
-        graphics = engine.CreateComponent<GraphicsComponent>();
-        dialogue->AddComponent(graphics);
+        dialogue = engine.createEntity();
+        graphics = engine.createComponent<GraphicsComponent>();
+        dialogue->addComponent(graphics);
     }
 
     // load graphics
@@ -287,8 +287,8 @@ void DialogueScreen::unload()
 
     if (dialogue != nullptr)
     {
-        dialogue->RemoveComponent<GraphicsComponent>();
-        engine.DestroyEntity(dialogue);
+        dialogue->removeComponent<GraphicsComponent>();
+        engine.destroyEntity(dialogue);
 
         dialogue = nullptr;
         graphics = nullptr;
