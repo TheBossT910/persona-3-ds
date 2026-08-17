@@ -35,7 +35,7 @@ class UIMenu
     /**
      * @brief Closes the root menu.
      *
-     * @return ViewState the View to switch to
+     * @return ViewState the view to switch to.
      */
     virtual ViewState closeMenu();
 

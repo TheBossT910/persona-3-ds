@@ -40,7 +40,7 @@ void MainMenuComponent::resetHook()
 
 ViewState MainMenuComponent::closeMenu()
 {
-    UIMenu::closeMenu();
+    isActive = false;
     return ViewState::INTRO;
 }
 
