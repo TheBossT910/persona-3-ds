@@ -1,5 +1,5 @@
 #pragma once
-#include "core/enums.h"
+#include "types/StateTypes.hpp"
 
 class BaseView
 {

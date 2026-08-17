@@ -1,9 +1,12 @@
 #pragma once
+
 #include "battleActions/BattleParticipant.h"
 #include "battleActions/actions/ActionBase.h"
 #include "battleActions/personas/PersonaBase.h"
-#include "components/menu/BattleMenuComponent.h"
 #include "components/menu/UIMenu.h"
+#include "core/enums.h"
+#include "types/UITypes.hpp"
+
 #include <etl/vector.h>
 
 class BattleMenuComponent : public UIMenu

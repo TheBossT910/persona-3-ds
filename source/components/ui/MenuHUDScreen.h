@@ -2,10 +2,10 @@
 #include "components/ui/UIScreen.h"
 #include "core/enums.h"
 #include "core/globals.h"
-#include "core/structs.h"
-#include <nds.h>
 
 #include "components/GraphicsComponent.hpp"
+
+#include <nds.h>
 
 class MenuHUDScreen : public UIScreen
 {

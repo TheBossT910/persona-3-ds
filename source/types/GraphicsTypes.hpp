@@ -32,3 +32,14 @@ struct Sprite
     int x;
     int y;
 };
+
+struct GraphicAsset
+{
+    int id;
+    void* tiles = nullptr;
+    u32 tilesLen;
+    void* pal = nullptr;
+    u32 palLen;
+    void* map = nullptr;
+    u32 mapLen;
+};

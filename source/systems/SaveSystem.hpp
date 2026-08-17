@@ -11,6 +11,8 @@
 #include "core/routerIDs.hpp"
 #include "events/SaveEvents.hpp"
 #include "managers/IOManager.hpp"
+#include "types/SaveTypes.hpp"
+
 #include <aegis/system.hpp>
 
 class SaveSystem : public ae::SystemRouter<SaveSystem, Event::ReadSave, Event::WriteSave>,

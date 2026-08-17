@@ -5,9 +5,12 @@
  */
 
 #pragma once
+
 #include "components/TextComponent.hpp"
+#include "components/menu/UIMenu.h"
 #include "components/ui/UIScreen.h"
-#include "core/enums.h"
+#include "types/aeTypes.hpp"
+
 #include <aegis/aegis.hpp>
 
 namespace Event

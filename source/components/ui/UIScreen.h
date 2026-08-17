@@ -1,5 +1,5 @@
 #pragma once
-#include "core/structs.h"
+
 #include <nds.h>
 #include <vector>
 

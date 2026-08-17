@@ -5,7 +5,11 @@
  */
 
 #pragma once
-#include "core/structs.h"
+
+#include "types/MovementTypes.hpp"
+#include "types/StateTypes.hpp"
+#include "types/aeTypes.hpp"
+
 #include <aegis/aegis.hpp>
 
 namespace Event

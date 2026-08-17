@@ -1,6 +1,8 @@
 #pragma once
+
 #include "controllers/MusicController.h"
-#include "core/enums.h"
+#include "types/StateTypes.hpp"
+
 #include <nds.h>
 #include <string>
 

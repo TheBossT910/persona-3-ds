@@ -1,5 +1,5 @@
 #include "IwatodaiDormView.h"
-#include "core/structs.h"
+#include "types/CameraTypes.hpp"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()

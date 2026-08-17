@@ -6,23 +6,6 @@
 #pragma once
 #include <aegis/system.hpp>
 
-enum class ViewState
-{
-    DEFAULT,
-    KEEP_CURRENT,
-    DISCLAIMER,
-    INTRO_VIDEO,
-    INTRO,
-    MAIN_MENU,
-    IWATODAI_DORM,
-    IWATODAI_STREETS,
-    CUTSCENE_1,
-    SIGN_CONTRACT,
-    CUTSCENE_2,
-    STATION,
-    PAULOWNIA_MALL,
-};
-
 enum class MoonSprite
 {
     MOON_0 = 0,
@@ -122,43 +105,6 @@ enum class DialogueSprite
     TEXT_CORNER_FEMC,
     TEXT_MIDDLE,
     TEXT_MIDDLE_FEMC,
-};
-
-enum class TileType
-{
-    NO_COLLISION = 0,
-    COLLISION = 1,
-    SAVE = 2,
-
-    // scenes / events
-    SCENE_0 = 400,
-    SCENE_1 = 401,
-    SCENE_2 = 402,
-    SCENE_3 = 403,
-    SCENE_4 = 404,
-    SCENE_5 = 405,
-    SCENE_6 = 406,
-    SCENE_7 = 407,
-    SCENE_8 = 408,
-    SCENE_9 = 409,
-
-    // characters (party)
-    C_MC = 600,
-    C_YU = 601,
-    C_JU = 602,
-    C_AK = 603,
-    C_MI = 604,
-    C_FU = 605,
-    C_AE = 606,
-    C_KO = 607,
-    C_KE = 608,
-    C_SH = 609,
-
-    // enemies (shadows)
-    // w = weak, m = medium, s = tring
-    SHD_W = 800,
-    SHD_M = 801,
-    SHD_S = 802,
 };
 
 enum class MainMenuOptions
@@ -279,80 +225,10 @@ enum class DebugOption
     CYCLE_CAMERA_MODE
 };
 
-enum class ModelVersion
-{
-    INVALID,
-    MDL1,
-    MDL2
-};
-
-enum class CharacterAnimOption
-{
-    TOGGLE_AUTO_ANIM = 0,
-    ANIM_1 = 1,
-    ANIM_2 = 2,
-    ANIM_3 = 3,
-    ANIM_4 = 4,
-    ANIM_5 = 5,
-    ANIM_6 = 6,
-    ANIM_7 = 7,
-    ANIM_8 = 8,
-    ANIM_9 = 9,
-    ANIM_10 = 10,
-    ANIM_11 = 11,
-    ANIM_12 = 12,
-    ANIM_13 = 13,
-    ANIM_14 = 14,
-    ANIM_15 = 15,
-    ANIM_16 = 16,
-    ANIM_17 = 17,
-    ANIM_18 = 18,
-    ANIM_19 = 19,
-    ANIM_20 = 20,
-    ANIM_21 = 21,
-    ANIM_22 = 22,
-    ANIM_23 = 23,
-    ANIM_24 = 24
-};
-
 enum class ViewPhase
 {
     Battle,
     Pause,
     Dialogue,
     Environment
-};
-
-namespace EventID
-{
-enum : etl::message_id_t
-{
-    ExecuteBattle = 0,
-    BattleResult,
-    CameraPosition,
-    ConfigureCamera,
-    SetCameraMode,
-    SetCameraPath,
-    StartCamera,
-    StopCamera,
-    SetCharacterPosition,
-    WriteSave,
-    ReadSave,
-    ConfigureUIScreen,
-    ShowScreen,
-    HideAllScreens,
-    ConfigureUIMenu,
-    SwitchView,
-    ShowMenu,
-    HideAllMenus
-};
-} // namespace EventID
-
-enum class ComponentType : ae::ComponentTypeID
-{
-    None = 0,
-    Movement,
-    Dialogue,
-    Graphics,
-    Text
 };

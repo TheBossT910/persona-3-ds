@@ -2,8 +2,6 @@
 
 #include "views/BaseView.h"
 
-// core
-#include "core/enums.h"
 // environments/data
 #include "data/environmentDb.h"
 #include "environment/Environment.h"

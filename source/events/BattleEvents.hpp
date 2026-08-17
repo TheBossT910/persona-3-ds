@@ -6,13 +6,15 @@
  */
 
 #pragma once
-#include "core/enums.h"
-#include <aegis/system.hpp>
-#include <etl/vector.h>
+
+#include "types/aeTypes.hpp"
 
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/EnemyProfileDb.h"
 #include "./battleActions/party/CharacterProfileDb.h"
+
+#include <aegis/system.hpp>
+#include <etl/vector.h>
 
 namespace Event
 {

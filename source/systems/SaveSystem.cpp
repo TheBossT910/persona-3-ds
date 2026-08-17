@@ -1,6 +1,5 @@
 #include "SaveSystem.hpp"
 #include "core/globals.h"
-#include "core/structs.h"
 
 void SaveSystem::on_receive(const Event::ReadSave)
 {

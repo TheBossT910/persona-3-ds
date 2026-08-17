@@ -7,13 +7,12 @@
  */
 
 #pragma once
-
-#include "core/enums.h"
-#include "types/TextTypes.hpp"
-#include <aegis/component.hpp>
-
 #include "managers/TextManager.hpp"
 #include "systems/TextSystem.hpp"
+#include "types/TextTypes.hpp"
+#include "types/aeTypes.hpp"
+
+#include <aegis/component.hpp>
 
 class TextComponent : public ae::Component
 {
