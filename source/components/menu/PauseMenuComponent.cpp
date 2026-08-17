@@ -41,6 +41,7 @@ void PauseMenuComponent::resetHook()
     pauseMessage = "Pause";
     options = menuOptions;
     optionCount = MENU_OPTIONS;
+    isClosed = false;
 
     if (demo_dialogue_bg_slot != -1)
     {
@@ -77,6 +78,14 @@ ViewState PauseMenuComponent::updateHook()
     }
 
     return ViewState::DEFAULT;
+}
+
+void PauseMenuComponent::closeHook()
+{
+    resetMenu();
+
+    // set flag
+    isClosed = true;
 }
 
 // menu navigation handlers
