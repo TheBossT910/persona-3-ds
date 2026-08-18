@@ -18,6 +18,7 @@ class MenuHUDScreen : public UIScreen
     void renderSprites() override;
     void removeSprites() override;
     int onTouch(touchPosition* touch) override;
+    void tick();
 
   private:
     MenuHUDScreen() {};
@@ -39,6 +40,16 @@ class MenuHUDScreen : public UIScreen
     SpriteRegister timeSprites[4];
     SpriteRegister skillSprites[18];
     SpriteRegister slashSprite;
+
+    static constexpr int kAnimSlot = 12;
+    static constexpr int kAnimAffine = 31;
+    static constexpr int kAnimFrames = 6;
+    u16* animGfx[kAnimFrames] = {};
+    GraphicAsset animAsset[kAnimFrames] = {};
+    int animX = 176;
+    int animY = 80;
+    bool animReady = false;
+
     bool bgLoaded;
     void renderBackground();
 

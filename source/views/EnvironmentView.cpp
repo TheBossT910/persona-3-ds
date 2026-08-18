@@ -265,6 +265,8 @@ ViewState EnvironmentView::update()
     glLoadIdentity();
 
     bgUpdate();
+    if (menuHUDScreen != nullptr && menuHUDScreen->isLoaded)
+        menuHUDScreen->tick();
     oamUpdate(&oamSub);
 
     switch (phase)

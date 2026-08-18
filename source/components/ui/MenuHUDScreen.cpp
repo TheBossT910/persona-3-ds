@@ -62,10 +62,13 @@ void MenuHUDScreen::renderSprites()
     dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);     // time (2)
     dmaCopy(timeSprites[3].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], timeSprites[3].palLen);     // time (3)
     dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[7][0], skillSprites[0].palLen);   // skill level
+    if (animReady && animAsset[0].pal != NULL && animAsset[0].palLen > 0)
+        dmaCopy(animAsset[0].pal, &VRAM_I_EXT_SPR_PALETTE[8][0], animAsset[0].palLen); // anim frames
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
     // draw sprites
-    for (int i = 0; i < 12; i++)
+    int count = animReady ? kAnimSlot + 1 : 12;
+    for (int i = 0; i < count; i++)
     {
         oamSet(oam, // sub display (OamState)
                i,   // oam entry to set (id)
@@ -88,7 +91,42 @@ void MenuHUDScreen::renderSprites()
 
 void MenuHUDScreen::removeSprites()
 {
-    oamClear(oam, 0, 12);
+    oamClear(oam, 0, animReady ? kAnimSlot + 1 : 12);
+}
+
+void MenuHUDScreen::tick()
+{
+    if (!isLoaded || !animReady)
+        return;
+
+    int frameIndex = (frame / 6) % kAnimFrames;
+    sprites[kAnimSlot].gfx = animGfx[frameIndex];
+
+    const int cycle = 180;
+    animX = 176 - (96 * (frame % cycle)) / (cycle - 1);
+    sprites[kAnimSlot].x = animX;
+
+    const int t = frame % cycle;
+    const int half = cycle / 2;
+    const int ramp = (t < half) ? t : (cycle - 1 - t);
+    const int scale = 256 - (85 * ramp) / half; // 256 down to 171 and back
+    oamRotateScale(oam, kAnimAffine, 0, scale, scale);
+
+    oamSet(oam,
+           kAnimSlot,
+           sprites[kAnimSlot].x,
+           sprites[kAnimSlot].y,
+           0,
+           sprites[kAnimSlot].paletteAlpha,
+           sprites[kAnimSlot].size,
+           sprites[kAnimSlot].format,
+           sprites[kAnimSlot].gfx,
+           kAnimAffine,
+           true,
+           false,
+           false,
+           false,
+           false);
 }
 
 int MenuHUDScreen::onTouch(touchPosition* touch)
@@ -147,6 +185,11 @@ void MenuHUDScreen::load()
     // slash
     sprites[11].gfx = oamAllocateGfx(oam, SpriteSize_16x16, SpriteColorFormat_256Color);
 
+    sprites[kAnimSlot] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, kAnimAffine, 8, animX, animY};
+    animReady = false;
+    for (int i = 0; i < kAnimFrames; i++)
+        animGfx[i] = oamAllocateGfx(oam, SpriteSize_32x32, SpriteColorFormat_256Color);
+
     // get sprites
     // moon
     spriteCtrl->switchSprite(SpriteType::MOON, MoonSprite::MOON_22, &moonSprite);
@@ -190,11 +233,41 @@ void MenuHUDScreen::load()
     // slash
     dmaCopy(slashSprite.tiles, sprites[11].gfx, slashSprite.tilesLen);
 
+    const char* names[kAnimFrames] = {
+        "tile064",
+        "tile065",
+        "tile066",
+        "tile067",
+        "tile068",
+        "tile069",
+    };
+    bool ok = true;
+    for (int i = 0; i < kAnimFrames; i++)
+    {
+        animAsset[i] = graphicsCtrl->loadGrit(fatBasePath + spriteCtrl->spritePath + names[i]);
+        if (animGfx[i] && animAsset[i].tiles && animAsset[i].tilesLen >= 1024)
+            dmaCopy(animAsset[i].tiles, animGfx[i], 1024);
+        else
+            ok = false;
+    }
+    if (ok)
+    {
+        sprites[kAnimSlot].gfx = animGfx[0];
+        animReady = true;
+    }
+
     renderBackground();
 };
 
 void MenuHUDScreen::unload()
 {
-    // TODO: implement
+    for (int i = 0; i < kAnimFrames; i++)
+    {
+        if (animAsset[i].tiles || animAsset[i].pal || animAsset[i].map)
+            graphicsCtrl->unloadGrit(animAsset[i]);
+        animAsset[i] = {NULL, 0, NULL, 0, NULL, 0};
+        animGfx[i] = nullptr;
+    }
+    animReady = false;
     spriteCtrl->unloadAll();
 }
