@@ -46,7 +46,7 @@ void UIMenu::prevOption()
     else
     {
         // otherwise, close the menu
-        isActive = false;
+        closeHook();
     }
 }
 

@@ -316,7 +316,7 @@ ViewState EnvironmentView::update()
             return menuResult;
         }
 
-        if (systemKeysDown & KEY_START)
+        if ((systemKeysDown & KEY_START) || pauseMenuCmpt->isClosed)
         {
             prevPauseState = false;
             textSub->clearScreen();
