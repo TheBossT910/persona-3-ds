@@ -135,6 +135,7 @@ void DialogueComponent::configureDialogue(const DialogueConfig& config)
 
 void DialogueComponent::start()
 {
+    prevKeys = systemKeysHeld;
     isActive = true;
 }
 

@@ -219,6 +219,19 @@ ViewState MainMenuView::update()
 
 void MainMenuView::cleanup()
 {
+    // transition both screens to black
+    for (int i = 0; i > -16; i--)
+    {
+        setBrightness(3, i);
+
+        // wait a few frames
+        for (int duration = 0; duration <= 2; duration++)
+        {
+            swiWaitForVBlank();
+            musicCtrl->update();
+        }
+    }
+
     if (graphics != nullptr)
     {
         graphics->unloadAll();

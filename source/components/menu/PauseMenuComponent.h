@@ -187,6 +187,7 @@ class PauseMenuComponent : public UIMenu
     AnimationController* animationCtrl = AnimationController::getInstance();
 
     void resetHook() override;
+    void closeHook() override;
 
   public:
     static void create();
@@ -194,4 +195,6 @@ class PauseMenuComponent : public UIMenu
     static PauseMenuComponent* getInstance();
 
     ViewState updateHook() override;
+
+    bool isClosed = false;
 };
