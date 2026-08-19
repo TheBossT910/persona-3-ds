@@ -191,7 +191,7 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
     if (!msg.screen->isLoaded)
     {
         // add screen if space
-        if (msg.screen->isMain ? (screenMainCount < 3) : (screenSubCount < 4))
+        if (msg.screen->isMain ? (screenMainCount < 2) : (screenSubCount < 3))
         {
             registerScreen(msg.screen);
         }
@@ -204,7 +204,7 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
             if (msg.screen->isMain)
             {
                 int targetBgId = lruBgMain[0];
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     if ((loadedMain[i] != nullptr) && (loadedMain[i]->bgId == targetBgId))
                     {
@@ -217,7 +217,7 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
             else
             {
                 int targetBgId = lruBgSub[0];
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     if ((loadedSub[i] != nullptr) && (loadedSub[i]->bgId == targetBgId))
                     {
@@ -287,7 +287,7 @@ void UISystem::lruUpdate(int id, bool isMain)
         int pos = 0;
 
         // find where the existing id currently is
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (lruBgMain[i] == id)
             {
@@ -297,20 +297,20 @@ void UISystem::lruUpdate(int id, bool isMain)
         }
 
         // shift everything after that position to the left to close the gap
-        for (int i = pos; i < 2; i++)
+        for (int i = pos; i < 1; i++)
         {
             lruBgMain[i] = lruBgMain[i + 1];
         }
 
         // place the updated id at the very end (most recently used)
-        lruBgMain[2] = id;
+        lruBgMain[1] = id;
     }
     else
     {
         int pos = 0;
 
         // find where the existing id currently is
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (lruBgSub[i] == id)
             {
@@ -320,13 +320,13 @@ void UISystem::lruUpdate(int id, bool isMain)
         }
 
         // shift everything after that position to the left to close the gap
-        for (int i = pos; i < 3; i++)
+        for (int i = pos; i < 2; i++)
         {
             lruBgSub[i] = lruBgSub[i + 1];
         }
 
         // place the updated id at the very end (most recently used)
-        lruBgSub[3] = id;
+        lruBgSub[2] = id;
     }
 }
 
@@ -335,7 +335,7 @@ void UISystem::registerScreen(UIScreen* screen)
     sassert(screen != nullptr, "UIScreen cannot be nullptr.");
 
     // load screen
-    if (screen->isMain && screenMainCount < 3)
+    if (screen->isMain && screenMainCount < 2)
     {
         loadedMain[screenMainCount] = screen;
         screen->bgId = hwBgMain[screenMainCount];
@@ -345,7 +345,7 @@ void UISystem::registerScreen(UIScreen* screen)
         screen->isLoaded = true;
         return;
     }
-    else if (!screen->isMain && screenSubCount < 4)
+    else if (!screen->isMain && screenSubCount < 3)
     {
         loadedSub[screenSubCount] = screen;
         screen->bgId = hwBgSub[screenSubCount];
@@ -360,13 +360,13 @@ void UISystem::registerScreen(UIScreen* screen)
     // throw error (too many screens registered)
     if (screen->isMain)
     {
-        sassert(screenMainCount < 3,
-                "Too many screens registered. A maximum of 4 main screens and 3 sub screens can be registered.");
+        sassert(screenMainCount < 2,
+                "Too many screens registered. A maximum of 3 main screens and 2 sub screens can be registered.");
     }
     else
     {
-        sassert(screenSubCount < 4,
-                "Too many screens registered. A maximum of 4 main screens and 3 sub screens can be registered.");
+        sassert(screenSubCount < 3,
+                "Too many screens registered. A maximum of 3 main screens and 2 sub screens can be registered.");
     }
 }
 
@@ -400,7 +400,7 @@ void UISystem::cleanupScreens()
 {
     // reset all bg ids, UIScreens
     // sub
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     {
         lruBgSub[i] = hwBgSub[i];
         if (loadedSub[i] == nullptr)
@@ -415,7 +415,7 @@ void UISystem::cleanupScreens()
     }
 
     // main
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 2; j++)
     {
         lruBgMain[j] = hwBgMain[j];
         if (loadedMain[j] == nullptr)
