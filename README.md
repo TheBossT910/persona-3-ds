@@ -54,16 +54,10 @@ The open-source license applied to this codebase **does not** extend to any copy
 - **ShareAlike (SA)**: If you remix, transform, or build upon the engine code, you must distribute your contributions under the same license as the original.
 
 ### Libraries
-**[ETL](https://github.com/etlcpp/etl)**
-- Copyright © 2014–2026, Embedded Template Library
-- Licensed under the MIT License
+**[BlocksDS](https://blocksds.skylyrac.net/)**
+-  Copyright © 2023-2026 Authors of BlocksDS
+- Licensed under the C BY-SA 4.0 License
 
-**[fpm](https://github.com/MikeLankamp/fpm)**
-- Copyright © 2019, Mike Lankamp
-- Licensed under the MIT License
-
-**[libnds](https://github.com/devkitPro/libnds)**
-- Copyright © 2005-2024, Michael Noland (joat), Jason Rogers (dovoto), Dave Murphy (WinterMute), fincs
-
-**[maxmod](https://github.com/devkitPro/maxmod)**
-- Copyright © 2008, Mukunda Johnson
+**[Aegis Engine](https://github.com/p3d-project/aegis-engine)**
+- Copyright © 2026 The P3D Project
+- Licensed under the CC BY-NC-SA 4.0 License
