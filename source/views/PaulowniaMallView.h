@@ -26,6 +26,7 @@ class PaulowniaMallView : public EnvironmentView
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void setTextConfig() override;
     void setupUI() override;
+    void setCameraConfig() override;
 
   private:
     // movement and camera

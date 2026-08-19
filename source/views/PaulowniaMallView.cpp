@@ -10,6 +10,17 @@ void PaulowniaMallView::setMusic()
         (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
 }
 
+void PaulowniaMallView::setCameraConfig()
+{
+    camConfig.mode = CameraMode::Follow;
+    camConfig.initialAngle = 1.5708f * 2;
+    camConfig.distance = 1.0f;
+    camConfig.height = height + 0.4f;
+    camConfig.lookAhead = 0.2f;
+    camConfig.angleIncrement = 0.05f;
+    camConfig.isRotationLocked = true;
+}
+
 void PaulowniaMallView::setMovementConfig()
 {
     movement->configureMovement(MovementConfig(PAULOWNIA_MALL_MAP_WIDTH,
