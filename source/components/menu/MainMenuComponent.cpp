@@ -108,11 +108,7 @@ ViewState MainMenuComponent::settingOptionSelected()
         changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
         selectedView = ViewState::KEEP_CURRENT;
         break;
-    case SettingOptions::FEMC_MODE:
-        saveData.femcMode = !saveData.femcMode;
-        updateSave();
-        selectedView = ViewState::KEEP_CURRENT;
-        break;
+
     default:
         selectedView = ViewState::KEEP_CURRENT;
     }

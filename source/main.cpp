@@ -28,7 +28,6 @@
 #include "soundbank_bin.h"
 
 // character models
-#include "models/kotone.h"
 #include "models/makoto.h"
 
 // DBs
@@ -57,18 +56,16 @@ Save saveData;
 ViewState nextView = ViewState::DEFAULT;
 
 BaseView* currentView = nullptr;
-bool prevFemcMode;
 
 // models
 unsigned int** bitmapsCharacter = nullptr;
 
-static unsigned int* bitmapsKotone[MODEL_KOTONE_TEX_COUNT] = {nullptr};
 static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
 
 // TODO: figure out a way to unload after being copied to ram
-static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
+static unsigned int* loadCharacterTexture(const std::string& name)
 {
-    std::string basePath = fatBasePath + "models/" + (isFemc ? "kotone/" : "makoto/");
+    std::string basePath = fatBasePath + "models/makoto/";
     GraphicAsset asset = genericGraphics->loadGraphic(basePath + name);
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
     return tiles;
@@ -99,30 +96,17 @@ void Vblank()
     frame = frame + 1;
 }
 
-void loadModels(bool isFemc)
+void loadModels()
 {
-    // Kotone
-    if (isFemc)
-    {
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_0] = loadCharacterTexture("kotone_texture_0", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_1] = loadCharacterTexture("kotone_texture_1", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_2] = loadCharacterTexture("kotone_texture_2", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_3] = loadCharacterTexture("kotone_texture_3", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_4] = loadCharacterTexture("kotone_texture_4", true);
-
-        bitmapsCharacter = bitmapsKotone;
-    }
     // Makoto
-    else
-    {
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4", false);
 
-        bitmapsCharacter = bitmapsMakoto;
-    }
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4");
+
+    bitmapsCharacter = bitmapsMakoto;
 }
 
 // TODO: add doxyen docs
@@ -225,8 +209,7 @@ int main(int argc, char* argv[])
 
     // load save data
     ae::BroadcastEvent(Event::ReadSave{});
-    prevFemcMode = saveData.femcMode;
-    loadModels(saveData.femcMode);
+    loadModels();
 
     // Default is DisclaimerView
     SwitchView(new DisclaimerView());
@@ -240,12 +223,6 @@ int main(int argc, char* argv[])
 
         // Poll Input -> Update Systems -> Update Components -> Process Managers -> Compute
         engine.Tick(dt);
-
-        if (saveData.femcMode != prevFemcMode)
-        {
-            loadModels(saveData.femcMode);
-            prevFemcMode = saveData.femcMode;
-        }
 
         // check state of currentView
         if (currentView != nullptr)
