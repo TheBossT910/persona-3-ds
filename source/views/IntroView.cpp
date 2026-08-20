@@ -73,10 +73,9 @@ void IntroView::init()
     dmaFillHalfWords(0, bgGetMapPtr(bgSubLogo), 2048);
     dmaFillHalfWords(0, bgGetMapPtr(bgSubSky), 2048);
 
-    bool femc = saveData.femcMode;
     std::string bgPath = "graphics/IntroView/backgrounds/";
     std::string spritePath = "graphics/IntroView/sprites/";
-    std::string suffix = femc ? "FEMC" : "";
+    std::string suffix = "";
 
     GraphicAsset silhouette =
         graphics->loadGraphic(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);

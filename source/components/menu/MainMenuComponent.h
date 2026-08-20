@@ -28,7 +28,6 @@ class MainMenuComponent : public UIMenu
 
     MenuOption settingOptions[SETTING_OPTIONS] = {
         {"Change Intro Video", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
-        {"Toggle FEMC Mode", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
         {"v1.0.0", -1, nullptr},
     };
 
