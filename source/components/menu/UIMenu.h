@@ -52,6 +52,11 @@ class UIMenu
      */
     virtual void resetHook() = 0;
 
+    /**
+     * @brief Execute logic after the root menu is exited.
+     */
+    virtual void closeHook() = 0;
+
   public:
     /**
      * @brief Resets the menu to its initial state.

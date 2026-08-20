@@ -22,7 +22,10 @@ class BattleMenuComponent : public UIMenu
     int alertStartFrame = 0;
     bool messagePrinted = false;
 
-    void resetHook();
+    void resetHook() override;
+    void closeHook() override
+    {
+    }
 
     // option handlers
     ViewState battleOptionSelected();

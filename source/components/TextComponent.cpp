@@ -26,6 +26,7 @@ void TextComponent::Update(ae::fixed_t)
 void TextComponent::Destroy()
 {
     isActive = false;
+    appearTextStop();
 }
 
 void TextComponent::configureText(const TextConfig& config, bool loadDefaultPalette)
@@ -75,6 +76,15 @@ void TextComponent::appearTextSkip()
     ts.appearTextSkip(appearingText);
 }
 
+void TextComponent::appearTextStop()
+{
+    if (appearingText != nullptr)
+    {
+        delete appearingText;
+        appearingText = nullptr;
+    }
+}
+
 bool TextComponent::appearTextDone()
 {
     return ts.appearTextDone(appearingText);
@@ -93,6 +103,7 @@ void TextComponent::clearArea(int x, int y, int width, int height)
 void TextComponent::clearScreen()
 {
     tm.clearScreen(videoBuffer);
+    appearTextStop();
 }
 
 int TextComponent::getFontSize()

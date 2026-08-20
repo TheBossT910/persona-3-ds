@@ -1,5 +1,6 @@
 #include "MainMenuComponent.h"
 #include "core/globals.h"
+#include "events/GenericEvents.hpp"
 #include "events/SaveEvents.hpp"
 #include <string>
 
@@ -36,6 +37,12 @@ void MainMenuComponent::resetHook()
     pauseMessage = "";
     options = mainMenuOptions;
     optionCount = MAIN_MENU_OPTIONS;
+}
+
+void MainMenuComponent::closeHook()
+{
+    resetMenu();
+    ae::BroadcastEvent(Event::SwitchView{ViewState::INTRO});
 }
 
 // option handlers

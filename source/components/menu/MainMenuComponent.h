@@ -28,7 +28,7 @@ class MainMenuComponent : public UIMenu
 
     MenuOption settingOptions[SETTING_OPTIONS] = {
         {"Change Intro Video", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
-        {"v1.0.0", -1, nullptr},
+        {"v1.1.0", -1, nullptr},
     };
 
     MenuOption settingIntroOptions[SETTING_INTRO_OPTIONS] = {
@@ -45,6 +45,7 @@ class MainMenuComponent : public UIMenu
     ViewState settingIntroOptionSelected();
 
     void resetHook() override;
+    void closeHook() override;
 
     // helper
     void updateSave();
