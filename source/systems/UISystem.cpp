@@ -361,12 +361,12 @@ void UISystem::registerScreen(UIScreen* screen)
     if (screen->isMain)
     {
         sassert(screenMainCount < 2,
-                "Too many screens registered. A maximum of 3 main screens and 2 sub screens can be registered.");
+                "Too many screens registered. A maximum of 2 main screens and 3 sub screens can be registered.");
     }
     else
     {
         sassert(screenSubCount < 3,
-                "Too many screens registered. A maximum of 3 main screens and 2 sub screens can be registered.");
+                "Too many screens registered. A maximum of 2 main screens and 3 sub screens can be registered.");
     }
 }
 
