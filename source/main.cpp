@@ -65,7 +65,7 @@ static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
 // TODO: figure out a way to unload after being copied to ram
 static unsigned int* loadCharacterTexture(const std::string& name)
 {
-    std::string basePath = fatBasePath + "models/makoto";
+    std::string basePath = fatBasePath + "models/makoto/";
     GraphicAsset asset = genericGraphics->loadGraphic(basePath + name);
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
     return tiles;
