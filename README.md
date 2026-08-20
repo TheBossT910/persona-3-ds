@@ -24,6 +24,52 @@ See [Installing the Game](https://docs.p3dual.com/guides/install-game/) for deta
 
 ---
 
+
+### Configure + Build Host Tests
+
+```bash
+cmake --preset host-debug
+cmake --build --preset build-host-tests
+ctest --preset test-host
+```
+
+### Configure + Build NDS ARM9 ELF
+
+```bash
+cmake --preset nds-debug
+cmake --build --preset build-nds-elf
+```
+
+### Build NDS ROM (`.nds`)
+
+```bash
+cmake --preset nds-release
+cmake --build --preset build-nds-rom
+```
+
+### Run Asset Pipeline via CMake
+
+```bash
+cmake --preset host-assets
+cmake --build --preset build-assets
+```
+
+### Package `sdcard.img` via CMake
+
+```bash
+cmake --preset nds-release
+cmake --build --preset build-nds-sdcard
+```
+
+### Notes
+
+- CMake now wires ARM9 ELF (`p3d_arm9_elf`) and ROM assembly (`p3d_nds_rom`) for NDS cross builds.
+- maxmod generation is still in migration progress (current CMake path expects generated maxmod artifacts to exist).
+- `make` remains the current ROM build path during migration.
+- Asset and packaging targets require external tools (`ffmpeg`, `grit`, and `mtools`).
+
+---
+
 ## Roadmap
 - See the [Project Board](https://github.com/orgs/p3d-project/projects/1) for current progress and open issues.
 - See the [Roadmap](https://docs.p3dual.com/roadmap/) document for progress on Milestones

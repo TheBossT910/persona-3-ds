@@ -145,13 +145,13 @@ jobs:
           path: ${{ github.workspace }}/build-version.txt
           retention-days: 1
 
-      # Print hit/miss stats after the build so cache effectiveness is visible
-      # in the Actions log without having to dig into ccache internals.
+      # Primary build path during migration: CMake presets.
+      # Print ccache stats after the build so cache effectiveness is visible
+      # in the Actions log.
       - name: Compile ROM
         run: |
-          export CC="ccache arm-none-eabi-gcc"
-          export CXX="ccache arm-none-eabi-g++"
-          make
+          cmake --preset nds-release
+          cmake --build --preset build-nds-sdcard -j"$(nproc)"
           ccache -s
 
       - name: Compress and Package Assets
@@ -219,3 +219,38 @@ jobs:
             persona-3-dual.nds
             sdcard.img.zip
             data.zip
+
+  build_make_fallback:
+    needs: lint
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    container:
+      image: ghcr.io/${{ github.repository }}/p3d-builder:latest
+      options: --user root
+
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      GIT_DIR: ${{ github.workspace }}/.git
+      HOME: /root
+
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: false
+          submodules: recursive
+
+      - name: Pull LFS files
+        run: git lfs pull
+
+      - name: Build ROM via Make (fallback)
+        run: make
+
+      - name: Validate fallback output
+        run: test -f persona-3-dual.nds

@@ -27,6 +27,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # git-lfs       – large file storage (LFS pointers resolved during CI checkout)
 # ccache        – compiler cache for faster rebuilds (CI manages cache via actions/cache)
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    cmake=3.28.3-1build7 \
     ffmpeg=7:6.1.1-3ubuntu5 \
     mtools=4.0.43-1build1 \
     libblas3=3.12.0-3build1.1 \

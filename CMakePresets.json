@@ -1,0 +1,157 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "host-debug",
+            "displayName": "Host Debug (tests on)",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/out/build/host-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "P3D_BUILD_TESTS": "ON",
+                "P3D_ENABLE_ASSETS": "OFF",
+                "P3D_ENABLE_SDCARD": "OFF",
+                "P3D_BUILD_NDS": "OFF"
+            }
+        },
+        {
+            "name": "host-assets",
+            "displayName": "Host Tools (assets+sdcard targets)",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/out/build/host-assets",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "P3D_BUILD_TESTS": "OFF",
+                "P3D_ENABLE_ASSETS": "ON",
+                "P3D_ENABLE_SDCARD": "ON",
+                "P3D_BUILD_NDS": "OFF"
+            }
+        },
+        {
+            "name": "nds-debug",
+            "displayName": "NDS ARM9 Debug",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/out/build/nds-debug",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "P3D_BUILD_TESTS": "OFF",
+                "P3D_ENABLE_ASSETS": "ON",
+                "P3D_ENABLE_SDCARD": "OFF",
+                "P3D_BUILD_NDS": "ON"
+            }
+        },
+        {
+            "name": "nds-release",
+            "displayName": "NDS ARM9 Release",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/out/build/nds-release",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "P3D_BUILD_TESTS": "OFF",
+                "P3D_ENABLE_ASSETS": "ON",
+                "P3D_ENABLE_SDCARD": "ON",
+                "P3D_BUILD_NDS": "ON"
+            }
+        },
+        {
+            "name": "default",
+            "displayName": "Default (NDS Release)",
+            "inherits": "nds-release"
+        },
+        {
+            "name": "aegis-host-debug",
+            "displayName": "Aegis Host Debug",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/out/build/aegis-host-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "P3D_BUILD_NDS": "OFF",
+                "P3D_BUILD_TESTS": "OFF",
+                "P3D_ENABLE_ASSETS": "OFF",
+                "P3D_ENABLE_SDCARD": "OFF",
+                "P3D_USE_BUNDLED_AEGIS": "ON",
+                "P3D_BUILD_AEGIS_TESTS": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-host-tests",
+            "configurePreset": "host-debug",
+            "targets": [
+                "p3d_tests"
+            ]
+        },
+        {
+            "name": "build-assets",
+            "configurePreset": "host-assets",
+            "targets": [
+                "p3d_assets"
+            ]
+        },
+        {
+            "name": "build-sdcard",
+            "configurePreset": "host-assets",
+            "targets": [
+                "p3d_sdcard_image"
+            ]
+        },
+        {
+            "name": "build-nds-elf",
+            "configurePreset": "nds-debug",
+            "targets": [
+                "p3d_arm9_elf"
+            ]
+        },
+        {
+            "name": "build-nds-rom",
+            "configurePreset": "nds-release",
+            "targets": [
+                "p3d_nds_rom"
+            ]
+        },
+        {
+            "name": "build-nds-sdcard",
+            "configurePreset": "nds-release",
+            "targets": [
+                "p3d_sdcard_image"
+            ]
+        },
+        {
+            "name": "default",
+            "displayName": "Default (NDS + sdcard)",
+            "inherits": "build-nds-sdcard"
+        },
+        {
+            "name": "build-aegis-tests",
+            "displayName": "Build Aegis Tests",
+            "configurePreset": "aegis-host-debug",
+            "targets": [
+                "aegis_headers_smoke"
+            ]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "test-host",
+            "configurePreset": "host-debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "test-aegis-host",
+            "configurePreset": "aegis-host-debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        }
+    ]
+}

@@ -52,5 +52,5 @@ sdcard.img
 sdcard.img.idx
 .venv/
 .idea/
-
+out/
 compile_commands.json
