@@ -73,6 +73,11 @@ class TextComponent : public ae::Component
     void appearTextSkip();
 
     /**
+     * @brief Stops the appearText animation immediately and clears the state.
+     */
+    void appearTextStop();
+
+    /**
      * @brief A wrapper for appearTextDone in TextSystem. Check if the text being rendered with appearText has finished appearing.
      * @return true if the text has finished appearing, false otherwise.
      * @see appearTextDone
