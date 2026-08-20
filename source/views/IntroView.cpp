@@ -75,14 +75,12 @@ void IntroView::init()
 
     std::string bgPath = "graphics/IntroView/backgrounds/";
     std::string spritePath = "graphics/IntroView/sprites/";
-    std::string suffix = "";
 
-    GraphicAsset silhouette =
-        graphics->loadGraphic(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
-    GraphicAsset room = graphics->loadGraphic(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
-    GraphicAsset sky = graphics->loadGraphic(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
-    GraphicAsset overlay = graphics->loadGraphic(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
-    GraphicAsset skySub = graphics->loadGraphic(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
+    GraphicAsset silhouette = graphics->loadGraphic(bgPath + "silhouetteBackground/silhouetteBackground");
+    GraphicAsset room = graphics->loadGraphic(bgPath + "roomBackground/roomBackground");
+    GraphicAsset sky = graphics->loadGraphic(bgPath + "skyBackground/skyBackground");
+    GraphicAsset overlay = graphics->loadGraphic(bgPath + "overlayBackground/overlayBackground");
+    GraphicAsset skySub = graphics->loadGraphic(bgPath + "skyBackgroundSub/skyBackgroundSub");
 
     GraphicAsset attribution = graphics->loadGraphic(bgPath + "attributionBackground/attributionBackground");
     GraphicAsset logoLeft = graphics->loadGraphic(spritePath + "logoSpriteLeft/logoSpriteLeft");
