@@ -1,6 +1,6 @@
-#include "Enemy.h"
-#include "../party/PartyMember.h"
-#include "../skills/BattleCalcs.h"
+#include "Enemy.hpp"
+#include "../party/PartyMember.hpp"
+#include "../skills/BattleCalcs.hpp"
 #include <stdlib.h>
 
 Enemy::Enemy(const EnemyProfile& iEnemyProfile) : enemyProfile(iEnemyProfile)

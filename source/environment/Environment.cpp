@@ -1,5 +1,5 @@
-#include "Environment.h"
-#include "core/globals.h"
+#include "Environment.hpp"
+#include "core/globals.hpp"
 #include <math.h>
 #include <nds.h>
 #include <stdio.h>

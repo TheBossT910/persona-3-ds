@@ -1,5 +1,5 @@
-#include "IntroView.h"
-#include "core/globals.h"
+#include "IntroView.hpp"
+#include "core/globals.hpp"
 #include <maxmod9.h>
 #include <nds.h>
 #include <stdio.h>

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "core/enums.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 #include <aegis/component.hpp>
 
 #include "managers/TextManager.hpp"

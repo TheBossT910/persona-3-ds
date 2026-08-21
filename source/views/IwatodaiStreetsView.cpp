@@ -1,4 +1,4 @@
-#include "IwatodaiStreetsView.h"
+#include "IwatodaiStreetsView.hpp"
 #include "events/BattleEvents.hpp"
 #include "events/GenericEvents.hpp"
 

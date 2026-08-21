@@ -1,8 +1,8 @@
 #include "MovementComponent.hpp"
-#include "core/globals.h"
+#include "core/globals.hpp"
 
 // TODO: remove hardcoded model references
-#include "models/makoto.h"
+#include "models/makoto.hpp"
 
 // TODO: decouple camera with movement (so that movement can be used by other entities) (make a seperate component?)
 // TODO: decouple animation controller with movement (make a seperate component?)

@@ -1,6 +1,6 @@
-#include "SignContractView.h"
-#include "core/enums.h"
-#include "core/globals.h"
+#include "SignContractView.hpp"
+#include "core/enums.hpp"
+#include "core/globals.hpp"
 #include "events/SaveEvents.hpp"
 
 #include <cstring>

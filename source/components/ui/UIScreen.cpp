@@ -1,4 +1,4 @@
-#include "UIScreen.h"
+#include "UIScreen.hpp"
 
 void UIScreen::renderSprites()
 {

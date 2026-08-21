@@ -1,8 +1,8 @@
 #include "BattleSystem.hpp"
-#include "./battleActions/skills/BattleCalcs.h"
+#include "./battleActions/skills/BattleCalcs.hpp"
 
-#include "./helpers/random.h"
-#include "core/globals.h"
+#include "./helpers/random.hpp"
+#include "core/globals.hpp"
 #include <cstdlib>
 #include <ctime>
 

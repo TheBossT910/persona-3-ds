@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "core/enums.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 #include "managers/IOManager.hpp"
 #include <aegis/component.hpp>
 #include <etl/vector.h>

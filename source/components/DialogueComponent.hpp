@@ -7,8 +7,8 @@
 #pragma once
 
 #include "components/TextComponent.hpp"
-#include "core/enums.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 #include <aegis/component.hpp>
 
 class DialogueComponent : public ae::Component
