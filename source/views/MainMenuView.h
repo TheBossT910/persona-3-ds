@@ -11,7 +11,6 @@
 class MainMenuView : public BaseView
 {
   private:
-    PrintConsole console;
     MainMenuComponent* mainMenuCmpt = nullptr;
     int bg[3];
 
