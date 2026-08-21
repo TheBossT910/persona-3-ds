@@ -1,5 +1,5 @@
-#include "PartyMember.h"
-#include "../skills/BattleCalcs.h"
+#include "PartyMember.hpp"
+#include "../skills/BattleCalcs.hpp"
 
 PartyMember::PartyMember(const CharacterProfile& iCharacterProfile) : characterProfile(iCharacterProfile)
 

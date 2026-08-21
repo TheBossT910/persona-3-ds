@@ -79,9 +79,9 @@ FONT_FNT_FILES   := $(shell find $(CURDIR)/assets/fonts -type f -name '*.fnt' 2>
 DIALOGUE_OUT    := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
 MUSIC_OUT       := $(patsubst $(ASSETS_MUSIC)/%.mp3,$(DATA_MUSIC)/%.pcm,$(MP3_FILES))
 VIDEO_OUT       := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
-JMAP_OUT        := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
+JMAP_OUT        := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.hpp)
 
-MODEL_OUT       := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
+MODEL_OUT       := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.hpp)))
 
 # Environments are now built entirely into .bin files by obj2environment.py
 # and integrated into source/data/environmentDb.cpp, no .h headers needed
@@ -134,19 +134,19 @@ environments: $(ENVIRONMENT_OUT)
 #---------------------------------------------------------------------------------
 # MODELS: Appended /$* to force output into a specific subdirectory
 #---------------------------------------------------------------------------------
-$(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
+$(CURDIR)/source/models/%.hpp: $(ASSETS_MODELS)/%/$$*.json \
 		$$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
 		$$(wildcard $(ASSETS_MODELS)/$$*.build.json)
 	@echo "  MODEL $*"
 	@mkdir -p $(dir $@) $(CURDIR)/data/models/$*
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/models/$*/$*.bin"
-	@mv $(CURDIR)/data/models/$*/$*.h $@
+	@mv $(CURDIR)/data/models/$*/$*.hpp $@
 	@touch $@
 models: $(MODEL_OUT)
 
 # Jmaps
 #---------------------------------------------------------------------------------
-$(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.jmap
+$(CURDIR)/source/maps/%.hpp: $(ASSETS_MAPS)/%.jmap
 	@echo "  JMAP  $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$@"
@@ -248,7 +248,7 @@ clean: clean-assets
 clean-assets:
 	@echo "  CLEAN   assets"
 	$(V)$(RM) $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) \
-	          $(CURDIR)/source/dialogue/*_dialogue.h
+	          $(CURDIR)/source/dialogue/*_dialogue.hpp
 	$(V)$(RM) $(CURDIR)/data/models/* $(CURDIR)/data/graphics/* $(CURDIR)/data/fonts/* $(CURDIR)/data/environments/*
 	$(V)$(RM) sdcard.img sdcard.img.idx
 

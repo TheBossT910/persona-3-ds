@@ -1,4 +1,4 @@
-#include "MenuHUDScreen.h"
+#include "MenuHUDScreen.hpp"
 
 MenuHUDScreen* MenuHUDScreen::instance = nullptr;
 

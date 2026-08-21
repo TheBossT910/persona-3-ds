@@ -1,10 +1,10 @@
-#include "EnvironmentView.h"
-#include "core/globals.h"
+#include "EnvironmentView.hpp"
+#include "core/globals.hpp"
 #include <nds.h>
 #include <string>
 
 // model
-#include "models/makoto.h"
+#include "models/makoto.hpp"
 
 #include "systems/BattleSystem.hpp"
 

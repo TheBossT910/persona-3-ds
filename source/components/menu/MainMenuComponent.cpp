@@ -1,5 +1,5 @@
-#include "MainMenuComponent.h"
-#include "core/globals.h"
+#include "MainMenuComponent.hpp"
+#include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
 #include "events/SaveEvents.hpp"
 #include <string>
