@@ -8,6 +8,7 @@ void CameraSystem::on_receive(const Event::ConfigureCamera& config)
     currentPos = config.eye;
     targetPos = config.target;
     angle = config.initialAngle;
+    isRotationLocked = config.isRotationLocked;
     distance = config.distance;
     height = config.height;
     lookAhead = config.lookAhead;
@@ -104,10 +105,15 @@ void CameraSystem::Update(ae::fixed_t)
 
     case CameraMode::Follow:
     {
-        if (systemKeysHeld & KEY_L)
+        if (!isRotationLocked && (systemKeysHeld & KEY_L))
+        {
             angle -= angleIncrement;
-        if (systemKeysHeld & KEY_R)
+        }
+
+        if (!isRotationLocked && (systemKeysHeld & KEY_R))
+        {
             angle += angleIncrement;
+        }
 
         camPos.eye.x = charPos.x + math.sin(angle) * distance;
         camPos.eye.y = charPos.y + height;
@@ -129,10 +135,15 @@ void CameraSystem::Update(ae::fixed_t)
             freeInitialised = true;
         }
 
-        if (systemKeysHeld & KEY_L)
+        if (!isRotationLocked && (systemKeysHeld & KEY_L))
+        {
             angle -= angleIncrement;
-        if (systemKeysHeld & KEY_R)
+        }
+
+        if (!isRotationLocked && (systemKeysHeld & KEY_R))
+        {
             angle += angleIncrement;
+        }
 
         const float fwdX = -math.sin(angle) * freeCameraSpeed;
         const float fwdZ = math.cos(angle) * freeCameraSpeed;

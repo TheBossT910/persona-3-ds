@@ -127,13 +127,9 @@ enum class DigitSprite
 enum class DialogueSprite
 {
     NAME_TAG = 0,
-    NAME_TAG_FEMC,
     CALENDAR,
-    CALENDAR_FEMC,
     TEXT_CORNER,
-    TEXT_CORNER_FEMC,
     TEXT_MIDDLE,
-    TEXT_MIDDLE_FEMC,
 };
 
 enum class TileType
@@ -201,7 +197,6 @@ enum class SettingIntroOptions
 enum class SettingOptions
 {
     CHANGE_INTRO_VIDEO = 0,
-    FEMC_MODE
 };
 
 enum class BattleMenuOptions

@@ -74,8 +74,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      * This function dynamically allocates the active combat entities (Player,
      * PartyMember, and Enemy objects) based on the profiles provided in the
      * message payload. It then resets all internal state machine variables, clears
-     * any pending UI alerts, and evaluates the save data to load the appropriate
-     * background music (e.g., FEMC mode track selection).
+     * any pending UI alerts
      *
      * Finally, it calculates the initial turn order based on the battleStartCondition
      * and advances the state machine to the first participant's initial phase.

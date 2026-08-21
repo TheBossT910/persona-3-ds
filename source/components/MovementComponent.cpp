@@ -2,7 +2,6 @@
 #include "core/globals.h"
 
 // TODO: remove hardcoded model references
-#include "models/kotone.h"
 #include "models/makoto.h"
 
 // TODO: decouple camera with movement (so that movement can be used by other entities) (make a seperate component?)
@@ -11,9 +10,8 @@
 void MovementComponent::Init()
 {
     isActive = false;
-    walkAnim =
-        saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION_0002 : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION_0002;
-    idleAnim = saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION;
+    walkAnim = (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION_0002;
+    idleAnim = (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION;
 }
 
 void MovementComponent::Destroy()
