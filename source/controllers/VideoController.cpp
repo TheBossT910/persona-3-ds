@@ -1,5 +1,5 @@
-#include "VideoController.h"
-#include "core/globals.h"
+#include "VideoController.hpp"
+#include "core/globals.hpp"
 #include <malloc.h>
 #include <nds.h>
 #include <stdio.h>

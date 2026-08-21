@@ -1,12 +1,12 @@
-#include "PauseMenuComponent.h"
-#include "core/globals.h"
+#include "PauseMenuComponent.hpp"
+#include "core/globals.hpp"
 #include <nds.h>
 #include <string>
 
 // sfx
 #include "soundbank.h"
 // dialogue
-#include "dialogue/demo_dialogue.h"
+#include "dialogue/demo_dialogue.hpp"
 
 PauseMenuComponent* PauseMenuComponent::instance = nullptr;
 

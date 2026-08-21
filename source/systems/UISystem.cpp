@@ -1,5 +1,5 @@
 #include "UISystem.hpp"
-#include "core/globals.h"
+#include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
 
 void UISystem::Init()

@@ -1,4 +1,4 @@
-#include "BattleCalcs.h"
+#include "BattleCalcs.hpp"
 
 u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
 {

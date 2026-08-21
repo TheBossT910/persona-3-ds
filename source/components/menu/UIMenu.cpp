@@ -1,4 +1,4 @@
-#include "UIMenu.h"
+#include "UIMenu.hpp"
 
 void UIMenu::resetMenu()
 {
