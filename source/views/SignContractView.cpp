@@ -160,7 +160,7 @@ ViewState SignContractView::update()
         {
             isLastName = false;
             text->clearScreen();
-            animText = "Enter your last name";
+            animText = "Enter your first name";
             displayText = saveData.firstName;
         }
         else if (!isNameConfirmed)
@@ -168,8 +168,9 @@ ViewState SignContractView::update()
             isNameConfirmed = true;
             text->clearScreen();
             animText = "Confirm your name?";
-            displayText = saveData.firstName;
-            text->drawText(saveData.lastName, 0, FONT_SIZE);
+
+            std::string op = "\n";
+            displayText = saveData.lastName + op + saveData.firstName;
         }
         else
         {
