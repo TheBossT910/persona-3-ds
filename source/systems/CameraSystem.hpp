@@ -11,16 +11,16 @@
 
 #pragma once
 
-#include "core/enums.h"
+#include "core/enums.hpp"
 #include "core/routerIDs.hpp"
 #include "events/CameraEvents.hpp"
 #include "events/GenericEvents.hpp"
 #include "managers/MathManager.hpp"
 #include <aegis/system.hpp>
 
-#include "core/enums.h"
-#include "core/geometry.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/geometry.hpp"
+#include "core/structs.hpp"
 #include <etl/vector.h>
 
 // !Todo replace floats with fixed point math for camera position and target position.
@@ -29,7 +29,9 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
                                              Event::ConfigureCamera,
                                              Event::SetCameraMode,
                                              Event::SetCameraPath,
-                                             Event::SetCharacterPosition>,
+                                             Event::SetCharacterPosition,
+                                             Event::StartCamera,
+                                             Event::StopCamera>,
                      public ae::Singleton<CameraSystem>
 {
   public:
@@ -84,6 +86,20 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      * @param msg The event payload containing the pointer to CharacterPosition
      */
     void on_receive(const Event::SetCharacterPosition& msg);
+
+    /**
+     * @brief ETL message handler to make the Camera active
+     *
+     * @param msg The event payload (unused)
+     */
+    void on_receive(const Event::StartCamera& msg);
+
+    /**
+     * @brief ETL message handler to disable the Camera
+     *
+     * @param msg The event payload (unused)
+     */
+    void on_receive(const Event::StopCamera& msg);
 
     /**
      * @brief Fallback handler for unhandled ETL messages.
@@ -166,6 +182,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
     float lookAhead = 0.5f;
     float angleIncrement = 0.05f;
     float freeCameraSpeed = 0.02f;
+    bool isRotationLocked = false;
 
     // Path playback state
     const CameraPath* path = nullptr;

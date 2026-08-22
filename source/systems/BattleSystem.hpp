@@ -6,14 +6,15 @@
 
 #pragma once
 
-#include "core/enums.h"
+#include "components/TextComponent.hpp"
+#include "core/enums.hpp"
 #include "core/routerIDs.hpp"
 #include "events/BattleEvents.hpp"
 #include "events/GenericEvents.hpp"
 #include <aegis/system.hpp>
 
-#include "components/menu/BattleMenuComponent.h"
-#include "controllers/MusicController.h"
+#include "components/menu/BattleMenuComponent.hpp"
+#include "controllers/MusicController.hpp"
 
 #include <algorithm>
 #include <array>
@@ -21,20 +22,20 @@
 #include <nds.h>
 #include <string>
 
-#include "./battleActions/actions/AttackAction.h"
-#include "./battleActions/actions/Guard.h"
-#include "./battleActions/actions/PersonaAction.h"
-#include "./battleActions/actions/SwitchPersona.h"
+#include "./battleActions/actions/AttackAction.hpp"
+#include "./battleActions/actions/Guard.hpp"
+#include "./battleActions/actions/PersonaAction.hpp"
+#include "./battleActions/actions/SwitchPersona.hpp"
 
-#include "./battleActions/BattleParticipant.h"
-#include "./battleActions/BattlePhase.h"
-#include "./battleActions/BattleStartCondition.h"
-#include "./battleActions/TurnResult.h"
-#include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/enemies/EnemyProfileDb.h"
-#include "./battleActions/party/CharacterProfileDb.h"
-#include "./battleActions/party/PartyMember.h"
-#include "./battleActions/party/Player.h"
+#include "./battleActions/BattleParticipant.hpp"
+#include "./battleActions/BattlePhase.hpp"
+#include "./battleActions/BattleStartCondition.hpp"
+#include "./battleActions/TurnResult.hpp"
+#include "./battleActions/enemies/Enemy.hpp"
+#include "./battleActions/enemies/EnemyProfileDb.hpp"
+#include "./battleActions/party/CharacterProfileDb.hpp"
+#include "./battleActions/party/PartyMember.hpp"
+#include "./battleActions/party/Player.hpp"
 
 // TODO: check for dead code/unfeasible paths
 class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>, public ae::Singleton<BattleSystem>
@@ -73,8 +74,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      * This function dynamically allocates the active combat entities (Player,
      * PartyMember, and Enemy objects) based on the profiles provided in the
      * message payload. It then resets all internal state machine variables, clears
-     * any pending UI alerts, and evaluates the save data to load the appropriate
-     * background music (e.g., FEMC mode track selection).
+     * any pending UI alerts
      *
      * Finally, it calculates the initial turn order based on the battleStartCondition
      * and advances the state machine to the first participant's initial phase.
@@ -82,16 +82,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      * @param msg The event payload containing the character/enemy profiles and encounter conditions.
      */
     void on_receive(const Event::ExecuteBattle& msg);
-
-    /**
-     * @brief ETL message handler to configure the sub-screen text buffer.
-     *
-     * @details Receives a pointer to the hardware video buffer and stores it
-     * so the BattleSystem can render text to the sub screen.
-     *
-     * @param msg The event payload containing the video buffer pointer.
-     */
-    void on_receive(const Event::SetTextVideoBufferSub& msg);
 
     /**
      * @brief Fallback handler for unhandled ETL messages.
@@ -116,8 +106,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     static constexpr u32 ACTION_PERSONA = 2;
     static constexpr u32 ACTION_SWITCH = 3;
 
-    uint16_t* textVideoBufferSub;
-
     u32 turnsTaken = 0;
 
     BattlePhase phase;
@@ -126,7 +114,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     BattleParticipant* currentParticipantTurn = nullptr;
     u32 currentParticipantIndex = 0;
 
-    int menuIndex = 0;
+    int selectedBattleOption = -1;
     Skill* selectedSkill = nullptr;
 
     bool pendingPersonaSwitch = false;

@@ -1,4 +1,4 @@
-#include "MusicController.h"
+#include "MusicController.hpp"
 #include <malloc.h>
 #include <nds.h>
 #include <string.h>

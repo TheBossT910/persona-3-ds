@@ -6,11 +6,10 @@
 
 #pragma once
 
-#include "core/enums.h"
-#include "core/structs.h"
+#include "components/TextComponent.hpp"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 #include <aegis/component.hpp>
-
-#include "controllers/TextController.h"
 
 class DialogueComponent : public ae::Component
 {
@@ -92,7 +91,5 @@ class DialogueComponent : public ae::Component
 
     u32 prevKeys = 0;
 
-    TextController* textCtrl = TextController::getInstance();
-    uint16_t* textVideoBufferSub = nullptr;
-    Font* font = nullptr;
+    TextComponent* text;
 };

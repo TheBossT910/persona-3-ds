@@ -6,9 +6,9 @@
  */
 
 #pragma once
-#include "core/enums.h"
-#include "core/geometry.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/geometry.hpp"
+#include "core/structs.hpp"
 #include <aegis/aegis.hpp>
 
 namespace Event
@@ -38,11 +38,12 @@ struct ConfigureCamera : public etl::message<EventID::ConfigureCamera>
     Vec3<float> target = {}; ///< Look-at point. Used by Static only.
 
     // Follow / Free
-    float initialAngle = 0.0f;    ///< Starting orbit angle in radians.
-    float distance = 1.5f;        ///< Distance from character to camera eye.
-    float height = 0.6f;          ///< Eye height above the character origin.
-    float lookAhead = 0.5f;       ///< Distance ahead of the character for the look-at point.
-    float angleIncrement = 0.05f; ///< Radians rotated per frame on L/R input.
+    float initialAngle = 0.0f;     ///< Starting orbit angle in radians.
+    float distance = 1.5f;         ///< Distance from character to camera eye.
+    float height = 0.6f;           ///< Eye height above the character origin.
+    float lookAhead = 0.5f;        ///< Distance ahead of the character for the look-at point.
+    float angleIncrement = 0.05f;  ///< Radians rotated per frame on L/R input.
+    bool isRotationLocked = false; ///< Disable camera angle rotation on L/R input.
 };
 
 /**
@@ -65,5 +66,19 @@ struct SetCameraPath : public etl::message<EventID::SetCameraPath>
     SetCameraPath(CameraPath* iPath) : path(iPath)
     {
     }
+};
+
+/**
+ * @brief Activates the CameraSystem update loop
+ */
+struct StartCamera : public etl::message<EventID::StartCamera>
+{
+};
+
+/**
+ * @brief Deactivates the CameraSystem update loop
+ */
+struct StopCamera : public etl::message<EventID::StopCamera>
+{
 };
 } // namespace Event

@@ -1,4 +1,4 @@
-#include "data/spriteDb.h"
+#include "data/spriteDb.hpp"
 
 static const SpriteDBEntry SPRITE_DB_ENTRY[] = {
     {SpriteType::MOON, static_cast<int>(MoonSprite::MOON_0), "moon-0"},
@@ -77,13 +77,9 @@ static const SpriteDBEntry SPRITE_DB_ENTRY[] = {
 
     // Dialogue
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::NAME_TAG), "nameTag"},
-    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::NAME_TAG_FEMC), "nameTagFEMC"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CALENDAR), "calendar"},
-    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CALENDAR_FEMC), "calendarFEMC"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_CORNER), "textCorner"},
-    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_CORNER_FEMC), "textCornerFEMC"},
-    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_MIDDLE), "textMiddle"},
-    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_MIDDLE_FEMC), "textMiddleFEMC"}};
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_MIDDLE), "textMiddle"}};
 
 static const int SPRITE_DB_ENTRY_LEN = sizeof(SPRITE_DB_ENTRY) / sizeof(SPRITE_DB_ENTRY[0]);
 

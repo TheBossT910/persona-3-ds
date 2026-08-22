@@ -1,7 +1,9 @@
-#include "SignContractView.h"
-#include "controllers/SaveController.h"
-#include "core/enums.h"
-#include "core/globals.h"
+#include "SignContractView.hpp"
+#include "core/enums.hpp"
+#include "core/globals.hpp"
+#include "events/SaveEvents.hpp"
+
+#include <cstring>
 #include <nds.h>
 #include <stdio.h>
 
@@ -17,6 +19,16 @@ void SignContractView::cancelSFX()
 
 void SignContractView::init()
 {
+    if (signContract == nullptr)
+    {
+        signContract = engine.CreateEntity();
+        graphics = engine.CreateComponent<GraphicsComponent>();
+        text = engine.CreateComponent<TextComponent>();
+
+        signContract->AddComponent(graphics);
+        signContract->AddComponent(text);
+    }
+
     // set both screens to black
     setBrightness(3, -16);
 
@@ -27,7 +39,7 @@ void SignContractView::init()
     musicCtrl->init((fatBasePath + "music/menus/contract/mistic.pcm").c_str(), 1.998f, 49.959f);
 
     videoSetMode(MODE_5_2D);
-    videoSetModeSub(MODE_0_2D);
+    videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
     // map vram banks to main engine background
     vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -43,42 +55,38 @@ void SignContractView::init()
     bgSetPriority(bg[0], 0);
 
     // load contract background from runtime assets
-    GraphicAsset contractBg =
-        graphicsCtrl->loadGrit(fatBasePath + "graphics/SignContractView/backgrounds/contract/contract");
+    GraphicAsset contractBg = graphics->loadGraphic("graphics/SignContractView/backgrounds/contract/contract");
 
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
-    if (contractBg.tiles)
-        dmaCopy(contractBg.tiles, bgGetGfxPtr(bg[0]), contractBg.tilesLen);
-    if (contractBg.map)
-        dmaCopy(contractBg.map, bgGetMapPtr(bg[0]), contractBg.mapLen);
+    dmaCopy(contractBg.tiles, bgGetGfxPtr(bg[0]), contractBg.tilesLen);
+    dmaCopy(contractBg.map, bgGetMapPtr(bg[0]), contractBg.mapLen);
 
     vramSetBankE(VRAM_E_LCD);
-    if (contractBg.pal)
-        dmaCopy(contractBg.pal, &VRAM_E_EXT_PALETTE[0][0], contractBg.palLen);
+    dmaCopy(contractBg.pal, &VRAM_E_EXT_PALETTE[0][0], contractBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
-    graphicsCtrl->unloadGrit(contractBg);
+    graphics->unloadGraphic(contractBg);
 
-    // setup console
-    consoleInit(&animatedConsole, 0, BgType_Text4bpp, BgSize_T_256x256, 5, 3, false, true);
-    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
+    // setup text
+    int bgTextSub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 4, 0);
+    uint16_t* textVideoBufferSub = bgGetGfxPtr(bgTextSub);
+    text->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     keyboardInit(keyboardGetDefault(), 2, BgType_Text4bpp, BgSize_T_256x512, 3, 1, false, true);
 
-    bgSetPriority(animatedConsole.bgId, 0);
-    bgSetPriority(console.bgId, 1);
+    bgSetPriority(bgTextSub, 0);
     bgSetPriority(keyboardGetDefault()->background, 2);
 
     keyboardShow();
 
-    consoleSelect(&animatedConsole);
-    printf("\x1b[11;6HEnter your last name");
-    printf("\x1b[0;0H%s", saveData.lastName);
-    consoleSelect(&console);
+    animText = "Enter your last name";
+    displayText = saveData.lastName;
 
-    // setup animated text
-    REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 | BLEND_DST_BACKDROP;
-    REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
+    firstNameIndex = std::strlen(saveData.firstName);
+    lastNameIndex = std::strlen(saveData.lastName);
+
+    text->drawText(displayText, 0, 0);
+    text->drawText(animText, 88, 48, TextColor::White);
 
     // transition both screens from black
     for (int i = -16; i < 0; i++)
@@ -111,7 +119,9 @@ ViewState SignContractView::update()
             {
                 saveData.lastName[lastNameIndex - 1] = '\0';
                 lastNameIndex--;
-                printf("%c", key);
+
+                text->clearArea(0, 0, 256, FONT_SIZE);
+                displayText = saveData.lastName;
             }
         }
         else if (!isLastName && !isNameConfirmed)
@@ -119,35 +129,24 @@ ViewState SignContractView::update()
             if (saveData.firstName[0] == '\0')
             {
                 isLastName = true;
-                consoleSelect(&console);
-                consoleClear();
-
-                consoleSelect(&animatedConsole);
-                consoleClear();
-                printf("\x1b[11;6HEnter your last name");
-
-                consoleSelect(&console);
-                printf("\x1b[0;0H%s", saveData.lastName);
+                animText = "Enter your last name";
+                displayText = saveData.lastName;
             }
             else
             {
                 saveData.firstName[firstNameIndex - 1] = '\0';
                 firstNameIndex--;
-                printf("%c", key);
+                text->clearArea(0, 0, 256, FONT_SIZE);
+                displayText = saveData.firstName;
             }
         }
         else
         {
             isNameConfirmed = false;
-            consoleSelect(&console);
-            consoleClear();
+            text->clearScreen();
 
-            consoleSelect(&animatedConsole);
-            consoleClear();
-            printf("\x1b[11;6HEnter your first name");
-
-            consoleSelect(&console);
-            printf("\x1b[0;0H%s", saveData.firstName);
+            animText = "Enter your first name";
+            displayText = saveData.firstName;
         }
     }
     // Return (10) or "A"
@@ -160,30 +159,18 @@ ViewState SignContractView::update()
         if (isLastName)
         {
             isLastName = false;
-            consoleSelect(&console);
-            consoleClear();
-
-            consoleSelect(&animatedConsole);
-            consoleClear();
-            printf("\x1b[11;5HEnter your first name");
-
-            consoleSelect(&console);
-            printf("\x1b[0;0H%s", saveData.firstName);
+            text->clearScreen();
+            animText = "Enter your first name";
+            displayText = saveData.firstName;
         }
         else if (!isNameConfirmed)
         {
             isNameConfirmed = true;
-            consoleSelect(&console);
-            consoleClear();
+            text->clearScreen();
+            animText = "Confirm your name?";
 
-            consoleSelect(&animatedConsole);
-            consoleClear();
-            printf("\x1b[11;7HConfirm your name?");
-
-            consoleSelect(&console);
-
-            printf("\x1b[0;0H%s,", saveData.lastName);
-            printf("\x1b[1;0H%s", saveData.firstName);
+            std::string op = "\n";
+            displayText = saveData.lastName + op + saveData.firstName;
         }
         else
         {
@@ -216,39 +203,31 @@ ViewState SignContractView::update()
             saveData.lastName[lastNameIndex] = key;
             saveData.lastName[lastNameIndex + 1] = '\0';
             lastNameIndex++;
+            displayText = saveData.lastName;
         }
         else if (!isLastName && !isNameConfirmed && (firstNameIndex < 31))
         {
             saveData.firstName[firstNameIndex] = key;
             saveData.firstName[firstNameIndex + 1] = '\0';
             firstNameIndex++;
+            displayText = saveData.firstName;
         }
-
-        printf("%c", key);
     }
 
-    // animate text
-    durationCounter++;
-    if (durationCounter >= duration)
+    // draw text
+    text->drawText(displayText, 0, 0);
+
+    // blink text
+    if (animText.length() != 0)
     {
-        durationCounter = 0;
-        textAlpha += textAlphaDirection;
-
-        // start fading out
-        if (textAlpha >= 16)
+        if (frame % 120 < 60)
         {
-            textAlpha = 16;
-            textAlphaDirection = -1;
+            text->drawText(animText, 88, 48, 2);
         }
-        // start fading in
-        else if (textAlpha <= 0)
+        else
         {
-            textAlpha = 0;
-            textAlphaDirection = 1;
+            text->clearArea(0, 48, 256, FONT_SIZE);
         }
-
-        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 | BLEND_DST_BACKDROP;
-        REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
     }
 
     musicCtrl->update();
@@ -257,16 +236,25 @@ ViewState SignContractView::update()
 
 void SignContractView::cleanup()
 {
-    // update save data (names)
-    if (!SaveController::getInstance()->write())
+    if (graphics != nullptr)
     {
-        consoleDemoInit();
-        printf("Failed to write save data!\n");
-        while (1)
-        {
-            swiWaitForVBlank();
-        }
+        graphics->unloadAll();
     }
+
+    if (signContract != nullptr)
+    {
+        signContract->RemoveComponent<GraphicsComponent>();
+        signContract->RemoveComponent<TextComponent>();
+
+        engine.DestroyEntity(signContract);
+
+        signContract = nullptr;
+        graphics = nullptr;
+        text = nullptr;
+    }
+
+    // update save data (names)
+    ae::BroadcastEvent(Event::WriteSave{});
     musicCtrl->cleanup();
     BaseView::cleanup();
 }

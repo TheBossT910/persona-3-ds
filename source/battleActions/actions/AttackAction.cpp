@@ -1,5 +1,5 @@
-#include "AttackAction.h"
-#include "./battleActions/skills/BattleCalcs.h"
+#include "AttackAction.hpp"
+#include "./battleActions/skills/BattleCalcs.hpp"
 #include <stdlib.h>
 
 //ignore skill here

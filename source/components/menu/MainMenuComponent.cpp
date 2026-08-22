@@ -1,17 +1,48 @@
-#include "MainMenuComponent.h"
-#include "controllers/SaveController.h"
-#include "core/globals.h"
+#include "MainMenuComponent.hpp"
+#include "core/globals.hpp"
+#include "events/GenericEvents.hpp"
+#include "events/SaveEvents.hpp"
 #include <string>
 
-void MainMenuComponent::init(int iBgSlot,
-                             bool* isActive,
-                             uint16_t* iTextVideoBuffer,
-                             uint16_t* iTextVideoBufferSub,
-                             const std::string& iPauseMessage)
+MainMenuComponent* MainMenuComponent::instance = nullptr;
+
+void MainMenuComponent::create()
 {
-    BaseMenu::init(iBgSlot, isActive, iTextVideoBuffer, iTextVideoBufferSub, iPauseMessage);
+    if (instance == nullptr)
+    {
+        instance = new MainMenuComponent();
+    }
+}
+
+void MainMenuComponent::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+MainMenuComponent* MainMenuComponent::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
+void MainMenuComponent::resetHook()
+{
+    pauseMessage = "";
     options = mainMenuOptions;
     optionCount = MAIN_MENU_OPTIONS;
+}
+
+void MainMenuComponent::closeHook()
+{
+    resetMenu();
+    ae::BroadcastEvent(Event::SwitchView{ViewState::INTRO});
 }
 
 // option handlers
@@ -77,11 +108,7 @@ ViewState MainMenuComponent::settingOptionSelected()
         changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
         selectedView = ViewState::KEEP_CURRENT;
         break;
-    case SettingOptions::FEMC_MODE:
-        saveData.femcMode = !saveData.femcMode;
-        updateSave();
-        selectedView = ViewState::KEEP_CURRENT;
-        break;
+
     default:
         selectedView = ViewState::KEEP_CURRENT;
     }
@@ -115,13 +142,5 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
 
 void MainMenuComponent::updateSave()
 {
-    if (!SaveController::getInstance()->write())
-    {
-        consoleDemoInit();
-        printf("Failed to write save data!\n");
-        while (1)
-        {
-            swiWaitForVBlank();
-        }
-    }
+    ae::BroadcastEvent(Event::WriteSave{});
 }

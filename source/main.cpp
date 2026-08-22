@@ -7,45 +7,43 @@
 #include <stdlib.h>
 #include <string>
 
-#include "core/enums.h"
+#include "core/enums.hpp"
 
 // states
-#include "views/BaseView.h"
-#include "views/DisclaimerView.h"
-#include "views/IntroView.h"
-#include "views/IwatodaiDormView.h"
-#include "views/IwatodaiStreetsView.h"
-#include "views/MainMenuView.h"
-#include "views/PaulowniaMallView.h"
-#include "views/SignContractView.h"
-#include "views/StationView.h"
-#include "views/VideoView.h"
-
-// controllers
-#include "controllers/SaveController.h"
+#include "views/BaseView.hpp"
+#include "views/DisclaimerView.hpp"
+#include "views/IntroView.hpp"
+#include "views/IwatodaiDormView.hpp"
+#include "views/IwatodaiStreetsView.hpp"
+#include "views/MainMenuView.hpp"
+#include "views/PaulowniaMallView.hpp"
+#include "views/SignContractView.hpp"
+#include "views/StationView.hpp"
+#include "views/VideoView.hpp"
 
 // components
-#include "components/ui/MenuHUDScreen.h"
+#include "components/ui/MenuHUDScreen.hpp"
 
 // sfx
 #include "soundbank_bin.h"
 
 // character models
-#include "models/kotone.h"
-#include "models/makoto.h"
+#include "models/makoto.hpp"
 
 // DBs
-#include "battleActions/armours/ArmourDb.h"
-#include "battleActions/enemies/EnemyProfileDb.h"
-#include "battleActions/party/CharacterProfileDb.h"
-#include "battleActions/personas/PersonaDb.h"
-#include "battleActions/shoes/ShoeDb.h"
-#include "battleActions/skills/SkillDb.h"
-#include "battleActions/weapons/WeaponDb.h"
+#include "battleActions/armours/ArmourDb.hpp"
+#include "battleActions/enemies/EnemyProfileDb.hpp"
+#include "battleActions/party/CharacterProfileDb.hpp"
+#include "battleActions/personas/PersonaDb.hpp"
+#include "battleActions/shoes/ShoeDb.hpp"
+#include "battleActions/skills/SkillDb.hpp"
+#include "battleActions/weapons/WeaponDb.hpp"
 
 // game engine
 GameEngine engine;
 ae::Entity* player;
+ae::Entity* generic;
+GraphicsComponent* genericGraphics;
 
 // variables
 volatile int frame = 0;
@@ -55,25 +53,23 @@ int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
 Save saveData;
+ViewState nextView = ViewState::DEFAULT;
+
+BaseView* currentView = nullptr;
 
 // models
 unsigned int** bitmapsCharacter = nullptr;
 
-static unsigned int* bitmapsKotone[MODEL_KOTONE_TEX_COUNT] = {nullptr};
 static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
 
 // TODO: figure out a way to unload after being copied to ram
-static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
+static unsigned int* loadCharacterTexture(const std::string& name)
 {
-    std::string basePath = fatBasePath + "models/" + (isFemc ? "kotone/" : "makoto/");
-    GraphicAsset asset = GraphicsController::getInstance()->loadGrit(basePath + name);
+    std::string basePath = fatBasePath + "models/makoto/";
+    GraphicAsset asset = genericGraphics->loadGraphic(basePath + name);
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
-    // GraphicsController::getInstance()->unloadGrit(asset);
     return tiles;
 }
-
-BaseView* currentView = nullptr;
-bool prevFemcMode;
 
 void SwitchView(BaseView* newView)
 {
@@ -100,33 +96,20 @@ void Vblank()
     frame = frame + 1;
 }
 
-void loadModels(bool isFemc)
+void loadModels()
 {
-    // Kotone
-    if (isFemc)
-    {
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_0] = loadCharacterTexture("kotone_texture_0", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_1] = loadCharacterTexture("kotone_texture_1", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_2] = loadCharacterTexture("kotone_texture_2", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_3] = loadCharacterTexture("kotone_texture_3", true);
-        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_4] = loadCharacterTexture("kotone_texture_4", true);
-
-        bitmapsCharacter = bitmapsKotone;
-    }
     // Makoto
-    else
-    {
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3", false);
-        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4", false);
 
-        bitmapsCharacter = bitmapsMakoto;
-    }
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3");
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4");
+
+    bitmapsCharacter = bitmapsMakoto;
 }
 
-// TODO: add javadoc
+// TODO: add doxyen docs
 void NDSPollInputCallback()
 {
     scanKeys();
@@ -134,7 +117,7 @@ void NDSPollInputCallback()
     systemKeysHeld = keysHeld();
 }
 
-// TODO: add javadoc
+// TODO: add doxyen docs
 void NDSComputeCallback()
 {
     //...
@@ -175,23 +158,6 @@ int main(int argc, char* argv[])
     // initialize maxmod (for sfx)
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
-    // load save data
-    if (!SaveController::getInstance()->read())
-    {
-        consoleDemoInit();
-        printf("Failed to read save data!\n");
-        while (1)
-        {
-            swiWaitForVBlank();
-        }
-    }
-
-    // set FEMC mode
-    prevFemcMode = saveData.femcMode;
-
-    // setup character model
-    loadModels(saveData.femcMode);
-
     // setup db's. DO NOT CHANGE order
     WeaponDb::Initialize();
     SkillDb::Initialize();
@@ -220,14 +186,31 @@ int main(int argc, char* argv[])
     // register singletons
     engine.RegisterSystem(&BattleSystem::GetInstance());
     engine.RegisterSystem(&CameraSystem::GetInstance());
+    engine.RegisterSystem(&SaveSystem::GetInstance());
+    engine.RegisterSystem(&TextSystem::GetInstance());
+    engine.RegisterSystem(&UISystem::GetInstance());
 
     engine.RegisterManager(&MathManager::GetInstance());
+    engine.RegisterManager(&IOManager::GetInstance());
+    engine.RegisterManager(&TextManager::GetInstance());
+    engine.RegisterManager(&RenderManager::GetInstance());
 
     // initialize engine
     engine.InitAll();
 
     // set up initial game state
+    // create entity
     player = engine.CreateEntity();
+
+    // TODO: replace this temporary workaround for graphics
+    generic = engine.CreateEntity();
+    genericGraphics = engine.CreateComponent<GraphicsComponent>();
+    generic->AddComponent(genericGraphics);
+
+    // load save data
+    ae::BroadcastEvent(Event::ReadSave{});
+    loadModels();
+
     // Default is DisclaimerView
     SwitchView(new DisclaimerView());
 
@@ -241,16 +224,20 @@ int main(int argc, char* argv[])
         // Poll Input -> Update Systems -> Update Components -> Process Managers -> Compute
         engine.Tick(dt);
 
-        if (saveData.femcMode != prevFemcMode)
-        {
-            loadModels(saveData.femcMode);
-            prevFemcMode = saveData.femcMode;
-        }
-
         // check state of currentView
         if (currentView != nullptr)
         {
-            ViewState nextState = currentView->update();
+            ViewState nextState;
+            if (nextView != ViewState::DEFAULT)
+            {
+                nextState = nextView;
+                nextView = ViewState::DEFAULT;
+            }
+            else
+            {
+                nextState = currentView->update();
+            }
+
             switch (nextState)
             {
             case ViewState::INTRO:

@@ -1,5 +1,5 @@
 #include "CameraSystem.hpp"
-#include "core/globals.h"
+#include "core/globals.hpp"
 
 void CameraSystem::on_receive(const Event::ConfigureCamera& config)
 {
@@ -8,6 +8,7 @@ void CameraSystem::on_receive(const Event::ConfigureCamera& config)
     currentPos = config.eye;
     targetPos = config.target;
     angle = config.initialAngle;
+    isRotationLocked = config.isRotationLocked;
     distance = config.distance;
     height = config.height;
     lookAhead = config.lookAhead;
@@ -40,6 +41,16 @@ void CameraSystem::on_receive(const Event::SetCameraPath& msg)
 void CameraSystem::on_receive(const Event::SetCharacterPosition& msg)
 {
     charPos = msg.charPos;
+}
+
+void CameraSystem::on_receive(const Event::StartCamera& msg)
+{
+    isActive = true;
+}
+
+void CameraSystem::on_receive(const Event::StopCamera& msg)
+{
+    isActive = false;
 }
 
 float CameraSystem::getMovementAngle() const
@@ -94,10 +105,15 @@ void CameraSystem::Update(ae::fixed_t)
 
     case CameraMode::Follow:
     {
-        if (systemKeysHeld & KEY_L)
+        if (!isRotationLocked && (systemKeysHeld & KEY_L))
+        {
             angle -= angleIncrement;
-        if (systemKeysHeld & KEY_R)
+        }
+
+        if (!isRotationLocked && (systemKeysHeld & KEY_R))
+        {
             angle += angleIncrement;
+        }
 
         camPos.eye.x = charPos.x + math.sin(angle) * distance;
         camPos.eye.y = charPos.y + height;
@@ -119,10 +135,15 @@ void CameraSystem::Update(ae::fixed_t)
             freeInitialised = true;
         }
 
-        if (systemKeysHeld & KEY_L)
+        if (!isRotationLocked && (systemKeysHeld & KEY_L))
+        {
             angle -= angleIncrement;
-        if (systemKeysHeld & KEY_R)
+        }
+
+        if (!isRotationLocked && (systemKeysHeld & KEY_R))
+        {
             angle += angleIncrement;
+        }
 
         const float fwdX = -math.sin(angle) * freeCameraSpeed;
         const float fwdZ = math.cos(angle) * freeCameraSpeed;

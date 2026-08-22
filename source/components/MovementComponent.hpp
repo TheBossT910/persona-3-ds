@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include "core/enums.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 
 #include "core/routerIDs.hpp"
 #include <aegis/component.hpp>
 
-#include "controllers/AnimationController.h"
+#include "controllers/AnimationController.hpp"
 #include "managers/MathManager.hpp"
 #include "systems/CameraSystem.hpp"
 
@@ -53,9 +53,9 @@ class MovementComponent : public ae::Component
     void start();
 
     /**
-     * @brief End the Update(ae::fixed_t) loop by setting isActive to false
+     * @brief Stop the Update(ae::fixed_t) loop by setting isActive to false
      */
-    void end();
+    void stop();
 
     /**
      * @brief Get the current character position.
