@@ -86,7 +86,7 @@ void SignContractView::init()
     lastNameIndex = std::strlen(saveData.lastName);
 
     text->drawText(displayText, 0, 0);
-    text->drawText(animText, 88, 48, 2);
+    text->drawText(animText, 88, 48, TextColor::White);
 
     // transition both screens from black
     for (int i = -16; i < 0; i++)
