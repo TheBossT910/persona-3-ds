@@ -6,6 +6,7 @@
 #include <nds/arm9/keyboard.h>
 
 #include "components/GraphicsComponent.hpp"
+#include "components/TextComponent.hpp"
 
 class SignContractView : public BaseView
 {
@@ -16,27 +17,24 @@ class SignContractView : public BaseView
     int lastNameIndex = 0;
     int firstNameIndex = 0;
 
-    // console
-    PrintConsole console;
-    PrintConsole animatedConsole;
-
-    // text animation
-    int duration = 4;
-    int durationCounter = 0;
-    int textAlpha = 0;
-    int textAlphaDirection = 0;
-
     // sfx
     mm_sfxhand sfxMenuHandle;
     mm_sfxhand sfxSelectHandle;
     mm_sfxhand sfxCancelHandle;
 
-    void cancelSFX();
+    // text
+    std::string FONT_NAME = "cosmetica";
+    int FONT_SIZE = 12;
+    std::string animText;
+    std::string displayText;
 
     ae::Entity* signContract = nullptr;
     GraphicsComponent* graphics = nullptr;
+    TextComponent* text = nullptr;
 
     MusicController* musicCtrl = MusicController::getInstance();
+
+    void cancelSFX();
 
   public:
     void init() override;
