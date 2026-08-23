@@ -37,12 +37,18 @@ set(P3D_BLOCKSDS_LIBRARY_DIRS
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-file(GLOB_RECURSE P3D_GAME_HEADERS CONFIGURE_DEPENDS
+# Asset generation writes headers into source/maps and source/models during the
+# build. Those generated files should not be included in the source glob, but
+# the checked-in dialogue sources must remain available for compilation.
+file(GLOB_RECURSE P3D_GAME_HEADERS
     ${CMAKE_SOURCE_DIR}/source/*.h
     ${CMAKE_SOURCE_DIR}/source/*.hpp
 )
+file(GLOB_RECURSE P3D_GAME_SOURCES ${CMAKE_SOURCE_DIR}/source/*.cpp)
 
-file(GLOB_RECURSE P3D_GAME_SOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/source/*.cpp)
+list(FILTER P3D_GAME_HEADERS EXCLUDE REGEX "/source/(maps|models)/")
+list(FILTER P3D_GAME_SOURCES EXCLUDE REGEX "/source/(maps|models)/")
+
 set(P3D_MAIN_CPP ${CMAKE_SOURCE_DIR}/source/main.cpp)
 
 if(P3D_BUILD_NDS)
@@ -265,10 +271,34 @@ if(P3D_BUILD_NDS)
     endif()
 
     set(P3D_MAXMOD_GEN_DIR ${CMAKE_SOURCE_DIR}/build/${P3D_NAME}/maxmod)
+    set(P3D_MAXMOD_SOUND_BANK ${P3D_MAXMOD_GEN_DIR}/soundbank.bin)
+    set(P3D_MAXMOD_SOUND_HEADER ${P3D_MAXMOD_GEN_DIR}/soundbank.h)
+    set(P3D_MAXMOD_SOUND_BIN_HEADER ${P3D_MAXMOD_GEN_DIR}/soundbank_bin.h)
+    set(P3D_MAXMOD_SOUND_BIN_C ${P3D_MAXMOD_GEN_DIR}/soundbank_bin.c)
     set(P3D_MAXMOD_SOUND_OBJ ${P3D_MAXMOD_GEN_DIR}/soundbank.c.o)
     set(P3D_ARM7_MAXMOD_ELF ${P3D_BLOCKSDS_ROOT}/sys/arm7/main_core/arm7_maxmod.elf)
     set(P3D_ICON_BMP ${CMAKE_SOURCE_DIR}/icon.bmp)
     set(P3D_NDS_BANNER "Persona 3 Dual\;Memento Mori.\;Atlus, The P3D Project")
+
+    find_program(P3D_MMUTIL_EXECUTABLE mmutil
+        HINTS
+            ${P3D_BLOCKSDS_ROOT}/tools/mmutil
+            /opt/wonderful/thirdparty/blocksds/core/tools/mmutil
+            /opt/blocksds/core/tools/mmutil
+    )
+    if(NOT P3D_MMUTIL_EXECUTABLE)
+        message(FATAL_ERROR "mmutil not found. Set BLOCKSDS/P3D_BLOCKSDS_ROOT correctly.")
+    endif()
+
+    find_program(P3D_BIN2C_EXECUTABLE bin2c
+        HINTS
+            ${P3D_BLOCKSDS_ROOT}/tools/bin2c
+            /opt/wonderful/thirdparty/blocksds/core/tools/bin2c
+            /opt/blocksds/core/tools/bin2c
+    )
+    if(NOT P3D_BIN2C_EXECUTABLE)
+        message(FATAL_ERROR "bin2c not found. Set BLOCKSDS/P3D_BLOCKSDS_ROOT correctly.")
+    endif()
 
     find_program(P3D_NDSTOOL_EXECUTABLE ndstool
         HINTS
@@ -279,16 +309,38 @@ if(P3D_BUILD_NDS)
     if(NOT P3D_NDSTOOL_EXECUTABLE)
         message(FATAL_ERROR "ndstool not found. Set BLOCKSDS/P3D_BLOCKSDS_ROOT correctly.")
     endif()
-    if(NOT EXISTS ${P3D_MAXMOD_GEN_DIR}/soundbank.h OR NOT EXISTS ${P3D_MAXMOD_GEN_DIR}/soundbank_bin.h)
-        message(WARNING "Maxmod generated headers not found at ${P3D_MAXMOD_GEN_DIR}. Run the existing Make build once or add CMake maxmod generation before compiling ARM9.")
+
+    file(GLOB P3D_SFX_WAV_FILES CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/assets/sfx/*.wav
+    )
+    if(NOT P3D_SFX_WAV_FILES)
+        message(FATAL_ERROR "No sound effects found in assets/sfx/*.wav")
     endif()
 
-    set(P3D_LINK_EXTRA_OBJECTS)
-    if(EXISTS ${P3D_MAXMOD_SOUND_OBJ})
-        list(APPEND P3D_LINK_EXTRA_OBJECTS ${P3D_MAXMOD_SOUND_OBJ})
-    else()
-        message(WARNING "Maxmod object not found: ${P3D_MAXMOD_SOUND_OBJ}. Audio bank symbols may fail to link.")
-    endif()
+    add_custom_command(
+        OUTPUT
+            ${P3D_MAXMOD_SOUND_HEADER}
+            ${P3D_MAXMOD_SOUND_BANK}
+            ${P3D_MAXMOD_SOUND_BIN_HEADER}
+            ${P3D_MAXMOD_SOUND_BIN_C}
+            ${P3D_MAXMOD_SOUND_OBJ}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${P3D_MAXMOD_GEN_DIR}
+        COMMAND ${P3D_MMUTIL_EXECUTABLE} ${P3D_SFX_WAV_FILES} -d
+            -o${P3D_MAXMOD_SOUND_BANK}
+            -h${P3D_MAXMOD_SOUND_HEADER}
+        COMMAND ${P3D_BIN2C_EXECUTABLE} ${P3D_MAXMOD_SOUND_BANK} ${P3D_MAXMOD_GEN_DIR}
+        COMMAND ${CMAKE_C_COMPILER} -c -o ${P3D_MAXMOD_SOUND_OBJ} ${P3D_MAXMOD_SOUND_BIN_C}
+        DEPENDS ${P3D_SFX_WAV_FILES}
+        COMMENT "Generating Maxmod soundbank from assets/sfx"
+        VERBATIM
+    )
+    add_custom_target(p3d_maxmod_soundbank DEPENDS
+        ${P3D_MAXMOD_SOUND_HEADER}
+        ${P3D_MAXMOD_SOUND_BIN_HEADER}
+        ${P3D_MAXMOD_SOUND_OBJ}
+    )
+
+    set(P3D_LINK_EXTRA_OBJECTS ${P3D_MAXMOD_SOUND_OBJ})
 
     if(P3D_GAME_LIBRARY_SOURCES STREQUAL "")
         message(FATAL_ERROR "No game sources found under source/")
@@ -299,6 +351,8 @@ if(P3D_BUILD_NDS)
             ${P3D_BLOCKSDS_INCLUDE_DIRS}
             ${P3D_MAXMOD_GEN_DIR}
     )
+
+    add_dependencies(p3d_game p3d_maxmod_soundbank)
 
     target_compile_definitions(p3d_game PUBLIC __NDS__ __BLOCKSDS__ ARM9)
     target_compile_options(p3d_game PUBLIC
@@ -345,6 +399,7 @@ if(P3D_BUILD_NDS)
     if(TARGET p3d_assets)
         add_dependencies(p3d_arm9_elf p3d_assets)
     endif()
+    add_dependencies(p3d_arm9_elf p3d_maxmod_soundbank)
 
     if(NOT EXISTS ${P3D_ARM7_MAXMOD_ELF})
         message(FATAL_ERROR "ARM7 maxmod ELF not found: ${P3D_ARM7_MAXMOD_ELF}")
