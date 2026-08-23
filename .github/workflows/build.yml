@@ -116,6 +116,13 @@ jobs:
           ccache -z  # Zero stats so per-run hit rate is visible in the log
 
       # --- 3. Build & compile ---
+      - name: Ensure required build tools are present
+        run: |
+          if ! command -v cmake >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends cmake
+          fi
+
       - name: Generate version tag
         id: version
         if: github.event_name != 'pull_request'
@@ -220,6 +227,7 @@ jobs:
             sdcard.img.zip
             data.zip
 
+  # 3. Temporary fallback path (non-blocking): retain Make build during CMake migration
   build_make_fallback:
     needs: lint
     runs-on: ubuntu-latest
@@ -248,6 +256,13 @@ jobs:
 
       - name: Pull LFS files
         run: git lfs pull
+
+      - name: Ensure required build tools are present
+        run: |
+          if ! command -v cmake >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends cmake
+          fi
 
       - name: Build ROM via Make (fallback)
         run: make
