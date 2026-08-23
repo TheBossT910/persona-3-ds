@@ -269,8 +269,6 @@ ViewState IntroView::update()
 
     if (animateText)
     {
-        text->drawText("Press Any Button", 80, 88, TextColor::White);
-
         durationCounter++;
 
         if (durationCounter >= duration)
@@ -352,6 +350,7 @@ ViewState IntroView::update()
         animateText = true;
         REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG3 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
         REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
+        text->drawText("\xFF\x02\x01Press Any Button", 45, 80, TextColor::White);
     }
 
     // setup blending for overlay
