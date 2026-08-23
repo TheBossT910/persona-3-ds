@@ -120,6 +120,12 @@ class TextComponent : public ae::Component
      */
     int getFontSize();
 
+    /**
+     * @brief A getter to return the line spacing
+     * @return The line spacing
+     */
+    int getLineSpacing();
+
   protected:
     void SubmitToManager() override
     {

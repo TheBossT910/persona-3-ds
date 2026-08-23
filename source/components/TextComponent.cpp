@@ -111,6 +111,11 @@ int TextComponent::getFontSize()
     return fontSize;
 }
 
+int TextComponent::getLineSpacing()
+{
+    return ts.LINE_SPACING;
+}
+
 void TextComponent::testBitmap()
 {
     ts.testBitmap(font, videoBuffer);

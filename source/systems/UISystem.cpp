@@ -92,7 +92,7 @@ void UISystem::Update(ae::fixed_t dt)
             }
             else
             {
-                text->clearArea(0, 0, 256, text->getFontSize());
+                text->clearArea(0, 0, 256, text->getFontSize() + text->getLineSpacing());
             }
         }
 

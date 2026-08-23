@@ -226,7 +226,7 @@ ViewState SignContractView::update()
         }
         else
         {
-            text->clearArea(0, 96, 256, FONT_SIZE);
+            text->clearArea(0, 96, 256, FONT_SIZE + text->getLineSpacing());
         }
     }
 
