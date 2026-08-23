@@ -136,15 +136,12 @@ void IntroView::init()
     logoSprite[0].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
     logoSprite[1].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
 
-    if (logoLeft.tiles)
-        dmaCopy(logoLeft.tiles, logoSprite[0].gfx, logoLeft.tilesLen);
-    if (logoRight.tiles)
-        dmaCopy(logoRight.tiles, logoSprite[1].gfx, logoRight.tilesLen);
+    dmaCopy(logoLeft.tiles, logoSprite[0].gfx, logoLeft.tilesLen);
+    dmaCopy(logoRight.tiles, logoSprite[1].gfx, logoRight.tilesLen);
 
     // NOTE: left and right will use the same palette. Just ensure that the order of colours when indexed
     // is THE SAME for both images!
-    if (logoRight.pal)
-        dmaCopy(logoRight.pal, SPRITE_PALETTE, logoRight.palLen);
+    dmaCopy(logoRight.pal, SPRITE_PALETTE, logoRight.palLen);
 
     // for slide in animation
     // move camera to the empty right half of the 512px wide background
