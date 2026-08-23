@@ -97,16 +97,17 @@ void UISystem::Update(ae::fixed_t dt)
         }
 
         // display options
+        int textSize = text->getFontSize();
         for (int i = 0; i < menu->visibleOptions && menu->startIndex + i < menu->optionCount; i++)
         {
             int option = menu->startIndex + i;
             if (option == menu->selectedOption)
             {
-                text->drawText(menu->options[option].name, 10, 8 + i * 9, TextColor::Blue);
+                text->drawText(menu->options[option].name, 10, textSize + 12 * i, TextColor::Blue);
             }
             else
             {
-                text->drawText(menu->options[option].name, 10, 8 + i * 9, TextColor::White);
+                text->drawText(menu->options[option].name, 10, textSize + 12 * i, TextColor::White);
             }
         }
 
@@ -182,6 +183,8 @@ void UISystem::on_receive(const Event::ConfigureUIMenu& config)
 
         menu->isActive = false;
         menu->text = text;
+        /// @note 192px is the screen height. 1 row is reserved for the flashing text. Each line takes the font size height
+        menu->visibleOptions = (192 / text->getFontSize()) - 1;
     }
 }
 
