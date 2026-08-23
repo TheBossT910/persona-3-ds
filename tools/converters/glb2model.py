@@ -3,6 +3,7 @@ import sys
 import struct
 import tempfile
 import subprocess
+import re
 
 import numpy as np
 import pygltflib
@@ -10,6 +11,7 @@ from PIL import Image
 
 MAGIC = b"MDL2"
 MAX_16_BIT_INT = 32767
+FRAME_RATE = 30.0
 
 # NDS GPU Commands
 FIFO_BEGIN = 0x40
@@ -248,6 +250,84 @@ def build_nds_display_list(positions, uvs, indices, tex_w, tex_h):
     return dl_words
 
 
+def parse_animations(gltf, node_count):
+    """Extracts keyframe channels per node for translation, rotation and scaling."""
+    animations = []
+    if not hasattr(gltf, "animations") or gltf.animations is None:
+        return animations
+
+    for anim_index, anim in enumerate(gltf.animations):
+        # Ensure string is always used, even if name is None
+        raw_name = get_prop(anim, "name")
+        anim_name = raw_name if raw_name is not None else f"anim_{anim_index}"
+        # Match C++ 32-byte name length
+        clean_name = re.sub(r"[^a-zA-Z0-9_]", "_", anim_name)[:31].ljust(32, "\0")
+
+        # Track per node containing keyframe lists
+        node_tracks = [{"nodeIndex": i, "t": [], "r": []} for i in range(node_count)]
+        max_duration = 0.0
+
+        channels = get_prop(anim, "channels", [])
+        samplers = get_prop(anim, "samplers", [])
+
+        for channel in channels:
+            target = get_prop(channel, "target", {})
+            target_node = get_prop(target, "node")
+            path = get_prop(target, "path")
+
+            if target_node is None or target_node >= node_count:
+                continue
+
+            sampler_index = get_prop(channel, "sampler")
+            sampler = samplers[sampler_index]
+
+            times = read_accessor_data(gltf, get_prop(sampler, "input"))
+            values = read_accessor_data(gltf, get_prop(sampler, "output"))
+
+            if times is not None and values is not None:
+                # Sort the keyframes chronologically by time to ensure correct order
+                combined = sorted(zip(times, values), key=lambda x: x[0])
+                times, values = zip(*combined) if combined else ([], [])
+
+            if times is None or values is None:
+                continue
+
+            if len(times) > 0 and times[-1] > max_duration:
+                max_duration = float(times[-1])
+
+            num_frames = int(max_duration * FRAME_RATE)
+
+            keys = []
+            for t, val in zip(times, values):
+                frame_num = float(t) * FRAME_RATE
+
+                if path == "translation":
+                    # Scale position vectors (meters) by 4096.0 to match base node 4.12 fixed-point units
+                    scaled_val = [float(v) * 4096.0 for v in val]
+                    keys.append({"time": frame_num, "val": scaled_val})
+                else:
+                    # Rotations (quaternions) MUST remain raw floats in the [-1.0, 1.0] range
+                    keys.append({"time": frame_num, "val": val})
+            if path == "translation":
+                node_tracks[target_node]["t"] = keys
+            elif path == "rotation":
+                node_tracks[target_node]["r"] = keys
+
+        # Filter out tracks that have no keyframes to save memory/space
+        # active_tracks = [tr for tr in node_tracks if tr["t"] or tr["r"]]
+
+        animations.append(
+            {
+                "name": clean_name,
+                "num_frames": num_frames,
+                "fps": FRAME_RATE,
+                "tracks": node_tracks,
+            }
+        )
+
+    return animations
+
+
 # ---------------------------------------------------------------------------
 # MDL2 binary format
 # ---------------------------------------------------------------------------
@@ -380,10 +460,13 @@ def convert_glb_to_mdl2(glb_path, output_path):
             }
         )
 
+    # Animations
+    animations = parse_animations(gltf, len(nodes))
+
     # Write to bin file
     with open(output_path, "wb") as f:
         # Header: 'MDL2 | u32 nodeCount | u32 animCount | u32 texCount
-        f.write(struct.pack("<4sIII", MAGIC, len(nodes), 0, tex_count))
+        f.write(struct.pack("<4sIII", MAGIC, len(nodes), len(animations), tex_count))
 
         # Tex Table
         for tex in textures:
@@ -415,7 +498,54 @@ def convert_glb_to_mdl2(glb_path, output_path):
                 for word in sub_list["dlWords"]:
                     f.write(struct.pack("<I", word))
 
-        print(f"Outputted '{output_path}' ({len(nodes)} nodes, {tex_count} textures)")
+        # Animations
+        for anim in animations:
+            # 1. Anim Header: 32-byte name | u32 num_frames | float fps
+            name_bytes = anim["name"].encode("ascii")[:31].ljust(32, b"\0")
+            f.write(struct.pack("<32sI f", name_bytes, anim["num_frames"], anim["fps"]))
+
+            # 2. Track Count: u32 trackCount
+            tracks = anim["tracks"]
+            f.write(struct.pack("<I", len(tracks)))
+
+            # 3. Individual Tracks
+            for track in tracks:
+                # Node Index
+                f.write(struct.pack("<i", track["nodeIndex"]))
+
+                # TODO: CONVERT TO FIXED POINT INTEGER
+                # Translation Keys: u32 count -> float time, float x, float y, float z
+                f.write(struct.pack("<I", len(track["t"])))
+                for k in track["t"]:
+                    val = k["val"]
+                    f.write(
+                        struct.pack(
+                            "<ffff",
+                            k["time"],
+                            float(val[0]),
+                            float(val[1]),
+                            float(val[2]),
+                        )
+                    )
+
+                # Rotation Keys: u32 count -> float time, float x, float y, float z, float w
+                f.write(struct.pack("<I", len(track["r"])))
+                for k in track["r"]:
+                    val = k["val"]
+                    f.write(
+                        struct.pack(
+                            "<fffff",
+                            k["time"],
+                            float(val[0]),
+                            float(val[1]),
+                            float(val[2]),
+                            float(val[3]),
+                        )
+                    )
+
+        print(
+            f"Outputted '{output_path}' ({len(nodes)} nodes, {tex_count} textures, {len(animations)} animations)."
+        )
 
 
 if __name__ == "__main__":
