@@ -61,7 +61,8 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::ShowScreen,
                                          Event::HideAllScreens,
                                          Event::ConfigureUIMenu,
-                                         Event::HideAllMenus>;
+                                         Event::HideAllMenus,
+                                         Event::RenderUIText>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
 constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
 } // namespace GameEngineConfig

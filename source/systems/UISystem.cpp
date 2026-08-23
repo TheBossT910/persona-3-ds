@@ -5,6 +5,7 @@
 void UISystem::Init()
 {
     isActive = false;
+    renderUIText = false;
 
     // load sfx
     musicCtrl->loadSFX(SFX_MENU);
@@ -35,12 +36,14 @@ void UISystem::Update(ae::fixed_t dt)
     {
         sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
         activeMenu->selectedOption = (activeMenu->selectedOption + 1) % activeMenu->optionCount;
+        renderUIText = true;
     }
     else if (systemKeysDown & KEY_UP)
     {
         sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
         activeMenu->selectedOption =
             (activeMenu->selectedOption + activeMenu->optionCount - 1) % activeMenu->optionCount;
+        renderUIText = true;
     }
 
     // Adjust scroll position
@@ -48,11 +51,13 @@ void UISystem::Update(ae::fixed_t dt)
     {
         activeMenu->startIndex = activeMenu->selectedOption;
         text->clearScreen();
+        renderUIText = true;
     }
     else if (activeMenu->selectedOption >= activeMenu->startIndex + activeMenu->visibleOptions)
     {
         activeMenu->startIndex = activeMenu->selectedOption - activeMenu->visibleOptions + 1;
         text->clearScreen();
+        renderUIText = true;
     }
 
     if (systemKeysDown & KEY_A)
@@ -60,6 +65,7 @@ void UISystem::Update(ae::fixed_t dt)
         cancelSFX();
         sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
         text->clearScreen();
+        renderUIText = true;
 
         if (activeMenu->options[activeMenu->selectedOption].onSelect != nullptr)
         {
@@ -78,6 +84,7 @@ void UISystem::Update(ae::fixed_t dt)
         activeMenu->selectedOption = 0;
         activeMenu->startIndex = 0;
         text->clearScreen();
+        renderUIText = true;
         activeMenu->prevOption();
     }
 
@@ -96,11 +103,15 @@ void UISystem::Update(ae::fixed_t dt)
 
     // display options
     int textSize = text->getFontSize();
-    for (int i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < activeMenu->optionCount; i++)
+    if (renderUIText)
     {
-        int option = activeMenu->startIndex + i;
-        TextColor color = option == activeMenu->selectedOption ? TextColor::Blue : TextColor::White;
-        text->drawText(activeMenu->options[option].name, 10, textSize + textSize * i, color);
+        renderUIText = false;
+        for (int i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < activeMenu->optionCount; i++)
+        {
+            int option = activeMenu->startIndex + i;
+            TextColor color = option == activeMenu->selectedOption ? TextColor::Blue : TextColor::White;
+            text->drawText(activeMenu->options[option].name, 10, textSize + textSize * i, color);
+        }
     }
 
     if (activeMenu->nextViewState != ViewState::KEEP_CURRENT)
@@ -119,6 +130,7 @@ void UISystem::Shutdown()
         activeMenu = nullptr;
     }
     isActive = false;
+    renderUIText = false;
 }
 
 void UISystem::on_receive(const Event::SwitchView& msg)
@@ -262,6 +274,7 @@ void UISystem::on_receive(const Event::ShowMenu& msg)
         activeMenu->isActive = false;
     }
 
+    renderUIText = true;
     activeMenu = msg.menu;
     activeMenu->resetMenu();
     activeMenu->isActive = true;
@@ -269,11 +282,17 @@ void UISystem::on_receive(const Event::ShowMenu& msg)
 
 void UISystem::on_receive(const Event::HideAllMenus& /*msg*/)
 {
+    renderUIText = false;
     if (activeMenu != nullptr)
     {
         activeMenu->resetMenu();
         activeMenu = nullptr;
     }
+}
+
+void UISystem::on_receive(const Event::RenderUIText& /*msg*/)
+{
+    renderUIText = true;
 }
 
 void UISystem::lruUpdate(int id, bool isMain)
