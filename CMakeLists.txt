@@ -35,6 +35,14 @@ set(P3D_BLOCKSDS_LIBRARY_DIRS
     ${P3D_BLOCKSDS_ROOT}/libs/libnds/lib
 )
 
+# Prefer the project-managed virtualenv so asset conversion tools (for example
+# Pillow used by video2vid.py) are available. The repo’s Makefile already uses
+# $(HOME)/.venv/bin/python3, so CMake should match that behavior.
+set(P3D_PROJECT_VENV_PYTHON "$ENV{HOME}/.venv/bin/python3")
+if(EXISTS "${P3D_PROJECT_VENV_PYTHON}")
+    set(Python3_EXECUTABLE "${P3D_PROJECT_VENV_PYTHON}" CACHE FILEPATH "Python interpreter for project tools" FORCE)
+endif()
+
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
 # Asset generation writes headers into source/maps and source/models during the
