@@ -236,6 +236,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
         return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
     }
 
-    MusicController* musicCtrl = MusicController::getInstance();
-    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
+    MusicController* musicCtrl = nullptr;
+    BattleMenuComponent* battleMenuCmpt = nullptr;
 };

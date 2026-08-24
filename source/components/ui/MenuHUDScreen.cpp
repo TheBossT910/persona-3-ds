@@ -202,15 +202,14 @@ void MenuHUDScreen::unload()
 {
     if (graphics != nullptr)
     {
-        graphics->unloadAll();
+        engine.DestroyComponent(graphics);
+        graphics = nullptr;
     }
 
     if (menuHUD != nullptr)
     {
-        menuHUD->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(menuHUD);
 
         menuHUD = nullptr;
-        graphics = nullptr;
     }
 }

@@ -352,7 +352,8 @@ enum : etl::message_id_t
     SwitchView,
     ShowMenu,
     HideAllMenus,
-    RenderUIText
+    RenderUIText,
+    ResetUIResources
 };
 } // namespace EventID
 

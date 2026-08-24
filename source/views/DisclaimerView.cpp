@@ -108,16 +108,15 @@ void DisclaimerView::cleanup()
 {
     if (graphics != nullptr)
     {
-        graphics->unloadAll();
+        engine.DestroyComponent(graphics);
+        graphics = nullptr;
     }
 
     if (disclaimer != nullptr)
     {
-        disclaimer->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(disclaimer);
 
         disclaimer = nullptr;
-        graphics = nullptr;
     }
     BaseView::cleanup();
 }

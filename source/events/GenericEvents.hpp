@@ -31,4 +31,11 @@ struct SwitchView : public etl::message<EventID::SwitchView>
     {
     }
 };
+
+/**
+ * @brief Event payload to release resources owned by the current view.
+ */
+struct ResetUIResources : public etl::message<EventID::ResetUIResources>
+{
+};
 } // namespace Event

@@ -1,4 +1,9 @@
 #include "UISystem.hpp"
+#include "components/menu/BattleMenuComponent.hpp"
+#include "components/menu/MainMenuComponent.hpp"
+#include "components/menu/PauseMenuComponent.hpp"
+#include "components/ui/DialogueScreen.hpp"
+#include "components/ui/MenuHUDScreen.hpp"
 #include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
 
@@ -122,20 +127,17 @@ void UISystem::Update(ae::fixed_t dt)
 
 void UISystem::Shutdown()
 {
-    cancelSFX();
-    cleanupScreens();
-    if (activeMenu != nullptr)
-    {
-        activeMenu->resetMenu();
-        activeMenu = nullptr;
-    }
-    isActive = false;
-    renderUIText = false;
+    resetUIResources();
 }
 
 void UISystem::on_receive(const Event::SwitchView& msg)
 {
     nextView = msg.view;
+}
+
+void UISystem::on_receive(const Event::ResetUIResources& /*msg*/)
+{
+    resetUIResources();
 }
 
 void UISystem::on_receive(const Event::ConfigureUIScreen& config)
@@ -453,15 +455,39 @@ void UISystem::cancelSFX()
     musicCtrl->stopSFX(sfxMenuHandle);
     musicCtrl->stopSFX(sfxSelectHandle);
     musicCtrl->stopSFX(sfxCancelHandle);
+    sfxMenuHandle = 0;
+    sfxSelectHandle = 0;
+    sfxCancelHandle = 0;
+}
+
+void UISystem::resetUIResources()
+{
+    cancelSFX();
+    cleanupScreens();
+    cleanupMenus();
+    PauseMenuComponent::destroy();
+    BattleMenuComponent::destroy();
+    MainMenuComponent::destroy();
+    isActive = false;
+    renderUIText = false;
 }
 
 void UISystem::cleanupMenus()
 {
-    menus = {};
-    text = nullptr;
     if (activeMenu != nullptr)
     {
         activeMenu->resetMenu();
         activeMenu = nullptr;
     }
+
+    for (UIMenu* menu : menus)
+    {
+        if (menu != nullptr)
+        {
+            menu->text = nullptr;
+        }
+    }
+
+    menus = {};
+    text = nullptr;
 }

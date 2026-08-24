@@ -162,13 +162,13 @@ struct Save
 
 struct GraphicAsset
 {
-    int id;
+    int id = -1;
     void* tiles = nullptr;
-    u32 tilesLen;
+    u32 tilesLen = 0;
     void* pal = nullptr;
-    u32 palLen;
+    u32 palLen = 0;
     void* map = nullptr;
-    u32 mapLen;
+    u32 mapLen = 0;
 };
 
 /**

@@ -267,15 +267,14 @@ void DialogueScreen::unload()
 {
     if (graphics != nullptr)
     {
-        graphics->unloadAll();
+        engine.DestroyComponent(graphics);
+        graphics = nullptr;
     }
 
     if (dialogue != nullptr)
     {
-        dialogue->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(dialogue);
 
         dialogue = nullptr;
-        graphics = nullptr;
     }
 }

@@ -388,22 +388,21 @@ void IntroView::cleanup()
 {
     if (graphics != nullptr)
     {
-        graphics->unloadAll();
+        engine.DestroyComponent(graphics);
+        graphics = nullptr;
     }
+
+    engine.DestroyComponent(text);
+    text = nullptr;
 
     if (intro != nullptr)
     {
-        intro->RemoveComponent<GraphicsComponent>();
-        intro->RemoveComponent<TextComponent>();
         engine.DestroyEntity(intro);
 
         intro = nullptr;
-        graphics = nullptr;
-        text = nullptr;
     }
 
     musicCtrl->cleanup();
-    BaseView::cleanup();
 
     // clear all sprites from oam
     oamClear(&oamMain, 0, 0);
@@ -416,4 +415,6 @@ void IntroView::cleanup()
             oamFreeGfx(&oamMain, logoSprite[i].gfx);
         }
     }
+
+    BaseView::cleanup();
 }

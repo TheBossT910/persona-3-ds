@@ -500,16 +500,9 @@ void EnvironmentView::cleanup()
         textSub->clearScreen();
     }
 
-    if (graphics != nullptr)
-    {
-        graphics->unloadAll();
-    }
-
     // entity
     if (environment != nullptr)
     {
-        environment->RemoveComponent<GraphicsComponent>();
-        environment->RemoveComponent<TextComponent>();
         engine.DestroyEntity(environment);
 
         environment = nullptr;
@@ -520,9 +513,10 @@ void EnvironmentView::cleanup()
     // entity
     if (player != nullptr)
     {
-        player->RemoveComponent<MovementComponent>();
-        player->RemoveComponent<DialogueComponent>();
-        player->RemoveComponent<TextComponent>();
+        engine.DestroyComponent(movement);
+        engine.DestroyComponent(dialogue);
+        engine.DestroyComponent(text);
+        engine.DestroyComponent(textSub);
 
         movement = nullptr;
         dialogue = nullptr;
@@ -530,14 +524,10 @@ void EnvironmentView::cleanup()
         textSub = nullptr;
     }
 
-    // hide UI screens/menus
-    ae::BroadcastEvent(Event::HideAllScreens{});
-    ae::BroadcastEvent(Event::HideAllMenus{});
-
     musicCtrl->cleanup();
     animationCtrl->stop();
 
-    BaseView::cleanup();
-
     env.cleanup();
+
+    BaseView::cleanup();
 }
