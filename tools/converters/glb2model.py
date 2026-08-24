@@ -39,6 +39,17 @@ def float_to_v16(val):
     return max(-MAX_16_BIT_INT, min(MAX_16_BIT_INT, i))
 
 
+def float_to_s16(val):
+    """Converts a float to a signed 16-bit integer."""
+    val = int(val) & 0xFFFF
+    return val if val <= MAX_16_BIT_INT else val - (2 * MAX_16_BIT_INT)
+
+
+def quat_float_to_s16(val):
+    """Normalizes float [-1.0, 1.0] to signed 16-bit integer [-32767, 32767]."""
+    return max(-4096, min(4096, int(round(val * 4096.0))))
+
+
 def pack_uv_t16(u, v, tex_w, tex_h):
     """Packs UV into DS TEXTURE_PACK t16 format.
 
@@ -294,10 +305,6 @@ def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
             pos = positions[v_index]
             pos_h = np.array([pos[0], pos[1], pos[2], 1.0], dtype=np.float32)
             local_pos = (ibm @ pos_h)[:3] * 0.25
-            if np.any(np.abs(local_pos) > 7.5):
-                print(
-                    f"WARNING: Vertex overflow! local_pos={local_pos}. Scale down your model in Blender/Python!"
-                )
             v_tri.append(local_pos)
             if uvs is not None:
                 uv_tri.append(uvs[v_index])
@@ -421,7 +428,6 @@ def convert_glb_to_mdl2(glb_path, output_path):
     textures = []
     with tempfile.TemporaryDirectory() as tmp_dir:
         for index in range(len(gltf.images)):
-            print(f"Processing texture {index}...")
             tex_info = process_texture(gltf, index, tmp_dir, output_dir)
             textures.append(tex_info)
     tex_count = len(textures)
@@ -619,32 +625,31 @@ def convert_glb_to_mdl2(glb_path, output_path):
                 f.write(struct.pack("<i", track["nodeIndex"]))
                 f.write(struct.pack("<I", len(track["t"])))
 
-                # TODO: CONVERT TO FIXED POINT INTEGER
-                # Translation Keys: u32 count -> float time, float x, float y, float z
+                # Translation Keys: u32 count -> s32 time, s32 x, s32 y, s32 z
                 for k in track["t"]:
                     val = k["val"]
                     f.write(
                         struct.pack(
-                            "<ffff",
-                            k["time"],
-                            float(val[0] * 0.25),
-                            float(val[1] * 0.25),
-                            float(val[2] * 0.25),
+                            "<hiii",
+                            float_to_s16(k["time"]),
+                            int(val[0] * 0.25),
+                            int(val[1] * 0.25),
+                            int(val[2] * 0.25),
                         )
                     )
 
-                # Rotation Keys: u32 count -> float time, float x, float y, float z, float w
+                # Rotation Keys: u32 count -> s32 time, s16 x, s16 y, s16 z, s16 w
                 f.write(struct.pack("<I", len(track["r"])))
                 for k in track["r"]:
                     val = k["val"]
                     f.write(
                         struct.pack(
-                            "<fffff",
-                            k["time"],
-                            float(val[0]),
-                            float(val[1]),
-                            float(val[2]),
-                            float(val[3]),
+                            "<hhhhh",
+                            float_to_s16(k["time"]),
+                            quat_float_to_s16(val[0]),
+                            quat_float_to_s16(val[1]),
+                            quat_float_to_s16(val[2]),
+                            quat_float_to_s16(val[3]),
                         )
                     )
 
