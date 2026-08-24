@@ -48,12 +48,20 @@ find_package(Python3 COMPONENTS Interpreter REQUIRED)
 # Asset generation writes headers into source/maps and source/models during the
 # build. Those generated files should not be included in the source glob, but
 # the checked-in dialogue sources must remain available for compilation.
-file(GLOB_RECURSE P3D_GAME_HEADERS
+file(GLOB_RECURSE P3D_GAME_HEADERS CONFIGURE_DEPENDS
     ${CMAKE_SOURCE_DIR}/source/*.h
     ${CMAKE_SOURCE_DIR}/source/*.hpp
 )
-file(GLOB_RECURSE P3D_GAME_SOURCES ${CMAKE_SOURCE_DIR}/source/*.cpp)
+file(GLOB_RECURSE P3D_GAME_SOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/source/*.cpp)
 
+file(GLOB P3D_DIALOGUE_INPUTS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/assets/dialogue/*.dlg)
+set(P3D_GENERATED_DIALOGUE_SOURCES "")
+foreach(dlg IN LISTS P3D_DIALOGUE_INPUTS)
+    get_filename_component(dialogue_stem "${dlg}" NAME_WE)
+    list(APPEND P3D_GENERATED_DIALOGUE_SOURCES "${CMAKE_SOURCE_DIR}/source/dialogue/${dialogue_stem}_dialogue.cpp")
+endforeach()
+
+list(APPEND P3D_GAME_SOURCES ${P3D_GENERATED_DIALOGUE_SOURCES})
 list(FILTER P3D_GAME_HEADERS EXCLUDE REGEX "/source/(maps|models)/")
 list(FILTER P3D_GAME_SOURCES EXCLUDE REGEX "/source/(maps|models)/")
 
