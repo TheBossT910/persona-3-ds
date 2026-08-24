@@ -525,6 +525,7 @@ void EnvironmentView::cleanup()
     }
 
     musicCtrl->cleanup();
+    animationCtrl->unloadTextures();
     animationCtrl->stop();
 
     env.cleanup();
