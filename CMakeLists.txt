@@ -222,6 +222,10 @@ if(P3D_ENABLE_ASSETS)
     if(P3D_ASSET_GROUP_TARGETS)
         add_dependencies(p3d_assets ${P3D_ASSET_GROUP_TARGETS})
     endif()
+
+    if(TARGET p3d_game)
+        add_dependencies(p3d_game p3d_assets)
+    endif()
 endif()
 
 if(P3D_ENABLE_SDCARD)
