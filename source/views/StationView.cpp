@@ -63,7 +63,7 @@ void StationView::setupUI()
 
     menuHUDScreen = MenuHUDScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen};
+    std::array<UIScreen*, 5> screens = {menuHUDScreen};
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
