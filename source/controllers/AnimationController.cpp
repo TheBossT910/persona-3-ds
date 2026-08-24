@@ -30,7 +30,6 @@ AnimationController* AnimationController::getInstance()
     return instance;
 }
 
-// Lifecycle
 AnimationController::AnimationController()
 {
 }
@@ -40,7 +39,6 @@ AnimationController::~AnimationController()
     unloadTextures();
 }
 
-// Texture size helper
 int AnimationController::textureSizeToEnum(int px)
 {
     if (px <= 8)
@@ -60,7 +58,7 @@ int AnimationController::textureSizeToEnum(int px)
     return TEXTURE_SIZE_1024;
 }
 
-// Check model magic and get version
+// Identify the compiled model format.
 static ModelVersion readModelVersion(FILE* file)
 {
     char magic[4];
@@ -75,18 +73,6 @@ static ModelVersion readModelVersion(FILE* file)
 
     return ModelVersion::INVALID;
 }
-
-// loadModel  - supports MDL2 (multi-texture) and MDL1 (legacy, no textures)
-//
-// MDL2 binary layout (produced by obj2model.py):
-//   'MDL2'
-//   u32 nodeCount | u32 animCount | u32 texCount
-//   texCount x { char[64] name | u16 w | u16 h | u8 isRGBA | u8[3] pad }   // 72 bytes each
-//   nodeCount x { s32 pid | s32 px | s32 py | s32 pz |
-//                 u32 subListCount |
-//                 subListCount x { s32 texSlot | u32 dlSize | u32[dlSize] } }
-//   animCount x { char[32] name | u32 duration |
-//                 nodeCount x { u32 kfCount | Keyframe[kfCount] } }
 
 bool AnimationController::loadModel(const char* filepath)
 {
@@ -109,9 +95,7 @@ bool AnimationController::loadModel(const char* filepath)
     {
         u32 texCount;
         fread(&texCount, sizeof(u32), 1, file);
-        // The texture metadata (sizes, formats) is baked into the generated header
-        // and consumed by loadTextures().  We skip the table here.
-        // Each entry: 64 (name) + 2 (w) + 2 (h) + 1 (isRGBA) + 3 (pad) = 72 bytes.
+        // Texture metadata is supplied by the generated model header.
         fseek(file, (long)(texCount * 72), SEEK_CUR);
     }
 
@@ -162,7 +146,7 @@ bool AnimationController::loadModel(const char* filepath)
         }
         else
         {
-            // MDL1: single display list with no texture assignment
+            // Legacy models contain one untextured display list per node.
             u32 dlSize;
             fread(&dlSize, sizeof(u32), 1, file);
 
@@ -214,7 +198,6 @@ bool AnimationController::loadModel(const char* filepath)
     return true;
 }
 
-// loadTextures
 bool AnimationController::loadTextures(
     int count, const unsigned int** bitmaps, const int* widths, const int* heights, const bool* isRGBA)
 {
@@ -254,7 +237,6 @@ void AnimationController::unloadTextures()
     textureIDs.clear();
 }
 
-// Animation control
 void AnimationController::set(int animIndex, bool loop)
 {
     if (animIndex < 0 || animIndex >= (int)animations.size())
@@ -325,7 +307,6 @@ void AnimationController::update()
     }
 }
 
-// Interpolation
 Keyframe AnimationController::getInterpolatedFrame(const AnimTrack& track, int timeFP, int nodeId)
 {
     if (track.frames.empty())
@@ -372,7 +353,6 @@ Keyframe AnimationController::getInterpolatedFrame(const AnimTrack& track, int t
     return result;
 }
 
-// Rendering
 void AnimationController::render()
 {
     if (modelNodes.empty())
@@ -382,8 +362,7 @@ void AnimationController::render()
     {
         renderNode(rootId);
     }
-    // Ensure the geometry engine has consumed all FIFO commands
-    // before the caller does anything that touches rendering state.
+    // Wait until the geometry FIFO has consumed all commands.
     while (GFX_BUSY)
         ;
 }
@@ -393,7 +372,7 @@ void AnimationController::renderNode(int nodeId)
     AnimNode& node = modelNodes[nodeId];
     glPushMatrix();
 
-    // Apply animation transform around the node's pivot
+    // Apply the current node transform around its pivot.
     if (currentAnimIndex != -1)
     {
         AnimTrack& track = animations[currentAnimIndex].nodeTracks[nodeId];
@@ -406,7 +385,7 @@ void AnimationController::renderNode(int nodeId)
         glTranslatef32(-node.pivotX, -node.pivotY, -node.pivotZ);
     }
 
-    // Draw each texture group
+    // Bind textures only when the sub-list changes texture slots.
     int currentTexSlot = -2; // -2 == "nothing bound yet this node"
 
     for (SubList& sl : node.subLists)
@@ -428,7 +407,7 @@ void AnimationController::renderNode(int nodeId)
         glCallList(sl.displayList.data());
     }
 
-    // Recurse into children (they will manage their own texture binds)
+    // Render child nodes recursively.
     for (int childId : node.children)
     {
         renderNode(childId);

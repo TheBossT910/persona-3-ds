@@ -5,9 +5,7 @@
 #include <string.h>
 #include <string>
 
-// =====================================================================
-// Critical section helpers (ARM9 IRQ mask save/restore — standard NDS idiom)
-// =====================================================================
+// Save and restore the IRQ mask around ring-buffer operations.
 static inline int enterCritical()
 {
     int oldIME = REG_IME;
@@ -19,29 +17,13 @@ static inline void exitCritical(int oldIME)
     REG_IME = oldIME;
 }
 
-// =====================================================================
-// Buffer copy. Plain memcpy — deliberately NOT using DMA here.
-//
-// An earlier version of this code used dmaCopyWords() for these copies.
-// That caused crunchy/staticky video audio on flashcart hardware: video
-// decode/VRAM transfer already uses DMA (commonly channel 3), and a
-// second, independent DMA transfer landing on the same channel corrupts
-// whichever transfer loses the race. These buffers are small (a few KB
-// at most - this is a 128KB/s audio stream), so memcpy costs nothing
-// meaningful on ARM9. Do not reintroduce DMA here unless you've
-// confirmed with certainty which channel(s) the video path owns and
-// picked a genuinely unused one.
-// =====================================================================
+// Small stream copies avoid contending with video DMA transfers.
 static inline void fastCopy(void* dst, const void* src, size_t size)
 {
     memcpy(dst, src, size);
 }
 
-// =====================================================================
-// Generic IRQ-safe ring buffer. Producer and consumer can run in
-// different execution contexts (main loop vs. stream IRQ callback)
-// without corrupting the read/write pointers.
-// =====================================================================
+// Ring buffer shared by the main loop and the stream IRQ callback.
 class SafeRingBuffer
 {
   public:
@@ -92,7 +74,7 @@ class SafeRingBuffer
         return result;
     }
 
-    // Returns bytes actually written (may be less than requested if full).
+    // Write as much as the available capacity allows.
     u32 write(const u8* data, u32 bytes)
     {
         if (!buffer)
@@ -126,7 +108,7 @@ class SafeRingBuffer
         return bytes;
     }
 
-    // Returns bytes actually read (may be less than requested if empty).
+    // Read as much as the available data allows.
     u32 read(u8* dest, u32 bytes)
     {
         if (!buffer)
@@ -167,9 +149,6 @@ class SafeRingBuffer
     volatile u32 available = 0;
 };
 
-// =====================================================================
-// Module state
-// =====================================================================
 static FILE* s_audioFile = nullptr;
 static bool s_isPaused = false;
 static bool s_streamOpen = false;
@@ -182,7 +161,7 @@ static bool s_loopAtEOF = false;
 
 static bool s_isVideoAudio = false;
 
-// Ring buffers: ~2 seconds of slack each at 32kHz/16-bit/stereo (128KB/s).
+// Two seconds of buffering at 32 kHz, 16-bit stereo.
 static const u32 RING_BUFFER_SIZE = 256 * 1024;
 static SafeRingBuffer s_videoRing;
 static SafeRingBuffer s_musicRing;
@@ -196,10 +175,7 @@ static u32 s_musicReadSamples = 0; // samples read from disk so far
 static const u32 MUSIC_READ_CHUNK = 4096;
 static const u32 MUSIC_FILL_BUDGET_PER_UPDATE = 16 * 1024;
 
-// =====================================================================
-// Stream callback — runs in the maxmod stream IRQ context.
-// No file I/O happens here for either path; both just drain a ring buffer.
-// =====================================================================
+// The callback only drains a ring buffer; file I/O stays in update().
 static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_formats format)
 {
     size_t bytesReq = length * BYTES_PER_FRAME;
@@ -241,10 +217,6 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
     return length;
 }
 
-// =====================================================================
-// Non-realtime music buffer filler — called from update(). Owns all
-// file I/O and loop-point handling. The callback never touches disk.
-// =====================================================================
 static void fillMusicBuffer()
 {
     if (!s_audioFile || s_isVideoAudio || !s_musicRing.isValid())
@@ -282,7 +254,6 @@ static void fillMusicBuffer()
     }
 }
 
-// =====================================================================
 MusicController* MusicController::instance = nullptr;
 
 void MusicController::create()
@@ -352,12 +323,7 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
     s_musicRing.init(RING_BUFFER_SIZE);
     s_musicPrefillDone = false;
 
-    // FIX: loop until the buffer actually crosses the prefill threshold
-    // (or hits EOF on a short track), instead of a single budget-capped
-    // call. A single call was capped at MUSIC_FILL_BUDGET_PER_UPDATE
-    // (16KB) while the callback's prefill gate required 64KB - so
-    // regular music could never clear the gate and just played silence
-    // forever. This is what was breaking song playback in Views.
+    // Prefill enough data to keep the stream callback from outputting silence.
     const u32 prefillTarget = RING_BUFFER_SIZE / PREFILL_FRACTION_DIVISOR;
     while (s_musicRing.usedSpace() < prefillTarget)
     {

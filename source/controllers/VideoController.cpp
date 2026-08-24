@@ -35,10 +35,7 @@ VideoController* VideoController::getInstance()
 
 void VideoController::init(std::string iFileName, float iFps, ViewState iNextState)
 {
-    // FIX: free/close any previous allocation before overwriting the
-    // pointers. Previously, calling init() twice without an intervening
-    // cleanup() call leaked the memalign'd frame buffer and the file
-    // handle every time.
+    // Make repeated initialization safe.
     if (ramBuffer != nullptr)
     {
         free(ramBuffer);
@@ -85,14 +82,14 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
             swiWaitForVBlank();
     }
 
-    // dynamic header reading
+    // Read the optional dynamic video header.
     u8 header[16];
     size_t hRead = fread(header, 1, 16, videoFile);
 
-    // validate if the new magic "VID\0" Header is present
+    // Use the header when present.
     if (hRead == 16 && memcmp(header, "VID\0", 4) == 0)
     {
-        // bit-shifts safeguard against unaligned memory access crashes on the ARM9
+        // Read fields byte-wise to avoid unaligned ARM9 accesses.
         fps = (float)(header[4] | (header[5] << 8));
         bpp = header[6];
         frameW = header[8] | (header[9] << 8);
@@ -100,7 +97,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
     }
     else
     {
-        // fallback for older files without header (Assuming 16-bit, 256x192)
+        // Support legacy raw 16-bit 256x192 video files.
         fseek(videoFile, 0, SEEK_SET);
         bpp = 2;
         frameW = 256;
@@ -110,7 +107,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
     frameSize = frameW * frameH * bpp;
     bufferSize = frameSize * FRAMES_TO_BUFFER;
 
-    // configure DS backgrounds dynamically depending on parsed BPP
+    // Select the background format from the parsed bit depth.
     if (bpp == 1)
     {
         bg = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
@@ -136,7 +133,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
         bg = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
     }
 
-    // clear memory
+    // Clear the first frame target before playback.
     dmaFillWords(0, bgGetGfxPtr(bg), frameSize);
 
     ramBuffer = (u8*)memalign(32, bufferSize);
@@ -171,13 +168,7 @@ void VideoController::refillBuffer()
     {
         u32 safeSize = (audioSize > sizeof(audioBuf)) ? sizeof(audioBuf) : audioSize;
 
-        // FIX: keep the pushed chunk aligned to whole stereo sample frames
-        // (4 bytes: 2ch * 16-bit). If a truncated chunk ever lands on a
-        // non-4-byte boundary, every sample pushed afterward permanently
-        // shifts relative to true L/R boundaries - the channels desync
-        // and it plays as persistent static/crunch that never
-        // self-corrects. This keeps the ring buffer's contents always a
-        // whole number of frames.
+        // Keep audio chunks aligned to complete stereo sample frames.
         safeSize -= (safeSize % BYTES_PER_FRAME);
 
         if (safeSize > 0)
@@ -211,16 +202,7 @@ ViewState VideoController::update()
 {
     musicCtrl->update();
 
-    // FIX: interleave a stream update between each disk read, not just
-    // once at the top. refillBuffer() can read up to ~frameSize bytes
-    // (e.g. ~98KB for a 256x192 16bpp frame) per call, up to
-    // READS_PER_UPDATE times. On a flashcart, that read latency can be
-    // long enough that the DS sound hardware runs past what our
-    // callback has filled and starts playing stale/uninitialized RAM -
-    // which is what static/crunch actually is at the hardware level.
-    // Calling update() here is cheap for the video-audio path (a
-    // ring-buffer memcpy, no disk I/O), so doing it 2-3x extra per
-    // frame costs effectively nothing.
+    // Service audio between disk reads to avoid underruns.
     for (int r = 0; r < READS_PER_UPDATE; r++)
     {
         refillBuffer();
