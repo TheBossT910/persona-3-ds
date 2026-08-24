@@ -423,6 +423,15 @@ def _format_cpp_h_files(paths: list[str]) -> None:
         print("Warning: clang-format failed on generated files.", file=sys.stderr)
 
 
+def _normalize_output_base(output_base: Optional[str]) -> Optional[str]:
+    if not output_base:
+        return output_base
+    root, ext = os.path.splitext(output_base)
+    if ext.lower() in {".hpp", ".hxx", ".hh"}:
+        return root
+    return output_base
+
+
 def convert(input_file, output_base, config):
     try:
         with open(input_file, "r", encoding="utf-8") as f:
@@ -431,7 +440,10 @@ def convert(input_file, output_base, config):
         print(f"ERROR: File not found: {input_file}", file=sys.stderr)
         sys.exit(1)
 
-    base = output_base or os.path.splitext(os.path.basename(input_file))[0]
+    base = (
+        _normalize_output_base(output_base)
+        or os.path.splitext(os.path.basename(input_file))[0]
+    )
     scene_name = re.sub(r"[^A-Za-z0-9_]", "_", base).lower()
 
     try:
