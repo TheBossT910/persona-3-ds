@@ -159,8 +159,8 @@ class EnvironmentView : public BaseView
     BattleMenuComponent* battleMenuCmpt = nullptr;
     PauseMenuComponent* pauseMenuCmpt = nullptr;
 
-    std::array<int, 3> bgMain;
-    std::array<int, 4> bgSub;
+    std::array<int, 2> bgMain;
+    std::array<int, 3> bgSub;
 
     // Environment
     Environment env;

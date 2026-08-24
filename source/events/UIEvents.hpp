@@ -18,10 +18,10 @@ namespace Event
 struct ConfigureUIScreen : public etl::message<EventID::ConfigureUIScreen>
 {
     /// Array of sub screen background ids
-    std::array<int, 4> bgSub;
+    std::array<int, 3> bgSub;
 
     /// Array of main screen background ids
-    std::array<int, 3> bgMain;
+    std::array<int, 2> bgMain;
 
     /// Pointer to sub OAM
     OamState* oamSub;
@@ -30,13 +30,13 @@ struct ConfigureUIScreen : public etl::message<EventID::ConfigureUIScreen>
     OamState* oamMain;
 
     /// The screens to register
-    std::array<UIScreen*, 7> screens;
+    std::array<UIScreen*, 5> screens;
 
-    ConfigureUIScreen(std::array<int, 4> iBgSub,
-                      std::array<int, 3> iBgMain,
+    ConfigureUIScreen(std::array<int, 3> iBgSub,
+                      std::array<int, 2> iBgMain,
                       OamState* iOamSub,
                       OamState* iOamMain,
-                      std::array<UIScreen*, 7> iScreens)
+                      std::array<UIScreen*, 5> iScreens)
         : bgSub(iBgSub), bgMain(iBgMain), oamSub(iOamSub), oamMain(iOamMain), screens(iScreens)
     {
     }
