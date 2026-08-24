@@ -265,6 +265,16 @@ void DialogueScreen::load()
 
 void DialogueScreen::unload()
 {
+    removeSprites();
+    for (int i = 0; i < 7; ++i)
+    {
+        if (sprites[i].gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprites[i].gfx);
+            sprites[i].gfx = nullptr;
+        }
+    }
+
     if (graphics != nullptr)
     {
         engine.DestroyComponent(graphics);

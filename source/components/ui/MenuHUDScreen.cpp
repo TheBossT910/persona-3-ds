@@ -200,6 +200,16 @@ void MenuHUDScreen::load()
 
 void MenuHUDScreen::unload()
 {
+    removeSprites();
+    for (int i = 0; i < 12; ++i)
+    {
+        if (sprites[i].gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprites[i].gfx);
+            sprites[i].gfx = nullptr;
+        }
+    }
+
     if (graphics != nullptr)
     {
         engine.DestroyComponent(graphics);

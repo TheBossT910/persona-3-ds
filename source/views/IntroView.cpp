@@ -413,6 +413,7 @@ void IntroView::cleanup()
         if (logoSprite[i].gfx != NULL)
         {
             oamFreeGfx(&oamMain, logoSprite[i].gfx);
+            logoSprite[i].gfx = nullptr;
         }
     }
 
