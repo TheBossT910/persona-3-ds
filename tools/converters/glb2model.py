@@ -48,7 +48,7 @@ def pack_uv_t16(u, v, tex_w, tex_h):
     # scale into texel space and 4 fractional bits (equivalent to <<4)
     u_t16 = int(round(u * float(tex_w) * 16.0)) & 0xFFFF
     v_t16 = int(round(v * float(tex_h) * 16.0)) & 0xFFFF
-    return (u_t16 & 0xFFFF) | ((v_t16 & 0xFFFF) << 16)
+    return (u_t16) | (v_t16 << 16)
 
 
 # TODO: consider pack cmd function
@@ -186,6 +186,7 @@ def process_texture(gltf, image_index, tmp_dir, output_dir):
         temp_png_path,
         "-gb",
         "-gB16",
+        "-gT!",
         "-ftb",
         "-fh!",
         "-o",
@@ -211,36 +212,26 @@ def process_texture(gltf, image_index, tmp_dir, output_dir):
     }
 
 
-def build_nds_display_list(positions, uvs, indices, tex_w, tex_h):
+def build_nds_display_list(triangles, tex_w, tex_h):
     """Compiles GL_TRIANGLES primitive data into NDS display list format."""
     dl_words = []
 
-    flat_indices = (
-        indices.flatten() if indices is not None else np.arange(len(positions))
-    )
-
-    # Cmmand: BEGIN & GL_TRIANGLES
+    # Command: BEGIN & GL_TRIANGLES
     dl_words.append(FIFO_BEGIN)
     dl_words.append(GL_TRIANGLES)
 
-    for i in range(0, len(flat_indices), 3):
+    for v_tri, uv_tri in triangles:
         for j in range(3):
-            v_idx = flat_indices[i + j]
-
-            # Pack UV Command
-            if uvs is not None:
-                u, v = uvs[v_idx]
+            if uv_tri is not None and len(uv_tri) > j:
+                u, v = uv_tri[j]
                 dl_words.append(FIFO_TEXCOORD)
                 dl_words.append(pack_uv_t16(u, v, tex_w, tex_h))
 
-            # Pack Vertex Command
-            vx, vy, vz = positions[v_idx]
-            # Convert floats to 4.12 fixed-point (signed), then mask to 16-bit words
+            vx, vy, vz = v_tri[j]
             v16_x = float_to_v16(vx) & 0xFFFF
             v16_y = float_to_v16(vy) & 0xFFFF
             v16_z = float_to_v16(vz) & 0xFFFF
 
-            # Use FIFO_VERTEX16 and pack (y << 16) | x followed by z
             dl_words.append(FIFO_VERTEX16)
             dl_words.append(v16_x | (v16_y << 16))
             dl_words.append(v16_z)
@@ -248,6 +239,79 @@ def build_nds_display_list(positions, uvs, indices, tex_w, tex_h):
     # Command: END
     dl_words.append(FIFO_END)
     return dl_words
+
+
+def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
+    """Splits skinned mesh vertices by primary bone and converts them to bone local space."""
+    ibm_accessor = get_prop(skin, "inverseBindMatrices")
+    ibm_raw = (
+        read_accessor_data(gltf, ibm_accessor) if ibm_accessor is not None else None
+    )
+    joints = get_prop(skin, "joints", [])
+
+    attrs = get_prop(primitive, "attributes", {})
+    joints_index = get_prop(attrs, "JOINTS_0")
+    weights_index = get_prop(attrs, "WEIGHTS_0")
+
+    joints_data = read_accessor_data(gltf, joints_index)
+    weights_data = read_accessor_data(gltf, weights_index)
+
+    if joints_data is None or weights_data is None:
+        print(
+            "Warning: Skinned primitive missing JOINTS_0 or WEIGHTS_0; skipping unskinning."
+        )
+        return None
+
+    num_joints = len(joints)
+    if ibm_raw is not None:
+        ibms = ibm_raw.reshape(num_joints, 4, 4)
+    else:
+        ibms = np.tile(np.eye(4, dtype=np.float32), (num_joints, 1, 1))
+
+    # Find bone with the maximum skin weight for each vertex
+    dominant_sub_indices = np.argmax(weights_data, axis=1)
+
+    flat_indices = (
+        indices.flatten() if indices is not None else np.arange(len(positions))
+    )
+    joint_triangles = {j_node: [] for j_node in joints}
+
+    for i in range(0, len(flat_indices), 3):
+        index0 = flat_indices[i]
+        index1 = flat_indices[i + 1]
+        index2 = flat_indices[i + 2]
+
+        # Use vertex 0's primary bone as triangle owner
+        sub_j_index = joints_data[index0, dominant_sub_indices[index0]]
+        target_node = joints[sub_j_index]
+
+        # gltf matrices are column-major, so transpose for numpy
+        ibm = ibms[sub_j_index].T
+
+        v_tri = []
+        uv_tri = []
+        for v_index in (index0, index1, index2):
+            pos = positions[v_index]
+            pos_h = np.array([pos[0], pos[1], pos[2], 1.0], dtype=np.float32)
+            local_pos = (ibm @ pos_h)[:3] * 0.25
+            if np.any(np.abs(local_pos) > 7.5):
+                print(
+                    f"WARNING: Vertex overflow! local_pos={local_pos}. Scale down your model in Blender/Python!"
+                )
+            v_tri.append(local_pos)
+            if uvs is not None:
+                uv_tri.append(uvs[v_index])
+        joint_triangles[target_node].append(
+            (v_tri, uv_tri if uvs is not None else None)
+        )
+    total_input_tris = len(flat_indices) // 3
+    total_output_tris = sum(len(tris) for tris in joint_triangles.values())
+
+    if total_input_tris != total_output_tris:
+        print(
+            f"  WARNING: Discarded {total_input_tris - total_output_tris} triangles during unskinning!"
+        )
+    return joint_triangles
 
 
 def parse_animations(gltf, node_count):
@@ -314,14 +378,14 @@ def parse_animations(gltf, node_count):
                 node_tracks[target_node]["r"] = keys
 
         # Filter out tracks that have no keyframes to save memory/space
-        # active_tracks = [tr for tr in node_tracks if tr["t"] or tr["r"]]
+        active_tracks = [tr for tr in node_tracks if tr["t"] or tr["r"]]
 
         animations.append(
             {
                 "name": clean_name,
                 "num_frames": num_frames,
                 "fps": FRAME_RATE,
-                "tracks": node_tracks,
+                "tracks": active_tracks,
             }
         )
 
@@ -345,7 +409,6 @@ def parse_animations(gltf, node_count):
 # texSlot == -1 means "no texture bound for this sub-list".
 
 
-# TODO: Add support for animations
 # TODO: Refactor into subfunctions for readability
 def convert_glb_to_mdl2(glb_path, output_path):
     gltf = pygltflib.GLTF2().load(glb_path)
@@ -362,31 +425,22 @@ def convert_glb_to_mdl2(glb_path, output_path):
             tex_info = process_texture(gltf, index, tmp_dir, output_dir)
             textures.append(tex_info)
     tex_count = len(textures)
-
     gltf_textures = get_prop(gltf, "textures", []) or []
 
-    # Base Mesh Hierarchy Nodes
-    nodes = []
+    # Parse Mesh Primitives and Unskin if necessary
+    node_sub_lists = [[] for _ in range(len(gltf.nodes))]
     for index, node in enumerate(gltf.nodes):
-        # Find parent node index
-        pid = -1
-        for parent_index, parent_node in enumerate(gltf.nodes):
-            children = get_prop(parent_node, "children", [])
-            if children and index in children:
-                pid = parent_index
-                break
-
-        translation = get_prop(node, "translation", [0.0, 0.0, 0.0])
-        px, py, pz = (
-            [float_to_v16(v) for v in translation] if translation else (0, 0, 0)
-        )
-
         mesh_id = get_prop(node, "mesh", None)
-        sub_lists = []
+        skin_id = get_prop(node, "skin", None)
 
         if mesh_id is not None and mesh_id < len(gltf.meshes):
             mesh = gltf.meshes[mesh_id]
             primitives = get_prop(mesh, "primitives", [])
+            skin = (
+                gltf.skins[skin_id]
+                if (skin_id is not None and skin_id < len(gltf.skins))
+                else None
+            )
 
             for prim in primitives:
                 attrs = get_prop(prim, "attributes", {})
@@ -397,17 +451,16 @@ def convert_glb_to_mdl2(glb_path, output_path):
 
                 positions = read_accessor_data(gltf, pos_index)
                 indices = read_accessor_data(gltf, indices_index)
-                uvs = read_accessor_data(gltf, uv_index)
 
-                # Resolve material to texture index
+                # Resolve Texture
                 tex_slot = -1
                 uv_set = 0
+                texture_transform = None
                 if mat_index is not None and mat_index < len(gltf.materials):
                     mat = gltf.materials[mat_index]
                     pbr = get_prop(mat, "pbrMetallicRoughness", {})
                     base_tex = get_prop(pbr, "baseColorTexture", {})
                     uv_set = int(get_prop(base_tex, "texCoord", 0) or 0)
-
                     extension = get_prop(mat, "extensions", {}) or {}
                     texture_transform = get_prop(
                         extension, "KHR_texture_transform", None
@@ -416,7 +469,6 @@ def convert_glb_to_mdl2(glb_path, output_path):
                         uv_set = int(
                             get_prop(texture_transform, "texCoord", uv_set) or uv_set
                         )
-
                     gltf_tex_index = get_prop(base_tex, "index", -1)
                     if gltf_tex_index is not None and 0 <= gltf_tex_index < len(
                         gltf.textures
@@ -427,8 +479,6 @@ def convert_glb_to_mdl2(glb_path, output_path):
                             tex_slot = source_image_index
 
                 uv_index = get_prop(attrs, f"TEXCOORD_{uv_set}")
-                if uv_index is None and uv_set != 0:
-                    uv_index = get_prop(attrs, "TEXCOORD_0")
                 uvs = read_accessor_data(gltf, uv_index)
                 uvs = apply_texture_transform(uvs, texture_transform)
 
@@ -443,11 +493,66 @@ def convert_glb_to_mdl2(glb_path, output_path):
                     else 128
                 )
 
-                dl_words = build_nds_display_list(positions, uvs, indices, tex_w, tex_h)
-
-                sub_lists.append(
-                    {"texSlot": tex_slot, "dlSize": len(dl_words), "dlWords": dl_words}
+                # If skinned, split vertices to local bone nodes
+                joint_triangles = (
+                    unskin_primitive(gltf, prim, skin, positions, uvs, indices)
+                    if skin
+                    else None
                 )
+
+                if joint_triangles:
+                    for joint_node_index, triangles in joint_triangles.items():
+                        if not triangles:
+                            continue
+                        dl_words = build_nds_display_list(triangles, tex_w, tex_h)
+                        node_sub_lists[joint_node_index].append(
+                            {
+                                "texSlot": tex_slot,
+                                "dlSize": len(dl_words),
+                                "dlWords": dl_words,
+                            }
+                        )
+                else:  # Rigid primitive; build display list directly for this node
+                    flat_indices = (
+                        indices.flatten()
+                        if indices is not None
+                        else np.arange(len(positions))
+                    )
+                    triangles = []
+                    for i in range(0, len(flat_indices), 3):
+                        v_tri = [positions[flat_indices[i + j]] for j in range(3)]
+                        uv_tri = (
+                            [uvs[flat_indices[i + j]] for j in range(3)]
+                            if uvs is not None
+                            else None
+                        )
+                        triangles.append((v_tri, uv_tri))
+
+                    dl_words = build_nds_display_list(triangles, tex_w, tex_h)
+                    node_sub_lists[index].append(
+                        {
+                            "texSlot": tex_slot,
+                            "dlSize": len(dl_words),
+                            "dlWords": dl_words,
+                        }
+                    )
+
+    # Construct binary base nodes
+    nodes = []
+    for index, node in enumerate(gltf.nodes):
+        # Find parent node index
+        pid = -1
+        for parent_index, parent_node in enumerate(gltf.nodes):
+            children = get_prop(parent_node, "children", [])
+            if children and index in children:
+                pid = parent_index
+                break
+
+        translation = get_prop(node, "translation", [0.0, 0.0, 0.0])
+        px, py, pz = (
+            [float_to_v16(v) for v in translation] if translation else (0, 0, 0)
+        )
+        sub_lists = node_sub_lists[index]
 
         nodes.append(
             {
@@ -502,7 +607,7 @@ def convert_glb_to_mdl2(glb_path, output_path):
         for anim in animations:
             # 1. Anim Header: 32-byte name | u32 num_frames | float fps
             name_bytes = anim["name"].encode("ascii")[:31].ljust(32, b"\0")
-            f.write(struct.pack("<32sI f", name_bytes, anim["num_frames"], anim["fps"]))
+            f.write(struct.pack("<32sIf", name_bytes, anim["num_frames"], anim["fps"]))
 
             # 2. Track Count: u32 trackCount
             tracks = anim["tracks"]
@@ -512,19 +617,19 @@ def convert_glb_to_mdl2(glb_path, output_path):
             for track in tracks:
                 # Node Index
                 f.write(struct.pack("<i", track["nodeIndex"]))
+                f.write(struct.pack("<I", len(track["t"])))
 
                 # TODO: CONVERT TO FIXED POINT INTEGER
                 # Translation Keys: u32 count -> float time, float x, float y, float z
-                f.write(struct.pack("<I", len(track["t"])))
                 for k in track["t"]:
                     val = k["val"]
                     f.write(
                         struct.pack(
                             "<ffff",
                             k["time"],
-                            float(val[0]),
-                            float(val[1]),
-                            float(val[2]),
+                            float(val[0] * 0.25),
+                            float(val[1] * 0.25),
+                            float(val[2] * 0.25),
                         )
                     )
 
