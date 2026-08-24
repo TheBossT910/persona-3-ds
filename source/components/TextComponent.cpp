@@ -27,6 +27,8 @@ void TextComponent::Destroy()
 {
     isActive = false;
     appearTextStop();
+    tm.unloadFont(font);
+    font = nullptr;
 }
 
 void TextComponent::configureText(const TextConfig& config, bool loadDefaultPalette)

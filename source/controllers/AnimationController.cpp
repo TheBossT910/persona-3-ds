@@ -37,10 +37,7 @@ AnimationController::AnimationController()
 
 AnimationController::~AnimationController()
 {
-    if (!textureIDs.empty())
-    {
-        glDeleteTextures((int)textureIDs.size(), textureIDs.data());
-    }
+    unloadTextures();
 }
 
 // Texture size helper
@@ -221,11 +218,7 @@ bool AnimationController::loadModel(const char* filepath)
 bool AnimationController::loadTextures(
     int count, const unsigned int** bitmaps, const int* widths, const int* heights, const bool* isRGBA)
 {
-    if (!textureIDs.empty())
-    {
-        glDeleteTextures((int)textureIDs.size(), textureIDs.data());
-        textureIDs.clear();
-    }
+    unloadTextures();
 
     textureIDs.resize(count, 0);
 
@@ -250,6 +243,15 @@ bool AnimationController::loadTextures(
     }
 
     return true;
+}
+
+void AnimationController::unloadTextures()
+{
+    if (textureIDs.empty())
+        return;
+
+    glDeleteTextures((int)textureIDs.size(), textureIDs.data());
+    textureIDs.clear();
 }
 
 // Animation control

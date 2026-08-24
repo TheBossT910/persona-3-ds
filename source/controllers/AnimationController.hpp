@@ -25,6 +25,8 @@ class AnimationController
     bool loadTextures(
         int count, const unsigned int** bitmaps, const int* widths, const int* heights, const bool* isRGBA);
 
+    void unloadTextures();
+
     // Animation control
     void set(int animIndex, bool loop = true);
     void play();
