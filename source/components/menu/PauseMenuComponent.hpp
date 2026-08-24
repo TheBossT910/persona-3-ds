@@ -194,6 +194,8 @@ class PauseMenuComponent : public UIMenu
     static void destroy();
     static PauseMenuComponent* getInstance();
 
+    void cleanup();
+
     ViewState updateHook() override;
 
     bool isClosed = false;

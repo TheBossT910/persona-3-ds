@@ -22,6 +22,7 @@ void PauseMenuComponent::destroy()
 {
     if (instance != nullptr)
     {
+        instance->cleanup();
         delete instance;
     }
     instance = nullptr;
@@ -34,6 +35,16 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
         create();
     }
     return instance;
+}
+
+void PauseMenuComponent::cleanup()
+{
+    if (pauseMenu != nullptr)
+    {
+        engine.DestroyEntity(pauseMenu);
+        pauseMenu = nullptr;
+        dialogue = nullptr;
+    }
 }
 
 void PauseMenuComponent::resetHook()
