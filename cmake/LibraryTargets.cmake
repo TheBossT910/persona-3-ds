@@ -1,8 +1,19 @@
 add_library(p3d_game STATIC ${P3D_GAME_LIBRARY_SOURCES})
 
-if(P3D_GENERATED_DIALOGUE_SOURCES)
-    set_source_files_properties(${P3D_GENERATED_DIALOGUE_SOURCES} PROPERTIES GENERATED TRUE)
-    target_sources(p3d_game PRIVATE ${P3D_GENERATED_DIALOGUE_SOURCES})
+set(P3D_GENERATED_GAME_SOURCES
+    ${P3D_GENERATED_DIALOGUE_SOURCES}
+    ${CMAKE_SOURCE_DIR}/source/data/environmentDb.cpp
+)
+
+if(P3D_GENERATED_GAME_SOURCES)
+    list(REMOVE_DUPLICATES P3D_GENERATED_GAME_SOURCES)
+
+    foreach(generated_source IN LISTS P3D_GENERATED_GAME_SOURCES)
+        if(generated_source)
+            set_source_files_properties(${generated_source} PROPERTIES GENERATED TRUE)
+            target_sources(p3d_game PRIVATE ${generated_source})
+        endif()
+    endforeach()
 endif()
 
 set_target_properties(p3d_game PROPERTIES CXX_EXTENSIONS ON)
