@@ -7,6 +7,11 @@ void UIMenu::resetMenu()
     isActive = false;
     nextViewState = ViewState::KEEP_CURRENT;
 
+    if (text != nullptr)
+    {
+        text->clearScreen();
+    }
+
     resetHook();
 
     while (!prevOptions.empty())

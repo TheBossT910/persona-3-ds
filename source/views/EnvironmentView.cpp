@@ -240,6 +240,8 @@ void EnvironmentView::init()
     phase = ViewPhase::Environment;
 
     bgSetPriority(0, 2); //set 3D view on main to be behind text layer
+
+    lineSpacing = text->getLineSpacing();
 }
 
 ViewState EnvironmentView::update()
@@ -462,7 +464,9 @@ ViewState EnvironmentView::update()
                              (int)(CameraSystem::GetInstance().getAngle() * 100),
                              (int)(charPos.facingAngle * 100));
                 debugText += buf;
-                textSub->drawText(debugText, 1, 120, TextColor::Red);
+
+                // screen height - 5 lines * (size of text in each line + spacing between each line)
+                textSub->drawText(debugText, 1, 192 - 5 * (FONT_SIZE + lineSpacing), TextColor::Red);
             }
         }
 

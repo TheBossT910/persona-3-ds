@@ -168,11 +168,16 @@ void DialogueComponent::renderOptions()
     text->drawText(current->characterName, 32, 115, TextColor::White);
     text->drawText(current->text, 0, 130, TextColor::White);
     //TODO: The options are currently drawn outside the textbox, do we want to add an extra overlay for them similar to the actual game?
+    int textSize = text->getFontSize();
     for (int i = 0; i < optionCount; i++)
     {
         if (i == selectedOption)
-            text->drawText(current->selections[i].text, 128, 50 + i * 8, TextColor::Blue);
+        {
+            text->drawText(current->selections[i].text, 128, 50 + textSize * i, TextColor::Blue);
+        }
         else
-            text->drawText(current->selections[i].text, 128, 50 + i * 8, TextColor::White);
+        {
+            text->drawText(current->selections[i].text, 128, 50 + textSize * i, TextColor::White);
+        }
     }
 }
