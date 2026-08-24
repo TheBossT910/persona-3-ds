@@ -46,7 +46,7 @@ class IntroView : public BaseView
 
     // text
     std::string FONT_NAME = "cosmetica";
-    int FONT_SIZE = 16;
+    int FONT_SIZE = 24;
 
     ae::Entity* intro = nullptr;
     GraphicsComponent* graphics = nullptr;

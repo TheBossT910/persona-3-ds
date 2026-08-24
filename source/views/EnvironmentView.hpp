@@ -171,6 +171,8 @@ class EnvironmentView : public BaseView
     uint16_t* textVideoBufferSub;
     std::string FONT_NAME = "cosmetica";
     int FONT_SIZE = 12;
+    // set in Init
+    int lineSpacing = 0;
 
     RenderManager& render = RenderManager::GetInstance();
 

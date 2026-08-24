@@ -36,7 +36,8 @@ class UIMenu
     friend class UISystem;
 
     // options
-    const int visibleOptions = 23;
+    /// @note visibleOptions is set via the UISystem via the ConfigureUIMenu event handler
+    int visibleOptions = 0;
     std::stack<MenuState> prevOptions;
     ViewState nextViewState = ViewState::KEEP_CURRENT;
 

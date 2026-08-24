@@ -1,5 +1,6 @@
 #include "BattleMenuComponent.hpp"
 #include "core/globals.hpp"
+#include "events/UIEvents.hpp"
 
 BattleMenuComponent* BattleMenuComponent::instance = nullptr;
 
@@ -39,6 +40,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
     };
 
     text->clearScreen();
+    ae::BroadcastEvent(Event::RenderUIText{});
 
     // set new options
     battleOptions.clear();
@@ -67,6 +69,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
     };
 
     text->clearScreen();
+    ae::BroadcastEvent(Event::RenderUIText{});
 
     // set new options
     battleOptions.clear();
@@ -95,6 +98,8 @@ void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* pers
     }
 
     text->clearScreen();
+    ae::BroadcastEvent(Event::RenderUIText{});
+
     battleOptions.clear();
     loadedOption = BattleMenuOptions::PERSONA;
     pauseMessage = "Persona";
@@ -121,6 +126,8 @@ void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>*
     }
 
     text->clearScreen();
+    ae::BroadcastEvent(Event::RenderUIText{});
+
     battleOptions.clear();
     loadedOption = targetLoadedOption;
     pauseMessage = "Target";
@@ -147,6 +154,8 @@ void BattleMenuComponent::loadAllOutAttackConfirmation()
     };
 
     text->clearScreen();
+    ae::BroadcastEvent(Event::RenderUIText{});
+
     battleOptions.clear();
     loadedOption = BattleMenuOptions::ALL_OUT_ATTACK;
     pauseMessage = "Confirm All-out-attack?";
