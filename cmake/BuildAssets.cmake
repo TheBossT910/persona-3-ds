@@ -121,8 +121,8 @@ if(P3D_RUN_MODELS)
 
         set(model_out_dir "${DATA_DIR}/models/${model_name}")
         set(model_bin "${model_out_dir}/${model_name}.bin")
-        set(model_h_tmp "${model_out_dir}/${model_name}.h")
-        set(model_h_dst "${SOURCE_DIR}/models/${model_name}.h")
+        set(model_h_tmp "${model_out_dir}/${model_name}.hpp")
+        set(model_h_dst "${SOURCE_DIR}/models/${model_name}.hpp")
 
         file(MAKE_DIRECTORY "${model_out_dir}")
         file(MAKE_DIRECTORY "${SOURCE_DIR}/models")
