@@ -113,8 +113,16 @@ endif()
 
 p3d_group_enabled(models P3D_RUN_MODELS)
 if(P3D_RUN_MODELS)
-    # Models .json -> source/models/*.h + data/models/<name>/<name>.bin
+    # Models .json -> source/models/*.hpp + data/models/<name>/<name>.bin
     file(GLOB MODEL_JSON_FILES "${ASSETS_DIR}/models/*/*.json")
+    file(GLOB LEGACY_MODEL_HEADERS
+        "${SOURCE_DIR}/models/*.h"
+        "${SOURCE_DIR}/models/*.hh"
+        "${SOURCE_DIR}/models/*.hxx"
+    )
+    if(LEGACY_MODEL_HEADERS)
+        file(REMOVE ${LEGACY_MODEL_HEADERS})
+    endif()
     foreach(model_json IN LISTS MODEL_JSON_FILES)
         get_filename_component(model_dir "${model_json}" DIRECTORY)
         get_filename_component(model_name "${model_dir}" NAME)
@@ -141,11 +149,18 @@ endif()
 
 p3d_group_enabled(maps P3D_RUN_MAPS)
 if(P3D_RUN_MAPS)
-    # JMAP -> source/maps/*.h
+    file(GLOB LEGACY_MAP_HEADERS
+        "${SOURCE_DIR}/maps/*.h"
+        "${SOURCE_DIR}/maps/*.hh"
+        "${SOURCE_DIR}/maps/*.hxx"
+    )
+    if(LEGACY_MAP_HEADERS)
+        file(REMOVE ${LEGACY_MAP_HEADERS})
+    endif()
     file(GLOB JMAP_FILES "${ASSETS_DIR}/maps/*.jmap")
     foreach(jmap IN LISTS JMAP_FILES)
         get_filename_component(stem "${jmap}" NAME_WE)
-        set(jmap_out "${SOURCE_DIR}/maps/${stem}.h")
+        set(jmap_out "${SOURCE_DIR}/maps/${stem}.hpp")
         file(MAKE_DIRECTORY "${SOURCE_DIR}/maps")
         p3d_run(
             WORKING_DIRECTORY "${P3D_SOURCE_DIR}"
