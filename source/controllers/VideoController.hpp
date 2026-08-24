@@ -19,29 +19,32 @@ class VideoController
     void cleanup();
 
   private:
-    VideoController() {};
-    ~VideoController() {};
+    VideoController() = default;
+    ~VideoController()
+    {
+        cleanup();
+    }
     static VideoController* instance;
 
-    ViewState nextState;
-    float fps;
+    ViewState nextState = ViewState::DEFAULT;
+    float fps = 0.0f;
 
-    FILE* videoFile;
-    bool fileEOF;
-    int currentFrame;
-    int bg;
+    FILE* videoFile = nullptr;
+    bool fileEOF = false;
+    int currentFrame = 0;
+    int bg = -1;
 
-    u8* ramBuffer;
-    int readIndex;
-    int writeIndex;
-    int framesAvailable;
+    u8* ramBuffer = nullptr;
+    int readIndex = 0;
+    int writeIndex = 0;
+    int framesAvailable = 0;
 
     // dynamic video variables
-    u16 frameW;
-    u16 frameH;
-    u8 bpp;
-    u32 frameSize;
-    u32 bufferSize;
+    u16 frameW = 0;
+    u16 frameH = 0;
+    u8 bpp = 0;
+    u32 frameSize = 0;
+    u32 bufferSize = 0;
 
     u8 audioBuf[16384];
 

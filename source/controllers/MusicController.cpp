@@ -1,9 +1,175 @@
 #include "MusicController.hpp"
 #include <malloc.h>
 #include <nds.h>
+#include <stdint.h>
 #include <string.h>
 #include <string>
 
+// =====================================================================
+// Critical section helpers (ARM9 IRQ mask save/restore — standard NDS idiom)
+// =====================================================================
+static inline int enterCritical()
+{
+    int oldIME = REG_IME;
+    REG_IME = 0;
+    return oldIME;
+}
+static inline void exitCritical(int oldIME)
+{
+    REG_IME = oldIME;
+}
+
+// =====================================================================
+// Buffer copy. Plain memcpy — deliberately NOT using DMA here.
+//
+// An earlier version of this code used dmaCopyWords() for these copies.
+// That caused crunchy/staticky video audio on flashcart hardware: video
+// decode/VRAM transfer already uses DMA (commonly channel 3), and a
+// second, independent DMA transfer landing on the same channel corrupts
+// whichever transfer loses the race. These buffers are small (a few KB
+// at most - this is a 128KB/s audio stream), so memcpy costs nothing
+// meaningful on ARM9. Do not reintroduce DMA here unless you've
+// confirmed with certainty which channel(s) the video path owns and
+// picked a genuinely unused one.
+// =====================================================================
+static inline void fastCopy(void* dst, const void* src, size_t size)
+{
+    memcpy(dst, src, size);
+}
+
+// =====================================================================
+// Generic IRQ-safe ring buffer. Producer and consumer can run in
+// different execution contexts (main loop vs. stream IRQ callback)
+// without corrupting the read/write pointers.
+// =====================================================================
+class SafeRingBuffer
+{
+  public:
+    void init(u32 capacity)
+    {
+        free(buffer);
+        buffer = (u8*)malloc(capacity);
+        size = capacity;
+        readPos = 0;
+        writePos = 0;
+        available = 0;
+    }
+
+    void destroy()
+    {
+        if (buffer)
+            free(buffer);
+        buffer = nullptr;
+        size = 0;
+        readPos = writePos = available = 0;
+    }
+
+    void reset()
+    {
+        int oldIME = enterCritical();
+        readPos = writePos = available = 0;
+        exitCritical(oldIME);
+    }
+
+    bool isValid() const
+    {
+        return buffer != nullptr;
+    }
+
+    u32 freeSpace() const
+    {
+        int oldIME = enterCritical();
+        u32 result = size - available;
+        exitCritical(oldIME);
+        return result;
+    }
+
+    u32 usedSpace() const
+    {
+        int oldIME = enterCritical();
+        u32 result = available;
+        exitCritical(oldIME);
+        return result;
+    }
+
+    // Returns bytes actually written (may be less than requested if full).
+    u32 write(const u8* data, u32 bytes)
+    {
+        if (!buffer)
+            return 0;
+
+        int oldIME = enterCritical();
+
+        u32 space = size - available;
+        if (bytes > space)
+            bytes = space;
+
+        if (bytes > 0)
+        {
+            u32 firstPart = size - writePos;
+            if (bytes <= firstPart)
+            {
+                fastCopy(&buffer[writePos], data, bytes);
+                writePos = (writePos + bytes) % size;
+            }
+            else
+            {
+                fastCopy(&buffer[writePos], data, firstPart);
+                u32 secondPart = bytes - firstPart;
+                fastCopy(buffer, data + firstPart, secondPart);
+                writePos = secondPart;
+            }
+            available += bytes;
+        }
+
+        exitCritical(oldIME);
+        return bytes;
+    }
+
+    // Returns bytes actually read (may be less than requested if empty).
+    u32 read(u8* dest, u32 bytes)
+    {
+        if (!buffer)
+            return 0;
+
+        int oldIME = enterCritical();
+
+        if (bytes > available)
+            bytes = available;
+
+        if (bytes > 0)
+        {
+            u32 firstPart = size - readPos;
+            if (bytes <= firstPart)
+            {
+                fastCopy(dest, &buffer[readPos], bytes);
+                readPos = (readPos + bytes) % size;
+            }
+            else
+            {
+                fastCopy(dest, &buffer[readPos], firstPart);
+                u32 secondPart = bytes - firstPart;
+                fastCopy(dest + firstPart, buffer, secondPart);
+                readPos = secondPart;
+            }
+            available -= bytes;
+        }
+
+        exitCritical(oldIME);
+        return bytes;
+    }
+
+  private:
+    u8* buffer = nullptr;
+    u32 size = 0;
+    volatile u32 readPos = 0;
+    volatile u32 writePos = 0;
+    volatile u32 available = 0;
+};
+
+// =====================================================================
+// Module state
+// =====================================================================
 static FILE* s_audioFile = nullptr;
 static bool s_isPaused = false;
 static bool s_streamOpen = false;
@@ -15,134 +181,136 @@ static long s_loopStartOffset = 0;
 static bool s_loopAtEOF = false;
 
 static bool s_isVideoAudio = false;
-static u8* s_ringBuffer = nullptr;
-static u32 s_ringBufferSize = 128 * 1024; // 128KB buffer (~1 second of audio)
-static u32 s_ringReadPos = 0;
-static u32 s_ringWritePos = 0;
-static u32 s_ringAvailable = 0;
 
+// Ring buffers: ~2 seconds of slack each at 32kHz/16-bit/stereo (128KB/s).
+static const u32 RING_BUFFER_SIZE = 256 * 1024;
+static SafeRingBuffer s_videoRing;
+static SafeRingBuffer s_musicRing;
+
+static bool s_videoPrefillDone = false;
+static bool s_musicPrefillDone = false;
+static const u32 PREFILL_FRACTION_DIVISOR = 4; // start once 25% full
+
+static u32 s_musicReadSamples = 0; // samples read from disk so far
+
+static const u32 MUSIC_READ_CHUNK = 4096;
+static const u32 MUSIC_FILL_BUDGET_PER_UPDATE = 16 * 1024;
+
+// =====================================================================
+// Stream callback — runs in the maxmod stream IRQ context.
+// No file I/O happens here for either path; both just drain a ring buffer.
+// =====================================================================
 static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_formats format)
 {
     size_t bytesReq = length * BYTES_PER_FRAME;
+    u8* out = (u8*)dest;
 
-    if (s_isVideoAudio)
+    SafeRingBuffer* ring = s_isVideoAudio ? &s_videoRing : &s_musicRing;
+    bool* prefillDone = s_isVideoAudio ? &s_videoPrefillDone : &s_musicPrefillDone;
+
+    if (!ring->isValid() || s_isPaused)
     {
-        if (!s_ringBuffer || s_isPaused)
-        {
-            memset(dest, 0, bytesReq);
-            return length;
-        }
+        memset(out, 0, bytesReq);
+        return length;
+    }
 
-        u32 bytesToRead = bytesReq;
-        if (bytesToRead > s_ringAvailable)
+    if (!*prefillDone)
+    {
+        if (ring->usedSpace() >= RING_BUFFER_SIZE / PREFILL_FRACTION_DIVISOR)
         {
-            bytesToRead = s_ringAvailable;
-        }
-
-        u8* out = (u8*)dest;
-        size_t firstPart = s_ringBufferSize - s_ringReadPos;
-
-        if (bytesToRead <= firstPart)
-        {
-            memcpy(out, &s_ringBuffer[s_ringReadPos], bytesToRead);
-            s_ringReadPos = (s_ringReadPos + bytesToRead) % s_ringBufferSize;
+            *prefillDone = true;
         }
         else
         {
-            memcpy(out, &s_ringBuffer[s_ringReadPos], firstPart);
-            size_t secondPart = bytesToRead - firstPart;
-            memcpy(out + firstPart, s_ringBuffer, secondPart);
-            s_ringReadPos = secondPart;
+            memset(out, 0, bytesReq);
+            if (s_isVideoAudio)
+                s_elapsedSamples += (bytesReq / BYTES_PER_FRAME);
+            return length;
         }
-
-        s_ringAvailable -= bytesToRead;
-
-        // always increment elapsed samples by the requested amount to keep time moving.
-        // this prevents the video controller from deadlocking if the SD card reads too slowly
-        s_elapsedSamples += (bytesReq / BYTES_PER_FRAME);
-
-        // fill remainder with silence if the ring buffer underruns
-        if (bytesToRead < bytesReq)
-        {
-            memset(out + bytesToRead, 0, bytesReq - bytesToRead);
-        }
-        return length;
     }
 
-    if (!s_audioFile || s_isPaused)
-    {
-        memset(dest, 0, bytesReq);
-        return length;
-    }
-
-    size_t bytesRead = fread(dest, 1, bytesReq, s_audioFile);
+    u32 bytesRead = ring->read(out, bytesReq);
     s_elapsedSamples += (bytesRead / BYTES_PER_FRAME);
 
-    bool hitLoopPoint = (s_loopEndSamples > 0 && s_elapsedSamples >= s_loopEndSamples);
-    bool hitEOF = (bytesRead < bytesReq);
-
-    if (hitLoopPoint || (hitEOF && s_loopAtEOF))
+    if (bytesRead < bytesReq)
     {
-        fseek(s_audioFile, s_loopStartOffset, SEEK_SET);
-        s_elapsedSamples = s_loopStartSamples;
-
-        size_t remaining = bytesReq - bytesRead;
-        if (remaining > 0)
-        {
-            size_t read2 = fread((u8*)dest + bytesRead, 1, remaining, s_audioFile);
-            s_elapsedSamples += (read2 / BYTES_PER_FRAME);
-
-            if (read2 < remaining)
-            {
-                memset((u8*)dest + bytesRead + read2, 0, remaining - read2);
-            }
-        }
-    }
-    else if (hitEOF && !s_loopAtEOF)
-    {
-        memset((u8*)dest + bytesRead, 0, bytesReq - bytesRead);
+        memset(out + bytesRead, 0, bytesReq - bytesRead);
+        *prefillDone = false; // rebuild safety margin before draining again
     }
 
     return length;
 }
 
+// =====================================================================
+// Non-realtime music buffer filler — called from update(). Owns all
+// file I/O and loop-point handling. The callback never touches disk.
+// =====================================================================
+static void fillMusicBuffer()
+{
+    if (!s_audioFile || s_isVideoAudio || !s_musicRing.isValid())
+        return;
+
+    u32 budgetRemaining = MUSIC_FILL_BUDGET_PER_UPDATE;
+    u8 scratch[MUSIC_READ_CHUNK];
+
+    while (budgetRemaining > 0)
+    {
+        u32 space = s_musicRing.freeSpace();
+        if (space < MUSIC_READ_CHUNK)
+            break;
+
+        size_t bytesRead = fread(scratch, 1, MUSIC_READ_CHUNK, s_audioFile);
+        s_musicReadSamples += (bytesRead / BYTES_PER_FRAME);
+
+        bool hitLoopPoint = (s_loopEndSamples > 0 && s_musicReadSamples >= s_loopEndSamples);
+        bool hitEOF = (bytesRead < MUSIC_READ_CHUNK);
+
+        if (bytesRead > 0)
+            s_musicRing.write(scratch, bytesRead);
+
+        if (hitLoopPoint || (hitEOF && s_loopAtEOF))
+        {
+            fseek(s_audioFile, s_loopStartOffset, SEEK_SET);
+            s_musicReadSamples = s_loopStartSamples;
+        }
+        else if (hitEOF && !s_loopAtEOF)
+        {
+            break;
+        }
+
+        budgetRemaining -= (budgetRemaining >= MUSIC_READ_CHUNK) ? MUSIC_READ_CHUNK : budgetRemaining;
+    }
+}
+
+// =====================================================================
 MusicController* MusicController::instance = nullptr;
 
 void MusicController::create()
 {
     if (!instance)
-    {
         instance = new MusicController();
-    }
 }
 
 void MusicController::destroy()
 {
     if (instance)
-    {
         delete instance;
-    }
     instance = nullptr;
 }
 
 MusicController* MusicController::getInstance()
 {
     if (!instance)
-    {
         create();
-    }
     return instance;
 }
 
 void MusicController::init(const char* filePath, float loopStartSeconds, float loopEndSeconds)
 {
-    // if the same track is already playing, don't restart it
     if (s_streamOpen && !s_isVideoAudio && s_currentFilePath == filePath)
     {
         if (s_isPaused)
-        {
             resume();
-        }
         return;
     }
 
@@ -155,7 +323,11 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
         return;
     }
 
+    static char s_fileIOBuffer[32 * 1024];
+    setvbuf(s_audioFile, s_fileIOBuffer, _IOFBF, sizeof(s_fileIOBuffer));
+
     s_elapsedSamples = 0;
+    s_musicReadSamples = 0;
     s_isPaused = false;
     s_isVideoAudio = false;
     s_currentFilePath = filePath;
@@ -177,6 +349,24 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
         s_loopEndSamples = 0;
     }
 
+    s_musicRing.init(RING_BUFFER_SIZE);
+    s_musicPrefillDone = false;
+
+    // FIX: loop until the buffer actually crosses the prefill threshold
+    // (or hits EOF on a short track), instead of a single budget-capped
+    // call. A single call was capped at MUSIC_FILL_BUDGET_PER_UPDATE
+    // (16KB) while the callback's prefill gate required 64KB - so
+    // regular music could never clear the gate and just played silence
+    // forever. This is what was breaking song playback in Views.
+    const u32 prefillTarget = RING_BUFFER_SIZE / PREFILL_FRACTION_DIVISOR;
+    while (s_musicRing.usedSpace() < prefillTarget)
+    {
+        u32 before = s_musicRing.usedSpace();
+        fillMusicBuffer();
+        if (s_musicRing.usedSpace() == before)
+            break; // EOF on a short/non-looping track - stop spinning
+    }
+
     mm_stream stream;
     stream.timer = MM_TIMER0;
     stream.sampling_rate = AUDIO_SAMPLE_RATE;
@@ -194,14 +384,9 @@ void MusicController::initVideoAudio()
 {
     cleanup();
 
-    if (!s_ringBuffer)
-    {
-        s_ringBuffer = (u8*)malloc(s_ringBufferSize);
-    }
+    s_videoRing.init(RING_BUFFER_SIZE);
+    s_videoPrefillDone = false;
 
-    s_ringReadPos = 0;
-    s_ringWritePos = 0;
-    s_ringAvailable = 0;
     s_elapsedSamples = 0;
     s_isPaused = false;
     s_isVideoAudio = true;
@@ -221,30 +406,10 @@ void MusicController::initVideoAudio()
 
 void MusicController::pushVideoAudio(const u8* data, size_t size)
 {
-    if (!s_ringBuffer || !s_isVideoAudio)
+    if (!s_isVideoAudio || !s_videoRing.isValid())
         return;
 
-    if (s_ringAvailable + size > s_ringBufferSize)
-    {
-        size = s_ringBufferSize - s_ringAvailable; // prevent overflow
-    }
-
-    size_t firstPart = s_ringBufferSize - s_ringWritePos;
-    if (size <= firstPart)
-    {
-        // fits perfectly before wrapping
-        memcpy(&s_ringBuffer[s_ringWritePos], data, size);
-        s_ringWritePos = (s_ringWritePos + size) % s_ringBufferSize;
-    }
-    else
-    {
-        // wraps around the end of the buffer to the beginning
-        memcpy(&s_ringBuffer[s_ringWritePos], data, firstPart);
-        size_t secondPart = size - firstPart;
-        memcpy(s_ringBuffer, data + firstPart, secondPart);
-        s_ringWritePos = secondPart;
-    }
-    s_ringAvailable += size;
+    s_videoRing.write(data, (u32)size);
 }
 
 float MusicController::getVideoTime()
@@ -254,6 +419,9 @@ float MusicController::getVideoTime()
 
 void MusicController::update()
 {
+    if (!s_isVideoAudio)
+        fillMusicBuffer();
+
     if (s_streamOpen)
         mmStreamUpdate();
 }
@@ -304,9 +472,9 @@ void MusicController::cleanup()
         s_audioFile = nullptr;
     }
     s_currentFilePath = "";
-    if (s_ringBuffer)
-    {
-        free(s_ringBuffer);
-        s_ringBuffer = nullptr;
-    }
+
+    s_videoRing.destroy();
+    s_musicRing.destroy();
+    s_videoPrefillDone = false;
+    s_musicPrefillDone = false;
 }

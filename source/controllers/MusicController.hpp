@@ -35,7 +35,10 @@ class MusicController
 
   private:
     MusicController() {};
-    ~MusicController() {};
+    ~MusicController()
+    {
+        cleanup();
+    }
     static MusicController* instance;
 
     long getAudioStartOffset(FILE* file);
