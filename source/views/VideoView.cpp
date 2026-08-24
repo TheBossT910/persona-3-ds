@@ -1,5 +1,5 @@
-#include "VideoView.h"
-#include "core/globals.h"
+#include "VideoView.hpp"
+#include "core/globals.hpp"
 #include <nds.h>
 #include <stdio.h>
 

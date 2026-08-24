@@ -1,4 +1,4 @@
-#include "IwatodaiStreetsView.h"
+#include "IwatodaiStreetsView.hpp"
 #include "events/BattleEvents.hpp"
 #include "events/GenericEvents.hpp"
 
@@ -36,6 +36,7 @@ void IwatodaiStreetsView::setCameraConfig()
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
     camConfig.angleIncrement = 0.05f;
+    camConfig.isRotationLocked = true;
 }
 
 // ----------------------------

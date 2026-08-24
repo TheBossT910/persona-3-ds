@@ -1,5 +1,5 @@
-#include "MainMenuView.h"
-#include "core/globals.h"
+#include "MainMenuView.hpp"
+#include "core/globals.hpp"
 #include <nds.h>
 #include <stdio.h>
 #include <string>
@@ -59,11 +59,6 @@ void MainMenuView::init()
     std::array<UIMenu*, 10> menus = {mainMenuCmpt};
     ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
     ae::BroadcastEvent(Event::ShowMenu{mainMenuCmpt});
-
-    // setup console
-    consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
-    consoleSelect(&console);
-    bgSetPriority(console.bgId, 1);
 
     // set brightness on bottom screen to completely dark (no visible image)
     setBrightness(2, -16);

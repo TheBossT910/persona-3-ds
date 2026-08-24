@@ -1,5 +1,5 @@
-#include "IwatodaiDormView.h"
-#include "core/structs.h"
+#include "IwatodaiDormView.hpp"
+#include "core/structs.hpp"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()
@@ -24,6 +24,7 @@ void IwatodaiDormView::setCameraConfig()
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
     camConfig.angleIncrement = 0.07f;
+    camConfig.isRotationLocked = true;
     ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 

@@ -1,5 +1,5 @@
-#include "MainMenuComponent.h"
-#include "core/globals.h"
+#include "MainMenuComponent.hpp"
+#include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
 #include "events/SaveEvents.hpp"
 #include <string>
@@ -108,11 +108,7 @@ ViewState MainMenuComponent::settingOptionSelected()
         changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
         selectedView = ViewState::KEEP_CURRENT;
         break;
-    case SettingOptions::FEMC_MODE:
-        saveData.femcMode = !saveData.femcMode;
-        updateSave();
-        selectedView = ViewState::KEEP_CURRENT;
-        break;
+
     default:
         selectedView = ViewState::KEEP_CURRENT;
     }

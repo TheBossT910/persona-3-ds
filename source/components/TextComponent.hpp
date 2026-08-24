@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "core/enums.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 #include <aegis/component.hpp>
 
 #include "managers/TextManager.hpp"
@@ -73,6 +73,11 @@ class TextComponent : public ae::Component
     void appearTextSkip();
 
     /**
+     * @brief Stops the appearText animation immediately and clears the state.
+     */
+    void appearTextStop();
+
+    /**
      * @brief A wrapper for appearTextDone in TextSystem. Check if the text being rendered with appearText has finished appearing.
      * @return true if the text has finished appearing, false otherwise.
      * @see appearTextDone
@@ -114,6 +119,12 @@ class TextComponent : public ae::Component
      * @return The font size
      */
     int getFontSize();
+
+    /**
+     * @brief A getter to return the line spacing
+     * @return The line spacing
+     */
+    int getLineSpacing();
 
   protected:
     void SubmitToManager() override

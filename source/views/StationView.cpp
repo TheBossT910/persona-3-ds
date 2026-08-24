@@ -1,4 +1,4 @@
-#include "StationView.h"
+#include "StationView.hpp"
 
 StationView::StationView()
 {
@@ -8,6 +8,17 @@ void StationView::setMusic()
 {
     musicCtrl->init(
         (fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(), 2.002f, 73.939f);
+}
+
+void StationView::setCameraConfig()
+{
+    camConfig.mode = CameraMode::Follow;
+    camConfig.initialAngle = 1.5708f * 2;
+    camConfig.distance = 1.0f;
+    camConfig.height = height + 0.6f;
+    camConfig.lookAhead = 0.2f;
+    camConfig.angleIncrement = 0.05f;
+    camConfig.isRotationLocked = true;
 }
 
 void StationView::setMovementConfig()

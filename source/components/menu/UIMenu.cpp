@@ -1,4 +1,4 @@
-#include "UIMenu.h"
+#include "UIMenu.hpp"
 
 void UIMenu::resetMenu()
 {
@@ -6,6 +6,11 @@ void UIMenu::resetMenu()
     startIndex = 0;
     isActive = false;
     nextViewState = ViewState::KEEP_CURRENT;
+
+    if (text != nullptr)
+    {
+        text->clearScreen();
+    }
 
     resetHook();
 

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "core/enums.h"
+#include "core/enums.hpp"
 #include "core/routerIDs.hpp"
 #include "events/UIEvents.hpp"
 #include "soundbank.h"
@@ -15,9 +15,9 @@
 
 #include "events/GenericEvents.hpp"
 
-#include "components/menu/UIMenu.h"
-#include "components/ui/UIScreen.h"
-#include "controllers/MusicController.h"
+#include "components/menu/UIMenu.hpp"
+#include "components/ui/UIScreen.hpp"
+#include "controllers/MusicController.hpp"
 #include "managers/RenderManager.hpp"
 
 // TODO: add a way to indicate reduced # of bg slots
@@ -28,7 +28,8 @@ class UISystem : public ae::SystemRouter<UISystem,
                                          Event::HideAllMenus,
                                          Event::ShowScreen,
                                          Event::HideAllScreens,
-                                         Event::SwitchView>,
+                                         Event::SwitchView,
+                                         Event::RenderUIText>,
                  public ae::Singleton<UISystem>
 {
   public:
@@ -85,8 +86,6 @@ class UISystem : public ae::SystemRouter<UISystem,
 
     /**
      * @brief ETL message handler to hide all menus
-     *
-     * @param msg The event trigger.
      */
     void on_receive(const Event::HideAllMenus& /*msg*/);
 
@@ -109,6 +108,11 @@ class UISystem : public ae::SystemRouter<UISystem,
      * Wrapper for hideAllScreens
      */
     void on_receive(const Event::HideAllScreens& /*msg*/);
+
+    /**
+     * @brief ETL message handler to render UI text.
+     */
+    void on_receive(const Event::RenderUIText& /*msg*/);
 
     /**
      * @brief Fallback handler for unhandled ETL messages.
@@ -200,4 +204,6 @@ class UISystem : public ae::SystemRouter<UISystem,
     mm_sfxhand sfxMenuHandle;
     mm_sfxhand sfxSelectHandle;
     mm_sfxhand sfxCancelHandle;
+
+    bool renderUIText = false;
 };

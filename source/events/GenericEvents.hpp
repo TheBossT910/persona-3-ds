@@ -5,7 +5,7 @@
  */
 
 #pragma once
-#include "core/structs.h"
+#include "core/structs.hpp"
 #include <aegis/aegis.hpp>
 
 namespace Event

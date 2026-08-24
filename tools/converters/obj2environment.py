@@ -490,7 +490,7 @@ def convert(obj_path, output_dir, config):
         config.get("db_path")
         or os.path.join(project_root, "source", "data", "environmentDb.cpp")
     )
-    struct_header = config.get("struct_header", "data/environmentDb.h")
+    struct_header = config.get("struct_header", "data/environmentDb.hpp")
     bin_runtime_prefix = config.get("bin_runtime_prefix", "") or ""
 
     obj_dir = os.path.dirname(obj_path)
@@ -720,7 +720,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--struct-header",
         type=str,
-        default="data/environmentDb.h",
+        default="data/environmentDb.hpp",
         help="Include path written at the top of environmentDb.cpp "
         "(default: data/environmentDb.h)",
     )
