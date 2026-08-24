@@ -1,11 +1,10 @@
-#include "EnvironmentView.h"
-#include "core/globals.h"
+#include "EnvironmentView.hpp"
+#include "core/globals.hpp"
 #include <nds.h>
 #include <string>
 
 // model
-#include "models/kotone.h"
-#include "models/makoto.h"
+#include "models/makoto.hpp"
 
 #include "systems/BattleSystem.hpp"
 
@@ -194,16 +193,9 @@ void EnvironmentView::init()
 
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
-    animationCtrl->loadModel((modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
+    animationCtrl->loadModel((modelPath + "makoto/makoto.bin").c_str());
 
-    if (saveData.femcMode)
-    {
-        kotone_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
-    }
-    else
-    {
-        makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
-    }
+    makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
 
     //setup main screen text engine
     int bgText = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);

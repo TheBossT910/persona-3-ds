@@ -1,5 +1,5 @@
-#include "DisclaimerView.h"
-#include "core/globals.h"
+#include "DisclaimerView.hpp"
+#include "core/globals.hpp"
 #include <nds.h>
 #include <stdio.h>
 

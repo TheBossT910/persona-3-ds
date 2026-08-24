@@ -1,4 +1,4 @@
-#include "DialogueScreen.h"
+#include "DialogueScreen.hpp"
 
 DialogueScreen* DialogueScreen::instance = nullptr;
 
@@ -240,30 +240,15 @@ void DialogueScreen::load()
 
     // get sprites
     // calendar
-    calendarSprite[0] = graphics->loadSpriteGraphic(
-        spritePath, SpriteType::DIALOGUE, saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR);
-    calendarSprite[1] = graphics->loadSpriteGraphic(
-        spritePath, SpriteType::DIALOGUE, saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR);
+    calendarSprite[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CALENDAR);
+    calendarSprite[1] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CALENDAR);
     // text box
-    textBox[0] =
-        graphics->loadSpriteGraphic(spritePath,
-                                    SpriteType::DIALOGUE,
-                                    saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER);
-    textBox[1] =
-        graphics->loadSpriteGraphic(spritePath,
-                                    SpriteType::DIALOGUE,
-                                    saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE);
-    textBox[2] =
-        graphics->loadSpriteGraphic(spritePath,
-                                    SpriteType::DIALOGUE,
-                                    saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE);
-    textBox[3] =
-        graphics->loadSpriteGraphic(spritePath,
-                                    SpriteType::DIALOGUE,
-                                    saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER);
+    textBox[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_CORNER);
+    textBox[1] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_MIDDLE);
+    textBox[2] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_MIDDLE);
+    textBox[3] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_CORNER);
     // name tag
-    nameTag[0] = graphics->loadSpriteGraphic(
-        spritePath, SpriteType::DIALOGUE, saveData.femcMode ? DialogueSprite::NAME_TAG_FEMC : DialogueSprite::NAME_TAG);
+    nameTag[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::NAME_TAG);
 
     // copy sprites into memory
     // calendar

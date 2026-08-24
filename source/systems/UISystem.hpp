@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "core/enums.h"
+#include "core/enums.hpp"
 #include "core/routerIDs.hpp"
 #include "events/UIEvents.hpp"
 #include "soundbank.h"
@@ -15,9 +15,9 @@
 
 #include "events/GenericEvents.hpp"
 
-#include "components/menu/UIMenu.h"
-#include "components/ui/UIScreen.h"
-#include "controllers/MusicController.h"
+#include "components/menu/UIMenu.hpp"
+#include "components/ui/UIScreen.hpp"
+#include "controllers/MusicController.hpp"
 #include "managers/RenderManager.hpp"
 
 // TODO: add a way to indicate reduced # of bg slots

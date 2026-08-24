@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "core/enums.h"
-#include "core/structs.h"
+#include "core/enums.hpp"
+#include "core/structs.hpp"
 #include <aegis/component.hpp>
 
 #include "managers/TextManager.hpp"
@@ -71,6 +71,11 @@ class TextComponent : public ae::Component
      * @see appearTextSkip
      */
     void appearTextSkip();
+
+    /**
+     * @brief Stops the appearText animation immediately and clears the state.
+     */
+    void appearTextStop();
 
     /**
      * @brief A wrapper for appearTextDone in TextSystem. Check if the text being rendered with appearText has finished appearing.

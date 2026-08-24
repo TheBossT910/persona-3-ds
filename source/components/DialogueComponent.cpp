@@ -1,5 +1,5 @@
 #include "DialogueComponent.hpp"
-#include "core/globals.h"
+#include "core/globals.hpp"
 
 void DialogueComponent::Init()
 {

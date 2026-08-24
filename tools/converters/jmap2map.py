@@ -140,7 +140,7 @@ def convert(input_file: str, output_file: str, config: dict) -> None:
 
     # If the caller passed a directory, derive the .h filename automatically
     if out_path.is_dir() or (not out_path.suffix):
-        out_path = out_path / (jmap_path.stem + ".h")
+        out_path = out_path / (jmap_path.stem + ".hpp")
 
     stem = jmap_path.stem
 
