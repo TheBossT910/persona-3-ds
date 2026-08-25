@@ -1,26 +1,64 @@
-// See https://go.microsoft.com/fwlink/?LinkId=733558
-// for the documentation about the tasks.json format
 {
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "make debug",
-            "type": "process",
-            "command": "make",
-            "args": [
-                "DEBUG=1"
-            ],
+            "label": "CMake: Configure (Host Debug)",
+            "type": "shell",
+            "command": "cmake --preset host-debug",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Configure (NDS Release)",
+            "type": "shell",
+            "command": "cmake --preset nds-release",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Build (Host Tests)",
+            "type": "shell",
+            "command": "cmake --build --preset build-host-tests",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": [
                 "$gcc"
             ]
         },
         {
-            "label": "clean",
-            "type": "process",
-            "command": "make",
-            "args": [
-                "clean"
-            ],
+            "label": "CMake: Build (Assets)",
+            "type": "shell",
+            "command": "cmake --build --preset build-assets",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CMake: Build (NDS SDCard)",
+            "type": "shell",
+            "command": "cmake --build --preset build-nds-sdcard",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CMake: Clean",
+            "type": "shell",
+            "command": "cmake --build --preset build-nds-sdcard --target clean",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         }
     ]

@@ -1,25 +1,18 @@
 {
+    "version": 4,
     "configurations": [
         {
-            "name": "BlocksDS NDS",
-            "compilerPath": "${ARM_GCC}/bin/arm-none-eabi-g++",
-            "intelliSenseMode": "gcc-arm",
+            "name": "CMake Project",
+            "compileCommands": "${workspaceFolder}/compile_commands.json",
+            "intelliSenseMode": "linux-gcc-x86_64",
             "forcedInclude": [
                 "${workspaceFolder}/include/vscode_fix.h"
             ],
             "includePath": [
                 "${workspaceFolder}/include/**",
                 "${workspaceFolder}/source/**",
-                "${workspaceFolder}/build",
-                "${workspaceFolder}/libs/aegis_engine/include**",
-                "${workspaceFolder}/libs/aegis_engine/libs/**",
-                "${env:ARM_GCC}/arm-none-eabi/include/**",
-                "${env:BLOCKSDSLIBS}/dswifi/include/**",
-                "${env:BLOCKSDSLIBS}/libnds/include/**",
-                "${env:BLOCKSDSLIBS}/libteak/include/**",
-                "${env:BLOCKSDSLIBS}/libxm7/include/**",
-                "${env:BLOCKSDSLIBS}/maxmod/include/**",
-                "${workspaceFolder}/build/persona-3-dual/maxmod/**"
+                "${workspaceFolder}/libs/aegis_engine/include/**",
+                "${workspaceFolder}/libs/aegis_engine/libs/**"
             ],
             "defines": [
                 "ARM9",
@@ -28,6 +21,5 @@
             "cStandard": "c11",
             "cppStandard": "c++17"
         }
-    ],
-    "version": 4
+    ]
 }

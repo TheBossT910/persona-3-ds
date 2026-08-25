@@ -2,38 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "[Docker] (gdb) Connect to melonDS",
+            "name": "NDS ELF (GDB)",
             "type": "cppdbg",
             "request": "launch",
-            // NOTE: this SHOULD BE the same as the target in the Makefile.
-            "program": "${workspaceFolder}/build/persona-3-dual.elf",
+            "program": "${workspaceFolder}/out/build/nds-release/persona-3-dual.elf",
             "targetArchitecture": "arm",
-            "serverLaunchTimeout": 10000,
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
             "miDebuggerPath": "/usr/bin/gdb-multiarch",
-            "miDebuggerServerAddress": "host.docker.internal:2345",
+            "MIMode": "gdb",
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "preLaunchTask": "CMake: Build (NDS SDCard)",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ],
-            "customLaunchSetupCommands": [
-                {
-                    "text": "target remote host.docker.internal:2345",
-                    "description": "Connect to melonDS",
-                    "ignoreFailures": false
-                },
-                {
-                    "text": "symbol-file \"${workspaceFolder}/build/persona-3-dual.elf\"",
-                    "description": "Force load symbols",
-                    "ignoreFailures": false
-                },
             ]
         }
     ]
