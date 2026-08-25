@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "data/spriteDb.hpp"
 #include "managers/IOManager.hpp"
 #include "types/GraphicsTypes.hpp"
 #include "types/aeTypes.hpp"
