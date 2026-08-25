@@ -239,20 +239,13 @@ ViewState SignContractView::update()
 
 void SignContractView::cleanup()
 {
-    if (graphics != nullptr)
-    {
-        engine.DestroyComponent(graphics);
-        graphics = nullptr;
-    }
-
-    engine.DestroyComponent(text);
-    text = nullptr;
-
     if (signContract != nullptr)
     {
         engine.DestroyEntity(signContract);
 
         signContract = nullptr;
+        graphics = nullptr;
+        text = nullptr;
     }
 
     // update save data (names)

@@ -386,20 +386,13 @@ ViewState IntroView::update()
 
 void IntroView::cleanup()
 {
-    if (graphics != nullptr)
-    {
-        engine.DestroyComponent(graphics);
-        graphics = nullptr;
-    }
-
-    engine.DestroyComponent(text);
-    text = nullptr;
-
     if (intro != nullptr)
     {
         engine.DestroyEntity(intro);
 
         intro = nullptr;
+        graphics = nullptr;
+        text = nullptr;
     }
 
     musicCtrl->cleanup();
@@ -408,9 +401,9 @@ void IntroView::cleanup()
     oamClear(&oamMain, 0, 0);
 
     // free allocated sprite vram
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 2; ++i)
     {
-        if (logoSprite[i].gfx != NULL)
+        if (logoSprite[i].gfx != nullptr)
         {
             oamFreeGfx(&oamMain, logoSprite[i].gfx);
             logoSprite[i].gfx = nullptr;

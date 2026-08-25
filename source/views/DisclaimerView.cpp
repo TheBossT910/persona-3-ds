@@ -106,17 +106,12 @@ ViewState DisclaimerView::update()
 
 void DisclaimerView::cleanup()
 {
-    if (graphics != nullptr)
-    {
-        engine.DestroyComponent(graphics);
-        graphics = nullptr;
-    }
-
     if (disclaimer != nullptr)
     {
         engine.DestroyEntity(disclaimer);
 
         disclaimer = nullptr;
+        graphics = nullptr;
     }
     BaseView::cleanup();
 }

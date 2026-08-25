@@ -227,20 +227,13 @@ void MainMenuView::cleanup()
         }
     }
 
-    if (graphics != nullptr)
-    {
-        engine.DestroyComponent(graphics);
-        graphics = nullptr;
-    }
-
-    engine.DestroyComponent(textMenu);
-    textMenu = nullptr;
-
     if (mainMenu != nullptr)
     {
         engine.DestroyEntity(mainMenu);
 
         mainMenu = nullptr;
+        graphics = nullptr;
+        textMenu = nullptr;
     }
 
     musicCtrl->cleanup();

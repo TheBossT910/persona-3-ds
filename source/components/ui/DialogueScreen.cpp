@@ -275,16 +275,11 @@ void DialogueScreen::unload()
         }
     }
 
-    if (graphics != nullptr)
-    {
-        engine.DestroyComponent(graphics);
-        graphics = nullptr;
-    }
-
     if (dialogue != nullptr)
     {
         engine.DestroyEntity(dialogue);
 
         dialogue = nullptr;
+        graphics = nullptr;
     }
 }
