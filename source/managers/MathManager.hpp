@@ -8,6 +8,7 @@
 #include <aegis/manager.hpp>
 #include <aegis/types.hpp>
 #include <math.h>
+#include <nds/arm9/math.h>
 #include <nds/arm9/trig_lut.h>
 
 class MathManager : public ae::Manager, public ae::Singleton<MathManager>
@@ -81,28 +82,44 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
     q20_12_t mod(q20_12_t num, q20_12_t den);
 
     /**
-     * @brief Computes the sine of a cyclic angle.
+     * @brief Converts an angle in radians (Q20.12)
+     *
+     * @param radians Angle in radians, as a Q20.12 fixed-point value.
+     * @return The equivalent cyclic angle (full turn = 1<<15).
+     */
+    angle16_t radiansToAngle(q20_12_t radians);
+
+    /**
+     * @brief Converts a cyclic angle to radians (Q20.12).
      *
      * @param angle Cyclic angle (full turn = 1<<15).
+     * @return The equivalent angle in radians, as a Q20.12 fixed-point value.
+     */
+    q20_12_t angleToRadians(angle16_t angle);
+
+    /**
+     * @brief Sine, accepting radians (Q20.12)
+     *
+     * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The sine in Q4.12.
      */
-    q4_12_t sin(angle16_t angle);
+    q4_12_t sin(q20_12_t radians);
 
     /**
-     * @brief Computes the cosine of a cyclic angle.
+     * @brief Cosine, accepting radians (Q20.12)
      *
-     * @param angle Cyclic angle (full turn = 1<<15).
+     * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The cosine in Q4.12.
      */
-    q4_12_t cos(angle16_t angle);
+    q4_12_t cos(q20_12_t radians);
 
     /**
-      * @brief Computes the tangent of a cyclic angle.
-      *
-      * @param angle Cyclic angle (full turn = 1<<15).
-      * @return The tangent in Q20.12.
-      */
-    q20_12_t tan(angle16_t angle);
+     * @brief Tangent, accepting radians (Q20.12)
+     *
+     * @param radians Angle in radians, as a Q20.12 fixed-point value.
+     * @return The tangent in Q20.12.
+     */
+    q20_12_t tan(q20_12_t radians);
 
     /**
      * @brief Computes the arcsine of a ratio.
@@ -166,6 +183,4 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
   private:
     friend class Singleton<MathManager>;
     MathManager() = default;
-
-    const float RAD_TO_LIBNDS = 32768.0f / (2.0f * 3.14159265f);
 };
