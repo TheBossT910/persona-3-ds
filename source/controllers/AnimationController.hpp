@@ -1,5 +1,4 @@
 #pragma once
-#include "core/enums.hpp"
 #include "types/AnimationTypes.hpp"
 
 #include <nds.h>

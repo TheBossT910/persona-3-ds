@@ -2,7 +2,6 @@
 
 #include "components/GraphicsComponent.hpp"
 #include "components/ui/UIScreen.hpp"
-#include "core/enums.hpp"
 #include "core/globals.hpp"
 
 #include <nds.h>

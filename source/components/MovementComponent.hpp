@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "core/enums.hpp"
 #include "types/CameraTypes.hpp"
 #include "types/MovementTypes.hpp"
 

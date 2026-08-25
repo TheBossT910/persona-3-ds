@@ -1,6 +1,5 @@
 #pragma once
 #include "components/ui/UIScreen.hpp"
-#include "core/enums.hpp"
 #include "core/globals.hpp"
 
 #include "components/GraphicsComponent.hpp"

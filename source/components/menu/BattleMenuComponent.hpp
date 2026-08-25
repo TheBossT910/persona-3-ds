@@ -6,9 +6,20 @@
 
 #include "components/menu/UIMenu.hpp"
 #include "types/UITypes.hpp"
-#include <core/enums.hpp>
 
 #include <etl/vector.h>
+
+enum class BattleMenuOptions
+{
+    NONE = 0,
+    ACTION,
+    SKILL,
+    PERSONA,
+    TARGET_ENEMY,
+    TARGET_HEAL,
+    ALL_OUT_ATTACK,
+    ALERT
+};
 
 class BattleMenuComponent : public UIMenu
 {

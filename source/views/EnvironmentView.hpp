@@ -19,6 +19,14 @@
 #include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
 
+enum class ViewPhase
+{
+    Battle,
+    Pause,
+    Dialogue,
+    Environment
+};
+
 class EnvironmentView : public BaseView
 {
   public:
