@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "core/geometry.h"
+#include "core/geometry.hpp"
 #include "core/routerIDs.hpp"
 #include "events/CameraEvents.hpp"
 #include "events/GenericEvents.hpp"
@@ -180,6 +180,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
     float lookAhead = 0.5f;
     float angleIncrement = 0.05f;
     float freeCameraSpeed = 0.02f;
+    bool isRotationLocked = false;
 
     // Path playback state
     const CameraPath* path = nullptr;

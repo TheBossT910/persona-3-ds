@@ -1,8 +1,8 @@
 #include "BattleSystem.hpp"
-#include "./battleActions/skills/BattleCalcs.h"
+#include "./battleActions/skills/BattleCalcs.hpp"
 
-#include "./helpers/random.h"
-#include "core/globals.h"
+#include "./helpers/random.hpp"
+#include "core/globals.hpp"
 #include <cstdlib>
 #include <ctime>
 
@@ -10,8 +10,7 @@ void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
 {
     isActive = true;
 
-    std::string path =
-        fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
+    std::string path = fatBasePath + "music/battle/" + "mass_destruction.pcm";
     musicCtrl->init(path.c_str(), 0.0f, -1.0f);
 
     this->player = new Player(msg.player);

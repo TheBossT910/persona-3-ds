@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include "core/enums.h"
+#include "core/enums.hpp"
+
 #include "managers/IOManager.hpp"
 #include "types/GraphicsTypes.hpp"
 #include "types/aeTypes.hpp"

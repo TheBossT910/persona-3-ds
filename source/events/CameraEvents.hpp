@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include "core/geometry.h"
+#include "core/geometry.hpp"
 #include "types/CameraTypes.hpp"
 #include "types/aeTypes.hpp"
+
 #include <aegis/aegis.hpp>
 
 namespace Event
@@ -39,11 +40,12 @@ struct ConfigureCamera : public etl::message<EventID::ConfigureCamera>
     Vec3<float> target = {}; ///< Look-at point. Used by Static only.
 
     // Follow / Free
-    float initialAngle = 0.0f;    ///< Starting orbit angle in radians.
-    float distance = 1.5f;        ///< Distance from character to camera eye.
-    float height = 0.6f;          ///< Eye height above the character origin.
-    float lookAhead = 0.5f;       ///< Distance ahead of the character for the look-at point.
-    float angleIncrement = 0.05f; ///< Radians rotated per frame on L/R input.
+    float initialAngle = 0.0f;     ///< Starting orbit angle in radians.
+    float distance = 1.5f;         ///< Distance from character to camera eye.
+    float height = 0.6f;           ///< Eye height above the character origin.
+    float lookAhead = 0.5f;        ///< Distance ahead of the character for the look-at point.
+    float angleIncrement = 0.05f;  ///< Radians rotated per frame on L/R input.
+    bool isRotationLocked = false; ///< Disable camera angle rotation on L/R input.
 };
 
 /**

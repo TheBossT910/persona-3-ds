@@ -1,4 +1,4 @@
-#include "PaulowniaMallView.h"
+#include "PaulowniaMallView.hpp"
 
 PaulowniaMallView::PaulowniaMallView()
 {
@@ -8,6 +8,17 @@ void PaulowniaMallView::setMusic()
 {
     musicCtrl->init(
         (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
+}
+
+void PaulowniaMallView::setCameraConfig()
+{
+    camConfig.mode = CameraMode::Follow;
+    camConfig.initialAngle = 1.5708f * 2;
+    camConfig.distance = 1.0f;
+    camConfig.height = height + 0.4f;
+    camConfig.lookAhead = 0.2f;
+    camConfig.angleIncrement = 0.05f;
+    camConfig.isRotationLocked = true;
 }
 
 void PaulowniaMallView::setMovementConfig()
@@ -66,7 +77,7 @@ void PaulowniaMallView::setupUI()
 
     menuHUDScreen = MenuHUDScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen};
+    std::array<UIScreen*, 5> screens = {menuHUDScreen};
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});

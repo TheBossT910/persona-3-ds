@@ -1,4 +1,4 @@
-#include "MenuHUDScreen.h"
+#include "MenuHUDScreen.hpp"
 
 MenuHUDScreen* MenuHUDScreen::instance = nullptr;
 
@@ -35,8 +35,7 @@ void MenuHUDScreen::loadBackground()
         return;
 
     std::string bgPath = "graphics/MenuHUD/backgrounds/";
-    GraphicAsset bgHUD =
-        graphics->loadGraphic(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
+    GraphicAsset bgHUD = graphics->loadGraphic(bgPath + "menuHUD/menuHUD");
 
     dmaCopy(bgHUD.tiles, bgGetGfxPtr(bgId), bgHUD.tilesLen);
     dmaCopy(bgHUD.map, bgGetMapPtr(bgId), bgHUD.mapLen);

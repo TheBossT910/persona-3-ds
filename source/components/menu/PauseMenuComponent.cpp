@@ -1,12 +1,12 @@
-#include "PauseMenuComponent.h"
-#include "core/globals.h"
+#include "PauseMenuComponent.hpp"
+#include "core/globals.hpp"
 #include <nds.h>
 #include <string>
 
 // sfx
 #include "soundbank.h"
 // dialogue
-#include "dialogue/demo_dialogue.h"
+#include "dialogue/demo_dialogue.hpp"
 
 PauseMenuComponent* PauseMenuComponent::instance = nullptr;
 
@@ -61,7 +61,9 @@ ViewState PauseMenuComponent::updateHook()
     // dialogue should be started, but has not
     if (isDialogueStarted && !dialogue->IsActive())
     {
-        text->clearScreen();
+        demo_yukari_kenji_argument_load();
+        dialogue->configureDialogue(
+            DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, text));
         dialogue->start();
         isDialogueStarted = false;
     }
@@ -75,6 +77,7 @@ ViewState PauseMenuComponent::updateHook()
     if (demo_dialogue_bg_slot != -1)
     {
         rm.hideBg(demo_dialogue_bg_slot);
+        ae::BroadcastEvent(Event::RenderUIText{});
     }
 
     return ViewState::DEFAULT;
@@ -232,9 +235,6 @@ ViewState PauseMenuComponent::debugOptionSelected()
         selectedView = ViewState::CUTSCENE_2;
         break;
     case DebugOption::DEBUG_DIALOGUE:
-        demo_yukari_kenji_argument_load();
-        dialogue->configureDialogue(
-            DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, text));
         isDialogueStarted = true;
         selectedView = ViewState::KEEP_CURRENT;
         break;

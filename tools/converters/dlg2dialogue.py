@@ -316,8 +316,8 @@ class CodeGenerator:
         out = []
         s = self.scene
         out += [
-            f'#include "{s}_dialogue.h"',
-            '#include "core/globals.h"',
+            f'#include "{s}_dialogue.hpp"',
+            '#include "core/globals.hpp"',
             "#include <nds.h>",
             "",
             f"int {s}_dialogue_bg_slot = -1;",
@@ -455,7 +455,7 @@ def convert(input_file, output_base, config):
         print("// ===== .cpp =====")
         print(cpp)
     else:
-        h_path = f"{base}_dialogue.h"
+        h_path = f"{base}_dialogue.hpp"
         cpp_path = f"{base}_dialogue.cpp"
         with open(h_path, "w", encoding="utf-8") as f:
             f.write(h)

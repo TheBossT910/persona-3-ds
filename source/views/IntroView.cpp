@@ -1,5 +1,5 @@
-#include "IntroView.h"
-#include "core/globals.h"
+#include "IntroView.hpp"
+#include "core/globals.hpp"
 #include <maxmod9.h>
 #include <nds.h>
 #include <stdio.h>
@@ -73,17 +73,14 @@ void IntroView::init()
     dmaFillHalfWords(0, bgGetMapPtr(bgSubLogo), 2048);
     dmaFillHalfWords(0, bgGetMapPtr(bgSubSky), 2048);
 
-    bool femc = saveData.femcMode;
     std::string bgPath = "graphics/IntroView/backgrounds/";
     std::string spritePath = "graphics/IntroView/sprites/";
-    std::string suffix = femc ? "FEMC" : "";
 
-    GraphicAsset silhouette =
-        graphics->loadGraphic(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
-    GraphicAsset room = graphics->loadGraphic(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
-    GraphicAsset sky = graphics->loadGraphic(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
-    GraphicAsset overlay = graphics->loadGraphic(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
-    GraphicAsset skySub = graphics->loadGraphic(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
+    GraphicAsset silhouette = graphics->loadGraphic(bgPath + "silhouetteBackground/silhouetteBackground");
+    GraphicAsset room = graphics->loadGraphic(bgPath + "roomBackground/roomBackground");
+    GraphicAsset sky = graphics->loadGraphic(bgPath + "skyBackground/skyBackground");
+    GraphicAsset overlay = graphics->loadGraphic(bgPath + "overlayBackground/overlayBackground");
+    GraphicAsset skySub = graphics->loadGraphic(bgPath + "skyBackgroundSub/skyBackgroundSub");
 
     GraphicAsset attribution = graphics->loadGraphic(bgPath + "attributionBackground/attributionBackground");
     GraphicAsset logoLeft = graphics->loadGraphic(spritePath + "logoSpriteLeft/logoSpriteLeft");
@@ -139,15 +136,12 @@ void IntroView::init()
     logoSprite[0].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
     logoSprite[1].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
 
-    if (logoLeft.tiles)
-        dmaCopy(logoLeft.tiles, logoSprite[0].gfx, logoLeft.tilesLen);
-    if (logoRight.tiles)
-        dmaCopy(logoRight.tiles, logoSprite[1].gfx, logoRight.tilesLen);
+    dmaCopy(logoLeft.tiles, logoSprite[0].gfx, logoLeft.tilesLen);
+    dmaCopy(logoRight.tiles, logoSprite[1].gfx, logoRight.tilesLen);
 
     // NOTE: left and right will use the same palette. Just ensure that the order of colours when indexed
     // is THE SAME for both images!
-    if (logoRight.pal)
-        dmaCopy(logoRight.pal, SPRITE_PALETTE, logoRight.palLen);
+    dmaCopy(logoRight.pal, SPRITE_PALETTE, logoRight.palLen);
 
     // for slide in animation
     // move camera to the empty right half of the 512px wide background
@@ -275,8 +269,6 @@ ViewState IntroView::update()
 
     if (animateText)
     {
-        text->drawText("Press Any Button", 80, 88, TextColor::White);
-
         durationCounter++;
 
         if (durationCounter >= duration)
@@ -358,6 +350,7 @@ ViewState IntroView::update()
         animateText = true;
         REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG3 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
         REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
+        text->drawText("\xFF\x02\x01Press Any Button", 45, 80, TextColor::White);
     }
 
     // setup blending for overlay

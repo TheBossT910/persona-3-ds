@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include "core/enums.h"
+#include "core/enums.hpp"
 #include "types/CameraTypes.hpp"
 #include "types/MovementTypes.hpp"
 
 #include "core/routerIDs.hpp"
 #include <aegis/component.hpp>
 
-#include "controllers/AnimationController.h"
+#include "controllers/AnimationController.hpp"
 #include "managers/MathManager.hpp"
 #include "systems/CameraSystem.hpp"
 

@@ -1,4 +1,4 @@
-#include "IwatodaiDormView.h"
+#include "IwatodaiDormView.hpp"
 #include "types/CameraTypes.hpp"
 
 // TODO: dont forget to clear in future
@@ -24,6 +24,7 @@ void IwatodaiDormView::setCameraConfig()
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
     camConfig.angleIncrement = 0.07f;
+    camConfig.isRotationLocked = true;
     ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
@@ -102,7 +103,7 @@ void IwatodaiDormView::setupUI()
     menuHUDScreen = MenuHUDScreen::getInstance();
     dialogueScreen = DialogueScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen, dialogueScreen};
+    std::array<UIScreen*, 5> screens = {menuHUDScreen, dialogueScreen};
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
