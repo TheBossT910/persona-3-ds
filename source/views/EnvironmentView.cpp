@@ -215,10 +215,10 @@ void EnvironmentView::init()
 
     // setup UI
     // NOTE: bg 0 is the 3D view
-    bgMain = {1, 2, 3};
+    bgMain = {1, 2};
     // TODO: Setting the first index to anything other than bgSharedSub results in black bg (but sprites still load)
     // This might be okay/intended, as long as we create 4 seperate bg to pass in
-    bgSub = {bgSharedSub2, bgSharedSub3, 4, 5};
+    bgSub = {bgSharedSub2, bgSharedSub3, 4};
 
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);

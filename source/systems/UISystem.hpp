@@ -192,18 +192,18 @@ class UISystem : public ae::SystemRouter<UISystem,
     OamState* oamMain = nullptr;
 
     /// background ids. The order of the arrays matter. Front = least recently updated, back = last updated
-    std::array<int, 4> lruBgSub = {0, 0, 0, 0};
-    std::array<int, 3> lruBgMain = {0, 0, 0};
+    std::array<int, 3> lruBgSub = {0, 0, 0};
+    std::array<int, 2> lruBgMain = {0, 0};
 
     /// original background ids (order doesn't change)
-    std::array<int, 4> hwBgSub = {0, 0, 0, 0};
-    std::array<int, 3> hwBgMain = {0, 0, 0};
+    std::array<int, 3> hwBgSub = {0, 0, 0};
+    std::array<int, 2> hwBgMain = {0, 0};
 
-    /// currently loaded screens (max 4 sub, 3 main)
+    /// currently loaded screens (max 3 sub, 2 main)
     int screenMainCount = 0;
     int screenSubCount = 0;
-    std::array<UIScreen*, 4> loadedSub{nullptr, nullptr, nullptr, nullptr};
-    std::array<UIScreen*, 3> loadedMain = {nullptr, nullptr, nullptr};
+    std::array<UIScreen*, 3> loadedSub{nullptr, nullptr, nullptr};
+    std::array<UIScreen*, 2> loadedMain = {nullptr, nullptr};
 
     // menu
     std::array<UIMenu*, 10> menus = {};
