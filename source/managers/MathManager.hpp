@@ -6,6 +6,7 @@
 
 #pragma once
 #include <aegis/manager.hpp>
+#include <aegis/types.hpp>
 #include <math.h>
 #include <nds/arm9/trig_lut.h>
 
@@ -25,23 +26,8 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
     }
 
     /**
-     * @brief Computes the sine of an angle using a hardware-optimized lookup table.
-     *
-     * @param r The angle in radians.
-     * @return The sine of the angle, ranging from -1.0f to 1.0f.
-     */
-    float sin(float r);
-
-    /**
-     * @brief Computes the cosine of an angle using a hardware-optimized lookup table.
-     *
-     * @param r The angle in radians.
-     * @return The cosine of the angle, ranging from -1.0f to 1.0f.
-     */
-    float cos(float r);
-
-    /**
-    * @brief Computes the tangent from an angles using an approximation.
+    * @brief DEPRECITATED, will be replaced with coming Libnds version
+    *  Computes the tangent from an angles using an approximation.
     *
     * @details Function courtesy of https://yal.cc/fast-atan2/.
     *
@@ -51,7 +37,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
     *
     * @author Vadym Diachenko (yellowafterlife)
     */
-    float tan(float r);
+    float tanDepreciated(float r);
 
     // TODO: replace with native atan2 solution in upcoming BlocksDS update
     /**
@@ -67,6 +53,115 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @author Vadym Diachenko (yellowafterlife)
      */
     float atan2(float y, float x);
+
+    /**
+     * @brief Divides two Q20.12 values.
+     *
+     * @param num Numerator.
+     * @param den Denominator.
+     * @return The quotient in Q20.12.
+     */
+    q20_12_t div(q20_12_t num, q20_12_t den);
+
+    /**
+     * @brief Computes the square root of a Q20.12 value.
+     *
+     * @param v Value to root.
+     * @return The square root in Q20.12.
+     */
+    q20_12_t sqrt(q20_12_t v);
+
+    /**
+     * @brief Computes the modulo of two Q20.12 values.
+     *
+     * @param num Numerator.
+     * @param den Denominator.
+     * @return The remainder in Q20.12.
+     */
+    q20_12_t mod(q20_12_t num, q20_12_t den);
+
+    /**
+     * @brief Computes the sine of a cyclic angle.
+     *
+     * @param angle Cyclic angle (full turn = 1<<15).
+     * @return The sine in Q4.12.
+     */
+    q4_12_t sin(angle16_t angle);
+
+    /**
+     * @brief Computes the cosine of a cyclic angle.
+     *
+     * @param angle Cyclic angle (full turn = 1<<15).
+     * @return The cosine in Q4.12.
+     */
+    q4_12_t cos(angle16_t angle);
+
+    /**
+      * @brief Computes the tangent of a cyclic angle.
+      *
+      * @param angle Cyclic angle (full turn = 1<<15).
+      * @return The tangent in Q20.12.
+      */
+    q20_12_t tan(angle16_t angle);
+
+    /**
+     * @brief Computes the arcsine of a ratio.
+     *
+     * @param ratio Ratio in Q4.12.
+     * @return The cyclic angle whose sine is ratio.
+     */
+    angle16_t asin(q4_12_t ratio);
+
+    /**
+     * @brief Computes the arccosine of a ratio.
+     *
+     * @param ratio Ratio in Q4.12.
+     * @return The cyclic angle whose cosine is ratio.
+     */
+    angle16_t acos(q4_12_t ratio);
+
+    /**
+     * @brief Computes the dot product of two Q20.12 3D vectors.
+     *
+     * @param x1 X component of the first vector.
+     * @param y1 Y component of the first vector.
+     * @param z1 Z component of the first vector.
+     * @param x2 X component of the second vector.
+     * @param y2 Y component of the second vector.
+     * @param z2 Z component of the second vector.
+     * @return The dot product in Q20.12.
+     */
+    q20_12_t dot(q20_12_t x1, q20_12_t y1, q20_12_t z1, q20_12_t x2, q20_12_t y2, q20_12_t z2);
+
+    /**
+     * @brief Computes the squared length of a Q20.12 3D vector.
+     *
+     * @param x X component.
+     * @param y Y component.
+     * @param z Z component.
+     * @return The squared length in Q20.12.
+     */
+    q20_12_t lengthSq(q20_12_t x, q20_12_t y, q20_12_t z);
+
+    /**
+     * @brief Computes the length of a Q20.12 3D vector.
+     *
+     * @param x X component.
+     * @param y Y component.
+     * @param z Z component.
+     * @return The length in Q20.12.
+     */
+    q20_12_t length(q20_12_t x, q20_12_t y, q20_12_t z);
+
+    /**
+     * @brief Normalizes a Q20.12 3D vector in place.
+     *
+     * @param x X component, updated in place.
+     * @param y Y component, updated in place.
+     * @param z Z component, updated in place.
+     * @return Sets x, y, z to 0,0,0 if length is zero (via out parameters).
+     */
+    void normalize(q20_12_t& x, q20_12_t& y, q20_12_t& z);
 
   private:
     friend class Singleton<MathManager>;
