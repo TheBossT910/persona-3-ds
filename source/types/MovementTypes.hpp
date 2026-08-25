@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/geometry.h>
+#include <core/geometry.hpp>
 #include <nds.h>
 
 enum class TileType
