@@ -6,8 +6,8 @@ option(P3D_BUILD_TESTS "Build host-side unit tests" ON)
 option(P3D_BUILD_NDS "Build Nintendo DS ROM target (WIP)" OFF)
 option(P3D_ENABLE_ASSETS "Enable CMake-driven asset generation target" ON)
 option(P3D_ENABLE_SDCARD "Enable CMake-driven sdcard packaging target" ON)
-option(P3D_USE_BUNDLED_AEGIS "Use bundled libs/aegis_engine CMake target" ON)
-option(P3D_BUILD_AEGIS_TESTS "Build bundled aegis_engine tests from root project" OFF)
+option(P3D_USE_BUNDLED_AEGIS_ENGINE "Use bundled libs/aegis_engine CMake target" ON)
+option(P3D_BUILD_AEGIS_ENGINE_TESTS "Build bundled Aegis Engine tests from root project" OFF)
 
 set(P3D_BLOCKSDS_ROOT "$ENV{BLOCKSDS}" CACHE PATH "Path to BlocksDS core root")
 
@@ -27,7 +27,7 @@ if(P3D_ENABLE_SDCARD)
     include(cmake/Packaging.cmake)
 endif()
 
-if(P3D_BUILD_TESTS OR P3D_BUILD_AEGIS_TESTS)
+if(P3D_BUILD_TESTS OR P3D_BUILD_AEGIS_ENGINE_TESTS)
     enable_testing()
 endif()
 

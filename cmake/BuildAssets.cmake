@@ -1,12 +1,15 @@
 if(NOT DEFINED P3D_SOURCE_DIR)
     message(FATAL_ERROR "P3D_SOURCE_DIR must be provided")
 endif()
+
 if(NOT DEFINED P3D_PYTHON_EXECUTABLE)
     message(FATAL_ERROR "P3D_PYTHON_EXECUTABLE must be provided")
 endif()
+
 if(NOT DEFINED P3D_FFMPEG_EXECUTABLE)
     message(FATAL_ERROR "P3D_FFMPEG_EXECUTABLE must be provided")
 endif()
+
 if(NOT DEFINED P3D_GRIT_EXECUTABLE)
     message(FATAL_ERROR "P3D_GRIT_EXECUTABLE must be provided")
 endif()
@@ -19,6 +22,7 @@ set(TOOLS_DIR "${P3D_SOURCE_DIR}/tools")
 if(NOT DEFINED P3D_ASSET_GROUP)
     set(P3D_ASSET_GROUP "all")
 endif()
+
 string(TOLOWER "${P3D_ASSET_GROUP}" P3D_ASSET_GROUP)
 
 function(p3d_group_enabled group out_var)
@@ -44,15 +48,18 @@ function(p3d_run)
         WORKING_DIRECTORY "${ARG_WORKING_DIRECTORY}"
         RESULT_VARIABLE p3d_result
     )
+
     if(NOT p3d_result EQUAL 0)
         message(FATAL_ERROR "Command failed with exit code ${p3d_result}: ${ARG_COMMAND}")
     endif()
 endfunction()
 
 p3d_group_enabled(dialogue P3D_RUN_DIALOGUE)
+
 if(P3D_RUN_DIALOGUE)
     # Dialogue .dlg -> source/dialogue/*_dialogue.cpp
     file(GLOB DIALOGUE_FILES "${ASSETS_DIR}/dialogue/*.dlg")
+
     foreach(dlg IN LISTS DIALOGUE_FILES)
         get_filename_component(stem "${dlg}" NAME_WE)
         file(MAKE_DIRECTORY "${SOURCE_DIR}/dialogue")
@@ -64,9 +71,11 @@ if(P3D_RUN_DIALOGUE)
 endif()
 
 p3d_group_enabled(music P3D_RUN_MUSIC)
+
 if(P3D_RUN_MUSIC)
     # Music .mp3 -> data/music/**/*.pcm
     file(GLOB_RECURSE MP3_FILES "${ASSETS_DIR}/music/*.mp3")
+
     foreach(mp3 IN LISTS MP3_FILES)
         file(RELATIVE_PATH rel "${ASSETS_DIR}/music" "${mp3}")
         string(REGEX REPLACE "\\.mp3$" ".pcm" rel_pcm "${rel}")
@@ -81,9 +90,11 @@ if(P3D_RUN_MUSIC)
 endif()
 
 p3d_group_enabled(video P3D_RUN_VIDEO)
+
 if(P3D_RUN_VIDEO)
     # Video .mp4 -> data/video/*.vid
     file(GLOB VIDEO_FILES "${ASSETS_DIR}/video/*.mp4")
+
     foreach(mp4 IN LISTS VIDEO_FILES)
         get_filename_component(stem "${mp4}" NAME_WE)
         file(MAKE_DIRECTORY "${DATA_DIR}/video")
@@ -95,9 +106,11 @@ if(P3D_RUN_VIDEO)
 endif()
 
 p3d_group_enabled(environments P3D_RUN_ENVIRONMENTS)
+
 if(P3D_RUN_ENVIRONMENTS)
     # Environments .obj -> data/environments/<name> + sentinel
     file(GLOB ENV_OBJ_FILES "${ASSETS_DIR}/environments/*/*.obj")
+
     foreach(obj IN LISTS ENV_OBJ_FILES)
         get_filename_component(env_dir "${obj}" DIRECTORY)
         get_filename_component(env_name "${env_dir}" NAME)
@@ -112,6 +125,7 @@ if(P3D_RUN_ENVIRONMENTS)
 endif()
 
 p3d_group_enabled(models P3D_RUN_MODELS)
+
 if(P3D_RUN_MODELS)
     # Models .json -> source/models/*.hpp + data/models/<name>/<name>.bin
     file(GLOB MODEL_JSON_FILES "${ASSETS_DIR}/models/*/*.json")
@@ -120,9 +134,11 @@ if(P3D_RUN_MODELS)
         "${SOURCE_DIR}/models/*.hh"
         "${SOURCE_DIR}/models/*.hxx"
     )
+
     if(LEGACY_MODEL_HEADERS)
         file(REMOVE ${LEGACY_MODEL_HEADERS})
     endif()
+
     foreach(model_json IN LISTS MODEL_JSON_FILES)
         get_filename_component(model_dir "${model_json}" DIRECTORY)
         get_filename_component(model_name "${model_dir}" NAME)
@@ -143,21 +159,26 @@ if(P3D_RUN_MODELS)
         if(EXISTS "${model_h_tmp}")
             file(RENAME "${model_h_tmp}" "${model_h_dst}")
         endif()
+
         file(TOUCH "${model_h_dst}")
     endforeach()
 endif()
 
 p3d_group_enabled(maps P3D_RUN_MAPS)
+
 if(P3D_RUN_MAPS)
     file(GLOB LEGACY_MAP_HEADERS
         "${SOURCE_DIR}/maps/*.h"
         "${SOURCE_DIR}/maps/*.hh"
         "${SOURCE_DIR}/maps/*.hxx"
     )
+
     if(LEGACY_MAP_HEADERS)
         file(REMOVE ${LEGACY_MAP_HEADERS})
     endif()
+
     file(GLOB JMAP_FILES "${ASSETS_DIR}/maps/*.jmap")
+
     foreach(jmap IN LISTS JMAP_FILES)
         get_filename_component(stem "${jmap}" NAME_WE)
         set(jmap_out "${SOURCE_DIR}/maps/${stem}.hpp")
@@ -170,13 +191,15 @@ if(P3D_RUN_MAPS)
 endif()
 
 p3d_group_enabled(graphics P3D_RUN_GRAPHICS)
+
 if(P3D_RUN_GRAPHICS)
-    # Graphics PNG -> data/**/*.img.bin using grit
+    # Graphics PNG -> data/**/*.img.bin/.map.bin/.pal.bin using grit
     file(GLOB_RECURSE FAT_PNG_FILES
         "${ASSETS_DIR}/graphics/*.png"
         "${ASSETS_DIR}/environments/*.png"
         "${ASSETS_DIR}/models/*.png"
     )
+
     foreach(png IN LISTS FAT_PNG_FILES)
         file(RELATIVE_PATH rel "${ASSETS_DIR}" "${png}")
         get_filename_component(rel_dir "${rel}" DIRECTORY)
@@ -193,9 +216,11 @@ if(P3D_RUN_GRAPHICS)
 endif()
 
 p3d_group_enabled(fonts P3D_RUN_FONTS)
+
 if(P3D_RUN_FONTS)
     # Font PNG -> data/fonts/**/*.img.bin using grit with font flags
     file(GLOB_RECURSE FONT_PNG_FILES "${ASSETS_DIR}/fonts/*.png")
+
     foreach(png IN LISTS FONT_PNG_FILES)
         file(RELATIVE_PATH rel "${ASSETS_DIR}/fonts" "${png}")
         get_filename_component(rel_dir "${rel}" DIRECTORY)
@@ -213,6 +238,7 @@ if(P3D_RUN_FONTS)
 
     # Font metadata copy .fnt -> data/fonts/**/*.fnt
     file(GLOB_RECURSE FONT_FNT_FILES "${ASSETS_DIR}/fonts/*.fnt")
+
     foreach(fnt IN LISTS FONT_FNT_FILES)
         file(RELATIVE_PATH rel "${ASSETS_DIR}/fonts" "${fnt}")
         set(out_fnt "${DATA_DIR}/fonts/${rel}")

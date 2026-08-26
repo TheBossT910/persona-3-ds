@@ -1,7 +1,7 @@
 find_program(P3D_FFMPEG_EXECUTABLE ffmpeg)
 
 if(NOT P3D_FFMPEG_EXECUTABLE)
-    message(FATAL_ERROR "ffmpeg not found, required for music conversion. Install ffmpeg or configure with -DP3D_ENABLE_ASSETS=OFF")
+    message(FATAL_ERROR "ffmpeg not found, required for media conversion. Install ffmpeg or configure with -DP3D_ENABLE_ASSETS=OFF")
 endif()
 
 if(NOT P3D_BLOCKSDS_ROOT)
