@@ -40,16 +40,23 @@ class SafeRingBuffer
     void destroy()
     {
         if (buffer)
+        {
             free(buffer);
+        }
+
         buffer = nullptr;
         size = 0;
-        readPos = writePos = available = 0;
+        readPos = 0;
+        writePos = 0;
+        available = 0;
     }
 
     void reset()
     {
         int oldIME = enterCritical();
-        readPos = writePos = available = 0;
+        readPos = 0;
+        writePos = 0;
+        available = 0;
         exitCritical(oldIME);
     }
 
@@ -78,13 +85,17 @@ class SafeRingBuffer
     u32 write(const u8* data, u32 bytes)
     {
         if (!buffer)
+        {
             return 0;
+        }
 
         int oldIME = enterCritical();
 
         u32 space = size - available;
         if (bytes > space)
+        {
             bytes = space;
+        }
 
         if (bytes > 0)
         {
@@ -112,12 +123,16 @@ class SafeRingBuffer
     u32 read(u8* dest, u32 bytes)
     {
         if (!buffer)
+        {
             return 0;
+        }
 
         int oldIME = enterCritical();
 
         if (bytes > available)
+        {
             bytes = available;
+        }
 
         if (bytes > 0)
         {
@@ -200,7 +215,10 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
         {
             memset(out, 0, bytesReq);
             if (s_isVideoAudio)
+            {
                 s_elapsedSamples += (bytesReq / BYTES_PER_FRAME);
+            }
+
             return length;
         }
     }
@@ -220,7 +238,9 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
 static void fillMusicBuffer()
 {
     if (!s_audioFile || s_isVideoAudio || !s_musicRing.isValid())
+    {
         return;
+    }
 
     u32 budgetRemaining = MUSIC_FILL_BUDGET_PER_UPDATE;
     u8 scratch[MUSIC_READ_CHUNK];
@@ -229,7 +249,9 @@ static void fillMusicBuffer()
     {
         u32 space = s_musicRing.freeSpace();
         if (space < MUSIC_READ_CHUNK)
+        {
             break;
+        }
 
         size_t bytesRead = fread(scratch, 1, MUSIC_READ_CHUNK, s_audioFile);
         s_musicReadSamples += (bytesRead / BYTES_PER_FRAME);
@@ -238,7 +260,9 @@ static void fillMusicBuffer()
         bool hitEOF = (bytesRead < MUSIC_READ_CHUNK);
 
         if (bytesRead > 0)
+        {
             s_musicRing.write(scratch, bytesRead);
+        }
 
         if (hitLoopPoint || (hitEOF && s_loopAtEOF))
         {
@@ -259,20 +283,27 @@ MusicController* MusicController::instance = nullptr;
 void MusicController::create()
 {
     if (!instance)
+    {
         instance = new MusicController();
+    }
 }
 
 void MusicController::destroy()
 {
     if (instance)
+    {
         delete instance;
+    }
     instance = nullptr;
 }
 
 MusicController* MusicController::getInstance()
 {
     if (!instance)
+    {
         create();
+    }
+
     return instance;
 }
 
@@ -281,7 +312,10 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
     if (s_streamOpen && !s_isVideoAudio && s_currentFilePath == filePath)
     {
         if (s_isPaused)
+        {
             resume();
+        }
+
         return;
     }
 
@@ -330,7 +364,9 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
         u32 before = s_musicRing.usedSpace();
         fillMusicBuffer();
         if (s_musicRing.usedSpace() == before)
+        {
             break; // EOF on a short/non-looping track - stop spinning
+        }
     }
 
     mm_stream stream;
@@ -373,7 +409,9 @@ void MusicController::initVideoAudio()
 void MusicController::pushVideoAudio(const u8* data, size_t size)
 {
     if (!s_isVideoAudio || !s_videoRing.isValid())
+    {
         return;
+    }
 
     s_videoRing.write(data, (u32)size);
 }
@@ -386,10 +424,14 @@ float MusicController::getVideoTime()
 void MusicController::update()
 {
     if (!s_isVideoAudio)
+    {
         fillMusicBuffer();
+    }
 
     if (s_streamOpen)
+    {
         mmStreamUpdate();
+    }
 }
 
 void MusicController::pause()
@@ -421,7 +463,9 @@ mm_sfxhand MusicController::playSFX(mm_word effectID, int volume, int panning)
 void MusicController::stopSFX(mm_sfxhand handle)
 {
     if (handle != 0)
+    {
         mmEffectCancel(handle);
+    }
 }
 
 void MusicController::cleanup()

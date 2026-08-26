@@ -79,7 +79,9 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
         consoleDemoInit();
         printf("ERR: %s", videoPath.c_str());
         while (1)
+        {
             swiWaitForVBlank();
+        }
     }
 
     // Read the optional dynamic video header.
@@ -119,7 +121,9 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
             consoleDemoInit();
             printf("ERR: palette read failed");
             while (1)
+            {
                 swiWaitForVBlank();
+            }
         }
 
         for (int i = 0; i < 256; i++)
@@ -142,7 +146,9 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
         consoleDemoInit();
         printf("ERR: malloc failed");
         while (1)
+        {
             swiWaitForVBlank();
+        }
     }
 
     refillBuffer();
@@ -152,7 +158,9 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
 void VideoController::refillBuffer()
 {
     if (fileEOF || framesAvailable >= FRAMES_TO_BUFFER)
+    {
         return;
+    }
 
     u32 audioSize = 0;
 
@@ -179,7 +187,9 @@ void VideoController::refillBuffer()
 
         u32 consumed = safeSize;
         if (audioSize > consumed)
+        {
             fseek(videoFile, audioSize - consumed, SEEK_CUR); // Skip overflowing/unaligned remainder
+        }
     }
 
     // read video frame utilizing dynamic frameSize
