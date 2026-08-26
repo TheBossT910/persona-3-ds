@@ -5,7 +5,7 @@
             "compilerPath": "${ARM_GCC}/bin/arm-none-eabi-g++",
             "intelliSenseMode": "gcc-arm",
             "forcedInclude": [
-                "${workspaceFolder}/include/vscode_fix.h"
+                "${workspaceFolder}/include/vscode_fix.hpp"
             ],
             "includePath": [
                 "${workspaceFolder}/include/**",
