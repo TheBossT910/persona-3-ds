@@ -52,10 +52,6 @@ void GraphicsComponent::unloadGraphic(GraphicAsset& asset)
         return;
     }
 
-    io.unloadFromRAM(asset.tiles);
-    io.unloadFromRAM(asset.pal);
-    io.unloadFromRAM(asset.map);
-
     auto it = std::find_if(
         loadedGraphics.begin(), loadedGraphics.end(), [asset](GraphicAsset ga) { return ga.id == asset.id; });
 
@@ -64,6 +60,10 @@ void GraphicsComponent::unloadGraphic(GraphicAsset& asset)
     {
         return;
     }
+
+    io.unloadFromRAM(asset.tiles);
+    io.unloadFromRAM(asset.pal);
+    io.unloadFromRAM(asset.map);
 
     asset.id = -1;
     asset.tiles = NULL;
