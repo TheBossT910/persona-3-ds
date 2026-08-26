@@ -111,7 +111,7 @@ void UISystem::Update(ae::fixed_t dt)
     if (renderUIText)
     {
         renderUIText = false;
-        for (size_t i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < activeMenu->options.size();
+        for (int i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < int(activeMenu->options.size());
              i++)
         {
             int option = activeMenu->startIndex + i;
