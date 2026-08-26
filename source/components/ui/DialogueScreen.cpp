@@ -266,12 +266,12 @@ void DialogueScreen::load()
 void DialogueScreen::unload()
 {
     removeSprites();
-    for (int i = 0; i < 7; ++i)
+    for (Sprite& sprite : sprites)
     {
-        if (sprites[i].gfx != nullptr)
+        if (sprite.gfx != nullptr)
         {
-            oamFreeGfx(oam, sprites[i].gfx);
-            sprites[i].gfx = nullptr;
+            oamFreeGfx(oam, sprite.gfx);
+            sprite.gfx = nullptr;
         }
     }
 
