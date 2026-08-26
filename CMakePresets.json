@@ -66,8 +66,8 @@
             "inherits": "nds-release"
         },
         {
-            "name": "aegis-host-debug",
-            "displayName": "Aegis Host Debug",
+            "name": "aegis-engine-host-debug",
+            "displayName": "Aegis Engine Host Debug",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/out/build/aegis-host-debug",
             "cacheVariables": {
@@ -76,8 +76,8 @@
                 "P3D_BUILD_TESTS": "OFF",
                 "P3D_ENABLE_ASSETS": "OFF",
                 "P3D_ENABLE_SDCARD": "OFF",
-                "P3D_USE_BUNDLED_AEGIS": "ON",
-                "P3D_BUILD_AEGIS_TESTS": "ON"
+                "P3D_USE_BUNDLED_AEGIS_ENGINE": "ON",
+                "P3D_BUILD_AEGIS_ENGINE_TESTS": "ON"
             }
         }
     ],
@@ -130,11 +130,11 @@
             "inherits": "build-nds-sdcard"
         },
         {
-            "name": "build-aegis-tests",
-            "displayName": "Build Aegis Tests",
-            "configurePreset": "aegis-host-debug",
+            "name": "build-aegis-engine-tests",
+            "displayName": "Build Aegis Engine Tests",
+            "configurePreset": "aegis-engine-host-debug",
             "targets": [
-                "aegis_headers_smoke"
+                "aegis-engine_headers_smoke"
             ]
         }
     ],
@@ -147,8 +147,8 @@
             }
         },
         {
-            "name": "test-aegis-host",
-            "configurePreset": "aegis-host-debug",
+            "name": "test-aegis-engine-host",
+            "configurePreset": "aegis-engine-host-debug",
             "output": {
                 "outputOnFailure": true
             }
