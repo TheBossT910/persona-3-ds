@@ -2,13 +2,13 @@
 
 #define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (UIMenu::*)()>(&ClassName::Method)
 
-#include "core/structs.hpp"
 #include <maxmod9.h>
 #include <nds.h>
 #include <stack>
 #include <string>
 
 #include "components/TextComponent.hpp"
+#include "types/UITypes.hpp"
 
 class UIMenu
 {

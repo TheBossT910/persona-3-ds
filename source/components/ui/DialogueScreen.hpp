@@ -1,11 +1,10 @@
 #pragma once
-#include "components/ui/UIScreen.hpp"
-#include "core/enums.hpp"
-#include "core/globals.hpp"
-#include "core/structs.hpp"
-#include <nds.h>
 
 #include "components/GraphicsComponent.hpp"
+#include "components/ui/UIScreen.hpp"
+#include "core/globals.hpp"
+
+#include <nds.h>
 
 class DialogueScreen : public UIScreen
 {

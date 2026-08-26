@@ -7,8 +7,6 @@
 #include <stdlib.h>
 #include <string>
 
-#include "core/enums.hpp"
-
 // states
 #include "views/BaseView.hpp"
 #include "views/DisclaimerView.hpp"

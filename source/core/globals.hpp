@@ -4,21 +4,25 @@
  */
 
 #pragma once
-#include "core/structs.hpp"
 #include <string>
 
-// aegis engine
 #include "components/DialogueComponent.hpp"
 #include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
 #include "components/TextComponent.hpp"
+
 #include "managers/IOManager.hpp"
 #include "managers/MathManager.hpp"
 #include "managers/RenderManager.hpp"
+
 #include "systems/BattleSystem.hpp"
 #include "systems/CameraSystem.hpp"
 #include "systems/SaveSystem.hpp"
 #include "systems/UISystem.hpp"
+
+#include "types/SaveTypes.hpp"
+#include "types/StateTypes.hpp"
+
 #include <aegis/engine.hpp>
 
 // variables

@@ -2,8 +2,6 @@
 
 #include "views/BaseView.hpp"
 
-// core
-#include "core/enums.hpp"
 // environments/data
 #include "data/environmentDb.hpp"
 #include "environment/Environment.hpp"
@@ -20,6 +18,14 @@
 #include "components/MovementComponent.hpp"
 #include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
+
+enum class ViewPhase
+{
+    Battle,
+    Pause,
+    Dialogue,
+    Environment
+};
 
 class EnvironmentView : public BaseView
 {
