@@ -1,5 +1,7 @@
 #include "IwatodaiDormView.hpp"
+#include "core/globals.hpp"
 #include "core/structs.hpp"
+#include "events/UIEvents.hpp"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()

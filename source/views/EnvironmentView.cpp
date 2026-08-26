@@ -4,6 +4,7 @@
 #include <string>
 
 // model
+#include "dialogue/demo_dialogue.hpp"
 #include "models/makoto.hpp"
 
 #include "systems/BattleSystem.hpp"
