@@ -10,9 +10,9 @@
 #include <aegis/system.hpp>
 #include <etl/vector.h>
 
-#include "./battleActions/BattleStartCondition.hpp"
-#include "./battleActions/enemies/EnemyProfileDb.hpp"
-#include "./battleActions/party/CharacterProfileDb.hpp"
+#include "battleActions/BattleStartCondition.hpp"
+#include "battleActions/enemies/EnemyProfileDb.hpp"
+#include "battleActions/party/CharacterProfileDb.hpp"
 
 namespace Event
 {

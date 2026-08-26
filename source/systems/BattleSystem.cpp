@@ -1,5 +1,5 @@
 #include "BattleSystem.hpp"
-#include "./battleActions/skills/BattleCalcs.hpp"
+#include "battleActions/skills/BattleCalcs.hpp"
 
 #include "./helpers/random.hpp"
 #include "core/globals.hpp"
