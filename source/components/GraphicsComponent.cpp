@@ -12,7 +12,9 @@ GraphicAsset GraphicsComponent::loadGraphic(const std::string& path)
     GraphicAsset asset;
 
     if (loadedGraphics.full())
+    {
         return asset;
+    }
 
     asset.id = ++id;
     asset.tiles = io.loadToRAM(io.getAssetFilePath(path, ".img.bin"), &asset.tilesLen);
@@ -46,21 +48,22 @@ GraphicAsset GraphicsComponent::loadSpriteGraphicImpl(const std::string& spriteP
 void GraphicsComponent::unloadGraphic(GraphicAsset& asset)
 {
     if (asset.id < 0)
+    {
         return;
+    }
 
     io.unloadFromRAM(asset.tiles);
     io.unloadFromRAM(asset.pal);
     io.unloadFromRAM(asset.map);
 
-    auto it = loadedGraphics.begin();
-    for (; it != loadedGraphics.end(); ++it)
-    {
-        if (it->id == asset.id)
-            break;
-    }
+    auto it = std::find_if(
+        loadedGraphics.begin(), loadedGraphics.end(), [asset](GraphicAsset ga) { return ga.id == asset.id; });
 
+    // asset was not found
     if (it == loadedGraphics.end())
+    {
         return;
+    }
 
     asset.id = -1;
     asset.tiles = NULL;
