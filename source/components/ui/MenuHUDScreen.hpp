@@ -34,13 +34,13 @@ class MenuHUDScreen : public UIScreen
     // 18 skill progress items (all same sprite)
 
     // sprites
-    etl::array<Sprite, 28> sprites; // enough entries for moon, day, digits, times, and repeated skill markers
-    etl::array<GraphicAsset, 4> numberSprites;
-    etl::array<GraphicAsset, 4> timeSprites;
-    etl::array<GraphicAsset, 18> skillSprites;
-    GraphicAsset moonSprite;
-    GraphicAsset dayOfWeekSprite;
-    GraphicAsset slashSprite;
+    etl::array<Sprite, 28> sprites = {}; // enough entries for moon, day, digits, times, and repeated skill markers
+    etl::array<GraphicAsset, 4> numberSprites = {};
+    etl::array<GraphicAsset, 4> timeSprites = {};
+    etl::array<GraphicAsset, 18> skillSprites = {};
+    GraphicAsset moonSprite = {};
+    GraphicAsset dayOfWeekSprite = {};
+    GraphicAsset slashSprite = {};
 
     bool bgLoaded;
     void loadBackground();

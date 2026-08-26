@@ -27,10 +27,10 @@ class DialogueScreen : public UIScreen
 
     // sprites
     // TODO: reduce allocated sprite/sprite registers
-    etl::array<Sprite, 50> sprites;
-    etl::array<GraphicAsset, 2> calendarSprite;
-    etl::array<GraphicAsset, 10> textBox;
-    etl::array<GraphicAsset, 10> nameTag;
+    etl::array<Sprite, 50> sprites = {};
+    etl::array<GraphicAsset, 2> calendarSprite = {};
+    etl::array<GraphicAsset, 10> textBox = {};
+    etl::array<GraphicAsset, 10> nameTag = {};
 
     ae::Entity* dialogue = nullptr;
     GraphicsComponent* graphics = nullptr;
