@@ -3,9 +3,10 @@
 #define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (UIMenu::*)()>(&ClassName::Method)
 
 #include "core/structs.hpp"
+#include <etl/span.h>
+#include <etl/stack.h>
 #include <maxmod9.h>
 #include <nds.h>
-#include <stack>
 #include <string>
 
 #include "components/TextComponent.hpp"
@@ -18,8 +19,7 @@ class UIMenu
     TextComponent* text = nullptr;
 
     // options
-    MenuOption* options;
-    int optionCount = 0;
+    etl::span<MenuOption> options;
     int selectedOption = 0;
     int startIndex = 0;
 
@@ -27,10 +27,9 @@ class UIMenu
      * @brief Changes the active menu.
      *
      * @param newOptions the new menu options.
-     * @param newOptionCount the number of new menu options.
      * @return ViewState the View to switch to
      */
-    ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
+    ViewState changeMenu(etl::span<MenuOption> newOptions);
 
   private:
     friend class UISystem;
@@ -38,7 +37,7 @@ class UIMenu
     // options
     /// @note visibleOptions is set via the UISystem via the ConfigureUIMenu event handler
     int visibleOptions = 0;
-    std::stack<MenuState> prevOptions;
+    etl::stack<MenuState, 5> prevOptions;
     ViewState nextViewState = ViewState::KEEP_CURRENT;
 
     /**
@@ -49,7 +48,7 @@ class UIMenu
     virtual void prevOption();
 
     /**
-     * @brief Used to set the default pauseMessage, options, and optionCount values
+     * @brief Used to set the default pauseMessage and options values
      */
     virtual void resetHook() = 0;
 

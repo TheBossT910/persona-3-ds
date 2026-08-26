@@ -2,23 +2,9 @@
 #include "components/DialogueComponent.hpp"
 #include "components/menu/UIMenu.hpp"
 #include "controllers/AnimationController.hpp"
-#include "core/globals.hpp"
-#include "dialogue/demo_dialogue.hpp"
 #include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
-#include <array>
-
-#define MENU_OPTIONS 8
-#define SKILL_OPTIONS 9
-#define ITEM_OPTIONS 3
-#define EQUIP_OPTIONS 9
-#define PERSONA_OPTIONS 3
-#define STATS_OPTIONS 9
-#define S_LINK_OPTIONS 3
-#define SYSTEM_OPTIONS 6
-#define DEBUG_OPTIONS 16
-#define CHARACTER_ANIM_OPTIONS 25
-#define SKILLS 2
+#include <etl/array.h>
 
 class PauseMenuComponent : public UIMenu
 {
@@ -30,11 +16,11 @@ class PauseMenuComponent : public UIMenu
     CameraSystem& cameraSystem = CameraSystem::GetInstance();
     RenderManager& rm = RenderManager::GetInstance();
 
-    std::array<CameraMode, 4> cameraModes = {
+    etl::array<CameraMode, 4> cameraModes = {
         CameraMode::Free, CameraMode::Static, CameraMode::CCTV, CameraMode::Follow};
 
-    MenuOption menuOptions[MENU_OPTIONS] = {
-        {"Debug", -1, MENU_BIND(PauseMenuComponent, openDebugMenu)},
+    etl::array<MenuOption, 8> menuOptions = {
+        MenuOption{"Debug", -1, MENU_BIND(PauseMenuComponent, openDebugMenu)},
         {"Skill", -1, MENU_BIND(PauseMenuComponent, openSkillMenu)},
         {"Item", -1, MENU_BIND(PauseMenuComponent, openItemMenu)},
         {"Persona", -1, MENU_BIND(PauseMenuComponent, openPersonaMenu)},
@@ -44,8 +30,8 @@ class PauseMenuComponent : public UIMenu
         {"System", -1, MENU_BIND(PauseMenuComponent, openSystemMenu)},
     };
 
-    MenuOption debugOptions[DEBUG_OPTIONS] = {
-        {"DisclaimerView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+    etl::array<MenuOption, 16> debugOptions = {
+        MenuOption{"DisclaimerView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"IntroView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"MainMenuView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"IwatodaiDormView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
@@ -63,8 +49,8 @@ class PauseMenuComponent : public UIMenu
         {"Cycle Camera Mode", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
     };
 
-    MenuOption skillOptions[SKILL_OPTIONS] = {
-        {"Makoto", 0, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+    etl::array<MenuOption, 9> skillOptions = {
+        MenuOption{"Makoto", 0, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
         {"Yukari", 1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
         {"Junpei", 3, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
         {"Akihiko", 2, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
@@ -75,14 +61,14 @@ class PauseMenuComponent : public UIMenu
         {"Shinjiro", -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
     };
 
-    MenuOption itemOptions[ITEM_OPTIONS] = {
-        {"Life Stone", -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
+    etl::array<MenuOption, 3> itemOptions = {
+        MenuOption{"Life Stone", -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
         {"Medicine", -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
         {"Bead", -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
     };
 
-    MenuOption equipOptions[EQUIP_OPTIONS] = {
-        {"Makoto", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+    etl::array<MenuOption, 9> equipOptions = {
+        MenuOption{"Makoto", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
         {"Yukari", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
         {"Junpei", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
         {"Akihiko", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
@@ -93,14 +79,14 @@ class PauseMenuComponent : public UIMenu
         {"Shinjiro", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
     };
 
-    MenuOption personaOptions[PERSONA_OPTIONS] = {
-        {"Jack Frost", -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
+    etl::array<MenuOption, 3> personaOptions = {
+        MenuOption{"Jack Frost", -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
         {"Black Frost", -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
         {"King Frost", -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
     };
 
-    MenuOption statsOptions[STATS_OPTIONS] = {
-        {"Makoto", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+    etl::array<MenuOption, 9> statsOptions = {
+        MenuOption{"Makoto", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
         {"Yukari", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
         {"Junpei", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
         {"Akihiko", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
@@ -111,14 +97,14 @@ class PauseMenuComponent : public UIMenu
         {"Shinjiro", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
     };
 
-    MenuOption sLinkOptions[S_LINK_OPTIONS] = {
-        {"Fool", -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
+    etl::array<MenuOption, 3> sLinkOptions = {
+        MenuOption{"Fool", -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
         {"Magician", -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
         {"Emperor", -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
     };
 
-    MenuOption systemOptions[SYSTEM_OPTIONS] = {
-        {"Tutorial", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
+    etl::array<MenuOption, 6> systemOptions = {
+        MenuOption{"Tutorial", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
         {"Config", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
         {"Dictionary", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
         {"Load Data", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
@@ -126,13 +112,13 @@ class PauseMenuComponent : public UIMenu
         {"Return to Title", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
     };
 
-    MenuOption skills[SKILLS] = {
-        {"Skill 1", -1, nullptr},
+    etl::array<MenuOption, 2> skills = {
+        MenuOption{"Skill 1", -1, nullptr},
         {"Skill 2", -1, nullptr},
     };
 
-    MenuOption characterAnimOptions[CHARACTER_ANIM_OPTIONS] = {
-        {"Toggle Auto Animations", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},
+    etl::array<MenuOption, 25> characterAnimOptions = {
+        MenuOption{"Toggle Auto Animations", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},
         {"0000", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},
         {"0001", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},
         {"0002", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},

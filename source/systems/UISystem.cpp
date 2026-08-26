@@ -40,14 +40,14 @@ void UISystem::Update(ae::fixed_t dt)
     if (systemKeysDown & KEY_DOWN)
     {
         sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
-        activeMenu->selectedOption = (activeMenu->selectedOption + 1) % activeMenu->optionCount;
+        activeMenu->selectedOption = (activeMenu->selectedOption + 1) % activeMenu->options.size();
         renderUIText = true;
     }
     else if (systemKeysDown & KEY_UP)
     {
         sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
         activeMenu->selectedOption =
-            (activeMenu->selectedOption + activeMenu->optionCount - 1) % activeMenu->optionCount;
+            (activeMenu->selectedOption + activeMenu->options.size() - 1) % activeMenu->options.size();
         renderUIText = true;
     }
 
@@ -111,7 +111,8 @@ void UISystem::Update(ae::fixed_t dt)
     if (renderUIText)
     {
         renderUIText = false;
-        for (int i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < activeMenu->optionCount; i++)
+        for (size_t i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < activeMenu->options.size();
+             i++)
         {
             int option = activeMenu->startIndex + i;
             TextColor color = option == activeMenu->selectedOption ? TextColor::Blue : TextColor::White;

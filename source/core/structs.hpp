@@ -6,6 +6,7 @@
 #pragma once
 #include "core/enums.hpp"
 #include "core/geometry.hpp"
+#include <etl/span.h>
 #include <etl/vector.h>
 #include <nds.h>
 #include <string>
@@ -42,8 +43,7 @@ struct MenuOption
 
 struct MenuState
 {
-    MenuOption* options;
-    int optionCount;
+    etl::span<MenuOption> options;
     int selectedOption;
     int startIndex;
 };
