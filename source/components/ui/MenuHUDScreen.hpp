@@ -20,7 +20,6 @@ class MenuHUDScreen : public UIScreen
     void load();
     void unload();
     void renderSprites() override;
-    void removeSprites() override;
     int onTouch(touchPosition* touch) override;
 
   private:

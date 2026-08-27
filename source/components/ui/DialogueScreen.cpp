@@ -198,11 +198,6 @@ void DialogueScreen::renderSprites()
     // }
 }
 
-void DialogueScreen::removeSprites()
-{
-    oamClear(oam, 0, 6);
-}
-
 void DialogueScreen::load()
 {
     if (dialogue == nullptr)

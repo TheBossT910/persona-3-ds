@@ -85,11 +85,6 @@ void MenuHUDScreen::renderSprites()
     }
 }
 
-void MenuHUDScreen::removeSprites()
-{
-    oamClear(oam, 0, 12);
-}
-
 int MenuHUDScreen::onTouch(touchPosition* touch)
 {
     if (touch->px >= 193 && touch->px <= 250 && touch->py >= 166 && touch->py <= 184)

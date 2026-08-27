@@ -15,7 +15,6 @@ class DialogueScreen : public UIScreen
     void load();
     void unload();
     void renderSprites() override;
-    void removeSprites() override;
 
   private:
     DialogueScreen() : UIScreen(false) {};
