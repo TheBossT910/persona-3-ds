@@ -47,7 +47,7 @@ struct BattleParticipant
     bool knockedDown = false;
 
     virtual BattleStats* getBattleStats() = 0;
-    virtual float calculateBaseDamage(BattleParticipant& defender, Skill& skill) = 0;
+    virtual ae::q20_12_t calculateBaseDamage(BattleParticipant& defender, Skill& skill) = 0;
     virtual ae::q20_12_t getTeamMultiplier() = 0;
     virtual void setCurrentTurnOrderAgility(ae::q20_12_t boost) = 0;
     virtual BattlePhase getInitalTurnPhase() = 0;

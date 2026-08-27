@@ -33,16 +33,16 @@ struct BattleCalcs
     static u32 healing(BattleParticipant& user, Skill& skill);
 
     static u32 getAtk(BattleStats& attackerStats, Skill& skill);
-    static float getLevelDifference(u32 attackerLevel, u32 defenderLevel);
-    static float getAffinityMtp(BattleStats& battleStats, Skill& skill);
+    static ae::q20_12_t getLevelDifference(u32 attackerLevel, u32 defenderLevel);
+    static ae::q20_12_t getAffinityMtp(BattleStats& battleStats, Skill& skill);
 
     static u32 allOutAttack(Player& attacker, BattleParticipant& defender, u32 participantCount);
 
   private:
     //Attack
-    static const float levelMultipliers[24];
+    static const ae::q20_12_t levelMultipliers[24];
 
     //Heal
-    static const float magicBoostTableHeal[20];
-    static u32 getMagicBoostHeal(u32& magic);
+    static const uint8_t magicBoostTableHeal[20];
+    static uint8_t getMagicBoostHeal(uint8_t& magic);
 };

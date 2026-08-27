@@ -24,7 +24,7 @@ struct Enemy : BattleParticipant
         return &battleStats;
     }
 
-    float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
+    ae::q20_12_t calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
     ae::q20_12_t getTeamMultiplier() override;
     BattlePhase getInitalTurnPhase() override;
     void onDead(Event::BattleResult& battleResult) override;
