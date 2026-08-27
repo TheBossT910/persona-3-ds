@@ -33,7 +33,7 @@ u32 BattleCalcs::hitrate(BattleParticipant& attacker, BattleParticipant& defende
 u32 BattleCalcs::healing(BattleParticipant& user, Skill& skill)
 {
     BattleStats* battleStats = user.getBattleStats();
-    float teamMultiplier = user.getTeamMultiplier();
+    ae::q20_12_t teamMultiplier = user.getTeamMultiplier();
 
     u32 magicBoost = BattleCalcs::getMagicBoostHeal(battleStats->ma);
     u32 base = (u32)floor((skill.movePower + magicBoost) * teamMultiplier);

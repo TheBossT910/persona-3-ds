@@ -100,9 +100,9 @@ float Enemy::calculateBaseDamage(BattleParticipant& defender, Skill& skill)
         return 0;
 }
 
-float Enemy::getTeamMultiplier()
+ae::q20_12_t Enemy::getTeamMultiplier()
 {
-    return 0.6f;
+    return ae::q20_12_t{0.6};
 }
 
 BattlePhase Enemy::getInitalTurnPhase()
@@ -114,7 +114,7 @@ void Enemy::onDead(Event::BattleResult& battleResult)
 {
 }
 
-void Enemy::setCurrentTurnOrderAgility(float boost)
+void Enemy::setCurrentTurnOrderAgility(ae::q20_12_t boost)
 {
-    currentTurnOrderAgility = battleStats.ag;
+    currentTurnOrderAgility = ae::q20_12_t{battleStats.ag};
 }

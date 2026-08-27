@@ -1,7 +1,7 @@
 #include "BattleSystem.hpp"
 #include "./battleActions/skills/BattleCalcs.hpp"
-
 #include "./helpers/random.hpp"
+#include "MathManager.hpp"
 #include "core/globals.hpp"
 #include <cstdlib>
 #include <ctime>
@@ -473,7 +473,7 @@ void BattleSystem::setNextPhase(BattlePhase nextPhase)
 void BattleSystem::calculateTurnOrder()
 {
     // random boost from 1.2 to 1.4 that priorizes party
-    float boost = 1.2f + (randf() * 0.2f);
+    ae::q20_12_t boost = ae::q20_12_t{1.2} + MathManager::GetInstance().randFrac() * ae::q20_12_t{0.2};
 
     for (BattleParticipant* battleParticipant : battleParticipants)
     {

@@ -33,14 +33,14 @@ float PartyMember::calculateBaseDamage(BattleParticipant& defender, Skill& skill
                  affinityMtp);
 }
 
-float PartyMember::getTeamMultiplier()
+ae::q20_12_t PartyMember::getTeamMultiplier()
 {
-    return 1.0f;
+    return ae::q20_12_t{1.0};
 }
 
-void PartyMember::setCurrentTurnOrderAgility(float boost)
+void PartyMember::setCurrentTurnOrderAgility(ae::q20_12_t boost)
 {
-    currentTurnOrderAgility = curPersona->battleStats.ag * boost;
+    currentTurnOrderAgility = ae::q20_12_t{curPersona->battleStats.ag} * boost;
 }
 
 BattlePhase PartyMember::getInitalTurnPhase()

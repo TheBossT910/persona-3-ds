@@ -181,6 +181,13 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      */
     void normalize(ae::q20_12_t& x, ae::q20_12_t& y, ae::q20_12_t& z);
 
+    /**
+     * @brief Returns a uniformly distributed random fraction in [0, 1).
+     *
+     * @return A random value in Q20.12, uniformly distributed over [0, 1).
+     */
+    ae::q20_12_t MathManager::randFrac();
+
   private:
     friend class Singleton<MathManager>;
     MathManager() = default;

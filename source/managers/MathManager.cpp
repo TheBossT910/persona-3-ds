@@ -87,6 +87,12 @@ void MathManager::normalize(ae::q20_12_t& x, ae::q20_12_t& y, ae::q20_12_t& z)
     z = ae::q20_12_t::from_raw_value(vec[2]);
 }
 
+ae::q20_12_t MathManager::randFrac()
+{
+    uint32_t r = static_cast<uint32_t>(rand()) % 4096;
+    return ae::q20_12_t::from_raw_value(static_cast<int32_t>(r));
+}
+
 float MathManager::atan2(float x, float y)
 {
     if (x >= 0)
