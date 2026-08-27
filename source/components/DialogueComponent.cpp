@@ -5,8 +5,8 @@ void DialogueComponent::Init()
 {
     isActive = false;
 
-    corner = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
-    edge = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
+    cornerBlue = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
+    edgeBlue = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
     cornerGreen = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN);
     edgeGreen = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN);
 }
@@ -58,12 +58,12 @@ void DialogueComponent::Update(ae::fixed_t)
 
     if (optionCount > 0)
     {
-        // switch palette to green
-        dmaCopy(cornerGreen.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-        dmaCopy(edgeGreen.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
-
         if (text->appearTextDone())
         {
+            // switch palette to green
+            dmaCopy(cornerGreen.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+            dmaCopy(edgeGreen.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+
             // selection dialogue
             if (pressed & KEY_DOWN)
             {
@@ -91,8 +91,9 @@ void DialogueComponent::Update(ae::fixed_t)
             }
 
             // switch palette to blue
-            dmaCopy(corner.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-            dmaCopy(edge.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+            dmaCopy(cornerBlue.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+            dmaCopy(edgeBlue.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+
             advanceTo(next);
         }
     }
@@ -170,7 +171,7 @@ void DialogueComponent::advanceTo(Dialogue* next)
 
 void DialogueComponent::renderAnimFrame()
 {
-    text->drawText(current->characterName, 8, 133, TextColor::DualGreen);
+    text->drawText(current->characterName, 8, 133, TextColor::RichBlue);
     text->appearText(current->text, 8, 154, TextColor::Black);
 }
 

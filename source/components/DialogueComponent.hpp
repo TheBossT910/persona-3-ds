@@ -98,8 +98,8 @@ class DialogueComponent : public ae::Component
     // debug
     // DEBUG
     const std::string spritePath = "graphics/Dialogue/sprites/";
-    GraphicAsset corner = {};
-    GraphicAsset edge = {};
+    GraphicAsset cornerBlue = {};
+    GraphicAsset edgeBlue = {};
     GraphicAsset cornerGreen = {};
     GraphicAsset edgeGreen = {};
 };
