@@ -7,7 +7,6 @@
 #pragma once
 
 #include "components/TextComponent.hpp"
-#include "core/enums.hpp"
 #include "core/routerIDs.hpp"
 #include "events/BattleEvents.hpp"
 #include "events/GenericEvents.hpp"

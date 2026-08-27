@@ -11,16 +11,14 @@
 
 #pragma once
 
-#include "core/enums.hpp"
+#include "core/geometry.hpp"
 #include "core/routerIDs.hpp"
 #include "events/CameraEvents.hpp"
 #include "events/GenericEvents.hpp"
 #include "managers/MathManager.hpp"
-#include <aegis/system.hpp>
+#include "types/CameraTypes.hpp"
 
-#include "core/enums.hpp"
-#include "core/geometry.hpp"
-#include "core/structs.hpp"
+#include <aegis/system.hpp>
 #include <etl/vector.h>
 
 // !Todo replace floats with fixed point math for camera position and target position.
