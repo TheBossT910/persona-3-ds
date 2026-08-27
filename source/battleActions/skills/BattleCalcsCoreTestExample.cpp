@@ -1,4 +1,4 @@
-#include "BattleCalcsCore.h"
+#include "BattleCalcsCoreTestExample.h"
 
 #include <algorithm>
 

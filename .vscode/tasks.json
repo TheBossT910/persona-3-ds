@@ -8,6 +8,19 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "CMake: Configure (Host Assets)",
+            "type": "shell",
+            "command": "cmake --preset host-assets",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         },
         {
@@ -26,6 +39,9 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+            "dependsOn": [
+                "CMake: Configure (Host Debug)"
+            ],
             "problemMatcher": [
                 "$gcc"
             ]
@@ -37,6 +53,9 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+            "dependsOn": [
+                "CMake: Configure (Host Assets)"
+            ],
             "problemMatcher": [
                 "$gcc"
             ]
@@ -48,9 +67,25 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+            "dependsOn": [
+                "CMake: Configure (NDS Release)"
+            ],
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "CMake: Test (Host)",
+            "type": "shell",
+            "command": "ctest --preset test-host",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": [
+                "CMake: Build (Host Tests)"
+            ],
+            "problemMatcher": [],
+            "group": "test"
         },
         {
             "label": "CMake: Clean",

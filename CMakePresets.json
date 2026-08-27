@@ -9,7 +9,6 @@
         {
             "name": "host-debug",
             "displayName": "Host Debug (tests on)",
-            "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/out/build/host-debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
@@ -22,7 +21,6 @@
         {
             "name": "host-assets",
             "displayName": "Host Tools (assets+sdcard targets)",
-            "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/out/build/host-assets",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
@@ -35,7 +33,6 @@
         {
             "name": "nds-debug",
             "displayName": "NDS ARM9 Debug",
-            "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/out/build/nds-debug",
             "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
             "cacheVariables": {
@@ -49,7 +46,6 @@
         {
             "name": "nds-release",
             "displayName": "NDS ARM9 Release",
-            "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/out/build/nds-release",
             "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
             "cacheVariables": {
@@ -68,7 +64,6 @@
         {
             "name": "aegis-engine-host-debug",
             "displayName": "Aegis Engine Host Debug",
-            "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/out/build/aegis-host-debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",

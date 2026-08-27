@@ -162,7 +162,7 @@ def convert(input_file: str, output_file: str, config: dict) -> None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert a .jmap collision map to a C header file."
+        description="Convert a .jmap collision map to a hpp header file."
     )
     parser.add_argument("input", help="Input .jmap file")
     parser.add_argument("output", help="Output .hpp file (or directory)")

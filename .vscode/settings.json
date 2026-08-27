@@ -27,6 +27,6 @@
     "C_Cpp.intelliSenseEngine": "default",
     "C_Cpp.formatting": "default",
     "C_Cpp.errorSquiggles": "enabled",
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/compile_commands.json",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/out/build/host-debug/compile_commands.json",
     "cmake.configureOnOpen": true
 }

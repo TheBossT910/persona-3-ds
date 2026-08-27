@@ -54,7 +54,7 @@ if(P3D_BUILD_NDS)
     set(P3D_GAME_LIBRARY_SOURCES ${P3D_GAME_SOURCES})
     list(REMOVE_ITEM P3D_GAME_LIBRARY_SOURCES ${P3D_MAIN_CPP})
 else()
-    set(P3D_GAME_LIBRARY_SOURCES ${CMAKE_SOURCE_DIR}/source/battleActions/skills/BattleCalcsCore.cpp)
+    set(P3D_GAME_LIBRARY_SOURCES ${CMAKE_SOURCE_DIR}/source/battleActions/skills/BattleCalcsCoreTestExample.cpp)
 endif()
 
 if(P3D_GAME_LIBRARY_SOURCES STREQUAL "")

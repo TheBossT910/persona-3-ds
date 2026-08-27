@@ -65,7 +65,7 @@ cmake --build --preset build-nds-sdcard
 
 - CMake now wires ARM9 ELF (`p3d_arm9_elf`) and ROM assembly (`p3d_nds_rom`) for NDS cross builds.
 - maxmod generation is still in migration progress (current CMake path expects generated maxmod artifacts to exist).
-- `make` remains the current ROM build path during migration.
+- CMake presets are now the primary ROM build path.
 - Asset and packaging targets require external tools (`ffmpeg`, `grit`, and `mtools`).
 
 ---

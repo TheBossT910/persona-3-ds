@@ -3,10 +3,10 @@
     "configurations": [
         {
             "name": "CMake Project",
-            "compileCommands": "${workspaceFolder}/compile_commands.json",
-            "intelliSenseMode": "linux-gcc-x86_64",
+            "compileCommands": "${workspaceFolder}/out/build/host-debug/compile_commands.json",
+            "intelliSenseMode": "${default}",
             "forcedInclude": [
-                "${workspaceFolder}/include/vscode_fix.h"
+                "${workspaceFolder}/include/vscode_fix.hpp"
             ],
             "includePath": [
                 "${workspaceFolder}/include/**",
