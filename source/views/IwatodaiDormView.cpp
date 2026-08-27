@@ -1,7 +1,5 @@
 #include "IwatodaiDormView.hpp"
-#include "core/globals.hpp"
-#include "core/structs.hpp"
-#include "events/UIEvents.hpp"
+#include "types/CameraTypes.hpp"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()

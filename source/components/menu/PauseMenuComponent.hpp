@@ -6,6 +6,26 @@
 #include "systems/CameraSystem.hpp"
 #include <etl/array.h>
 
+enum class DebugOption
+{
+    DISCLAIMER_VIEW = 0,
+    INTRO_VIEW,
+    MAIN_MENU_VIEW,
+    IWATODAI_DORM_VIEW,
+    IWATODAI_STREETS_VIEW,
+    STATION_VIEW,
+    SIGN_CONTRACT_VIEW,
+    PAULOWNIA_MALL_VIEW,
+    INTRO_VIDEO,
+    CUTSCENE_1,
+    CUTSCENE_2,
+    DEBUG_DIALOGUE,
+    TOGGLE_BILLBOARDS,
+    TOGGLE_DEBUG_PRINT,
+    PLAY_CHARACTER_ANIM,
+    CYCLE_CAMERA_MODE
+};
+
 class PauseMenuComponent : public UIMenu
 {
   private:

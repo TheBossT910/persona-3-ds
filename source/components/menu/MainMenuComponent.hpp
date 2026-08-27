@@ -1,5 +1,35 @@
 #include "components/menu/UIMenu.hpp"
 
+enum class MainMenuOptions
+{
+    LOAD_GAME = 0,
+    SETTINGS,
+    RETURN_TO_TITLE,
+};
+
+enum class LevelOptions
+{
+    START_GAME = 0,
+    IWATODAI_DORM,
+    IWATODAI_STREETS,
+    STATION,
+    PAULOWNIA_MALL,
+    SIGN_CONTRACT,
+};
+
+enum class SettingIntroOptions
+{
+    ORIGINAL = 0,
+    FES,
+    PORTABLE,
+    RELOAD
+};
+
+enum class SettingOptions
+{
+    CHANGE_INTRO_VIDEO = 0,
+};
+
 class MainMenuComponent : public UIMenu
 {
   private:

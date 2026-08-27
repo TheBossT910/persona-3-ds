@@ -1,10 +1,25 @@
 #pragma once
+
 #include "battleActions/BattleParticipant.hpp"
 #include "battleActions/actions/ActionBase.hpp"
 #include "battleActions/personas/PersonaBase.hpp"
-#include "components/menu/BattleMenuComponent.hpp"
+
 #include "components/menu/UIMenu.hpp"
+#include "types/UITypes.hpp"
+
 #include <etl/vector.h>
+
+enum class BattleMenuOptions
+{
+    NONE = 0,
+    ACTION,
+    SKILL,
+    PERSONA,
+    TARGET_ENEMY,
+    TARGET_HEAL,
+    ALL_OUT_ATTACK,
+    ALERT
+};
 
 class BattleMenuComponent : public UIMenu
 {

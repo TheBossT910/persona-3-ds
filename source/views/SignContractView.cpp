@@ -1,5 +1,5 @@
 #include "SignContractView.hpp"
-#include "core/enums.hpp"
+
 #include "core/globals.hpp"
 #include "events/SaveEvents.hpp"
 

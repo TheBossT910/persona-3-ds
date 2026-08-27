@@ -1,5 +1,4 @@
 #pragma once
-#include "core/structs.hpp"
 #include <nds.h>
 #include <vector>
 

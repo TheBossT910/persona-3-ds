@@ -1,10 +1,7 @@
 #pragma once
 #include "components/GraphicsComponent.hpp"
 #include "components/ui/UIScreen.hpp"
-
-#include "core/enums.hpp"
-#include "core/structs.hpp"
-
+#include "core/globals.hpp"
 #include <etl/array.h>
 #include <nds.h>
 

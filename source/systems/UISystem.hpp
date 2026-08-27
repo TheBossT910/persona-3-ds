@@ -7,16 +7,18 @@
 
 #pragma once
 
-#include "core/enums.hpp"
+#include <aegis/system.hpp>
+
 #include "core/routerIDs.hpp"
 #include "events/UIEvents.hpp"
 #include "soundbank.h"
-#include <aegis/system.hpp>
 
 #include "events/GenericEvents.hpp"
 
+#include "components/TextComponent.hpp"
 #include "components/menu/UIMenu.hpp"
 #include "components/ui/UIScreen.hpp"
+
 #include "controllers/MusicController.hpp"
 #include "managers/RenderManager.hpp"
 

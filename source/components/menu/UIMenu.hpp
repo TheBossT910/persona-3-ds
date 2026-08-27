@@ -10,6 +10,7 @@
 #include <string>
 
 #include "components/TextComponent.hpp"
+#include "types/UITypes.hpp"
 
 class UIMenu
 {
