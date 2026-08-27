@@ -2,7 +2,6 @@
 
 #define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (UIMenu::*)()>(&ClassName::Method)
 
-#include "core/structs.hpp"
 #include <etl/span.h>
 #include <etl/stack.h>
 #include <maxmod9.h>

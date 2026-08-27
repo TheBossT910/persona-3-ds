@@ -5,9 +5,6 @@
 #include "components/GraphicsComponent.hpp"
 #include "components/ui/UIScreen.hpp"
 
-#include "core/enums.hpp"
-#include "core/structs.hpp"
-
 #include <etl/array.h>
 #include <nds.h>
 

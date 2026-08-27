@@ -1,5 +1,5 @@
 /**
- * @file globals.h
+ * @file globals.hpp
  * @brief Holds global variables used game-wide
  */
 
