@@ -26,9 +26,10 @@ class DialogueScreen : public UIScreen
     // sprites
     // TODO: reduce allocated sprite/sprite registers
     Sprite sprites[50];
-    GraphicAsset calendarSprite[2];
-    GraphicAsset textBox[10];
-    GraphicAsset nameTag[10];
+    GraphicAsset blueBlock[10];
+    GraphicAsset whiteBlock[10];
+    GraphicAsset corner[10];
+    GraphicAsset edge[10];
 
     ae::Entity* dialogue = nullptr;
     GraphicsComponent* graphics = nullptr;

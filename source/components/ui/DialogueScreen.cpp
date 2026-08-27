@@ -33,173 +33,213 @@ DialogueScreen* DialogueScreen::getInstance()
 // helper
 void DialogueScreen::renderSprites()
 {
-    // NOTE: we are currently assuming that the sprite extended palette will be set on VRAM bank I
-    vramSetBankI(VRAM_I_LCD);
-    dmaCopy(calendarSprite[0].pal, &VRAM_I_EXT_SPR_PALETTE[0][0], calendarSprite[0].palLen);
-    dmaCopy(textBox[0].pal, &VRAM_I_EXT_SPR_PALETTE[1][0], textBox[0].palLen);
-    dmaCopy(nameTag[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], nameTag[0].palLen);
-    vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+    // we have 16 colours x 16 palettes
+    dmaCopy(blueBlock[0].pal, SPRITE_PALETTE_SUB, 16 * sizeof(u16));
+    dmaCopy(whiteBlock[0].pal, SPRITE_PALETTE_SUB + (1 * 16), 16 * sizeof(u16));
 
+    dmaCopy(corner[0].pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+    dmaCopy(edge[0].pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
     int i = 0;
+
+    // render multiple blue block sprites
+    for (int count = 0; count < 8; count++)
+    {
+        oamSet(oam, // sub display (OamState)
+               i++, // oam entry to set (id)
+               sprites[0].x + (32 * count),
+               sprites[0].y,            // position
+               1,                       // priority
+               sprites[0].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+               sprites[0].size,
+               sprites[0].format,
+               sprites[0].gfx,
+               sprites[0].rotationIndex,
+               false, // double the size of rotated sprites
+               false, // don't hide the sprite
+               false,
+               false, // vflip, hflip
+               false  // apply mosaic
+        );
+    }
+
+    // corner
+    // top right
     oamSet(oam, // sub display (OamState)
-           i,   // oam entry to set (id)
-           sprites[i].x,
-           sprites[i].y,            // position
+           i++, // oam entry to set (id)
+           224,
+           149,                     // position
            1,                       // priority
-           sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-           sprites[i].size,
-           sprites[i].format,
-           sprites[i].gfx,
-           sprites[i].rotationIndex,
+           sprites[2].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+           sprites[2].size,
+           sprites[2].format,
+           sprites[2].gfx,
+           sprites[2].rotationIndex,
+           false, // double the size of rotated sprites
+           false, // don't hide the sprite
+           false,
+           false,
+           false // apply mosaic
+    );
+
+    // top left
+    oamSet(oam, // sub display (OamState)
+           i++, // oam entry to set (id)
+           0,
+           149,                     // position
+           1,                       // priority
+           sprites[2].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+           sprites[2].size,
+           sprites[2].format,
+           sprites[2].gfx,
+           sprites[2].rotationIndex,
            false, // double the size of rotated sprites
            false, // don't hide the sprite
            true,
-           false, // vflip, hflip
-           false  // apply mosaic
-    );
-
-    i = 1;
-    oamSet(oam, // sub display (OamState)
-           i,   // oam entry to set (id)
-           sprites[i].x,
-           sprites[i].y,            // position
-           1,                       // priority
-           sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-           sprites[i].size,
-           sprites[i].format,
-           sprites[i].gfx,
-           sprites[i].rotationIndex,
-           false, // double the size of rotated sprites
-           false, // don't hide the sprite
            false,
-           false, // vflip, hflip
-           false  // apply mosaic
+           false // apply mosaic
     );
 
-    i = 2;
+    // bottom left
     oamSet(oam, // sub display (OamState)
-           i,   // oam entry to set (id)
-           sprites[i].x,
-           sprites[i].y,            // position
+           i++, // oam entry to set (id)
+           0,
+           176,                     // position
            1,                       // priority
-           sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-           sprites[i].size,
-           sprites[i].format,
-           sprites[i].gfx,
-           sprites[i].rotationIndex,
-           false, // double the size of rotated sprites
-           false, // don't hide the sprite
-           false,
-           false, // vflip, hflip
-           false  // apply mosaic
-    );
-
-    i = 3;
-    oamSet(oam, // sub display (OamState)
-           i,   // oam entry to set (id)
-           sprites[i].x,
-           sprites[i].y,            // position
-           1,                       // priority
-           sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-           sprites[i].size,
-           sprites[i].format,
-           sprites[i].gfx,
-           sprites[i].rotationIndex,
-           false, // double the size of rotated sprites
-           false, // don't hide the sprite
-           false,
-           false, // vflip, hflip
-           false  // apply mosaic
-    );
-
-    i = 4;
-    oamSet(oam, // sub display (OamState)
-           i,   // oam entry to set (id)
-           sprites[i].x,
-           sprites[i].y,            // position
-           1,                       // priority
-           sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-           sprites[i].size,
-           sprites[i].format,
-           sprites[i].gfx,
-           sprites[i].rotationIndex,
-           false, // double the size of rotated sprites
-           false, // don't hide the sprite
-           false,
-           false, // vflip, hflip
-           false  // apply mosaic
-    );
-
-    i = 5;
-    oamSet(oam, // sub display (OamState)
-           i,   // oam entry to set (id)
-           sprites[i].x,
-           sprites[i].y,            // position
-           1,                       // priority
-           sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-           sprites[i].size,
-           sprites[i].format,
-           sprites[i].gfx,
-           sprites[i].rotationIndex,
+           sprites[2].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+           sprites[2].size,
+           sprites[2].format,
+           sprites[2].gfx,
+           sprites[2].rotationIndex,
            false, // double the size of rotated sprites
            false, // don't hide the sprite
            true,
-           false, // vflip, hflip
-           false  // apply mosaic
+           true,
+           false // apply mosaic
     );
 
-    i = 6;
+    // bottom right
     oamSet(oam, // sub display (OamState)
-           i,   // oam entry to set (id)
-           sprites[i].x,
-           sprites[i].y,            // position
+           i++, // oam entry to set (id)
+           224,
+           176,                     // position
            1,                       // priority
-           sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-           sprites[i].size,
-           sprites[i].format,
-           sprites[i].gfx,
-           sprites[i].rotationIndex,
+           sprites[2].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+           sprites[2].size,
+           sprites[2].format,
+           sprites[2].gfx,
+           sprites[2].rotationIndex,
            false, // double the size of rotated sprites
            false, // don't hide the sprite
            false,
-           false, // vflip, hflip
-           false  // apply mosaic
+           true,
+           false // apply mosaic
     );
 
-    // rotate sprite
-    // oamRotateScale(
-    //     oam,
-    //     sprites[i].rotationIndex,
-    //     degreesToAngle(0),
-    //     intToFixed(1, 8),
-    //     intToFixed(1, 8)
-    // );
+    // render multiple edge sprites on the top
+    for (int count = 0; count < 6; count++)
+    {
+        oamSet(oam, // sub display (OamState)
+               i++, // oam entry to set (id)
+               32 + (32 * count),
+               149,                     // position
+               1,                       // priority
+               sprites[3].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+               sprites[3].size,
+               sprites[3].format,
+               sprites[3].gfx,
+               sprites[3].rotationIndex,
+               false, // double the size of rotated sprites
+               false, // don't hide the sprite
+               false,
+               false, // vflip, hflip
+               false  // apply mosaic
+        );
+    }
 
-    // render multiple of the same sprits
-    // in this case, the skills level
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     oamSet(
-    //         oam,                    // sub display (OamState)
-    //         7 + i,                      // oam entry to set (id)
-    //         sprites[7].x + (13 * i), sprites[7].y, // position
-    //         1,                          // priority
-    //         sprites[7].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
-    //         sprites[7].size,
-    //         sprites[7].format,
-    //         sprites[7].gfx,
-    //         sprites[7].rotationIndex,
-    //         true,         // double the size of rotated sprites
-    //         false,        // don't hide the sprite
-    //         false, false, // vflip, hflip
-    //         false         // apply mosaic
-    //     );
-    // }
+    // render multiple edge sprites on the bottom
+    for (int count = 0; count < 6; count++)
+    {
+        oamSet(oam, // sub display (OamState)
+               i++, // oam entry to set (id)
+               32 + (32 * count),
+               176,                     // position
+               1,                       // priority
+               sprites[3].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+               sprites[3].size,
+               sprites[3].format,
+               sprites[3].gfx,
+               sprites[3].rotationIndex,
+               false, // double the size of rotated sprites
+               false, // don't hide the sprite
+               false,
+               true, // vflip, hflip
+               false // apply mosaic
+        );
+    }
+
+    // left edge
+    oamSet(oam, // sub display (OamState)
+           i++, // oam entry to set (id)
+           -8,
+           165,                     // position
+           1,                       // priority
+           sprites[3].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+           sprites[3].size,
+           sprites[3].format,
+           sprites[3].gfx,
+           1,
+           false, // double the size of rotated sprites
+           false, // don't hide the sprite
+           false,
+           false,
+           false // apply mosaic
+    );
+    oamRotateScale(oam, 1, degreesToAngle(90), intToFixed(1, 8), intToFixed(1, 8));
+
+    // right edge
+    oamSet(oam, // sub display (OamState)
+           i++, // oam entry to set (id)
+           231,
+           165,                     // position
+           1,                       // priority
+           sprites[3].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+           sprites[3].size,
+           sprites[3].format,
+           sprites[3].gfx,
+           2,
+           false, // double the size of rotated sprites
+           false, // don't hide the sprite
+           false,
+           false,
+           false // apply mosaic
+    );
+    oamRotateScale(oam, 2, degreesToAngle(270), intToFixed(1, 8), intToFixed(1, 8));
+
+    // render multiple white block sprites
+    for (int count = 0; count < 8; count++)
+    {
+        oamSet(oam, // sub display (OamState)
+               i++, // oam entry to set (id)
+               sprites[1].x + (32 * count),
+               sprites[1].y,            // position
+               1,                       // priority
+               sprites[1].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+               sprites[1].size,
+               sprites[1].format,
+               sprites[1].gfx,
+               sprites[1].rotationIndex,
+               false, // double the size of rotated sprites
+               false, // don't hide the sprite
+               false,
+               false, // vflip, hflip
+               false  // apply mosaic
+        );
+    }
 }
 
 void DialogueScreen::removeSprites()
 {
-    oamClear(oam, 0, 6);
+    oamClear(oam, 0, 34);
 }
 
 void DialogueScreen::load()
@@ -215,52 +255,60 @@ void DialogueScreen::load()
     std::string spritePath = "graphics/Dialogue/sprites/";
 
     // setup sprites
-    // calendar
-    sprites[0] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, -1, 0, 192, 0};
-    sprites[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 0, 128, 0};
-    // text box
-    sprites[2] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 1, 0, 128};
-    sprites[3] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 1, 64, 128};
-    sprites[4] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 1, 128, 128};
-    sprites[5] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, -1, 1, 192, 128};
-    // name tag
-    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 2, 20, 112};
+    // blue block
+    sprites[0] = {0, SpriteSize_32x16, SpriteColorFormat_16Color, 0, 0, 0, 133};
+    // white block
+    sprites[1] = {0, SpriteSize_32x16, SpriteColorFormat_16Color, 0, 1, 0, 165};
+    // corner
+    sprites[2] = {0, SpriteSize_32x16, SpriteColorFormat_16Color, -1, 2, 0, 0};
+    // edge
+    sprites[3] = {0, SpriteSize_32x16, SpriteColorFormat_16Color, -1, 3, 0, 0};
+    // corner green
+    sprites[4] = {0, SpriteSize_32x16, SpriteColorFormat_16Color, -1, 4, 0, 0};
+    // edge green
+    sprites[5] = {0, SpriteSize_32x16, SpriteColorFormat_16Color, -1, 5, 0, 0};
 
     // allocating space for sprite graphics
-    // calendar
+    // blue block
     sprites[0].gfx = oamAllocateGfx(oam, sprites[0].size, sprites[0].format);
+    // white block
     sprites[1].gfx = oamAllocateGfx(oam, sprites[1].size, sprites[1].format);
-    // text box
+    // corner
     sprites[2].gfx = oamAllocateGfx(oam, sprites[2].size, sprites[2].format);
+    // edge
     sprites[3].gfx = oamAllocateGfx(oam, sprites[3].size, sprites[3].format);
+    // corner green
     sprites[4].gfx = oamAllocateGfx(oam, sprites[4].size, sprites[4].format);
+    // edge green
     sprites[5].gfx = oamAllocateGfx(oam, sprites[5].size, sprites[5].format);
-    // name tag
-    sprites[6].gfx = oamAllocateGfx(oam, sprites[6].size, sprites[6].format);
 
     // get sprites
-    // calendar
-    calendarSprite[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CALENDAR);
-    calendarSprite[1] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CALENDAR);
-    // text box
-    textBox[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_CORNER);
-    textBox[1] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_MIDDLE);
-    textBox[2] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_MIDDLE);
-    textBox[3] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::TEXT_CORNER);
-    // name tag
-    nameTag[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::NAME_TAG);
+    // blue block
+    blueBlock[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::BLUE_BLOCK);
+    // white block
+    whiteBlock[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::WHITE_BLOCK);
+    // corner
+    corner[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
+    // edge
+    edge[0] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
+    // corner green
+    corner[1] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN);
+    // edge green
+    edge[1] = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN);
 
     // copy sprites into memory
-    // calendar
-    dmaCopy(calendarSprite[0].tiles, sprites[0].gfx, calendarSprite[0].tilesLen);
-    dmaCopy(calendarSprite[1].tiles, sprites[1].gfx, calendarSprite[1].tilesLen);
-    // text box
-    dmaCopy(textBox[0].tiles, sprites[2].gfx, textBox[0].tilesLen);
-    dmaCopy(textBox[1].tiles, sprites[3].gfx, textBox[1].tilesLen);
-    dmaCopy(textBox[2].tiles, sprites[4].gfx, textBox[2].tilesLen);
-    dmaCopy(textBox[3].tiles, sprites[5].gfx, textBox[3].tilesLen);
-    // name tag
-    dmaCopy(nameTag[0].tiles, sprites[6].gfx, nameTag[0].tilesLen);
+    // blue block
+    dmaCopy(blueBlock[0].tiles, sprites[0].gfx, blueBlock[0].tilesLen);
+    // white block
+    dmaCopy(whiteBlock[0].tiles, sprites[1].gfx, whiteBlock[0].tilesLen);
+    // corner
+    dmaCopy(corner[0].tiles, sprites[2].gfx, corner[0].tilesLen);
+    // edge
+    dmaCopy(edge[0].tiles, sprites[3].gfx, edge[0].tilesLen);
+    // corner green
+    dmaCopy(corner[1].tiles, sprites[4].gfx, corner[1].tilesLen);
+    // edge green
+    dmaCopy(edge[1].tiles, sprites[5].gfx, edge[1].tilesLen);
 };
 
 void DialogueScreen::unload()

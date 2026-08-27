@@ -4,6 +4,11 @@
 void DialogueComponent::Init()
 {
     isActive = false;
+
+    corner = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
+    edge = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
+    cornerGreen = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN);
+    edgeGreen = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN);
 }
 
 void DialogueComponent::Update(ae::fixed_t)
@@ -53,6 +58,10 @@ void DialogueComponent::Update(ae::fixed_t)
 
     if (optionCount > 0)
     {
+        // switch palette to green
+        dmaCopy(cornerGreen.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+        dmaCopy(edgeGreen.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+
         if (text->appearTextDone())
         {
             // selection dialogue
@@ -80,6 +89,10 @@ void DialogueComponent::Update(ae::fixed_t)
                 end();
                 return;
             }
+
+            // switch palette to blue
+            dmaCopy(corner.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+            dmaCopy(edge.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
             advanceTo(next);
         }
     }
@@ -157,16 +170,16 @@ void DialogueComponent::advanceTo(Dialogue* next)
 
 void DialogueComponent::renderAnimFrame()
 {
-    text->drawText(current->characterName, 32, 115, TextColor::White);
-    text->appearText(current->text, 0, 130, TextColor::White);
+    text->drawText(current->characterName, 8, 133, TextColor::DualGreen);
+    text->appearText(current->text, 8, 154, TextColor::Black);
 }
 
 void DialogueComponent::renderOptions()
 {
     /// reprint the complete line then list choices below it
     text->clearScreen();
-    text->drawText(current->characterName, 32, 115, TextColor::White);
-    text->drawText(current->text, 0, 130, TextColor::White);
+    text->drawText(current->characterName, 8, 133, TextColor::DualGreen);
+    text->drawText(current->text, 8, 154, TextColor::Black);
     //TODO: The options are currently drawn outside the textbox, do we want to add an extra overlay for them similar to the actual game?
     int textSize = text->getFontSize();
     for (int i = 0; i < optionCount; i++)

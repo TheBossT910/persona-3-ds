@@ -8,6 +8,7 @@
 
 #include "components/TextComponent.hpp"
 #include "types/DialogueTypes.hpp"
+#include "types/GraphicsTypes.hpp"
 #include "types/aeTypes.hpp"
 
 #include <aegis/component.hpp>
@@ -93,4 +94,12 @@ class DialogueComponent : public ae::Component
     u32 prevKeys = 0;
 
     TextComponent* text;
+
+    // debug
+    // DEBUG
+    const std::string spritePath = "graphics/Dialogue/sprites/";
+    GraphicAsset corner = {};
+    GraphicAsset edge = {};
+    GraphicAsset cornerGreen = {};
+    GraphicAsset edgeGreen = {};
 };

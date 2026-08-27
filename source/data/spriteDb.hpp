@@ -112,10 +112,12 @@ enum class DigitSprite
 
 enum class DialogueSprite
 {
-    NAME_TAG = 0,
-    CALENDAR,
-    TEXT_CORNER,
-    TEXT_MIDDLE,
+    BLUE_BLOCK = 0,
+    WHITE_BLOCK,
+    CORNER,
+    EDGE,
+    CORNER_GREEN,
+    EDGE_GREEN
 };
 
 std::string getSpriteFilename(SpriteType type, int id);

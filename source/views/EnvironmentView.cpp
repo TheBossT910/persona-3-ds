@@ -99,7 +99,7 @@ void EnvironmentView::init()
 
     // set modes
     videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
-    videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+    videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE);
 
     // set vram
     vramSetBankA(VRAM_A_TEXTURE_SLOT0); // texture slot 0
