@@ -62,7 +62,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param den Denominator.
      * @return The quotient in Q20.12.
      */
-    q20_12_t div(q20_12_t num, q20_12_t den);
+    ae::q20_12_t div(ae::q20_12_t num, ae::q20_12_t den);
 
     /**
      * @brief Computes the square root of a Q20.12 value.
@@ -70,7 +70,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param v Value to root.
      * @return The square root in Q20.12.
      */
-    q20_12_t sqrt(q20_12_t v);
+    ae::q20_12_t sqrt(ae::q20_12_t v);
 
     /**
      * @brief Computes the modulo of two Q20.12 values.
@@ -79,7 +79,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param den Denominator.
      * @return The remainder in Q20.12.
      */
-    q20_12_t mod(q20_12_t num, q20_12_t den);
+    ae::q20_12_t mod(ae::q20_12_t num, ae::q20_12_t den);
 
     /**
      * @brief Converts an angle in radians (Q20.12)
@@ -87,7 +87,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The equivalent cyclic angle (full turn = 1<<15).
      */
-    angle16_t radiansToAngle(q20_12_t radians);
+    ae::angle16_t radiansToAngle(ae::q20_12_t radians);
 
     /**
      * @brief Converts a cyclic angle to radians (Q20.12).
@@ -95,7 +95,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param angle Cyclic angle (full turn = 1<<15).
      * @return The equivalent angle in radians, as a Q20.12 fixed-point value.
      */
-    q20_12_t angleToRadians(angle16_t angle);
+    ae::q20_12_t angleToRadians(ae::angle16_t angle);
 
     /**
      * @brief Sine, accepting radians (Q20.12)
@@ -103,7 +103,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The sine in Q4.12.
      */
-    q4_12_t sin(q20_12_t radians);
+    ae::q4_12_t sin(ae::q20_12_t radians);
 
     /**
      * @brief Cosine, accepting radians (Q20.12)
@@ -111,7 +111,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The cosine in Q4.12.
      */
-    q4_12_t cos(q20_12_t radians);
+    ae::q4_12_t cos(ae::q20_12_t radians);
 
     /**
      * @brief Tangent, accepting radians (Q20.12)
@@ -119,7 +119,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The tangent in Q20.12.
      */
-    q20_12_t tan(q20_12_t radians);
+    ae::q20_12_t tan(ae::q20_12_t radians);
 
     /**
      * @brief Computes the arcsine of a ratio.
@@ -127,7 +127,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param ratio Ratio in Q4.12.
      * @return The cyclic angle whose sine is ratio.
      */
-    angle16_t asin(q4_12_t ratio);
+    ae::angle16_t asin(ae::q4_12_t ratio);
 
     /**
      * @brief Computes the arccosine of a ratio.
@@ -135,7 +135,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param ratio Ratio in Q4.12.
      * @return The cyclic angle whose cosine is ratio.
      */
-    angle16_t acos(q4_12_t ratio);
+    ae::angle16_t acos(ae::q4_12_t ratio);
 
     /**
      * @brief Computes the dot product of two Q20.12 3D vectors.
@@ -148,7 +148,8 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param z2 Z component of the second vector.
      * @return The dot product in Q20.12.
      */
-    q20_12_t dot(q20_12_t x1, q20_12_t y1, q20_12_t z1, q20_12_t x2, q20_12_t y2, q20_12_t z2);
+    ae::q20_12_t dot(
+        ae::q20_12_t x1, ae::q20_12_t y1, ae::q20_12_t z1, ae::q20_12_t x2, ae::q20_12_t y2, ae::q20_12_t z2);
 
     /**
      * @brief Computes the squared length of a Q20.12 3D vector.
@@ -158,7 +159,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param z Z component.
      * @return The squared length in Q20.12.
      */
-    q20_12_t lengthSq(q20_12_t x, q20_12_t y, q20_12_t z);
+    ae::q20_12_t lengthSq(ae::q20_12_t x, ae::q20_12_t y, ae::q20_12_t z);
 
     /**
      * @brief Computes the length of a Q20.12 3D vector.
@@ -168,7 +169,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param z Z component.
      * @return The length in Q20.12.
      */
-    q20_12_t length(q20_12_t x, q20_12_t y, q20_12_t z);
+    ae::q20_12_t length(ae::q20_12_t x, ae::q20_12_t y, ae::q20_12_t z);
 
     /**
      * @brief Normalizes a Q20.12 3D vector in place.
@@ -178,7 +179,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param z Z component, updated in place.
      * @return Sets x, y, z to 0,0,0 if length is zero (via out parameters).
      */
-    void normalize(q20_12_t& x, q20_12_t& y, q20_12_t& z);
+    void normalize(ae::q20_12_t& x, ae::q20_12_t& y, ae::q20_12_t& z);
 
   private:
     friend class Singleton<MathManager>;

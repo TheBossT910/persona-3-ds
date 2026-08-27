@@ -1,13 +1,13 @@
 #pragma once
 #include "BattlePhase.hpp"
 #include "BattleStats.hpp"
+#include "MathManager.hpp"
 #include "ParticipantType.hpp"
 #include "armours/Armour.hpp"
+#include "events/BattleEvents.hpp"
 #include "shoes/Shoe.hpp"
 #include "skills/Skill.hpp"
-
-#include "events/BattleEvents.hpp"
-
+#include <aegis/types.hpp>
 #include <nds.h>
 #include <vector>
 
@@ -42,7 +42,7 @@ struct BattleParticipant
     Armour armour;
     Shoe shoe;
 
-    float currentTurnOrderAgility;
+    ae::q20_12_t currentTurnOrderAgility;
     bool oneMore = false;
     bool knockedDown = false;
 
