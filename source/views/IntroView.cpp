@@ -308,7 +308,7 @@ ViewState IntroView::update()
                    logoSprite[i].size,
                    logoSprite[i].format,
                    logoSprite[i].gfx,
-                   logoSprite[i].rotationIndex,
+                   logoSprite[i].affineIndex,
                    true,  // double the size of rotated sprites
                    false, // don't hide the sprite
                    false,

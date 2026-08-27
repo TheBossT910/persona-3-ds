@@ -6,6 +6,7 @@ void UIScreen::renderSprites()
 
 void UIScreen::removeSprites()
 {
+    oamClear(oam, 0, 0);
 }
 
 int UIScreen::onTouch(touchPosition* touch)

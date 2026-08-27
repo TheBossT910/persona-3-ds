@@ -74,7 +74,7 @@ void MenuHUDScreen::renderSprites()
                sprites[i].size,
                sprites[i].format,
                sprites[i].gfx,
-               sprites[i].rotationIndex,
+               sprites[i].affineIndex,
                true,  // double the size of rotated sprites
                false, // don't hide the sprite
                false,
@@ -82,11 +82,6 @@ void MenuHUDScreen::renderSprites()
                false  // apply mosaic
         );
     }
-}
-
-void MenuHUDScreen::removeSprites()
-{
-    oamClear(oam, 0, 12);
 }
 
 int MenuHUDScreen::onTouch(touchPosition* touch)
