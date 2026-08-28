@@ -77,10 +77,10 @@ void DialogueScreen::load()
     }
 
     // setup sprites
-    blueBlockSprite = {0, SpriteSize_32x16, SpriteColorFormat_16Color, 0, 0, 0, 133};
-    whiteBlockSprite = {0, SpriteSize_32x16, SpriteColorFormat_16Color, 0, 1, 0, 165};
-    cornerSprite = {0, SpriteSize_32x16, SpriteColorFormat_16Color, -1, 2, 0, 0};
-    edgeSprite = {0, SpriteSize_32x16, SpriteColorFormat_16Color, -1, 3, 0, 0};
+    blueBlockSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 0};
+    whiteBlockSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 1};
+    cornerSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 2};
+    edgeSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 3};
 
     // allocating space for sprites
     blueBlockSprite.gfx = oamAllocateGfx(oam, blueBlockSprite.size, blueBlockSprite.format);

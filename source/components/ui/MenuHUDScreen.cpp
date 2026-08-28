@@ -113,17 +113,17 @@ void MenuHUDScreen::load()
     }
 
     // setup sprites
-    moonSprite = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0};
-    dayOfWeekSprite = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1};
-    digitSprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2};
-    digitSprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2};
-    digitSprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2};
-    timeSprites[0] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3};
-    timeSprites[1] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4};
-    timeSprites[2] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 5};
-    timeSprites[3] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 6};
-    skillSprite = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 7};
-    slashSprite = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 2};
+    moonSprite = {SpriteSize_32x32, SpriteColorFormat_256Color, 0};
+    dayOfWeekSprite = {SpriteSize_32x32, SpriteColorFormat_256Color, 1};
+    digitSprites[0] = {SpriteSize_32x32, SpriteColorFormat_256Color, 2};
+    digitSprites[1] = {SpriteSize_32x32, SpriteColorFormat_256Color, 2};
+    digitSprites[2] = {SpriteSize_32x32, SpriteColorFormat_256Color, 2};
+    timeSprites[0] = {SpriteSize_64x32, SpriteColorFormat_256Color, 3};
+    timeSprites[1] = {SpriteSize_64x32, SpriteColorFormat_256Color, 4};
+    timeSprites[2] = {SpriteSize_64x32, SpriteColorFormat_256Color, 5};
+    timeSprites[3] = {SpriteSize_64x32, SpriteColorFormat_256Color, 6};
+    skillSprite = {SpriteSize_16x16, SpriteColorFormat_256Color, 7};
+    slashSprite = {SpriteSize_16x16, SpriteColorFormat_256Color, 2};
 
     // allocating space for sprite
     moonSprite.gfx = oamAllocateGfx(oam, moonSprite.size, moonSprite.format);

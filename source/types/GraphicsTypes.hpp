@@ -5,15 +5,10 @@
 //a simple sprite structure
 struct Sprite
 {
-    u16* gfx;
     SpriteSize size;
     SpriteColorFormat format;
-    int affineIndex; // TODO: remove, and use from SpriteRenderState instead
     int paletteAlpha;
-
-    // TODO: remove, and use from SpriteRenderState instead
-    int x;
-    int y;
+    u16* gfx; // default = 0?
 };
 
 struct GraphicAsset

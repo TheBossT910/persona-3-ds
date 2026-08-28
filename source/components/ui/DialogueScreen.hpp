@@ -4,6 +4,7 @@
 #include "components/ui/UIScreen.hpp"
 #include "core/globals.hpp"
 
+#include <etl/array.h>
 #include <nds.h>
 
 class DialogueScreen : public UIScreen

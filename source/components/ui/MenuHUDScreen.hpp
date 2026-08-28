@@ -4,6 +4,7 @@
 
 #include "components/GraphicsComponent.hpp"
 
+#include <etl/array.h>
 #include <nds.h>
 
 class MenuHUDScreen : public UIScreen
