@@ -83,6 +83,8 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
 void IwatodaiDormView::setDialogueConfig()
 {
     demo_yukari_kenji_argument_load();
+    dialogue->configureDialogue(DialogueConfig(
+        demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, textMenu, dialogueScreen));
 }
 
 void IwatodaiDormView::setTextConfig()
