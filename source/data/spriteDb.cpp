@@ -81,7 +81,16 @@ static const SpriteDBEntry SPRITE_DB_ENTRY[] = {
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CORNER), "corner"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::EDGE), "edge"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CORNER_GREEN), "corner-green"},
-    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::EDGE_GREEN), "edge-green"}};
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::EDGE_GREEN), "edge-green"},
+
+    // Busts
+    {SpriteType::BUST, static_cast<int>(BustSprite::TOP_LEFT), "top-left"},
+    {SpriteType::BUST, static_cast<int>(BustSprite::TOP_RIGHT), "top-right"},
+    {SpriteType::BUST, static_cast<int>(BustSprite::MIDDLE_LEFT), "middle-left"},
+    {SpriteType::BUST, static_cast<int>(BustSprite::MIDDLE_RIGHT), "middle-right"},
+    {SpriteType::BUST, static_cast<int>(BustSprite::BOTTOM_LEFT), "bottom-left"},
+    {SpriteType::BUST, static_cast<int>(BustSprite::BOTTOM_RIGHT), "bottom-right"},
+};
 
 static const int SPRITE_DB_ENTRY_LEN = sizeof(SPRITE_DB_ENTRY) / sizeof(SPRITE_DB_ENTRY[0]);
 
