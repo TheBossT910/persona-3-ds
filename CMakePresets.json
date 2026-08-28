@@ -75,6 +75,11 @@
             "inherits": "nds-release"
         },
         {
+            "name": "debug",
+            "displayName": "Default (NDS Debug)",
+            "inherits": "nds-debug-sdcard"
+        },
+        {
             "name": "aegis-engine-host-debug",
             "displayName": "Aegis Engine Host Debug",
             "binaryDir": "${sourceDir}/out/build/aegis-host-debug",
@@ -143,6 +148,11 @@
             "name": "default",
             "displayName": "Default (NDS + sdcard)",
             "inherits": "build-nds-sdcard"
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug (NDS + sdcard)",
+            "inherits": "build-nds-debug-sdcard"
         },
         {
             "name": "build-aegis-engine-tests",
