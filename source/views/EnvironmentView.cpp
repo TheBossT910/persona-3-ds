@@ -122,7 +122,7 @@ void EnvironmentView::init()
     glEnable(GL_OUTLINE); // stylistic outline
 
     glClearColor(0, 0, 0, 31);
-    glClearPolyID(63);
+    glClearPolyID(0);
     glClearDepth(0x7FFF);
 
     // viewport
