@@ -1,4 +1,5 @@
 #include "MenuHUDScreen.hpp"
+#include "core/globals.hpp"
 
 MenuHUDScreen* MenuHUDScreen::instance = nullptr;
 
@@ -82,11 +83,6 @@ void MenuHUDScreen::renderSprites()
                false  // apply mosaic
         );
     }
-}
-
-void MenuHUDScreen::removeSprites()
-{
-    oamClear(oam, 0, 12);
 }
 
 int MenuHUDScreen::onTouch(touchPosition* touch)
@@ -200,14 +196,18 @@ void MenuHUDScreen::load()
 
 void MenuHUDScreen::unload()
 {
-    if (graphics != nullptr)
+    removeSprites();
+    for (Sprite& sprite : sprites)
     {
-        graphics->unloadAll();
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+            sprite.gfx = nullptr;
+        }
     }
 
     if (menuHUD != nullptr)
     {
-        menuHUD->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(menuHUD);
 
         menuHUD = nullptr;

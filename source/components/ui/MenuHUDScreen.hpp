@@ -3,6 +3,10 @@
 #include "core/globals.hpp"
 
 #include "components/GraphicsComponent.hpp"
+#include "components/ui/UIScreen.hpp"
+
+#include <etl/array.h>
+#include <nds.h>
 
 #include <nds.h>
 
@@ -16,7 +20,6 @@ class MenuHUDScreen : public UIScreen
     void load();
     void unload();
     void renderSprites() override;
-    void removeSprites() override;
     int onTouch(touchPosition* touch) override;
 
   private:
@@ -32,13 +35,14 @@ class MenuHUDScreen : public UIScreen
     // 18 skill progress items (all same sprite)
 
     // sprites
-    Sprite sprites[28]; // enough entries for moon, day, digits, times, and repeated skill markers
-    GraphicAsset moonSprite;
-    GraphicAsset dayOfWeekSprite;
-    GraphicAsset numberSprites[4];
-    GraphicAsset timeSprites[4];
-    GraphicAsset skillSprites[18];
-    GraphicAsset slashSprite;
+    etl::array<Sprite, 28> sprites = {}; // enough entries for moon, day, digits, times, and repeated skill markers
+    etl::array<GraphicAsset, 4> numberSprites = {};
+    etl::array<GraphicAsset, 4> timeSprites = {};
+    etl::array<GraphicAsset, 18> skillSprites = {};
+    GraphicAsset moonSprite = {};
+    GraphicAsset dayOfWeekSprite = {};
+    GraphicAsset slashSprite = {};
+
     bool bgLoaded;
     void loadBackground();
 

@@ -1,4 +1,6 @@
 #include "StationView.hpp"
+#include "core/globals.hpp"
+#include "events/UIEvents.hpp"
 
 StationView::StationView()
 {

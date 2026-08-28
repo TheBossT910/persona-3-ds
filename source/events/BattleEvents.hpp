@@ -9,9 +9,9 @@
 
 #include "types/aeTypes.hpp"
 
-#include "./battleActions/BattleStartCondition.hpp"
-#include "./battleActions/enemies/EnemyProfileDb.hpp"
-#include "./battleActions/party/CharacterProfileDb.hpp"
+#include "battleActions/BattleStartCondition.hpp"
+#include "battleActions/enemies/EnemyProfileDb.hpp"
+#include "battleActions/party/CharacterProfileDb.hpp"
 
 #include <aegis/system.hpp>
 #include <etl/vector.h>

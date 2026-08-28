@@ -2,6 +2,7 @@
 
 void UIMenu::resetMenu()
 {
+    options = {};
     selectedOption = 0;
     startIndex = 0;
     isActive = false;
@@ -20,15 +21,14 @@ void UIMenu::resetMenu()
     }
 }
 
-ViewState UIMenu::changeMenu(MenuOption* newOptions, int newOptionCount)
+ViewState UIMenu::changeMenu(etl::span<MenuOption> newOptions)
 {
     // add to prevOptions
-    MenuState currentState = {options, optionCount, selectedOption, startIndex};
+    MenuState currentState = {options, selectedOption, startIndex};
     prevOptions.push(currentState);
 
     // set new options
     options = newOptions;
-    optionCount = newOptionCount;
     selectedOption = 0;
     startIndex = 0;
 
@@ -44,7 +44,6 @@ void UIMenu::prevOption()
         prevOptions.pop();
 
         options = prevState.options;
-        optionCount = prevState.optionCount;
         selectedOption = prevState.selectedOption;
         startIndex = prevState.startIndex;
     }

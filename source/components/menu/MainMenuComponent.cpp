@@ -36,7 +36,6 @@ void MainMenuComponent::resetHook()
 {
     pauseMessage = "";
     options = mainMenuOptions;
-    optionCount = MAIN_MENU_OPTIONS;
 }
 
 void MainMenuComponent::closeHook()
@@ -52,11 +51,11 @@ ViewState MainMenuComponent::mainMenuOptionSelected()
     switch (static_cast<MainMenuOptions>(selectedOption))
     {
     case MainMenuOptions::LOAD_GAME:
-        changeMenu(levelOptions, LEVEL_OPTIONS);
+        changeMenu(levelOptions);
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case MainMenuOptions::SETTINGS:
-        changeMenu(settingOptions, SETTING_OPTIONS);
+        changeMenu(settingOptions);
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case MainMenuOptions::RETURN_TO_TITLE:
@@ -105,7 +104,7 @@ ViewState MainMenuComponent::settingOptionSelected()
     switch (static_cast<SettingOptions>(selectedOption))
     {
     case SettingOptions::CHANGE_INTRO_VIDEO:
-        changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
+        changeMenu(settingIntroOptions);
         selectedView = ViewState::KEEP_CURRENT;
         break;
 

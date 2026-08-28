@@ -1,9 +1,8 @@
 #pragma once
-
 #include "components/GraphicsComponent.hpp"
 #include "components/ui/UIScreen.hpp"
 #include "core/globals.hpp"
-
+#include <etl/array.h>
 #include <nds.h>
 
 class DialogueScreen : public UIScreen
@@ -16,7 +15,6 @@ class DialogueScreen : public UIScreen
     void load();
     void unload();
     void renderSprites() override;
-    void removeSprites() override;
 
   private:
     DialogueScreen() : UIScreen(false) {};
@@ -25,10 +23,10 @@ class DialogueScreen : public UIScreen
 
     // sprites
     // TODO: reduce allocated sprite/sprite registers
-    Sprite sprites[50];
-    GraphicAsset calendarSprite[2];
-    GraphicAsset textBox[10];
-    GraphicAsset nameTag[10];
+    etl::array<Sprite, 50> sprites = {};
+    etl::array<GraphicAsset, 2> calendarSprite = {};
+    etl::array<GraphicAsset, 10> textBox = {};
+    etl::array<GraphicAsset, 10> nameTag = {};
 
     ae::Entity* dialogue = nullptr;
     GraphicsComponent* graphics = nullptr;

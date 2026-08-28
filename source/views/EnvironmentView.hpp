@@ -12,6 +12,7 @@
 #include "components/ui/MenuHUDScreen.hpp"
 // controllers
 #include "controllers/AnimationController.hpp"
+#include "controllers/MusicController.hpp"
 
 #include "components/DialogueComponent.hpp"
 #include "components/GraphicsComponent.hpp"

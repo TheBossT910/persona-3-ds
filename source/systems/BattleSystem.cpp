@@ -1,5 +1,5 @@
 #include "BattleSystem.hpp"
-#include "./battleActions/skills/BattleCalcs.hpp"
+#include "battleActions/skills/BattleCalcs.hpp"
 
 #include "./helpers/random.hpp"
 #include "core/globals.hpp"
@@ -9,6 +9,8 @@
 void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
 {
     isActive = true;
+    musicCtrl = MusicController::getInstance();
+    battleMenuCmpt = BattleMenuComponent::getInstance();
 
     std::string path = fatBasePath + "music/battle/" + "mass_destruction.pcm";
     musicCtrl->init(path.c_str(), 0.0f, -1.0f);
