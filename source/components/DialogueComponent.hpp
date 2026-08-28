@@ -7,8 +7,8 @@
 #pragma once
 
 #include "components/TextComponent.hpp"
+#include "components/ui/DialogueScreen.hpp"
 #include "types/DialogueTypes.hpp"
-#include "types/GraphicsTypes.hpp"
 #include "types/aeTypes.hpp"
 
 #include <aegis/component.hpp>
@@ -60,8 +60,6 @@ class DialogueComponent : public ae::Component
     }
 
   private:
-    DialogueConfig config;
-
     /**
      * @brief Transition to a new Dialogue node and reset animation state
      *
@@ -94,12 +92,5 @@ class DialogueComponent : public ae::Component
     u32 prevKeys = 0;
 
     TextComponent* text;
-
-    // debug
-    // DEBUG
-    const std::string spritePath = "graphics/Dialogue/sprites/";
-    GraphicAsset cornerBlue = {};
-    GraphicAsset edgeBlue = {};
-    GraphicAsset cornerGreen = {};
-    GraphicAsset edgeGreen = {};
+    DialogueScreen* screen;
 };

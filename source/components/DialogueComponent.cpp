@@ -1,14 +1,10 @@
 #include "DialogueComponent.hpp"
 #include "core/globals.hpp"
+#include "types/UITypes.hpp"
 
 void DialogueComponent::Init()
 {
     isActive = false;
-
-    cornerBlue = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
-    edgeBlue = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
-    cornerGreen = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN);
-    edgeGreen = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN);
 }
 
 void DialogueComponent::Update(ae::fixed_t)
@@ -61,8 +57,10 @@ void DialogueComponent::Update(ae::fixed_t)
         if (text->appearTextDone())
         {
             // switch palette to green
-            dmaCopy(cornerGreen.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-            dmaCopy(edgeGreen.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+            if (screen != nullptr)
+            {
+                screen->triggerAction(UIAction::SwitchToPalette1);
+            }
 
             // selection dialogue
             if (pressed & KEY_DOWN)
@@ -91,8 +89,10 @@ void DialogueComponent::Update(ae::fixed_t)
             }
 
             // switch palette to blue
-            dmaCopy(cornerBlue.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-            dmaCopy(edgeBlue.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+            if (screen != nullptr)
+            {
+                screen->triggerAction(UIAction::SwitchToPalette0);
+            }
 
             advanceTo(next);
         }
@@ -142,6 +142,7 @@ void DialogueComponent::configureDialogue(const DialogueConfig& config)
 {
     bgLoader = config.loader;
     text = config.text;
+    screen = config.screen;
     loadedImageId = -1; // force a bg load for the very first line
     prevKeys = 0;
     advanceTo(config.firstLine);

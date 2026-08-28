@@ -18,3 +18,9 @@ struct MenuState
     int selectedOption;
     int startIndex;
 };
+
+enum class UIAction
+{
+    SwitchToPalette0 = 0,
+    SwitchToPalette1,
+};

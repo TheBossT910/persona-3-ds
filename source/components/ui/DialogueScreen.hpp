@@ -2,7 +2,6 @@
 
 #include "components/GraphicsComponent.hpp"
 #include "components/ui/UIScreen.hpp"
-#include "core/globals.hpp"
 
 #include <etl/array.h>
 #include <nds.h>
@@ -16,6 +15,7 @@ class DialogueScreen : public UIScreen
 
     void load();
     void unload();
+    void triggerAction(UIAction action) override;
     void renderSprites() override;
 
   private:
@@ -38,10 +38,12 @@ class DialogueScreen : public UIScreen
     GraphicAsset cornerGraphic = {};
     GraphicAsset edgeGraphic = {};
 
+    // alt palette
+    GraphicAsset cornerGreenGraphic = {};
+    GraphicAsset edgeGreenGraphic = {};
+
     ae::Entity* dialogue = nullptr;
     GraphicsComponent* graphics = nullptr;
-
-    void loadBackground();
 
     // ---
     // sprite setup

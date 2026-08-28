@@ -1,5 +1,9 @@
 #include "UIScreen.hpp"
 
+void UIScreen::triggerAction(UIAction action)
+{
+}
+
 void UIScreen::renderSprites()
 {
 }

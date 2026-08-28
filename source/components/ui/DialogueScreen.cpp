@@ -1,4 +1,5 @@
 #include "DialogueScreen.hpp"
+#include "core/globals.hpp"
 
 DialogueScreen* DialogueScreen::instance = nullptr;
 
@@ -94,6 +95,10 @@ void DialogueScreen::load()
     whiteBlockGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::WHITE_BLOCK);
     cornerGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
     edgeGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
+    // load alt palette sprites
+    cornerGreenGraphic =
+        genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN);
+    edgeGreenGraphic = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN);
 
     // copy sprites into memory
     dmaCopy(blueBlockGraphic.tiles, blueBlockSprite.gfx, blueBlockGraphic.tilesLen);
@@ -116,5 +121,32 @@ void DialogueScreen::unload()
 
         dialogue = nullptr;
         graphics = nullptr;
+    }
+}
+
+void DialogueScreen::triggerAction(UIAction action)
+{
+    switch (action)
+    {
+    // default palette
+    case UIAction::SwitchToPalette0:
+    {
+        dmaCopy(cornerGraphic.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+        dmaCopy(edgeGraphic.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+        break;
+    }
+
+    // option selection palette
+    case UIAction::SwitchToPalette1:
+    {
+        dmaCopy(cornerGreenGraphic.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+        dmaCopy(edgeGreenGraphic.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+        break;
+    }
+
+    default:
+    {
+        break;
+    }
     }
 }

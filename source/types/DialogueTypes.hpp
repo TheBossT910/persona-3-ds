@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+class DialogueScreen;
+
 struct Dialogue;
 struct DialogueSelection
 {
@@ -29,8 +31,14 @@ struct DialogueConfig
     Dialogue* firstLine = nullptr;
     void (*loader)(int bgIndex) = nullptr;
     TextComponent* text = nullptr;
+    DialogueScreen* screen = nullptr;
 
     DialogueConfig() = default;
+
+    DialogueConfig(Dialogue* iFirstLine, void (*iLoader)(int bgIndex), TextComponent* iText, DialogueScreen* iScreen)
+        : firstLine(iFirstLine), loader(iLoader), text(iText), screen(iScreen)
+    {
+    }
 
     DialogueConfig(Dialogue* iFirstLine, void (*iLoader)(int bgIndex), TextComponent* iText)
         : firstLine(iFirstLine), loader(iLoader), text(iText)

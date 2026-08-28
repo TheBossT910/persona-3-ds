@@ -1,4 +1,5 @@
 #pragma once
+#include "types/UITypes.hpp"
 #include <nds.h>
 #include <vector>
 
@@ -22,6 +23,11 @@ class UIScreen
     virtual void unload() = 0;
 
     /**
+     * @brief Trigger an action to be handled
+     */
+    virtual void triggerAction(UIAction action);
+
+    /**
      * @brief Applys sprite colour palette & draws sprites to screen
      */
     virtual void renderSprites();
@@ -29,7 +35,7 @@ class UIScreen
     /**
      * @brief Clears the displayed sprites from the screen
      */
-    virtual void removeSprites();
+    void removeSprites();
 
     /**
      * @brief Hook to allow touch response
