@@ -44,6 +44,19 @@
             }
         },
         {
+            "name": "nds-debug-sdcard",
+            "displayName": "NDS ARM9 Debug (with sdcard)",
+            "binaryDir": "${sourceDir}/out/build/nds-debug-sdcard",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "P3D_BUILD_TESTS": "OFF",
+                "P3D_ENABLE_ASSETS": "ON",
+                "P3D_ENABLE_SDCARD": "ON",
+                "P3D_BUILD_NDS": "ON"
+            }
+        },
+        {
             "name": "nds-release",
             "displayName": "NDS ARM9 Release",
             "binaryDir": "${sourceDir}/out/build/nds-release",
@@ -110,6 +123,13 @@
             "configurePreset": "nds-release",
             "targets": [
                 "p3d_nds_rom"
+            ]
+        },
+        {
+            "name": "build-nds-debug-sdcard",
+            "configurePreset": "nds-debug-sdcard",
+            "targets": [
+                "p3d_sdcard_image"
             ]
         },
         {
