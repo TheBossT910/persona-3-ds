@@ -21,20 +21,20 @@
 #include <nds.h>
 #include <string>
 
-#include "./battleActions/actions/AttackAction.hpp"
-#include "./battleActions/actions/Guard.hpp"
-#include "./battleActions/actions/PersonaAction.hpp"
-#include "./battleActions/actions/SwitchPersona.hpp"
+#include "battleActions/actions/AttackAction.hpp"
+#include "battleActions/actions/Guard.hpp"
+#include "battleActions/actions/PersonaAction.hpp"
+#include "battleActions/actions/SwitchPersona.hpp"
 
-#include "./battleActions/BattleParticipant.hpp"
-#include "./battleActions/BattlePhase.hpp"
-#include "./battleActions/BattleStartCondition.hpp"
-#include "./battleActions/TurnResult.hpp"
-#include "./battleActions/enemies/Enemy.hpp"
-#include "./battleActions/enemies/EnemyProfileDb.hpp"
-#include "./battleActions/party/CharacterProfileDb.hpp"
-#include "./battleActions/party/PartyMember.hpp"
-#include "./battleActions/party/Player.hpp"
+#include "battleActions/BattleParticipant.hpp"
+#include "battleActions/BattlePhase.hpp"
+#include "battleActions/BattleStartCondition.hpp"
+#include "battleActions/TurnResult.hpp"
+#include "battleActions/enemies/Enemy.hpp"
+#include "battleActions/enemies/EnemyProfileDb.hpp"
+#include "battleActions/party/CharacterProfileDb.hpp"
+#include "battleActions/party/PartyMember.hpp"
+#include "battleActions/party/Player.hpp"
 
 // TODO: check for dead code/unfeasible paths
 class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>, public ae::Singleton<BattleSystem>
@@ -235,6 +235,6 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
         return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
     }
 
-    MusicController* musicCtrl = MusicController::getInstance();
-    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
+    MusicController* musicCtrl = nullptr;
+    BattleMenuComponent* battleMenuCmpt = nullptr;
 };

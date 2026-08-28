@@ -15,6 +15,9 @@ void SignContractView::cancelSFX()
     musicCtrl->stopSFX(sfxMenuHandle);
     musicCtrl->stopSFX(sfxSelectHandle);
     musicCtrl->stopSFX(sfxCancelHandle);
+    sfxMenuHandle = 0;
+    sfxSelectHandle = 0;
+    sfxCancelHandle = 0;
 }
 
 void SignContractView::init()
@@ -236,16 +239,8 @@ ViewState SignContractView::update()
 
 void SignContractView::cleanup()
 {
-    if (graphics != nullptr)
-    {
-        graphics->unloadAll();
-    }
-
     if (signContract != nullptr)
     {
-        signContract->RemoveComponent<GraphicsComponent>();
-        signContract->RemoveComponent<TextComponent>();
-
         engine.DestroyEntity(signContract);
 
         signContract = nullptr;
@@ -255,6 +250,7 @@ void SignContractView::cleanup()
 
     // update save data (names)
     ae::BroadcastEvent(Event::WriteSave{});
+    keyboardHide();
     musicCtrl->cleanup();
     BaseView::cleanup();
 }

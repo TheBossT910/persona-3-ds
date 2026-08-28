@@ -106,14 +106,8 @@ ViewState DisclaimerView::update()
 
 void DisclaimerView::cleanup()
 {
-    if (graphics != nullptr)
-    {
-        graphics->unloadAll();
-    }
-
     if (disclaimer != nullptr)
     {
-        disclaimer->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(disclaimer);
 
         disclaimer = nullptr;

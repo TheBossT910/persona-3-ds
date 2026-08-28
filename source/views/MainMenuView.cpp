@@ -227,15 +227,8 @@ void MainMenuView::cleanup()
         }
     }
 
-    if (graphics != nullptr)
-    {
-        graphics->unloadAll();
-    }
-
     if (mainMenu != nullptr)
     {
-        mainMenu->RemoveComponent<GraphicsComponent>();
-        mainMenu->RemoveComponent<TextComponent>();
         engine.DestroyEntity(mainMenu);
 
         mainMenu = nullptr;
@@ -243,7 +236,6 @@ void MainMenuView::cleanup()
         textMenu = nullptr;
     }
 
-    ae::BroadcastEvent(Event::HideAllMenus{});
     musicCtrl->cleanup();
     BaseView::cleanup();
 }
