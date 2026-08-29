@@ -32,22 +32,51 @@ DTYPE_MAP = {
 }
 TYPE_COUNTS = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
 
+# Math Helpers / Type Conversions
+
+
+def next_pow2(x: int) -> int:
+    """Returns the next power of two greater than or equal to x, with a minimum of 8.
+    Args:
+        x (int): The input integer.
+    Returns:
+        int: The next power of two greater than or equal to x, or 8 if x <= 8."""
+    return 1 << (x - 1).bit_length() if x > 8 else 8
+
 
 def float_to_v16(val):
-    """Converts a float to a Nintendo DS 4.12 fixed-point integer."""
+    """Converts a float to a Nintendo DS 4.12 fixed-point integer.
+    Args:
+        val (float): The input float value.
+    Returns:
+        int: The corresponding 4.12 fixed-point integer, clamped to the range [-32767, 32767].
+    """
     i = int(round(val * 4096.0))
     return max(-MAX_16_BIT_INT, min(MAX_16_BIT_INT, i))
 
 
 def float_to_s16(val):
-    """Converts a float to a signed 16-bit integer."""
+    """Converts a float to a signed 16-bit integer.
+    Args:
+        val (float): The input float value.
+    Returns:
+        int: The corresponding signed 16-bit integer, clamped to the range [-32767, 32767].
+    """
     val = int(val) & 0xFFFF
     return val if val <= MAX_16_BIT_INT else val - (2 * MAX_16_BIT_INT)
 
 
 def quat_float_to_s16(val):
-    """Normalizes float [-1.0, 1.0] to signed 16-bit integer [-32767, 32767]."""
+    """Normalizes float [-1.0, 1.0] to signed 16-bit integer.
+    Args:
+        val (float): The input float value.
+    Returns:
+        int: The normalized signed 16-bit integer, clamped to the range [-4096, 4096].
+    """
     return max(-4096, min(4096, int(round(val * 4096.0))))
+
+
+# NDS Packing Functions
 
 
 def pack_uv_t16(u, v, tex_w, tex_h):
@@ -55,6 +84,14 @@ def pack_uv_t16(u, v, tex_w, tex_h):
 
     glTF UVs are passed through directly: TEXCOORD values are stored as
         (u * tex_w) and (v * tex_h) then multiplied by 16 (4 fractional bits).
+
+    Args:
+        u (float): The U coordinate (0.0 to 1.0).
+        v (float): The V coordinate (0.0 to 1.0).
+        tex_w (int): The width of the texture in pixels.
+        tex_h (int): The height of the texture in pixels.
+    Returns:
+        int: The packed UV value in t16 format (32-bit integer).
     """
     # scale into texel space and 4 fractional bits (equivalent to <<4)
     u_t16 = int(round(u * float(tex_w) * 16.0)) & 0xFFFF
@@ -65,13 +102,54 @@ def pack_uv_t16(u, v, tex_w, tex_h):
 # TODO: consider pack cmd function
 
 
-def next_pow2(x):
-    return 1 << (x - 1).bit_length() if x > 8 else 8
+def build_nds_display_list(triangles, tex_w, tex_h):
+    """Compiles GL_TRIANGLES primitive data into NDS display list format.
+
+    Args:
+        triangles (list): List of tuples containing vertex and UV data for each triangle.
+        tex_w (int): Width of the texture in pixels.
+        tex_h (int): Height of the texture in pixels.
+    Returns:
+        list: A list of 32-bit integers representing the NDS display list commands and data.
+    """
+    dl_words = []
+
+    # Command: BEGIN & GL_TRIANGLES
+    dl_words.append(FIFO_BEGIN)
+    dl_words.append(GL_TRIANGLES)
+
+    for v_tri, uv_tri in triangles:
+        for j in range(3):
+            if uv_tri is not None and len(uv_tri) > j:
+                u, v = uv_tri[j]
+                dl_words.append(FIFO_TEXCOORD)
+                dl_words.append(pack_uv_t16(u, v, tex_w, tex_h))
+
+            vx, vy, vz = v_tri[j]
+            v16_x = float_to_v16(vx) & 0xFFFF
+            v16_y = float_to_v16(vy) & 0xFFFF
+            v16_z = float_to_v16(vz) & 0xFFFF
+
+            dl_words.append(FIFO_VERTEX16)
+            dl_words.append(v16_x | (v16_y << 16))
+            dl_words.append(v16_z)
+
+    # Command: END
+    dl_words.append(FIFO_END)
+    return dl_words
 
 
-# TODO: Try to remove?
+# Read Helpers
+
+
 def get_prop(obj, key, default=None):
-    """Helper to read attributes safely from either pygltflib objects or dicts."""
+    """Helper to read attributes safely from either pygltflib objects or dicts.
+    Args:
+        obj: The object or dictionary to read from.
+        key: The key or attribute name to retrieve.
+        default: The default value to return if the key/attribute is not found.
+    Returns:
+        The value of the key/attribute."""
     if obj is None:
         return default
     if isinstance(obj, dict):  # Dictionary Check
@@ -80,6 +158,13 @@ def get_prop(obj, key, default=None):
 
 
 def read_accessor_data(gltf, accessor_index):
+    """Reads accessor data from GLTF and returns as a numpy array.
+
+    Args:
+        gltf: The GLTF object.
+        accessor_index: The index of the accessor to read.
+    Returns:
+        np.ndarray: The data from the accessor as a numpy array."""
     if accessor_index is None:
         return None
     accessor = gltf.accessors[accessor_index]
@@ -111,8 +196,17 @@ def read_accessor_data(gltf, accessor_index):
     return raw_array
 
 
+# Texture Functions
+
+
 def apply_texture_transform(uvs, transform):
-    """Apply KHR_texture_transform (offset, scale, rotation) to UVs."""
+    """Apply KHR_texture_transform (offset, scale, rotation) to UVs.
+
+    Args:
+        uvs (np.ndarray): The original UV coordinates.
+        transform (dict): The KHR_texture_transform extension data.
+    Returns:
+        np.ndarray: The transformed UV coordinates."""
     if uvs is None or transform is None:
         return uvs
 
@@ -130,10 +224,12 @@ def apply_texture_transform(uvs, transform):
     ):
         return uvs
 
+    # Create a copy to avoid modifying the original array and then scale
     transformed = np.array(uvs, copy=True)
     transformed[:, 0] *= float(scale[0])
     transformed[:, 1] *= float(scale[1])
 
+    # Apply rotation if necessary
     if abs(rotation) >= 1e-8:
         cos_r = float(np.cos(rotation))
         sin_r = float(np.sin(rotation))
@@ -142,13 +238,23 @@ def apply_texture_transform(uvs, transform):
         transformed[:, 0] = (u * cos_r) - (v * sin_r)
         transformed[:, 1] = (u * sin_r) + (v * cos_r)
 
+    # Apply translation offset
     transformed[:, 0] += float(offset[0])
     transformed[:, 1] += float(offset[1])
     return transformed
 
 
-def process_texture(gltf, image_index, tmp_dir, output_dir):
-    """Extracts glTF image, resizes to NDS power-of-two dimensions, and runs GRIT on it."""
+def process_texture_img(gltf, image_index, tmp_dir, output_dir):
+    """Extracts glTF image, resizes to NDS power-of-two dimensions, and runs GRIT on it.
+
+    Args:
+        gltf: The GLTF object.
+        image_index (int): The index of the image to process.
+        tmp_dir (str): Temporary directory for intermediate files.
+        output_dir (str): Directory to save the final texture files.
+    Returns:
+        dict: A dictionary containing texture information (name, width, height, isRGBA).
+    """
     image = gltf.images[image_index]
     texture_base_name = f"tex_{image_index}"
 
@@ -177,7 +283,9 @@ def process_texture(gltf, image_index, tmp_dir, output_dir):
         )
 
     # Enforce NDS texture size constraints (power-of-two)
-    img = Image.open(temp_png_path).convert("RGBA")  # TODO: support for non RGBA?
+    img = Image.open(temp_png_path).convert(
+        "RGBA"
+    )  # TODO DECIDE: support for non RGBA?
 
     target_w = min(1024, next_pow2(img.width))
     target_h = min(1024, next_pow2(img.height))
@@ -186,12 +294,9 @@ def process_texture(gltf, image_index, tmp_dir, output_dir):
         img.save(temp_png_path)
 
     # Run GRIT command to convert PNG to NDS texture format
-    # TODO: Leave here ot pass it to outside script ? (similar to whatever obj2model was doing idk)
-    # -gt: Texture mode | -gB16: 16-bit A1BGR555 | -ftb: Binary output | -fh!: No C header
+    # TODO DECIDE: Leave here ot pass it to outside script ? (similar to whatever obj2model was doing idk)
+    # -gt: Texture mode | -gB16: 16-bit A1BGR555 | -gT!: set alpha-bit  | -ftb: Binary output | -fh!: No C header
     grit_output_base = os.path.join(output_dir, texture_base_name)
-    print(
-        f"Running GRIT for texture {image_index} (output base: {grit_output_base})..."
-    )
     grit_cmd = [
         "/opt/wonderful/thirdparty/blocksds/core/tools/grit/grit",  # TODO: shorten this monstrousity with env var or something
         temp_png_path,
@@ -223,37 +328,22 @@ def process_texture(gltf, image_index, tmp_dir, output_dir):
     }
 
 
-def build_nds_display_list(triangles, tex_w, tex_h):
-    """Compiles GL_TRIANGLES primitive data into NDS display list format."""
-    dl_words = []
-
-    # Command: BEGIN & GL_TRIANGLES
-    dl_words.append(FIFO_BEGIN)
-    dl_words.append(GL_TRIANGLES)
-
-    for v_tri, uv_tri in triangles:
-        for j in range(3):
-            if uv_tri is not None and len(uv_tri) > j:
-                u, v = uv_tri[j]
-                dl_words.append(FIFO_TEXCOORD)
-                dl_words.append(pack_uv_t16(u, v, tex_w, tex_h))
-
-            vx, vy, vz = v_tri[j]
-            v16_x = float_to_v16(vx) & 0xFFFF
-            v16_y = float_to_v16(vy) & 0xFFFF
-            v16_z = float_to_v16(vz) & 0xFFFF
-
-            dl_words.append(FIFO_VERTEX16)
-            dl_words.append(v16_x | (v16_y << 16))
-            dl_words.append(v16_z)
-
-    # Command: END
-    dl_words.append(FIFO_END)
-    return dl_words
+# Mesh Functions
 
 
 def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
-    """Splits skinned mesh vertices by primary bone and converts them to bone local space."""
+    """Splits skinned mesh vertices by primary bone and converts them to bone local space.
+
+    Args:
+        gltf: The GLTF object.
+        primitive: The mesh primitive to unskin.
+        skin: The skin object associated with the primitive.
+        positions (np.ndarray): Vertex positions.
+        uvs (np.ndarray): Vertex UV coordinates.
+        indices (np.ndarray): Triangle indices.
+    Returns:
+        dict: A dictionary mapping joint node indices to lists of triangles (each triangle is a tuple of vertex positions and UVs).
+    """
     ibm_accessor = get_prop(skin, "inverseBindMatrices")
     ibm_raw = (
         read_accessor_data(gltf, ibm_accessor) if ibm_accessor is not None else None
@@ -273,6 +363,7 @@ def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
         )
         return None
 
+    # Initialize inverse bind matrices (IBMs) for each joint
     num_joints = len(joints)
     if ibm_raw is not None:
         ibms = ibm_raw.reshape(num_joints, 4, 4)
@@ -304,13 +395,18 @@ def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
         for v_index in (index0, index1, index2):
             pos = positions[v_index]
             pos_h = np.array([pos[0], pos[1], pos[2], 1.0], dtype=np.float32)
-            local_pos = (ibm @ pos_h)[:3] * 0.25
+            local_pos = (ibm @ pos_h)[
+                :3
+            ] * 0.25  # TODO: dynamic scale factor? i just picked this to get a working demo
             v_tri.append(local_pos)
             if uvs is not None:
                 uv_tri.append(uvs[v_index])
+
         joint_triangles[target_node].append(
             (v_tri, uv_tri if uvs is not None else None)
         )
+
+    # Check for discarded triangles due to unskinning
     total_input_tris = len(flat_indices) // 3
     total_output_tris = sum(len(tris) for tris in joint_triangles.values())
 
@@ -321,8 +417,18 @@ def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
     return joint_triangles
 
 
+# Core Functions
+
+
 def parse_animations(gltf, node_count):
-    """Extracts keyframe channels per node for translation, rotation and scaling."""
+    """Extracts keyframe channels per node for translation, rotation and scaling.
+
+    Args:
+        gltf: The GLTF object.
+        node_count (int): The number of nodes in the GLTF scene.
+    Returns:
+        list: A list of animation dictionaries, each containing name, number of frames, fps, and tracks (per node keyframe data).
+    """
     animations = []
     if not hasattr(gltf, "animations") or gltf.animations is None:
         return animations
@@ -399,25 +505,108 @@ def parse_animations(gltf, node_count):
     return animations
 
 
-# ---------------------------------------------------------------------------
-# MDL2 binary format
-# ---------------------------------------------------------------------------
-#
-# Header      : 'MDL2' | u32 nodeCount | u32 animCount | u32 texCount
-# Tex table   : texCount × { char[64] name | u16 w | u16 h | u8 isRGBA | u8[3] pad }
-# Nodes       : nodeCount × { s32 pid | s32 px | s32 py | s32 pz |
-#                              u32 subListCount |
-#                              subListCount × { s32 texSlot | u32 dlSize | u32[dlSize] } }
-# Animations  : animCount × { char[32] name | u32 duration |
-#                              nodeCount × { u32 kfCount | Keyframe[kfCount] } }
-#
-# Keyframe (16 bytes)  : s32 time | s16 rx | s16 ry | s16 rz | s16 px | s16 py | s16 pz
-#
-# texSlot == -1 means "no texture bound for this sub-list".
+def write_mdl2_file(output_path, nodes, textures, animations):
+    """Write extracted data to binary MDL2 file.
+
+    Args:
+        output_path (str): Path to the output MDL2 file.
+        nodes (list): List of node dictionaries containing position and sublist data.
+        textures (list): List of texture dictionaries containing name, width, height, and RGBA flag.
+        animations (list): List of animation dictionaries containing name, number of frames, fps, and tracks.
+    """
+    with open(output_path, "wb") as f:
+        # Header: 'MDL2 | u32 nodeCount | u32 animCount | u32 texCount
+        f.write(
+            struct.pack("<4sIII", MAGIC, len(nodes), len(animations), len(textures))
+        )
+
+        # Tex Table
+        for tex in textures:
+            f.write(
+                struct.pack(
+                    "<64sHHB3s",
+                    tex["name"].encode("ascii"),
+                    tex["w"],
+                    tex["h"],
+                    tex["isRGBA"],
+                    b"\0\0\0",
+                )
+            )
+
+        # Nodes
+        for node in nodes:
+            f.write(
+                struct.pack(
+                    "<iiiiI",
+                    node["pid"],
+                    node["px"],
+                    node["py"],
+                    node["pz"],
+                    node["subListCount"],
+                )
+            )
+            for sub_list in node["subLists"]:
+                f.write(struct.pack("<iI", sub_list["texSlot"], sub_list["dlSize"]))
+                for word in sub_list["dlWords"]:
+                    f.write(struct.pack("<I", word))
+
+        # Animations
+        for anim in animations:
+            # 1. Anim Header: 32-byte name | u32 num_frames | float fps
+            name_bytes = anim["name"].encode("ascii")[:31].ljust(32, b"\0")
+            f.write(struct.pack("<32sIf", name_bytes, anim["num_frames"], anim["fps"]))
+
+            # 2. Track Count: u32 trackCount
+            tracks = anim["tracks"]
+            f.write(struct.pack("<I", len(tracks)))
+
+            # 3. Individual Tracks
+            for track in tracks:
+                # Node Index
+                f.write(struct.pack("<i", track["nodeIndex"]))
+                f.write(struct.pack("<I", len(track["t"])))
+
+                # Translation Keys: u32 count -> s32 time, s32 x, s32 y, s32 z
+                for k in track["t"]:
+                    val = k["val"]
+                    f.write(
+                        struct.pack(
+                            "<hiii",
+                            float_to_s16(k["time"]),
+                            int(val[0] * 0.25),
+                            int(val[1] * 0.25),
+                            int(val[2] * 0.25),
+                        )
+                    )
+
+                # Rotation Keys: u32 count -> s32 time, s16 x, s16 y, s16 z, s16 w
+                f.write(struct.pack("<I", len(track["r"])))
+                for k in track["r"]:
+                    val = k["val"]
+                    f.write(
+                        struct.pack(
+                            "<hhhhh",
+                            float_to_s16(k["time"]),
+                            quat_float_to_s16(val[0]),
+                            quat_float_to_s16(val[1]),
+                            quat_float_to_s16(val[2]),
+                            quat_float_to_s16(val[3]),
+                        )
+                    )
+
+        print(
+            f"Outputted '{output_path}' ({len(nodes)} nodes, {len(textures)} textures, {len(animations)} animations)."
+        )
 
 
 # TODO: Refactor into subfunctions for readability
-def convert_glb_to_mdl2(glb_path, output_path):
+def convert_glb_to_mdl2(glb_path: str, output_path: str):
+    """Converts a GLB file to a custom MDL2 format.
+
+    Args:
+        glb_path (str): Path to the input GLB file.
+        output_path (str): Path to the output MDL2 file.
+    """
     gltf = pygltflib.GLTF2().load(glb_path)
 
     output_dir = os.path.dirname(output_path) or "."
@@ -428,7 +617,7 @@ def convert_glb_to_mdl2(glb_path, output_path):
     textures = []
     with tempfile.TemporaryDirectory() as tmp_dir:
         for index in range(len(gltf.images)):
-            tex_info = process_texture(gltf, index, tmp_dir, output_dir)
+            tex_info = process_texture_img(gltf, index, tmp_dir, output_dir)
             textures.append(tex_info)
     tex_count = len(textures)
     gltf_textures = get_prop(gltf, "textures", []) or []
@@ -574,88 +763,7 @@ def convert_glb_to_mdl2(glb_path, output_path):
     # Animations
     animations = parse_animations(gltf, len(nodes))
 
-    # Write to bin file
-    with open(output_path, "wb") as f:
-        # Header: 'MDL2 | u32 nodeCount | u32 animCount | u32 texCount
-        f.write(struct.pack("<4sIII", MAGIC, len(nodes), len(animations), tex_count))
-
-        # Tex Table
-        for tex in textures:
-            f.write(
-                struct.pack(
-                    "<64sHHB3s",
-                    tex["name"].encode("ascii"),
-                    tex["w"],
-                    tex["h"],
-                    tex["isRGBA"],
-                    b"\0\0\0",
-                )
-            )
-
-        # Nodes
-        for node in nodes:
-            f.write(
-                struct.pack(
-                    "<iiiiI",
-                    node["pid"],
-                    node["px"],
-                    node["py"],
-                    node["pz"],
-                    node["subListCount"],
-                )
-            )
-            for sub_list in node["subLists"]:
-                f.write(struct.pack("<iI", sub_list["texSlot"], sub_list["dlSize"]))
-                for word in sub_list["dlWords"]:
-                    f.write(struct.pack("<I", word))
-
-        # Animations
-        for anim in animations:
-            # 1. Anim Header: 32-byte name | u32 num_frames | float fps
-            name_bytes = anim["name"].encode("ascii")[:31].ljust(32, b"\0")
-            f.write(struct.pack("<32sIf", name_bytes, anim["num_frames"], anim["fps"]))
-
-            # 2. Track Count: u32 trackCount
-            tracks = anim["tracks"]
-            f.write(struct.pack("<I", len(tracks)))
-
-            # 3. Individual Tracks
-            for track in tracks:
-                # Node Index
-                f.write(struct.pack("<i", track["nodeIndex"]))
-                f.write(struct.pack("<I", len(track["t"])))
-
-                # Translation Keys: u32 count -> s32 time, s32 x, s32 y, s32 z
-                for k in track["t"]:
-                    val = k["val"]
-                    f.write(
-                        struct.pack(
-                            "<hiii",
-                            float_to_s16(k["time"]),
-                            int(val[0] * 0.25),
-                            int(val[1] * 0.25),
-                            int(val[2] * 0.25),
-                        )
-                    )
-
-                # Rotation Keys: u32 count -> s32 time, s16 x, s16 y, s16 z, s16 w
-                f.write(struct.pack("<I", len(track["r"])))
-                for k in track["r"]:
-                    val = k["val"]
-                    f.write(
-                        struct.pack(
-                            "<hhhhh",
-                            float_to_s16(k["time"]),
-                            quat_float_to_s16(val[0]),
-                            quat_float_to_s16(val[1]),
-                            quat_float_to_s16(val[2]),
-                            quat_float_to_s16(val[3]),
-                        )
-                    )
-
-        print(
-            f"Outputted '{output_path}' ({len(nodes)} nodes, {tex_count} textures, {len(animations)} animations)."
-        )
+    write_mdl2_file(output_path, nodes, textures, animations)
 
 
 if __name__ == "__main__":
