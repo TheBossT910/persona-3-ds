@@ -36,13 +36,6 @@ void DialogueScreen::renderSprites()
     dmaCopy(whiteBlockGraphic.pal, SPRITE_PALETTE_SUB + (1 * 16), 16 * sizeof(u16));
     dmaCopy(cornerGraphic.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
     dmaCopy(edgeGraphic.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
-    // busts
-    dmaCopy(topLeftGraphic.pal, SPRITE_PALETTE_SUB + (4 * 16), 16 * sizeof(u16));
-    dmaCopy(topRightGraphic.pal, SPRITE_PALETTE_SUB + (5 * 16), 16 * sizeof(u16));
-    dmaCopy(middleLeftGraphic.pal, SPRITE_PALETTE_SUB + (6 * 16), 16 * sizeof(u16));
-    dmaCopy(middleRightGraphic.pal, SPRITE_PALETTE_SUB + (7 * 16), 16 * sizeof(u16));
-    dmaCopy(bottomLeftGraphic.pal, SPRITE_PALETTE_SUB + (8 * 16), 16 * sizeof(u16));
-    dmaCopy(bottomRightGraphic.pal, SPRITE_PALETTE_SUB + (9 * 16), 16 * sizeof(u16));
 
     // perform transformations
     /// index -1 is reserved for vflip/hflip, 0 is reserved for no transform
@@ -72,25 +65,9 @@ void DialogueScreen::renderSprites()
                srs.vflip,
                srs.mosaic);
     }
-    // busts
-    for (SpriteRenderState& srs : srsBusts)
-    {
-        oamSet(oam,
-               j++,
-               srs.x,
-               srs.y,
-               srs.priority,
-               srs.sprite.paletteAlpha,
-               srs.sprite.size,
-               srs.sprite.format,
-               srs.sprite.gfx,
-               srs.affineIndex,
-               srs.sizeDouble,
-               srs.hide,
-               srs.hflip,
-               srs.vflip,
-               srs.mosaic);
-    }
+
+    // draw busts
+    renderBust(j);
 }
 
 void DialogueScreen::load()
@@ -132,8 +109,9 @@ void DialogueScreen::load()
     dmaCopy(cornerGraphic.tiles, cornerSprite.gfx, cornerGraphic.tilesLen);
     dmaCopy(edgeGraphic.tiles, edgeSprite.gfx, edgeGraphic.tilesLen);
 
+    // DEBUG
     // bust demo
-    loadBustDemo();
+    // loadBustDemo();
 };
 
 void DialogueScreen::loadBustDemo()
@@ -171,6 +149,83 @@ void DialogueScreen::loadBustDemo()
     dmaCopy(middleRightGraphic.tiles, middleRightSprite.gfx, middleRightGraphic.tilesLen);
     dmaCopy(bottomLeftGraphic.tiles, bottomLeftSprite.gfx, bottomLeftGraphic.tilesLen);
     dmaCopy(bottomRightGraphic.tiles, bottomRightSprite.gfx, bottomRightGraphic.tilesLen);
+}
+
+void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
+{
+    bustPalette = {};
+
+    // load bust
+    for (SpritePayload& sp : bust)
+    {
+        // use alias for easy referencing
+        Sprite sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
+
+        // setup sprite
+        sprite = {SpriteSize_64x64, SpriteColorFormat_16Color, bustPaletteId};
+
+        // allocating space for sprite
+        sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
+
+        // load sprite
+        graphic = graphics->loadSpriteGraphic(sp.spritePath, sp.spriteType, sp.spriteVariant);
+
+        // copy sprite into memory
+        dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
+
+        // save the latest palette
+        // bustPalette.pal = graphic.pal;
+        dmaCopy(graphic.pal, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
+
+        // unload sprite (already copied into memory)
+        graphics->unloadGraphic(graphic);
+    }
+
+    this->bust = bust;
+}
+
+void DialogueScreen::renderBust(int id)
+{
+    // exit if palette is not set
+    if (bustPalette.pal == nullptr)
+    {
+        return;
+    }
+
+    // setup bust palette
+    dmaCopy(bustPalette.pal, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
+
+    // DEBUG
+    // dmaCopy(topLeftGraphic.pal, SPRITE_PALETTE_SUB + (4 * 16), 16 * sizeof(u16));
+    // dmaCopy(topRightGraphic.pal, SPRITE_PALETTE_SUB + (5 * 16), 16 * sizeof(u16));
+    // dmaCopy(middleLeftGraphic.pal, SPRITE_PALETTE_SUB + (6 * 16), 16 * sizeof(u16));
+    // dmaCopy(middleRightGraphic.pal, SPRITE_PALETTE_SUB + (7 * 16), 16 * sizeof(u16));
+    // dmaCopy(bottomLeftGraphic.pal, SPRITE_PALETTE_SUB + (8 * 16), 16 * sizeof(u16));
+    // dmaCopy(bottomRightGraphic.pal, SPRITE_PALETTE_SUB + (9 * 16), 16 * sizeof(u16));
+
+    // draw bust
+    for (SpritePayload& sp : bust)
+    {
+        // use alias for easy referencing
+        SpriteRenderState& srs = sp.srs;
+
+        oamSet(oam,
+               id++,
+               srs.x,
+               srs.y,
+               srs.priority,
+               srs.sprite.paletteAlpha,
+               srs.sprite.size,
+               srs.sprite.format,
+               srs.sprite.gfx,
+               srs.affineIndex,
+               srs.sizeDouble,
+               srs.hide,
+               srs.hflip,
+               srs.vflip,
+               srs.mosaic);
+    }
 }
 
 void DialogueScreen::unload()

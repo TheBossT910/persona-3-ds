@@ -1,13 +1,5 @@
 #pragma once
-
 #include "views/EnvironmentView.hpp"
-
-// data
-#include "data/environmentDb.hpp"
-// maps
-#include "maps/iwatodai_dorm_floor_1.hpp"
-// dialogue
-#include "dialogue/demo_dialogue.hpp"
 
 class IwatodaiDormView : public EnvironmentView
 {

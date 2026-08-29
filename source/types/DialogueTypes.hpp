@@ -1,26 +1,34 @@
 #pragma once
 
 #include "components/TextComponent.hpp"
+#include "types/GraphicsTypes.hpp"
+#include <etl/span.h>
 #include <string>
 #include <vector>
 
 class DialogueScreen;
-
 struct Dialogue;
+
 struct DialogueSelection
 {
     std::string text;
     bool isSelected;
     Dialogue* next;
 };
+
 struct Dialogue
 {
-    std::string characterName;
+    // content
+    std::string name;
     std::string text;
-    int imageId;
+
+    // bust
+    etl::span<SpritePayload> spritePayload;
+
+    // branching
     Dialogue* prev;
     Dialogue* next;
-    std::vector<DialogueSelection> selections;
+    etl::vector<DialogueSelection, 3> selections;
 };
 
 /**
@@ -29,19 +37,17 @@ struct Dialogue
 struct DialogueConfig
 {
     Dialogue* firstLine = nullptr;
-    void (*loader)(int bgIndex) = nullptr;
     TextComponent* text = nullptr;
     DialogueScreen* screen = nullptr;
 
     DialogueConfig() = default;
 
-    DialogueConfig(Dialogue* iFirstLine, void (*iLoader)(int bgIndex), TextComponent* iText, DialogueScreen* iScreen)
-        : firstLine(iFirstLine), loader(iLoader), text(iText), screen(iScreen)
+    DialogueConfig(Dialogue* iFirstLine, TextComponent* iText, DialogueScreen* iScreen)
+        : firstLine(iFirstLine), text(iText), screen(iScreen)
     {
     }
 
-    DialogueConfig(Dialogue* iFirstLine, void (*iLoader)(int bgIndex), TextComponent* iText)
-        : firstLine(iFirstLine), loader(iLoader), text(iText)
+    DialogueConfig(Dialogue* iFirstLine, TextComponent* iText) : firstLine(iFirstLine), text(iText)
     {
     }
 };

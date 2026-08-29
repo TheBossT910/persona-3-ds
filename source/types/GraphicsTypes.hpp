@@ -1,15 +1,7 @@
 #pragma once
 
+#include "data/spriteDb.hpp"
 #include <nds.h>
-
-//a simple sprite structure
-struct Sprite
-{
-    SpriteSize size;
-    SpriteColorFormat format;
-    int paletteAlpha;
-    u16* gfx; // default = 0?
-};
 
 struct GraphicAsset
 {
@@ -22,6 +14,20 @@ struct GraphicAsset
     u32 mapLen;
 };
 
+/**
+ * @brief A simple sprite structure
+ */
+struct Sprite
+{
+    SpriteSize size;
+    SpriteColorFormat format;
+    int paletteAlpha;
+    u16* gfx; // default = 0?
+};
+
+/**
+ * @brief Data to render a Sprite
+ */
 struct SpriteRenderState
 {
     // sprite data
@@ -40,9 +46,27 @@ struct SpriteRenderState
     bool mosaic = false;
 };
 
+/**
+ * @brief Data to perform a transformation on a Sprite
+ */
 struct SpriteTransform
 {
     int angle;
     int sx;
     int sy;
+};
+
+/**
+ * @brief Data to manage the lifecycle of a sprite
+ */
+struct SpritePayload
+{
+    SpriteRenderState& srs;
+    // SpriteTransform spriteTransform; // TODO: remove? This is an operation *on* a sprite, not dealing with lifecyle of a sprite
+
+    std::string& spritePath;
+    GraphicAsset& ga;
+
+    SpriteType spriteType;
+    int spriteVariant;
 };

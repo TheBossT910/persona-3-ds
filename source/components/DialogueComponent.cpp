@@ -20,10 +20,17 @@ void DialogueComponent::Update(ae::fixed_t)
     {
         /// swap the background exactly once per dialogue line, on the first
         /// frame, and only if the image has actually changed
-        if (bgLoader && current->imageId != loadedImageId)
+        if (renderBust)
         {
-            bgLoader(current->imageId);
-            loadedImageId = current->imageId;
+            if (screen != nullptr)
+            {
+                screen->loadBust(current->spritePayload);
+            }
+
+            renderBust = false;
+
+            // TODO: fix logic for checking for new sprites
+            // ...
         }
         else
         {
@@ -140,10 +147,8 @@ void DialogueComponent::Destroy()
 
 void DialogueComponent::configureDialogue(const DialogueConfig& config)
 {
-    bgLoader = config.loader;
     text = config.text;
     screen = config.screen;
-    loadedImageId = -1; // force a bg load for the very first line
     prevKeys = 0;
     advanceTo(config.firstLine);
 }
@@ -152,6 +157,7 @@ void DialogueComponent::start()
 {
     prevKeys = systemKeysHeld;
     isActive = true;
+    renderBust = true;
 }
 
 void DialogueComponent::end()
@@ -166,13 +172,14 @@ void DialogueComponent::advanceTo(Dialogue* next)
     doRenderOptions = false;
     optionCount = 0;
     selectedOption = 0;
+    renderBust = true;
     text->clearScreen();
     renderAnimFrame();
 }
 
 void DialogueComponent::renderAnimFrame()
 {
-    text->drawText(current->characterName, 8, 133, TextColor::RichBlue);
+    text->drawText(current->name, 8, 133, TextColor::RichBlue);
     text->appearText(current->text, 8, 154, TextColor::Black);
 }
 
@@ -180,7 +187,7 @@ void DialogueComponent::renderOptions()
 {
     /// reprint the complete line then list choices below it
     text->clearScreen();
-    text->drawText(current->characterName, 8, 133, TextColor::DualGreen);
+    text->drawText(current->name, 8, 133, TextColor::DualGreen);
     text->drawText(current->text, 8, 154, TextColor::Black);
     //TODO: The options are currently drawn outside the textbox, do we want to add an extra overlay for them similar to the actual game?
     int textSize = text->getFontSize();

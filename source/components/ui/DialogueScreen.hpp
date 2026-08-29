@@ -4,6 +4,7 @@
 #include "components/ui/UIScreen.hpp"
 
 #include <etl/array.h>
+#include <etl/span.h>
 #include <nds.h>
 
 class DialogueScreen : public UIScreen
@@ -18,6 +19,9 @@ class DialogueScreen : public UIScreen
     void triggerAction(UIAction action) override;
     void renderSprites() override;
 
+    // debug
+    void loadBust(etl::span<SpritePayload>& bust);
+
   private:
     DialogueScreen() : UIScreen(false) {};
     ~DialogueScreen() {};
@@ -25,6 +29,12 @@ class DialogueScreen : public UIScreen
 
     // debug
     void loadBustDemo();
+    void renderBust(int id);
+
+    // busts
+    etl::span<SpritePayload> bust;
+    GraphicAsset bustPalette = {};
+    int bustPaletteId = 4; // 10
 
     // sprites
     Sprite blueBlockSprite = {};

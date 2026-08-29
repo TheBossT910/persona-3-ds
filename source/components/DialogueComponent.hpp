@@ -84,10 +84,8 @@ class DialogueComponent : public ae::Component
     int selectedOption = 0;
     bool doRenderOptions = false;
 
-    /// track the currently loaded imageId
-    int loadedImageId = -1;
-
-    void (*bgLoader)(int bgIndex) = nullptr;
+    /// track the currently loaded bust
+    bool renderBust = true;
 
     u32 prevKeys = 0;
 

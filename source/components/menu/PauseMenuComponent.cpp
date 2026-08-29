@@ -6,7 +6,8 @@
 // sfx
 #include "soundbank.h"
 // dialogue
-#include "dialogue/demo_dialogue.hpp"
+// #include "dialogue/demo_dialogue.hpp"
+#include "demo/demo_dialogue.hpp"
 
 PauseMenuComponent* PauseMenuComponent::instance = nullptr;
 
@@ -43,10 +44,11 @@ void PauseMenuComponent::resetHook()
     optionCount = MENU_OPTIONS;
     isClosed = false;
 
-    if (demo_dialogue_bg_slot != -1)
-    {
-        rm.hideBg(demo_dialogue_bg_slot);
-    }
+    // TODO: update logic
+    // if (demo_dialogue_bg_slot != -1)
+    // {
+    //     rm.hideBg(demo_dialogue_bg_slot);
+    // }
 
     if (pauseMenu == nullptr)
     {
@@ -61,10 +63,10 @@ ViewState PauseMenuComponent::updateHook()
     // dialogue should be started, but has not
     if (isDialogueStarted && !dialogue->IsActive())
     {
-        demo_yukari_kenji_argument_load();
-        dialogue->configureDialogue(
-            DialogueConfig(demo_yukari_kenji_argument_first(), demo_yukari_kenji_argument_load_bg, text));
-        dialogue->start();
+        // TODO: uncomment
+        // dialogue->configureDialogue(
+        //     DialogueConfig(demo_yukari_kenji_argument_first(), text));
+        // dialogue->start();
         isDialogueStarted = false;
     }
 
@@ -74,11 +76,12 @@ ViewState PauseMenuComponent::updateHook()
         return ViewState::KEEP_CURRENT;
     }
 
-    if (demo_dialogue_bg_slot != -1)
-    {
-        rm.hideBg(demo_dialogue_bg_slot);
-        ae::BroadcastEvent(Event::RenderUIText{});
-    }
+    // TODO: update logic
+    // if (demo_dialogue_bg_slot != -1)
+    // {
+    //     rm.hideBg(demo_dialogue_bg_slot);
+    //     ae::BroadcastEvent(Event::RenderUIText{});
+    // }
 
     return ViewState::DEFAULT;
 }
