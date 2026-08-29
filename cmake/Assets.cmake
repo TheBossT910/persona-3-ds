@@ -117,30 +117,7 @@ p3d_add_asset_group(fonts
     ${CMAKE_SOURCE_DIR}/assets/fonts/*.grit
 )
 
-set(P3D_ENVIRONMENT_DB "${CMAKE_SOURCE_DIR}/source/data/environmentDb.cpp")
-file(GLOB P3D_ENVIRONMENT_INPUTS CONFIGURE_DEPENDS
-    ${CMAKE_SOURCE_DIR}/assets/environments/*/*.obj
-    ${CMAKE_SOURCE_DIR}/assets/environments/*/*.build.json
-)
-
-add_custom_command(
-    OUTPUT ${P3D_ENVIRONMENT_DB}
-    COMMAND ${CMAKE_COMMAND}
-    -DP3D_SOURCE_DIR=${CMAKE_SOURCE_DIR}
-    -DP3D_PYTHON_EXECUTABLE=${Python3_EXECUTABLE}
-    -DP3D_FFMPEG_EXECUTABLE=${P3D_FFMPEG_EXECUTABLE}
-    -DP3D_GRIT_EXECUTABLE=${P3D_GRIT_EXECUTABLE}
-    -DP3D_ASSET_GROUP=environments
-    -P ${CMAKE_SOURCE_DIR}/cmake/BuildAssets.cmake
-    DEPENDS
-    ${P3D_ENVIRONMENT_INPUTS}
-    ${CMAKE_SOURCE_DIR}/tools/build_asset.py
-    ${CMAKE_SOURCE_DIR}/cmake/BuildAssets.cmake
-    COMMENT "Generating environment database"
-    VERBATIM
-)
-
-add_custom_target(p3d_environment_db DEPENDS ${P3D_ENVIRONMENT_DB})
+add_custom_target(p3d_environment_db DEPENDS p3d_assets_environments)
 
 add_custom_target(p3d_assets)
 get_property(P3D_ASSET_GROUP_TARGETS GLOBAL PROPERTY P3D_ASSET_GROUP_TARGETS)

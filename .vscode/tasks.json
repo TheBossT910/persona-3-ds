@@ -33,6 +33,15 @@
             "problemMatcher": []
         },
         {
+            "label": "CMake: Configure (NDS Debug)",
+            "type": "shell",
+            "command": "cmake --preset nds-debug-sdcard",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "CMake: Build (Host Tests)",
             "type": "shell",
             "command": "cmake --build --preset build-host-tests",
@@ -69,6 +78,20 @@
             },
             "dependsOn": [
                 "CMake: Configure (NDS Release)"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CMake: Build (NDS Debug SDCard)",
+            "type": "shell",
+            "command": "cmake --build --preset build-nds-debug-sdcard",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": [
+                "CMake: Configure (NDS Debug)"
             ],
             "problemMatcher": [
                 "$gcc"

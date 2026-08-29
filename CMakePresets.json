@@ -20,7 +20,7 @@
         },
         {
             "name": "host-assets",
-            "displayName": "Host Tools (assets+sdcard targets)",
+            "displayName": "Host Tools (assets + sdcard targets)",
             "binaryDir": "${sourceDir}/out/build/host-assets",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
@@ -37,6 +37,8 @@
             "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS_DEBUG": "-O0 -DNDEBUG -ggdb",
+                "CMAKE_CXX_FLAGS_DEBUG": "-O0 -DNDEBUG -ggdb",
                 "P3D_BUILD_TESTS": "OFF",
                 "P3D_ENABLE_ASSETS": "ON",
                 "P3D_ENABLE_SDCARD": "OFF",
@@ -50,6 +52,8 @@
             "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS_DEBUG": "-O0 -DNDEBUG -ggdb",
+                "CMAKE_CXX_FLAGS_DEBUG": "-O0 -DNDEBUG -ggdb",
                 "P3D_BUILD_TESTS": "OFF",
                 "P3D_ENABLE_ASSETS": "ON",
                 "P3D_ENABLE_SDCARD": "ON",
