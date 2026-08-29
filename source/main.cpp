@@ -40,34 +40,16 @@
 // game engine
 GameEngine engine;
 ae::Entity* player;
-ae::Entity* generic;
-GraphicsComponent* genericGraphics;
 
 // variables
 volatile int frame = 0;
 volatile u32 systemKeysDown = 0;
 volatile u32 systemKeysHeld = 0;
-int fps = 0;
-int fpsTimer = 0;
 std::string fatBasePath = "";
 Save saveData;
 ViewState nextView = ViewState::DEFAULT;
 
 BaseView* currentView = nullptr;
-
-// models
-unsigned int** bitmapsCharacter = nullptr;
-
-static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
-
-// TODO: figure out a way to unload after being copied to ram
-static unsigned int* loadCharacterTexture(const std::string& name)
-{
-    std::string basePath = fatBasePath + "models/makoto/";
-    GraphicAsset asset = genericGraphics->loadGraphic(basePath + name);
-    unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
-    return tiles;
-}
 
 void SwitchView(BaseView* newView)
 {
@@ -92,19 +74,6 @@ void SwitchView(BaseView* newView)
 void Vblank()
 {
     frame = frame + 1;
-}
-
-void loadModels()
-{
-    // Makoto
-
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4");
-
-    bitmapsCharacter = bitmapsMakoto;
 }
 
 // TODO: add doxyen docs
@@ -200,14 +169,8 @@ int main(int argc, char* argv[])
     // create entity
     player = engine.CreateEntity();
 
-    // TODO: replace this temporary workaround for graphics
-    generic = engine.CreateEntity();
-    genericGraphics = engine.CreateComponent<GraphicsComponent>();
-    generic->AddComponent(genericGraphics);
-
     // load save data
     ae::BroadcastEvent(Event::ReadSave{});
-    loadModels();
 
     // Default is DisclaimerView
     SwitchView(new DisclaimerView());

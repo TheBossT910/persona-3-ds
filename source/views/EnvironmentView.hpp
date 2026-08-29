@@ -60,19 +60,6 @@ class EnvironmentView : public BaseView
      */
     void cleanup() override;
 
-    /**
-     * @brief Loads and uploads a room's environment geometry and textures,
-     *        driven entirely by dbEntry
-     *
-     * @note  No per-room texture-slot code and no per-room generated class needed.
-     *
-     * Loads each texture slot's texture assets to build display lists and upload
-     * textures to VRAM, then unloads the texture assets. Logs a message if environment
-     * loading fails, since a failed load otherwise leaves environments silently
-     * rendering nothing.
-     */
-    void setupEnvironment();
-
   protected:
     // Room-specific hooks
     virtual float getCameraYOffset() const
@@ -202,5 +189,23 @@ class EnvironmentView : public BaseView
      * @return Raw pointer to the asset's tile data, reinterpreted as
      *         unsigned int, suitable for passing to the texture upload code.
      */
-    const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset);
+    const unsigned int* loadBitmap(const std::string& path, GraphicAsset& asset);
+
+    /**
+     * @brief Loads and uploads a room's environment geometry and textures,
+     *        driven entirely by dbEntry
+     *
+     * @note  No per-room texture-slot code and no per-room generated class needed.
+     *
+     * Loads each texture slot's texture assets to build display lists and upload
+     * textures to VRAM, then unloads the texture assets. Logs a message if environment
+     * loading fails, since a failed load otherwise leaves environments silently
+     * rendering nothing.
+     */
+    void setupEnvironment();
+
+    /**
+     * Loads a model's bitmap textures into memory & passes them to AnimationController
+     */
+    void setupModel();
 };

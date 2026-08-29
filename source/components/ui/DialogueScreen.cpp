@@ -98,9 +98,8 @@ void DialogueScreen::load()
 
     // load alt palettes
     cornerGreenPalette =
-        (genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN)).pal;
-    edgeGreenPalette =
-        (genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
+        (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN)).pal;
+    edgeGreenPalette = (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
 
     // copy sprites into memory
     dmaCopy(blueBlockGraphic.tiles, blueBlockSprite.gfx, blueBlockGraphic.tilesLen);

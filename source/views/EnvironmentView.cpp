@@ -36,10 +36,48 @@ std::string gritBaseName(const char* compiledFileName)
 }
 } // namespace
 
-const unsigned int* EnvironmentView::loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
+// models
+// unsigned int* EnvironmentView::loadModelBitmap(const std::string& path)
+// {
+//     // std::string basePath = fatBasePath + "models/makoto/";
+//     GraphicAsset asset = graphics->loadGraphic(path);
+//     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
+//     return tiles;
+// }
+
+const unsigned int* EnvironmentView::loadBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphics->loadGraphic(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
+}
+
+void EnvironmentView::setupModel()
+{
+    GraphicAsset modelTextures[MODEL_MAKOTO_TEX_COUNT] = {};
+    const unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
+
+    const std::string basePath = fatBasePath + "models/makoto/";
+
+    // load textures
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] =
+        loadBitmap(basePath + "makoto_texture_0", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] =
+        loadBitmap(basePath + "makoto_texture_1", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] =
+        loadBitmap(basePath + "makoto_texture_2", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] =
+        loadBitmap(basePath + "makoto_texture_3", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] =
+        loadBitmap(basePath + "makoto_texture_4", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4]);
+
+    makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsMakoto);
+
+    // unload texture graphics
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4]);
 }
 
 void EnvironmentView::setupEnvironment()
@@ -51,7 +89,7 @@ void EnvironmentView::setupEnvironment()
 
     for (int i = 0; i < dbEntry->textureCount; ++i)
     {
-        bitmapsEnv[i] = loadEnvironmentBitmap(basePath + gritBaseName(dbEntry->textures[i].name), envTextures[i]);
+        bitmapsEnv[i] = loadBitmap(basePath + gritBaseName(dbEntry->textures[i].name), envTextures[i]);
     }
 
     if (!env.load(dbEntry, bitmapsEnv))
@@ -194,8 +232,7 @@ void EnvironmentView::init()
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
     animationCtrl->loadModel((modelPath + "makoto/makoto.bin").c_str());
-
-    makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
+    setupModel();
 
     //setup main screen text engine
     int bgText = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
