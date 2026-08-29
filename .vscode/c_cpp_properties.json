@@ -12,7 +12,14 @@
                 "${workspaceFolder}/include/**",
                 "${workspaceFolder}/source/**",
                 "${workspaceFolder}/libs/aegis_engine/include/**",
-                "${workspaceFolder}/libs/aegis_engine/libs/**"
+                "${workspaceFolder}/libs/aegis_engine/libs/**",
+                "${env:ARM_GCC}/arm-none-eabi/include/**",
+                "${env:BLOCKSDSLIBS}/dswifi/include/**",
+                "${env:BLOCKSDSLIBS}/libnds/include/**",
+                "${env:BLOCKSDSLIBS}/libteak/include/**",
+                "${env:BLOCKSDSLIBS}/libxm7/include/**",
+                "${env:BLOCKSDSLIBS}/maxmod/include/**",
+                "${workspaceFolder}/build/persona-3-dual/maxmod/**"
             ],
             "defines": [
                 "ARM9",
