@@ -129,10 +129,10 @@ struct AnimNode
 
 struct CharacterPosition
 {
-    float x;
-    float z;
-    float y; // height
-    float facingAngle;
+    ae::q20_12_t x;
+    ae::q20_12_t z;
+    ae::q20_12_t y; // height
+    ae::q20_12_t facingAngle;
 };
 
 // From DialogueController.h
@@ -178,9 +178,9 @@ struct GraphicAsset
  */
 struct CameraKeyframe
 {
-    int time;           ///< Frame index at which this keyframe is reached.
-    Vec3<float> eye;    ///< Camera eye position.
-    Vec3<float> target; ///< Look-at position.
+    int time;                  ///< Frame index at which this keyframe is reached.
+    Vec3<ae::q20_12_t> eye;    ///< Camera eye position.
+    Vec3<ae::q20_12_t> target; ///< Look-at position.
 };
 
 /**
@@ -205,15 +205,15 @@ struct MovementConfig
     uint16_t* collisionMap;
 
     // world
-    float tileSize;
-    float worldOffsetX;
-    float worldOffsetZ;
-    Point2D<float> characterSize;
+    ae::q20_12_t tileSize;
+    ae::q20_12_t worldOffsetX;
+    ae::q20_12_t worldOffsetZ;
+    Point2D<ae::q20_12_t> characterSize;
 
     // translation
-    float speed;
-    float height;
-    Point2D<float> characterTranslate;
+    ae::q20_12_t speed;
+    ae::q20_12_t height;
+    Point2D<ae::q20_12_t> characterTranslate;
     float characterFacingAngle;
 
     MovementConfig() = default;

@@ -23,19 +23,19 @@ void MovementComponent::Update(ae::fixed_t)
 {
     // TODO: don't broadcast on every update (waste cpu cycles). Set it once?
     ae::BroadcastEvent(Event::SetCharacterPosition{isCharacterAt()});
-    float cameraAngle = CameraSystem::GetInstance().getMovementAngle();
-    float forwardX;
-    float forwardZ;
-    float rightX;
-    float rightZ;
+    ae::q20_12_t cameraAngle = CameraSystem::GetInstance().getMovementAngle();
+    ae::q20_12_t forwardX;
+    ae::q20_12_t forwardZ;
+    ae::q20_12_t rightX;
+    ae::q20_12_t rightZ;
 
-    float deltaX = 0.0f;
-    float deltaZ = 0.0f;
+    ae::q20_12_t deltaX{0};
+    ae::q20_12_t deltaZ;
 
-    float nextX;
-    float nextZ;
+    ae::q20_12_t nextX;
+    ae::q20_12_t nextZ;
 
-    float angleRad;
+    ae::q20_12_t angleRad;
 
     forwardX = -math.sin(cameraAngle) * config.speed;
     forwardZ = math.cos(cameraAngle) * config.speed;
@@ -66,7 +66,7 @@ void MovementComponent::Update(ae::fixed_t)
         deltaZ += rightZ;
     }
 
-    if (deltaX != 0.0f || deltaZ != 0.0f)
+    if (deltaX != ae::q20_12_t{0} || deltaZ != ae::q20_12_t{0})
     {
         // set walking animation
         if (Globals::enableCharacterAnim && (animationCtrl->getCurrentAnimIndex() != walkAnim))
@@ -112,11 +112,10 @@ void MovementComponent::Update(ae::fixed_t)
         config.characterTranslate.z = nextZ;
     }
 
-    if (deltaX != 0.0f || deltaZ != 0.0f)
+    if (deltaX != ae::q20_12_t{0} || deltaZ != ae::q20_12_t{0})
     {
-        // return angle in radians and convert to degrees
-        angleRad = math.atan2(deltaZ, deltaX);
-        config.characterFacingAngle = angleRad * (180.0f / 3.14159265f);
+        angleRad = MathManager::GetInstance().atan2(deltaZ, deltaX);
+        config.characterFacingAngle = angleRad * (ae::q20_12_t{180} / ae::q20_12_t{M_PI});
     }
 }
 

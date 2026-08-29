@@ -5,7 +5,6 @@
  * Owns all camera state (position, angle, path playback). Call configure()
  * once on room load, then update() every frame to get the gluLookAt arguments.
  *
- * @todo Replace float arithmetic with fixed-point (f32) for NDS performance.
  * @author Oles Gedz (olesgedz)
  */
 
@@ -120,7 +119,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
     }
 
     /** @brief Returns the current orbit angle in radians. */
-    float getAngle() const
+    ae::q20_12_t getAngle() const
     {
         return angle;
     }
@@ -140,7 +139,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      *
      * @return Angle in radians.
      */
-    float getMovementAngle() const;
+    ae::q20_12_t getMovementAngle() const;
 
     /**
      * @brief Returns the camera position.
@@ -170,18 +169,18 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
 
     CameraMode mode = CameraMode::Follow;
 
-    Vec3<float> currentPos = {};
-    Vec3<float> targetPos = {};
+    Vec3<ae::q20_12_t> currentPos = {};
+    Vec3<ae::q20_12_t> targetPos = {};
 
     CharacterPosition charPos;
     // TODO: remove camPos in favour of Event pub/sub?
     Event::CameraPosition camPos = {};
-    float angle = 0.0f;
-    float distance = 1.5f;
-    float height = 0.6f;
-    float lookAhead = 0.5f;
-    float angleIncrement = 0.05f;
-    float freeCameraSpeed = 0.02f;
+    ae::q20_12_t angle{0};
+    ae::q20_12_t distance{1.5};
+    ae::q20_12_t height{0.6};
+    ae::q20_12_t lookAhead{0.5};
+    ae::q20_12_t angleIncrement{0.05};
+    ae::q20_12_t freeCameraSpeed{0.02};
     bool isRotationLocked = false;
 
     // Path playback state

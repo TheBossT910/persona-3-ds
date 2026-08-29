@@ -53,13 +53,14 @@ void CameraSystem::on_receive(const Event::StopCamera& msg)
     isActive = false;
 }
 
-float CameraSystem::getMovementAngle() const
+ae::q20_12_t CameraSystem::getMovementAngle() const
 {
     switch (mode)
     {
     case CameraMode::CCTV:
     case CameraMode::Static:
-        return atan2f(currentPos.x - charPos.x, charPos.z - currentPos.z);
+        return MathManager::GetInstance().atan2(ae::q20_12_t{currentPos.x - charPos.x},
+                                                ae::q20_12_t{charPos.z - currentPos.z});
     default:
         return angle;
     }
@@ -77,7 +78,7 @@ void CameraSystem::Shutdown()
 
 void CameraSystem::Update(ae::fixed_t)
 {
-    camPos.up.y = 1.0f;
+    camPos.up.y = ae::q20_12_t{0};
 
     switch (mode)
     {
@@ -115,13 +116,13 @@ void CameraSystem::Update(ae::fixed_t)
             angle += angleIncrement;
         }
 
-        camPos.eye.x = charPos.x + math.sin(angle) * distance;
+        camPos.eye.x = charPos.x + MathManager::GetInstance().sinQ20_12(angle) * distance;
         camPos.eye.y = charPos.y + height;
-        camPos.eye.z = charPos.z - math.cos(angle) * distance;
+        camPos.eye.z = charPos.z - MathManager::GetInstance().cosQ20_12(angle) * distance;
 
-        camPos.target.x = charPos.x - math.sin(angle) * lookAhead;
-        camPos.target.y = charPos.y + 0.1f;
-        camPos.target.z = charPos.z + math.cos(angle) * lookAhead;
+        camPos.target.x = charPos.x - MathManager::GetInstance().sinQ20_12(angle) * lookAhead;
+        camPos.target.y = charPos.y + ae::q20_12_t{0.1};
+        camPos.target.z = charPos.z + MathManager::GetInstance().cosQ20_12(angle) * lookAhead;
         break;
     }
 
@@ -145,8 +146,8 @@ void CameraSystem::Update(ae::fixed_t)
             angle += angleIncrement;
         }
 
-        const float fwdX = -math.sin(angle) * freeCameraSpeed;
-        const float fwdZ = math.cos(angle) * freeCameraSpeed;
+        const ae::q20_12_t fwdX = -MathManager::GetInstance().sinQ20_12(angle) * freeCameraSpeed;
+        const ae::q20_12_t fwdZ = MathManager::GetInstance().cosQ20_12(angle) * freeCameraSpeed;
 
         if (systemKeysHeld & KEY_UP)
         {
@@ -172,9 +173,9 @@ void CameraSystem::Update(ae::fixed_t)
         camPos.eye.x = currentPos.x;
         camPos.eye.y = currentPos.y;
         camPos.eye.z = currentPos.z;
-        camPos.target.x = currentPos.x - math.sin(angle);
+        camPos.target.x = currentPos.x - MathManager::GetInstance().sinQ20_12(angle);
         camPos.target.y = currentPos.y;
-        camPos.target.z = currentPos.z + math.cos(angle);
+        camPos.target.z = currentPos.z + MathManager::GetInstance().cosQ20_12(angle);
         break;
     }
 
@@ -208,7 +209,9 @@ void CameraSystem::Update(ae::fixed_t)
         }
 
         int span = kf1.time - kf0.time;
-        float t = (span > 0) ? static_cast<float>(pathFrame - kf0.time) / static_cast<float>(span) : 1.0f;
+        ae::q20_12_t t = (span > 0)
+                             ? MathManager::GetInstance().div(ae::q20_12_t{pathFrame - kf0.time}, ae::q20_12_t{span})
+                             : ae::q20_12_t{1};
 
         camPos.eye.x = kf0.eye.x + (kf1.eye.x - kf0.eye.x) * t;
         camPos.eye.y = kf0.eye.y + (kf1.eye.y - kf0.eye.y) * t;

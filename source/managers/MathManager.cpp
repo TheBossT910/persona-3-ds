@@ -32,14 +32,26 @@ ae::q20_12_t MathManager::angleToRadians(ae::angle16_t angle)
     return ae::q20_12_t::from_raw_value(raw_rad);
 }
 
-ae::q4_12_t MathManager::sin(ae::q20_12_t radians)
+ae::q4_12_t MathManager::sinQ4_12(ae::q20_12_t radians)
 {
     return ae::q4_12_t::from_raw_value(sinLerp(radiansToAngle(radians)));
 }
 
-ae::q4_12_t MathManager::cos(ae::q20_12_t radians)
+ae::q4_12_t MathManager::cosQ4_12(ae::q20_12_t radians)
 {
     return ae::q4_12_t::from_raw_value(cosLerp(radiansToAngle(radians)));
+}
+
+ae::q20_12_t MathManager::sinQ20_12(ae::q20_12_t radians)
+{
+    ae::q4_12_t result = ae::q4_12_t::from_raw_value(sinLerp(radiansToAngle(radians)));
+    return ae::q20_12_t::from_raw_value(static_cast<int32_t>(result.raw_value()));
+}
+
+ae::q20_12_t MathManager::cosQ20_12(ae::q20_12_t radians)
+{
+    ae::q4_12_t result = ae::q4_12_t::from_raw_value(cosLerp(radiansToAngle(radians)));
+    return ae::q20_12_t::from_raw_value(static_cast<int32_t>(result.raw_value()));
 }
 
 ae::q20_12_t MathManager::tan(ae::q20_12_t radians)
@@ -145,4 +157,11 @@ float MathManager::atan2(float x, float y)
             }
         }
     }
+}
+
+/// uses depreciated solution internally
+ae::q20_12_t MathManager::atan2(ae::q20_12_t x, ae::q20_12_t y)
+{
+    float result = atan2(static_cast<float>(x), static_cast<float>(y));
+    return ae::q20_12_t{result};
 }

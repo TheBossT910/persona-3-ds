@@ -54,6 +54,17 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @author Vadym Diachenko (yellowafterlife)
      */
     float atan2(float y, float x);
+    /**
+     * @brief Computes the angle (in radians) between the positive x-axis and (x, y).
+     *
+     * @note Internally calls the depreciated float-based atan2.
+     * float conversion happens at this boundary until atan2 itself is ported.
+     *
+     * @param x X component.
+     * @param y Y component.
+     * @return The angle in radians, as Q20.12.
+     */
+    ae::q20_12_t atan2(ae::q20_12_t x, ae::q20_12_t y);
 
     /**
      * @brief Divides two Q20.12 values.
@@ -103,7 +114,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The sine in Q4.12.
      */
-    ae::q4_12_t sin(ae::q20_12_t radians);
+    ae::q4_12_t sinQ4_12(ae::q20_12_t radians);
 
     /**
      * @brief Cosine, accepting radians (Q20.12)
@@ -111,7 +122,23 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The cosine in Q4.12.
      */
-    ae::q4_12_t cos(ae::q20_12_t radians);
+    ae::q4_12_t cosQ4_12(ae::q20_12_t radians);
+
+    /**
+      * @brief Sine, accepting radians (Q20.12)
+      *
+      * @param radians Angle in radians, as a Q20.12 fixed-point value.
+      * @return The sine in Q20.12
+      */
+    ae::q20_12_t sinQ20_12(ae::q20_12_t radians);
+
+    /**
+     * @brief Cosine, accepting radians (Q20.12) .
+     *
+     * @param radians Angle in radians, as a Q20.12 fixed-point value.
+     * @return The cosine in Q20.12.
+     */
+    ae::q20_12_t cosQ20_12(ae::q20_12_t radians);
 
     /**
      * @brief Tangent, accepting radians (Q20.12)
@@ -182,9 +209,9 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
     void normalize(ae::q20_12_t& x, ae::q20_12_t& y, ae::q20_12_t& z);
 
     /**
-     * @brief Returns a uniformly distributed random fraction in [0, 1).
+     * @brief Returns a uniformly distributed random fraction from 0 to 1.
      *
-     * @return A random value in Q20.12, uniformly distributed over [0, 1).
+     * @return A random value in Q20.12, from 0 to 1.
      */
     ae::q20_12_t MathManager::randFrac();
 

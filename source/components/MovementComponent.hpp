@@ -11,6 +11,7 @@
 
 #include "core/routerIDs.hpp"
 #include <aegis/component.hpp>
+#include <aegis/types.hpp>
 
 #include "controllers/AnimationController.hpp"
 #include "managers/MathManager.hpp"
@@ -105,5 +106,5 @@ class MovementComponent : public ae::Component
      *
      * @return true if there is collision at the given position in 3D space, otherwise false
      */
-    bool isTileWalkable(float worldX, float worldZ);
+    bool isTileWalkable(ae::q20_12_t worldX, ae::q20_12_t worldZ);
 };

@@ -19,11 +19,11 @@ static CameraPath dormTestPath = {{
 void IwatodaiDormView::setCameraConfig()
 {
     camConfig.mode = CameraMode::Path;
-    camConfig.initialAngle = -1.6f;
-    camConfig.distance = 0.8f;
-    camConfig.height = height + 0.6f;
-    camConfig.lookAhead = 0.2f;
-    camConfig.angleIncrement = 0.07f;
+    camConfig.initialAngle = ae::q20_12_t{-1.6};
+    camConfig.distance = ae::q20_12_t{0.8};
+    camConfig.height = height + ae::q20_12_t{0.6};
+    camConfig.lookAhead = ae::q20_12_t{0.2};
+    camConfig.angleIncrement = ae::q20_12_t{0.07};
     camConfig.isRotationLocked = true;
     ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
