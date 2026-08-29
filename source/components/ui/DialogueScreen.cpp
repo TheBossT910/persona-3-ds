@@ -65,9 +65,6 @@ void DialogueScreen::renderSprites()
                srs.vflip,
                srs.mosaic);
     }
-
-    // draw busts
-    renderBust(j);
 }
 
 void DialogueScreen::load()
@@ -108,58 +105,36 @@ void DialogueScreen::load()
     dmaCopy(whiteBlockGraphic.tiles, whiteBlockSprite.gfx, whiteBlockGraphic.tilesLen);
     dmaCopy(cornerGraphic.tiles, cornerSprite.gfx, cornerGraphic.tilesLen);
     dmaCopy(edgeGraphic.tiles, edgeSprite.gfx, edgeGraphic.tilesLen);
-
-    // DEBUG
-    // bust demo
-    // loadBustDemo();
 };
-
-void DialogueScreen::loadBustDemo()
-{
-    // setup sprites
-    // TODO: export as 1 sprite with the same palette, then splice
-    topLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color, 4};
-    topRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color, 5};
-    middleLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color, 6};
-    middleRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color, 7};
-    bottomLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color, 8};
-    bottomRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color, 9};
-
-    // allocating space for sprites
-    topLeftSprite.gfx = oamAllocateGfx(oam, topLeftSprite.size, topLeftSprite.format);
-    topRightSprite.gfx = oamAllocateGfx(oam, topRightSprite.size, topRightSprite.format);
-    middleLeftSprite.gfx = oamAllocateGfx(oam, middleLeftSprite.size, middleLeftSprite.format);
-    middleRightSprite.gfx = oamAllocateGfx(oam, middleRightSprite.size, middleRightSprite.format);
-    bottomLeftSprite.gfx = oamAllocateGfx(oam, bottomLeftSprite.size, bottomLeftSprite.format);
-    bottomRightSprite.gfx = oamAllocateGfx(oam, bottomRightSprite.size, bottomRightSprite.format);
-
-    // load sprites
-    std::string spritePath = "graphics/Busts/yukari/sprites/";
-    topLeftGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::BUST, BustSprite::TOP_LEFT);
-    topRightGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::BUST, BustSprite::TOP_RIGHT);
-    middleLeftGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::BUST, BustSprite::MIDDLE_LEFT);
-    middleRightGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::BUST, BustSprite::MIDDLE_RIGHT);
-    bottomLeftGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::BUST, BustSprite::BOTTOM_LEFT);
-    bottomRightGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::BUST, BustSprite::BOTTOM_RIGHT);
-
-    // copy sprites into memory
-    dmaCopy(topLeftGraphic.tiles, topLeftSprite.gfx, topLeftGraphic.tilesLen);
-    dmaCopy(topRightGraphic.tiles, topRightSprite.gfx, topRightGraphic.tilesLen);
-    dmaCopy(middleLeftGraphic.tiles, middleLeftSprite.gfx, middleLeftGraphic.tilesLen);
-    dmaCopy(middleRightGraphic.tiles, middleRightSprite.gfx, middleRightGraphic.tilesLen);
-    dmaCopy(bottomLeftGraphic.tiles, bottomLeftSprite.gfx, bottomLeftGraphic.tilesLen);
-    dmaCopy(bottomRightGraphic.tiles, bottomRightSprite.gfx, bottomRightGraphic.tilesLen);
-}
 
 void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
 {
-    bustPalette = {};
+    // don't re-render the bust
+    if (this->bust.data() == bust.data())
+    {
+        return;
+    }
 
-    // load bust
+    // free previous bust
+    for (SpritePayload& sp : this->bust)
+    {
+        Sprite& sprite = sp.srs.sprite;
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sp.srs.sprite.gfx);
+            sprite.gfx = nullptr;
+        }
+    }
+
+    // clear old bust palette
+    dmaFillHalfWords(0, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
+    bustPalette = nullptr;
+
+    // load new bust
     for (SpritePayload& sp : bust)
     {
         // use alias for easy referencing
-        Sprite sprite = sp.srs.sprite;
+        Sprite& sprite = sp.srs.sprite;
         GraphicAsset& graphic = sp.ga;
 
         // setup sprite
@@ -175,8 +150,7 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
         dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
 
         // save the latest palette
-        // bustPalette.pal = graphic.pal;
-        dmaCopy(graphic.pal, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
+        bustPalette = graphic.pal;
 
         // unload sprite (already copied into memory)
         graphics->unloadGraphic(graphic);
@@ -187,22 +161,14 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
 
 void DialogueScreen::renderBust(int id)
 {
-    // exit if palette is not set
-    if (bustPalette.pal == nullptr)
+    // exit if no bust
+    if (bust.empty())
     {
         return;
     }
 
     // setup bust palette
-    dmaCopy(bustPalette.pal, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
-
-    // DEBUG
-    // dmaCopy(topLeftGraphic.pal, SPRITE_PALETTE_SUB + (4 * 16), 16 * sizeof(u16));
-    // dmaCopy(topRightGraphic.pal, SPRITE_PALETTE_SUB + (5 * 16), 16 * sizeof(u16));
-    // dmaCopy(middleLeftGraphic.pal, SPRITE_PALETTE_SUB + (6 * 16), 16 * sizeof(u16));
-    // dmaCopy(middleRightGraphic.pal, SPRITE_PALETTE_SUB + (7 * 16), 16 * sizeof(u16));
-    // dmaCopy(bottomLeftGraphic.pal, SPRITE_PALETTE_SUB + (8 * 16), 16 * sizeof(u16));
-    // dmaCopy(bottomRightGraphic.pal, SPRITE_PALETTE_SUB + (9 * 16), 16 * sizeof(u16));
+    dmaCopy(bustPalette, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
 
     // draw bust
     for (SpritePayload& sp : bust)
@@ -242,6 +208,12 @@ void DialogueScreen::unload()
 
         dialogue = nullptr;
         graphics = nullptr;
+    }
+
+    // clear palettes
+    for (int i = 0; i < 5; i++)
+    {
+        dmaFillHalfWords(0, SPRITE_PALETTE_SUB + (i * 16), 16 * sizeof(u16));
     }
 }
 

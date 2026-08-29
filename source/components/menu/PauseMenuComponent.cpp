@@ -6,7 +6,6 @@
 // sfx
 #include "soundbank.h"
 // dialogue
-// #include "dialogue/demo_dialogue.hpp"
 #include "demo/demo_dialogue.hpp"
 
 PauseMenuComponent* PauseMenuComponent::instance = nullptr;
@@ -44,12 +43,6 @@ void PauseMenuComponent::resetHook()
     optionCount = MENU_OPTIONS;
     isClosed = false;
 
-    // TODO: update logic
-    // if (demo_dialogue_bg_slot != -1)
-    // {
-    //     rm.hideBg(demo_dialogue_bg_slot);
-    // }
-
     if (pauseMenu == nullptr)
     {
         pauseMenu = engine.CreateEntity();
@@ -63,25 +56,26 @@ ViewState PauseMenuComponent::updateHook()
     // dialogue should be started, but has not
     if (isDialogueStarted && !dialogue->IsActive())
     {
-        // TODO: uncomment
-        // dialogue->configureDialogue(
-        //     DialogueConfig(demo_yukari_kenji_argument_first(), text));
-        // dialogue->start();
+        demo_yukari_kenji_argument_init();
+        dialogue->configureDialogue(DialogueConfig(demo_yukari_kenji_argument_first(), text));
+        dialogue->start();
+
         isDialogueStarted = false;
+        isDialoguePrevActive = false;
     }
 
     // dialogue controller takes full control when active
     if (dialogue->IsActive())
     {
+        isDialoguePrevActive = true;
         return ViewState::KEEP_CURRENT;
     }
 
-    // TODO: update logic
-    // if (demo_dialogue_bg_slot != -1)
-    // {
-    //     rm.hideBg(demo_dialogue_bg_slot);
-    //     ae::BroadcastEvent(Event::RenderUIText{});
-    // }
+    if (!dialogue->IsActive() && isDialoguePrevActive)
+    {
+        isDialoguePrevActive = false;
+        ae::BroadcastEvent(Event::RenderUIText{});
+    }
 
     return ViewState::DEFAULT;
 }

@@ -3,7 +3,6 @@
 #include "components/menu/UIMenu.hpp"
 #include "controllers/AnimationController.hpp"
 #include "core/globals.hpp"
-#include "dialogue/demo_dialogue.hpp"
 #include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
 #include <array>
@@ -202,6 +201,7 @@ class PauseMenuComponent : public UIMenu
     ViewState characterAnimOptionSelected();
 
     bool isDialogueStarted = false;
+    bool isDialoguePrevActive = false;
     ae::Entity* pauseMenu = nullptr;
     DialogueComponent* dialogue = nullptr;
     AnimationController* animationCtrl = AnimationController::getInstance();

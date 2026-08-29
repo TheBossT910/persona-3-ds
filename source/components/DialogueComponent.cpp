@@ -25,6 +25,7 @@ void DialogueComponent::Update(ae::fixed_t)
             if (screen != nullptr)
             {
                 screen->loadBust(current->spritePayload);
+                screen->renderBust(35);
             }
 
             renderBust = false;

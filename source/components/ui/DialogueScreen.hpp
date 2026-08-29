@@ -21,20 +21,17 @@ class DialogueScreen : public UIScreen
 
     // debug
     void loadBust(etl::span<SpritePayload>& bust);
+    void renderBust(int id);
 
   private:
     DialogueScreen() : UIScreen(false) {};
     ~DialogueScreen() {};
     static DialogueScreen* instance;
 
-    // debug
-    void loadBustDemo();
-    void renderBust(int id);
-
     // busts
     etl::span<SpritePayload> bust;
-    GraphicAsset bustPalette = {};
-    int bustPaletteId = 4; // 10
+    void* bustPalette = nullptr;
+    int bustPaletteId = 4;
 
     // sprites
     Sprite blueBlockSprite = {};
@@ -111,30 +108,5 @@ class DialogueScreen : public UIScreen
     SpriteTransform st1 = {degreesToAngle(270), intToFixed(1, 8), intToFixed(1, 8)};
 
     etl::array<SpriteTransform, 2> spriteTransforms = {st0, st1};
-    // ---
-
-    // ---
-    // busts
-    Sprite topLeftSprite = {};
-    Sprite topRightSprite = {};
-    Sprite middleLeftSprite = {};
-    Sprite middleRightSprite = {};
-    Sprite bottomLeftSprite = {};
-    Sprite bottomRightSprite = {};
-
-    GraphicAsset topLeftGraphic = {};
-    GraphicAsset topRightGraphic = {};
-    GraphicAsset middleLeftGraphic = {};
-    GraphicAsset middleRightGraphic = {};
-    GraphicAsset bottomLeftGraphic = {};
-    GraphicAsset bottomRightGraphic = {};
-
-    SpriteRenderState srsBust0 = {topLeftSprite, 0, 0};
-    SpriteRenderState srsBust1 = {topRightSprite, 64, 0};
-    SpriteRenderState srsBust2 = {middleLeftSprite, 0, 64};
-    SpriteRenderState srsBust3 = {middleRightSprite, 64, 64};
-    SpriteRenderState srsBust4 = {bottomLeftSprite, 0, 128};
-    SpriteRenderState srsBust5 = {bottomRightSprite, 64, 128};
-    etl::array<SpriteRenderState, 6> srsBusts = {srsBust0, srsBust1, srsBust2, srsBust3, srsBust4, srsBust5};
     // ---
 };
