@@ -90,6 +90,8 @@ static const SpriteDBEntry SPRITE_DB_ENTRY[] = {
     {SpriteType::BUST, static_cast<int>(BustSprite::MIDDLE_RIGHT), "middle-right"},
     {SpriteType::BUST, static_cast<int>(BustSprite::BOTTOM_LEFT), "bottom-left"},
     {SpriteType::BUST, static_cast<int>(BustSprite::BOTTOM_RIGHT), "bottom-right"},
+    {SpriteType::BUST, static_cast<int>(BustSprite::EYES_NEUTRAL), "eyes-neutral"},
+    {SpriteType::BUST, static_cast<int>(BustSprite::MOUTH_NEUTRAL), "mouth-neutral"},
 };
 
 static const int SPRITE_DB_ENTRY_LEN = sizeof(SPRITE_DB_ENTRY) / sizeof(SPRITE_DB_ENTRY[0]);

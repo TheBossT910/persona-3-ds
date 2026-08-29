@@ -128,7 +128,9 @@ enum class BustSprite
     MIDDLE_LEFT,
     MIDDLE_RIGHT,
     BOTTOM_LEFT,
-    BOTTOM_RIGHT
+    BOTTOM_RIGHT,
+    EYES_NEUTRAL,
+    MOUTH_NEUTRAL
 };
 
 std::string getSpriteFilename(SpriteType type, int id);

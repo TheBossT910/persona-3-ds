@@ -33,42 +33,42 @@ namespace BustYukari
 
 // asset paths
 inline std::string bustBasePath = "graphics/Busts/yukari/sprites/";
-inline std::string bustExpressionPath = "";
+inline std::string bustExpressionPath = "graphics/Busts/yukari/sprites/";
 
 // base bust
 // variable names based on asset names
 // in graphics/busts/[character]/base
-inline Sprite topLeftSprite = {};
+inline Sprite topLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset topLeftGraphic = {};
 inline SpriteRenderState topLeftSrs = {topLeftSprite, 0, 0};
 inline SpritePayload topLeftSp = {
     topLeftSrs, bustBasePath, topLeftGraphic, SpriteType::BUST, (int)BustSprite::TOP_LEFT};
 
-inline Sprite topRightSprite = {};
+inline Sprite topRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset topRightGraphic = {};
 inline SpriteRenderState topRightSrs = {topRightSprite, 64, 0};
 inline SpritePayload topRightSp = {
     topRightSrs, bustBasePath, topRightGraphic, SpriteType::BUST, (int)BustSprite::TOP_RIGHT};
 
-inline Sprite middleLeftSprite = {};
+inline Sprite middleLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleLeftGraphic = {};
 inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 0, 64};
 inline SpritePayload middleLeftSp = {
     middleLeftSrs, bustBasePath, middleLeftGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_LEFT};
 
-inline Sprite middleRightSprite = {};
+inline Sprite middleRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleRightGraphic = {};
 inline SpriteRenderState middleRightSrs = {middleRightSprite, 64, 64};
 inline SpritePayload middleRightSp = {
     middleRightSrs, bustBasePath, middleRightGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_RIGHT};
 
-inline Sprite bottomLeftSprite = {};
+inline Sprite bottomLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomLeftGraphic = {};
 inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 0, 128};
 inline SpritePayload bottomLeftSp = {
     bottomLeftSrs, bustBasePath, bottomLeftGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_LEFT};
 
-inline Sprite bottomRightSprite = {};
+inline Sprite bottomRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomRightGraphic = {};
 inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 64, 128};
 inline SpritePayload bottomRightSp = {
@@ -78,23 +78,21 @@ inline SpritePayload bottomRightSp = {
 // pieces of experessions
 // variable names based on asset names
 // in graphics/busts/[character]/expressions
-inline Sprite angryEyesSprite = {};
-inline GraphicAsset angryEyesGraphic = {};
-inline SpriteRenderState angryEyesSrs = {angryEyesSprite, 0, 0};
-inline SpritePayload angryEyesSp = {
-    angryEyesSrs, bustExpressionPath, angryEyesGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_LEFT};
+inline Sprite eyesNeutralSprite = {SpriteSize_32x32, SpriteColorFormat_16Color};
+inline GraphicAsset eyesNeutralGraphic = {};
+inline SpriteRenderState eyesNeutralSrs = {eyesNeutralSprite, 27, 46, 0};
+inline SpritePayload eyesNeutralSp = {
+    eyesNeutralSrs, bustExpressionPath, eyesNeutralGraphic, SpriteType::BUST, (int)BustSprite::EYES_NEUTRAL};
 
-inline Sprite neutralMouthSprite = {};
-inline GraphicAsset neutralMouthGraphic = {};
-inline SpriteRenderState neutralMouthSrs = {neutralMouthSprite, 0, 0};
-inline SpritePayload neutralMouthSp = {
-    neutralMouthSrs, bustExpressionPath, neutralMouthGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_LEFT};
+inline Sprite mouthNeutralSprite = {SpriteSize_32x32, SpriteColorFormat_16Color};
+inline GraphicAsset mouthNeutralGraphic = {};
+inline SpriteRenderState mouthNeutralSrs = {mouthNeutralSprite, 25, 59, 0};
+inline SpritePayload mouthNeutralSp = {
+    mouthNeutralSrs, bustExpressionPath, mouthNeutralGraphic, SpriteType::BUST, (int)BustSprite::MOUTH_NEUTRAL};
 
 // combination of base bust + expressions to form one expression per array
-// inline etl::array<SpritePayload, 3> spAngry = {topLeftSp, angryEyesSp, neutralMouthSp};
-// TODO: add actual expression SpritePayloads
-inline etl::array<SpritePayload, 6> spAngry = {
-    topLeftSp, topRightSp, middleLeftSp, middleRightSp, bottomLeftSp, bottomRightSp};
+inline etl::array<SpritePayload, 8> spNeutral = {
+    topLeftSp, topRightSp, middleRightSp, bottomLeftSp, bottomRightSp, eyesNeutralSp, mouthNeutralSp, middleLeftSp};
 
 } // namespace BustYukari
 

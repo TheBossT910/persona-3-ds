@@ -21,7 +21,7 @@ void demo_yukari_kenji_argument_init()
     demo_yukari_kenji_argument_lines[1] = {
         "Yukari",
         "And I've told you - I left my bag on the bench. It will take thirty seconds.",
-        BustYukari::spAngry,
+        BustYukari::spNeutral,
         &demo_yukari_kenji_argument_lines[0],
         &demo_yukari_kenji_argument_lines[2],
         {}};
@@ -39,7 +39,7 @@ void demo_yukari_kenji_argument_init()
                                            {}};
     demo_yukari_kenji_argument_lines[4] = {"Yukari",
                                            "Kenji won't let me through to get my bag.",
-                                           BustYukari::spAngry,
+                                           BustYukari::spNeutral,
                                            &demo_yukari_kenji_argument_lines[3],
                                            &demo_yukari_kenji_argument_lines[5],
                                            {}};
@@ -76,12 +76,12 @@ void demo_yukari_kenji_argument_init()
                                            {}};
     demo_yukari_kenji_argument_lines[10] = {"Yukari",
                                             "Thank you.",
-                                            BustYukari::spAngry,
+                                            BustYukari::spNeutral,
                                             &demo_yukari_kenji_argument_lines[9],
                                             &demo_yukari_kenji_argument_lines[11],
                                             {}};
     demo_yukari_kenji_argument_lines[11] = {
-        "Yukari", "...Both of you.", BustYukari::spAngry, &demo_yukari_kenji_argument_lines[10], NULL, {}};
+        "Yukari", "...Both of you.", BustYukari::spNeutral, &demo_yukari_kenji_argument_lines[10], NULL, {}};
     demo_yukari_kenji_argument_lines[12] = {"Akihiko",
                                             "He's got a point, Yukari. Come back in the morning.",
                                             BustAkihiko::spNeutral,
@@ -90,13 +90,13 @@ void demo_yukari_kenji_argument_init()
                                             {}};
     demo_yukari_kenji_argument_lines[13] = {"Yukari",
                                             "Are you serious right now?",
-                                            BustYukari::spAngry,
+                                            BustYukari::spNeutral,
                                             &demo_yukari_kenji_argument_lines[12],
                                             &demo_yukari_kenji_argument_lines[14],
                                             {}};
     demo_yukari_kenji_argument_lines[14] = {"Yukari",
                                             "Fine. Don't talk to me tonight.",
-                                            BustYukari::spAngry,
+                                            BustYukari::spNeutral,
                                             &demo_yukari_kenji_argument_lines[13],
                                             NULL,
                                             {}};
@@ -113,5 +113,5 @@ void demo_yukari_kenji_argument_init()
                                             &demo_yukari_kenji_argument_lines[17],
                                             {}};
     demo_yukari_kenji_argument_lines[17] = {
-        "Yukari", "Unbelievable.", BustYukari::spAngry, &demo_yukari_kenji_argument_lines[16], NULL, {}};
+        "Yukari", "Unbelievable.", BustYukari::spNeutral, &demo_yukari_kenji_argument_lines[16], NULL, {}};
 }

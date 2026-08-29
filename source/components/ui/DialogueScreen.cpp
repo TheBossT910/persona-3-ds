@@ -134,7 +134,7 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
         graphics->unloadGraphic(graphic);
 
         // reset data
-        sprite = {};
+        sprite.paletteAlpha = -1;
         graphic = {};
     }
 
@@ -150,7 +150,7 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
         GraphicAsset& graphic = sp.ga;
 
         // setup sprite
-        sprite = {SpriteSize_64x64, SpriteColorFormat_16Color, bustPaletteId};
+        sprite.paletteAlpha = bustPaletteId;
 
         // allocating space for sprite
         sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
