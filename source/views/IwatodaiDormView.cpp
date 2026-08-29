@@ -5,7 +5,6 @@
 // maps
 #include "maps/iwatodai_dorm_floor_1.hpp"
 // dialogue
-// #include "dialogue/demo_dialogue.hpp"
 #include "demo/demo_dialogue.hpp"
 
 // TODO: dont forget to clear in future

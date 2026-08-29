@@ -21,7 +21,7 @@ class DialogueScreen : public UIScreen
 
     // debug
     void loadBust(etl::span<SpritePayload>& bust);
-    void renderBust(int id);
+    void renderBust();
 
   private:
     DialogueScreen() : UIScreen(false) {};
@@ -38,9 +38,6 @@ class DialogueScreen : public UIScreen
     Sprite whiteBlockSprite = {};
     Sprite cornerSprite = {};
     Sprite edgeSprite = {};
-    // alt
-    Sprite cornerGreenSprite = {};
-    Sprite edgeGreenSprite = {};
 
     // graphics
     GraphicAsset blueBlockGraphic = {};
@@ -49,8 +46,10 @@ class DialogueScreen : public UIScreen
     GraphicAsset edgeGraphic = {};
 
     // alt palette
-    GraphicAsset cornerGreenGraphic = {};
-    GraphicAsset edgeGreenGraphic = {};
+    void* cornerGreenPalette = nullptr;
+    void* edgeGreenPalette = nullptr;
+
+    int srsId = 0;
 
     ae::Entity* dialogue = nullptr;
     GraphicsComponent* graphics = nullptr;

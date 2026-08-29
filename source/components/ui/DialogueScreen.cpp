@@ -39,18 +39,18 @@ void DialogueScreen::renderSprites()
 
     // perform transformations
     /// index -1 is reserved for vflip/hflip, 0 is reserved for no transform
-    int i = 1;
+    int stId = 1;
     for (SpriteTransform& st : spriteTransforms)
     {
-        oamRotateScale(oam, i++, st.angle, st.sx, st.sy);
+        oamRotateScale(oam, stId++, st.angle, st.sx, st.sy);
     }
 
     // draw sprites
-    int j = 0;
+    srsId = 0;
     for (SpriteRenderState& srs : spriteRenderStates)
     {
         oamSet(oam,
-               j++,
+               srsId++,
                srs.x,
                srs.y,
                srs.priority,
@@ -95,10 +95,12 @@ void DialogueScreen::load()
     whiteBlockGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::WHITE_BLOCK);
     cornerGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
     edgeGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
-    // load alt palette sprites
-    cornerGreenGraphic =
-        genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN);
-    edgeGreenGraphic = genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN);
+
+    // load alt palettes
+    cornerGreenPalette =
+        (genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN)).pal;
+    edgeGreenPalette =
+        (genericGraphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
 
     // copy sprites into memory
     dmaCopy(blueBlockGraphic.tiles, blueBlockSprite.gfx, blueBlockGraphic.tilesLen);
@@ -118,12 +120,22 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
     // free previous bust
     for (SpritePayload& sp : this->bust)
     {
+        // use alias for easy referencing
         Sprite& sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
+
+        // free vram
         if (sprite.gfx != nullptr)
         {
-            oamFreeGfx(oam, sp.srs.sprite.gfx);
-            sprite.gfx = nullptr;
+            oamFreeGfx(oam, sprite.gfx);
         }
+
+        // unload from memory
+        graphics->unloadGraphic(graphic);
+
+        // reset data
+        sprite = {};
+        graphic = {};
     }
 
     // clear old bust palette
@@ -151,15 +163,12 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
 
         // save the latest palette
         bustPalette = graphic.pal;
-
-        // unload sprite (already copied into memory)
-        graphics->unloadGraphic(graphic);
     }
 
     this->bust = bust;
 }
 
-void DialogueScreen::renderBust(int id)
+void DialogueScreen::renderBust()
 {
     // exit if no bust
     if (bust.empty())
@@ -177,7 +186,7 @@ void DialogueScreen::renderBust(int id)
         SpriteRenderState& srs = sp.srs;
 
         oamSet(oam,
-               id++,
+               srsId++,
                srs.x,
                srs.y,
                srs.priority,
@@ -232,8 +241,8 @@ void DialogueScreen::triggerAction(UIAction action)
     // option selection palette
     case UIAction::SwitchToPalette1:
     {
-        dmaCopy(cornerGreenGraphic.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-        dmaCopy(edgeGreenGraphic.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+        dmaCopy(cornerGreenPalette, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
+        dmaCopy(edgeGreenPalette, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
         break;
     }
 
