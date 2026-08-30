@@ -26,13 +26,14 @@ static CameraPath dormTestPath = {{
 
 void IwatodaiDormView::setCameraConfig()
 {
-    camConfig.mode = CameraMode::Follow;
-    camConfig.initialAngle = 1.5708f * 2;
-    camConfig.distance = 1.0f;
+    camConfig.mode = CameraMode::Path;
+    camConfig.initialAngle = -1.6f;
+    camConfig.distance = 0.8f;
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
-    camConfig.angleIncrement = 0.05f;
+    camConfig.angleIncrement = 0.07f;
     camConfig.isRotationLocked = true;
+    ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
 void IwatodaiDormView::setMusic()
