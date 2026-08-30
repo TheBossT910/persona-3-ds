@@ -13,7 +13,7 @@
  */
 
 // dialogue content
-extern Dialogue demo_yukari_kenji_argument_lines[18];
+extern Dialogue demo_yukari_kenji_argument_lines[29];
 
 // init() needs to be called to properly set the dialogue content
 void demo_yukari_kenji_argument_init();
@@ -31,9 +31,21 @@ inline Dialogue* demo_yukari_kenji_argument_side_kenji()
 {
     return &demo_yukari_kenji_argument_lines[12];
 }
-inline Dialogue* demo_yukari_kenji_argument_stay_out()
+inline Dialogue* demo_yukari_kenji_argument_ask_curfew()
 {
     return &demo_yukari_kenji_argument_lines[15];
+}
+inline Dialogue* demo_yukari_kenji_argument_escort()
+{
+    return &demo_yukari_kenji_argument_lines[20];
+}
+inline Dialogue* demo_yukari_kenji_argument_wait_morning()
+{
+    return &demo_yukari_kenji_argument_lines[23];
+}
+inline Dialogue* demo_yukari_kenji_argument_rules_right()
+{
+    return &demo_yukari_kenji_argument_lines[26];
 }
 
 // busts
@@ -165,7 +177,7 @@ inline etl::array<SpritePayload, 7> spNeutral = {
     topLeftSp, topRightSp, middleRightSp, bottomLeftSp, bottomRightSp, middleLeftSp, happySp};
 } // namespace BustAkihiko
 
-namespace BustKenji
+namespace BustAigis
 {
 // asset paths
 inline std::string assetPath = "graphics/Busts/aigis/sprites/";
@@ -210,4 +222,4 @@ inline SpritePayload bottomRightSp = {
 // grouping
 inline etl::array<SpritePayload, 6> spNeutral = {
     topLeftSp, topRightSp, middleRightSp, bottomLeftSp, bottomRightSp, middleLeftSp};
-} // namespace BustKenji
+} // namespace BustAigis
