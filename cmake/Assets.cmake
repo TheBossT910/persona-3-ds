@@ -117,6 +117,8 @@ p3d_add_asset_group(fonts
     ${CMAKE_SOURCE_DIR}/assets/fonts/*.grit
 )
 
+add_dependencies(p3d_assets_graphics p3d_assets_environments)
+
 add_custom_target(p3d_environment_db DEPENDS p3d_assets_environments)
 
 add_custom_target(p3d_assets)

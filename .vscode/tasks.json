@@ -72,7 +72,7 @@
         {
             "label": "CMake: Build (NDS SDCard)",
             "type": "shell",
-            "command": "cmake --build --preset build-nds-sdcard",
+            "command": "cmake --build --preset build-nds-sdcard --parallel",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -86,7 +86,7 @@
         {
             "label": "CMake: Build (NDS Debug SDCard)",
             "type": "shell",
-            "command": "cmake --build --preset build-nds-debug-sdcard",
+            "command": "cmake --build --preset build-nds-debug-sdcard --parallel",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -111,12 +111,40 @@
             "group": "test"
         },
         {
-            "label": "CMake: Clean",
+            "label": "CMake: Clean (NDS Debug)",
             "type": "shell",
-            "command": "cmake --build --preset build-nds-sdcard --target clean",
+            "command": "cmake --build out/build/nds-debug-sdcard --target clean",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Clean (NDS Release)",
+            "type": "shell",
+            "command": "cmake --build out/build/nds-release --target clean",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Clean (Host Debug)",
+            "type": "shell",
+            "command": "cmake --build out/build/host-debug --target clean",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Clean (All)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "CMake: Clean (Host Debug)",
+                "CMake: Clean (NDS Debug)",
+                "CMake: Clean (NDS Release)"
+            ],
             "problemMatcher": []
         }
     ]
