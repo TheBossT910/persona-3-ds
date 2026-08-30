@@ -1,12 +1,9 @@
-#include <dirent.h>
-#include <fat.h>
-#include <filesystem.h>
-#include <maxmod9.h>
 #include <memory>
-#include <nds.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
+
+#include <fat.h>
+#include <maxmod9.h>
+#include <nds.h>
 
 // states
 #include "views/BaseView.hpp"
@@ -20,14 +17,8 @@
 #include "views/StationView.hpp"
 #include "views/VideoView.hpp"
 
-// components
-#include "components/screens/MenuHUDScreen.hpp"
-
 // sfx
 #include "soundbank_bin.h"
-
-// character models
-#include "models/makoto.hpp"
 
 // DBs
 #include "battleActions/armours/ArmourDb.hpp"
@@ -98,7 +89,9 @@ int main(int argc, char* argv[])
         consoleDemoInit();
         printf("FAT initialization failed!\nPlease ensure the SD card is inserted.\n");
         while (1)
+        {
             swiWaitForVBlank();
+        }
     }
 
     // dynamically resolve runtime path using argv[0]
@@ -200,51 +193,75 @@ int main(int argc, char* argv[])
             switch (nextState)
             {
             case ViewState::INTRO:
+            {
                 SwitchView(new IntroView());
                 break;
+            }
 
             case ViewState::MAIN_MENU:
+            {
                 SwitchView(new MainMenuView());
                 break;
+            }
 
             case ViewState::IWATODAI_DORM:
+            {
                 SwitchView(new IwatodaiDormView());
                 break;
+            }
 
             case ViewState::IWATODAI_STREETS:
+            {
                 SwitchView(new IwatodaiStreetsView());
                 break;
+            }
 
             case ViewState::DISCLAIMER:
+            {
                 SwitchView(new DisclaimerView());
                 break;
+            }
 
             case ViewState::INTRO_VIDEO:
+            {
                 SwitchView(new VideoView(saveData.introVideoPath, ViewState::INTRO));
                 break;
+            }
 
             case ViewState::CUTSCENE_1:
+            {
                 SwitchView(new VideoView("cutscene-1.vid", ViewState::SIGN_CONTRACT));
                 break;
+            }
 
             case ViewState::SIGN_CONTRACT:
+            {
                 SwitchView(new SignContractView());
                 break;
+            }
 
             case ViewState::CUTSCENE_2:
+            {
                 SwitchView(new VideoView("cutscene-2.vid", ViewState::IWATODAI_DORM));
                 break;
+            }
 
             case ViewState::STATION:
+            {
                 SwitchView(new StationView());
                 break;
+            }
 
             case ViewState::PAULOWNIA_MALL:
+            {
                 SwitchView(new PaulowniaMallView());
                 break;
+            }
 
             default:
+            {
                 break;
+            }
             }
         }
 
