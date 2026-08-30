@@ -209,6 +209,16 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
     void normalize(ae::q20_12_t& x, ae::q20_12_t& y, ae::q20_12_t& z);
 
     /**
+     * @brief Converts a Q20.12 seconds value to a sample count, avoiding
+     * overflow when seconds * sampleRate exceeds Q20.12's integer range.
+     *
+     * @param seconds Time value in seconds, as Q20.12.
+     * @param sampleRate Samples per second.
+     * @return The equivalent sample count.
+     */
+    u32 MathManager::secondsToSamples(ae::q20_12_t seconds, u32 sampleRate);
+
+    /**
      * @brief Returns a uniformly distributed random fraction from 0 to 1.
      *
      * @return A random value in Q20.12, from 0 to 1.

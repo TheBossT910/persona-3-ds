@@ -32,9 +32,9 @@ class AnimationController
     void pause();
 
     // Adjust animation speed
-    void setAnimationSpeed(float speedMultiplier = 1.0f)
+    void setAnimationSpeed(ae::q20_12_t speedMultiplier = ae::q20_12_t{1.0})
     {
-        animSpeedFP = (int)(speedMultiplier * 128.0f);
+        animSpeedFP = (int)(speedMultiplier * ae::q20_12_t{128.0});
     }
 
     // Call once per frame (advances the frame counter)

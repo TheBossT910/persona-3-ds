@@ -1,4 +1,5 @@
 #pragma once
+#include <aegis/types.hpp>
 #include <maxmod9.h>
 #include <nds.h>
 #include <stdio.h>
@@ -16,7 +17,9 @@ class MusicController
     static MusicController* getInstance();
 
     // audio
-    void init(const char* filePath, float loopStartSeconds = 0.0f, float loopEndSeconds = -1.0f);
+    void init(const char* filePath,
+              ae::q20_12_t loopStartSeconds = ae::q20_12_t{0},
+              ae::q20_12_t loopEndSeconds = ae::q20_12_t{-1.0});
     void update();
     void pause();
     void resume();
@@ -24,7 +27,7 @@ class MusicController
     // audio for video streams
     void initVideoAudio();
     void pushVideoAudio(const u8* data, size_t size);
-    float getVideoTime();
+    ae::q20_12_t getVideoTime();
 
     // sfx
     void loadSFX(mm_word effectID);

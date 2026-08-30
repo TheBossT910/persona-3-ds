@@ -165,3 +165,11 @@ ae::q20_12_t MathManager::atan2(ae::q20_12_t x, ae::q20_12_t y)
     float result = atan2(static_cast<float>(x), static_cast<float>(y));
     return ae::q20_12_t{result};
 }
+
+u32 MathManager::secondsToSamples(ae::q20_12_t seconds, u32 sampleRate)
+{
+    u32 wholeSeconds = static_cast<u32>(seconds);
+    ae::q20_12_t fractionalSeconds = seconds - ae::q20_12_t{wholeSeconds};
+    u32 fractionalSamples = static_cast<u32>(fractionalSeconds * sampleRate);
+    return (wholeSeconds * sampleRate) + fractionalSamples;
+}
