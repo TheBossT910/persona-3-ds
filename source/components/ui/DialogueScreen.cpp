@@ -31,26 +31,34 @@ DialogueScreen* DialogueScreen::getInstance()
 
 void DialogueScreen::renderSprites()
 {
-    // setup palettes
-    dmaCopy(blueBlockGraphic.pal, SPRITE_PALETTE_SUB, 16 * sizeof(u16));
-    dmaCopy(whiteBlockGraphic.pal, SPRITE_PALETTE_SUB + (1 * 16), 16 * sizeof(u16));
-    dmaCopy(cornerGraphic.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-    dmaCopy(edgeGraphic.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+    // load palettes
+    int j = 0;
+    for (GraphicAsset*& ga : spritePalettes)
+    {
+        if (ga != nullptr)
+        {
+            dmaCopy(ga->pal, SPRITE_PALETTE_SUB + (j * 16), 16 * sizeof(u16));
+        }
+        j++;
+    }
 
     // perform transformations
     /// index -1 is reserved for vflip/hflip, 0 is reserved for no transform
-    int stId = 1;
+    int i = 1;
     for (SpriteTransform& st : spriteTransforms)
     {
-        oamRotateScale(oam, stId++, st.angle, st.sx, st.sy);
+        oamRotateScale(oam, i++, st.angle, st.sx, st.sy);
     }
 
     // draw sprites
-    srsId = 0;
-    for (SpriteRenderState& srs : spriteRenderStates)
+    spriteId = 0;
+    for (SpritePayload& sp : spritePayloads)
     {
+        // use alias for easy referencing
+        SpriteRenderState& srs = sp.srs;
+
         oamSet(oam,
-               srsId++,
+               spriteId++,
                srs.x,
                srs.y,
                srs.priority,
@@ -77,35 +85,27 @@ void DialogueScreen::load()
         dialogue->AddComponent(graphics);
     }
 
-    // setup sprites
-    blueBlockSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 0};
-    whiteBlockSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 1};
-    cornerSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 2};
-    edgeSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 3};
-
-    // allocating space for sprites
-    blueBlockSprite.gfx = oamAllocateGfx(oam, blueBlockSprite.size, blueBlockSprite.format);
-    whiteBlockSprite.gfx = oamAllocateGfx(oam, whiteBlockSprite.size, whiteBlockSprite.format);
-    cornerSprite.gfx = oamAllocateGfx(oam, cornerSprite.size, cornerSprite.format);
-    edgeSprite.gfx = oamAllocateGfx(oam, edgeSprite.size, edgeSprite.format);
-
     // load sprites
-    std::string spritePath = "graphics/Dialogue/sprites/";
-    blueBlockGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::BLUE_BLOCK);
-    whiteBlockGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::WHITE_BLOCK);
-    cornerGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER);
-    edgeGraphic = graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE);
+    for (SpritePayload& sp : spritePayloads)
+    {
+        // use alias for easy referencing
+        Sprite& sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
+
+        // allocating space for sprite
+        sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
+
+        // load sprite
+        graphic = graphics->loadSpriteGraphic(sp.spritePath, sp.spriteType, sp.spriteVariant);
+
+        // copy sprite into memory
+        dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
+    }
 
     // load alt palettes
     cornerGreenPalette =
         (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN)).pal;
     edgeGreenPalette = (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
-
-    // copy sprites into memory
-    dmaCopy(blueBlockGraphic.tiles, blueBlockSprite.gfx, blueBlockGraphic.tilesLen);
-    dmaCopy(whiteBlockGraphic.tiles, whiteBlockSprite.gfx, whiteBlockGraphic.tilesLen);
-    dmaCopy(cornerGraphic.tiles, cornerSprite.gfx, cornerGraphic.tilesLen);
-    dmaCopy(edgeGraphic.tiles, edgeSprite.gfx, edgeGraphic.tilesLen);
 };
 
 void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
@@ -130,7 +130,10 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
         }
 
         // unload from memory
-        graphics->unloadGraphic(graphic);
+        if (graphic.id > -1)
+        {
+            graphics->unloadGraphic(graphic);
+        }
 
         // reset data
         sprite.paletteAlpha = -1;
@@ -185,7 +188,7 @@ void DialogueScreen::renderBust()
         SpriteRenderState& srs = sp.srs;
 
         oamSet(oam,
-               srsId++,
+               spriteId++,
                srs.x,
                srs.y,
                srs.priority,
@@ -204,25 +207,11 @@ void DialogueScreen::renderBust()
 
 void DialogueScreen::unload()
 {
+    // hide sprites
     removeSprites();
+
     // free sprites
-    for (SpriteRenderState& srs : spriteRenderStates)
-    {
-        // use alias for easy referencing
-        Sprite& sprite = srs.sprite;
-
-        // free vram
-        if (sprite.gfx != nullptr)
-        {
-            oamFreeGfx(oam, sprite.gfx);
-        }
-
-        // TODO: unload graphics from memory
-        // ...
-    }
-
-    // free bust sprites
-    for (SpritePayload& sp : this->bust)
+    for (SpritePayload& sp : spritePayloads)
     {
         // use alias for easy referencing
         Sprite& sprite = sp.srs.sprite;
@@ -235,7 +224,33 @@ void DialogueScreen::unload()
         }
 
         // unload from memory
-        graphics->unloadGraphic(graphic);
+        if (graphic.id > -1)
+        {
+            graphics->unloadGraphic(graphic);
+        }
+
+        // reset data
+        graphic = {};
+    }
+
+    // free bust sprites
+    for (SpritePayload& sp : bust)
+    {
+        // use alias for easy referencing
+        Sprite& sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
+
+        // free vram
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+        }
+
+        // unload from memory
+        if (graphic.id > -1)
+        {
+            graphics->unloadGraphic(graphic);
+        }
 
         // reset data
         sprite.paletteAlpha = -1;
@@ -248,12 +263,6 @@ void DialogueScreen::unload()
 
         dialogue = nullptr;
         graphics = nullptr;
-    }
-
-    // clear palettes
-    for (int i = 0; i < 5; i++)
-    {
-        dmaFillHalfWords(0, SPRITE_PALETTE_SUB + (i * 16), 16 * sizeof(u16));
     }
 }
 
