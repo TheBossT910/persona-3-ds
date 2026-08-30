@@ -29,14 +29,14 @@ class DialogueScreen : public UIScreen
     // busts
     void unloadBust();
     etl::span<SpritePayload> bust;
-    void* bustPalette = nullptr;
-    int bustPaletteId = 4;
+    int bustPaletteId = 1;
 
     std::string spritePath = "graphics/Dialogue/sprites/";
 
-    // alt palette
-    void* cornerGreenPalette = nullptr;
-    void* edgeGreenPalette = nullptr;
+    // palettes
+    void* palette0 = nullptr;
+    void* palette1 = nullptr;
+    void* bustPalette = nullptr;
 
     int spriteId = 0;
 
@@ -75,7 +75,7 @@ class DialogueScreen : public UIScreen
     SpritePayload sp7 = {srs7, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
     // corner sprites
-    Sprite cornerSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 2};
+    Sprite cornerSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 0};
     GraphicAsset cornerGraphic = {};
 
     SpriteRenderState srs8 = {cornerSprite, 224, 149};
@@ -91,7 +91,7 @@ class DialogueScreen : public UIScreen
     SpritePayload sp11 = {srs11, spritePath, cornerGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::CORNER};
 
     // edge sprites
-    Sprite edgeSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 3};
+    Sprite edgeSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 0};
     GraphicAsset edgeGraphic = {};
 
     SpriteRenderState srs12 = {edgeSprite, 32, 149};
@@ -137,7 +137,7 @@ class DialogueScreen : public UIScreen
     SpritePayload sp25 = {srs25, spritePath, edgeGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::EDGE};
 
     // whiteBlock sprites
-    Sprite whiteBlockSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 1};
+    Sprite whiteBlockSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 0};
     GraphicAsset whiteBlockGraphic = {};
 
     SpriteRenderState srs26 = {whiteBlockSprite, 0, 165};
@@ -169,8 +169,6 @@ class DialogueScreen : public UIScreen
     SpriteTransform st1 = {degreesToAngle(270), intToFixed(1, 8), intToFixed(1, 8)};
 
     // data groups
-    etl::array<GraphicAsset*, 4> spritePalettes = {&blueBlockGraphic, &whiteBlockGraphic, &cornerGraphic, &edgeGraphic};
-
     etl::array<SpritePayload, 34> spritePayloads = {
         sp0,  sp1,  sp2,  sp3,  sp4,  sp5,  sp6,  sp7,  sp8,  sp9,  sp10, sp11, sp12, sp13, sp14, sp15, sp16,
         sp17, sp18, sp19, sp20, sp21, sp22, sp23, sp24, sp25, sp26, sp27, sp28, sp29, sp30, sp31, sp32, sp33};

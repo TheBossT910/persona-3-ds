@@ -32,15 +32,7 @@ DialogueScreen* DialogueScreen::getInstance()
 void DialogueScreen::renderSprites()
 {
     // load palettes
-    int j = 0;
-    for (GraphicAsset*& ga : spritePalettes)
-    {
-        if (ga != nullptr)
-        {
-            dmaCopy(ga->pal, SPRITE_PALETTE_SUB + (j * 16), 16 * sizeof(u16));
-        }
-        j++;
-    }
+    dmaCopy(palette0, SPRITE_PALETTE_SUB, 16 * sizeof(u16));
 
     // perform transformations
     /// index -1 is reserved for vflip/hflip, 0 is reserved for no transform
@@ -106,10 +98,9 @@ void DialogueScreen::load()
         }
     }
 
-    // load alt palettes
-    cornerGreenPalette =
-        (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::CORNER_GREEN)).pal;
-    edgeGreenPalette = (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
+    // set palettes
+    palette0 = blueBlockGraphic.pal;
+    palette1 = (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
 };
 
 void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
@@ -261,16 +252,14 @@ void DialogueScreen::triggerAction(UIAction action)
     // default palette
     case UIAction::SwitchToPalette0:
     {
-        dmaCopy(cornerGraphic.pal, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-        dmaCopy(edgeGraphic.pal, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+        dmaCopy(palette0, SPRITE_PALETTE_SUB, 16 * sizeof(u16));
         break;
     }
 
     // option selection palette
     case UIAction::SwitchToPalette1:
     {
-        dmaCopy(cornerGreenPalette, SPRITE_PALETTE_SUB + (2 * 16), 16 * sizeof(u16));
-        dmaCopy(edgeGreenPalette, SPRITE_PALETTE_SUB + (3 * 16), 16 * sizeof(u16));
+        dmaCopy(palette1, SPRITE_PALETTE_SUB, 16 * sizeof(u16));
         break;
     }
 
