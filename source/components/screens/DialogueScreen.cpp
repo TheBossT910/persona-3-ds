@@ -200,6 +200,7 @@ void DialogueScreen::unloadBust()
         if (sprite.gfx != nullptr)
         {
             oamFreeGfx(oam, sprite.gfx);
+            sprite.gfx = nullptr;
         }
 
         // unload graphic if not already unloaded
@@ -233,6 +234,7 @@ void DialogueScreen::unload()
         if (sprite.gfx != nullptr)
         {
             oamFreeGfx(oam, sprite.gfx);
+            sprite.gfx = nullptr;
         }
 
         // unload graphic if not already unloaded
