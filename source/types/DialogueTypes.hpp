@@ -9,6 +9,9 @@
 class DialogueScreen;
 struct Dialogue;
 
+/**
+ * @brief Holds dialogue selection choice data
+ */
 struct DialogueSelection
 {
     std::string text;
@@ -16,6 +19,9 @@ struct DialogueSelection
     Dialogue* next;
 };
 
+/**
+ * @brief Holds dialogue content and branching data
+ */
 struct Dialogue
 {
     // content

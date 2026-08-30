@@ -3,6 +3,9 @@
 #include "data/spriteDb.hpp"
 #include <nds.h>
 
+/**
+ * @brief Holds loaded graphics data
+ */
 struct GraphicAsset
 {
     int id = -1;
