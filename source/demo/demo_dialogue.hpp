@@ -67,51 +67,51 @@ inline Sprite topLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 // empty
 inline GraphicAsset topLeftGraphic = {};
 // set the sprite, the x position, and the y position to draw the sprite to
-inline SpriteRenderState topLeftSrs = {topLeftSprite, 0, 0};
+inline SpriteRenderState topLeftSrs = {topLeftSprite, 128, 0};
 // set the SpriteRenderState, asset path, GraphicAsset & critically the SpriteType, and the sprite variant
 // the asset path, SpriteType and sprite variant need to be explicitly set
 inline SpritePayload topLeftSp = {topLeftSrs, assetPath, topLeftGraphic, SpriteType::BUST, (int)BustSprite::TOP_LEFT};
 
 inline Sprite topRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset topRightGraphic = {};
-inline SpriteRenderState topRightSrs = {topRightSprite, 64, 0};
+inline SpriteRenderState topRightSrs = {topRightSprite, 192, 0};
 inline SpritePayload topRightSp = {
     topRightSrs, assetPath, topRightGraphic, SpriteType::BUST, (int)BustSprite::TOP_RIGHT};
 
 inline Sprite middleLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleLeftGraphic = {};
-inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 0, 64};
+inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 128, 64};
 inline SpritePayload middleLeftSp = {
     middleLeftSrs, assetPath, middleLeftGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_LEFT};
 
 inline Sprite middleRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleRightGraphic = {};
-inline SpriteRenderState middleRightSrs = {middleRightSprite, 64, 64};
+inline SpriteRenderState middleRightSrs = {middleRightSprite, 192, 64};
 inline SpritePayload middleRightSp = {
     middleRightSrs, assetPath, middleRightGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_RIGHT};
 
 inline Sprite bottomLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomLeftGraphic = {};
-inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 0, 128};
+inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 128, 128};
 inline SpritePayload bottomLeftSp = {
     bottomLeftSrs, assetPath, bottomLeftGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_LEFT};
 
 inline Sprite bottomRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomRightGraphic = {};
-inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 64, 128};
+inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 192, 128};
 inline SpritePayload bottomRightSp = {
     bottomRightSrs, assetPath, bottomRightGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_RIGHT};
 
 // expressions
 inline Sprite eyesNeutralSprite = {SpriteSize_32x32, SpriteColorFormat_16Color};
 inline GraphicAsset eyesNeutralGraphic = {};
-inline SpriteRenderState eyesNeutralSrs = {eyesNeutralSprite, 27, 46, 0};
+inline SpriteRenderState eyesNeutralSrs = {eyesNeutralSprite, 155, 46, 0};
 inline SpritePayload eyesNeutralSp = {
     eyesNeutralSrs, assetPath, eyesNeutralGraphic, SpriteType::BUST, (int)BustSprite::EYES_NEUTRAL};
 
 inline Sprite mouthNeutralSprite = {SpriteSize_32x32, SpriteColorFormat_16Color};
 inline GraphicAsset mouthNeutralGraphic = {};
-inline SpriteRenderState mouthNeutralSrs = {mouthNeutralSprite, 25, 59, 0};
+inline SpriteRenderState mouthNeutralSrs = {mouthNeutralSprite, 153, 59, 0};
 inline SpritePayload mouthNeutralSp = {
     mouthNeutralSrs, assetPath, mouthNeutralGraphic, SpriteType::BUST, (int)BustSprite::MOUTH_NEUTRAL};
 
@@ -133,43 +133,43 @@ inline std::string assetPath = "graphics/Busts/akihiko/sprites/";
 inline Sprite topLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 // empty
 inline GraphicAsset topLeftGraphic = {};
-inline SpriteRenderState topLeftSrs = {topLeftSprite, 0, 0};
+inline SpriteRenderState topLeftSrs = {topLeftSprite, 128, 0};
 inline SpritePayload topLeftSp = {topLeftSrs, assetPath, topLeftGraphic, SpriteType::BUST, (int)BustSprite::TOP_LEFT};
 
 inline Sprite topRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset topRightGraphic = {};
-inline SpriteRenderState topRightSrs = {topRightSprite, 64, 0};
+inline SpriteRenderState topRightSrs = {topRightSprite, 192, 0};
 inline SpritePayload topRightSp = {
     topRightSrs, assetPath, topRightGraphic, SpriteType::BUST, (int)BustSprite::TOP_RIGHT};
 
 inline Sprite middleLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleLeftGraphic = {};
-inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 0, 64};
+inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 128, 64};
 inline SpritePayload middleLeftSp = {
     middleLeftSrs, assetPath, middleLeftGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_LEFT};
 
 inline Sprite middleRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleRightGraphic = {};
-inline SpriteRenderState middleRightSrs = {middleRightSprite, 64, 64};
+inline SpriteRenderState middleRightSrs = {middleRightSprite, 192, 64};
 inline SpritePayload middleRightSp = {
     middleRightSrs, assetPath, middleRightGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_RIGHT};
 
 inline Sprite bottomLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomLeftGraphic = {};
-inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 0, 128};
+inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 128, 128};
 inline SpritePayload bottomLeftSp = {
     bottomLeftSrs, assetPath, bottomLeftGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_LEFT};
 
 inline Sprite bottomRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomRightGraphic = {};
-inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 64, 128};
+inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 192, 128};
 inline SpritePayload bottomRightSp = {
     bottomRightSrs, assetPath, bottomRightGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_RIGHT};
 
 // expressions
 inline Sprite happySprite = {SpriteSize_32x32, SpriteColorFormat_16Color};
 inline GraphicAsset happyGraphic = {};
-inline SpriteRenderState happySrs = {happySprite, 37, 54, 0};
+inline SpriteRenderState happySrs = {happySprite, 165, 54, 0};
 inline SpritePayload happySp = {happySrs, assetPath, happyGraphic, SpriteType::BUST, (int)BustSprite::HAPPY};
 
 // grouping
@@ -186,36 +186,36 @@ inline std::string assetPath = "graphics/Busts/aigis/sprites/";
 inline Sprite topLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 // empty
 inline GraphicAsset topLeftGraphic = {};
-inline SpriteRenderState topLeftSrs = {topLeftSprite, 0, 0};
+inline SpriteRenderState topLeftSrs = {topLeftSprite, 128, 0};
 inline SpritePayload topLeftSp = {topLeftSrs, assetPath, topLeftGraphic, SpriteType::BUST, (int)BustSprite::TOP_LEFT};
 
 inline Sprite topRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset topRightGraphic = {};
-inline SpriteRenderState topRightSrs = {topRightSprite, 64, 0};
+inline SpriteRenderState topRightSrs = {topRightSprite, 192, 0};
 inline SpritePayload topRightSp = {
     topRightSrs, assetPath, topRightGraphic, SpriteType::BUST, (int)BustSprite::TOP_RIGHT};
 
 inline Sprite middleLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleLeftGraphic = {};
-inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 0, 64};
+inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 128, 64};
 inline SpritePayload middleLeftSp = {
     middleLeftSrs, assetPath, middleLeftGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_LEFT};
 
 inline Sprite middleRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset middleRightGraphic = {};
-inline SpriteRenderState middleRightSrs = {middleRightSprite, 64, 64};
+inline SpriteRenderState middleRightSrs = {middleRightSprite, 192, 64};
 inline SpritePayload middleRightSp = {
     middleRightSrs, assetPath, middleRightGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_RIGHT};
 
 inline Sprite bottomLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomLeftGraphic = {};
-inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 0, 128};
+inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 128, 128};
 inline SpritePayload bottomLeftSp = {
     bottomLeftSrs, assetPath, bottomLeftGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_LEFT};
 
 inline Sprite bottomRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
 inline GraphicAsset bottomRightGraphic = {};
-inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 64, 128};
+inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 192, 128};
 inline SpritePayload bottomRightSp = {
     bottomRightSrs, assetPath, bottomRightGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_RIGHT};
 

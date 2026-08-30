@@ -50,28 +50,28 @@ class DialogueScreen : public UIScreen
     Sprite blueBlockSprite = {SpriteSize_32x16, SpriteColorFormat_16Color, 0};
     GraphicAsset blueBlockGraphic = {};
 
-    SpriteRenderState srs0 = {blueBlockSprite, 0, 133};
+    SpriteRenderState srs0 = {blueBlockSprite, 0, 133, 2};
     SpritePayload sp0 = {srs0, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
-    SpriteRenderState srs1 = {blueBlockSprite, 32, 133};
+    SpriteRenderState srs1 = {blueBlockSprite, 32, 133, 2};
     SpritePayload sp1 = {srs1, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
-    SpriteRenderState srs2 = {blueBlockSprite, 64, 133};
+    SpriteRenderState srs2 = {blueBlockSprite, 64, 133, 2};
     SpritePayload sp2 = {srs2, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
-    SpriteRenderState srs3 = {blueBlockSprite, 96, 133};
+    SpriteRenderState srs3 = {blueBlockSprite, 96, 133, 2};
     SpritePayload sp3 = {srs3, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
-    SpriteRenderState srs4 = {blueBlockSprite, 128, 133};
+    SpriteRenderState srs4 = {blueBlockSprite, 128, 133, 2};
     SpritePayload sp4 = {srs4, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
-    SpriteRenderState srs5 = {blueBlockSprite, 160, 133};
+    SpriteRenderState srs5 = {blueBlockSprite, 160, 133, 2};
     SpritePayload sp5 = {srs5, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
-    SpriteRenderState srs6 = {blueBlockSprite, 192, 133};
+    SpriteRenderState srs6 = {blueBlockSprite, 192, 133, 2};
     SpritePayload sp6 = {srs6, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
-    SpriteRenderState srs7 = {blueBlockSprite, 224, 133};
+    SpriteRenderState srs7 = {blueBlockSprite, 224, 133, 2};
     SpritePayload sp7 = {srs7, spritePath, blueBlockGraphic, SpriteType::DIALOGUE, (int)DialogueSprite::BLUE_BLOCK};
 
     // corner sprites
