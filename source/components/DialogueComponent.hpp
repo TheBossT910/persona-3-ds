@@ -7,7 +7,7 @@
 #pragma once
 
 #include "components/TextComponent.hpp"
-#include "components/ui/DialogueScreen.hpp"
+#include "components/screens/DialogueScreen.hpp"
 #include "types/DialogueTypes.hpp"
 #include "types/aeTypes.hpp"
 

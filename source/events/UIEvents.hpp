@@ -8,7 +8,7 @@
 
 #include "components/TextComponent.hpp"
 #include "components/menu/UIMenu.hpp"
-#include "components/ui/UIScreen.hpp"
+#include "components/screens/UIScreen.hpp"
 #include "types/aeTypes.hpp"
 
 #include <aegis/aegis.hpp>

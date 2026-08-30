@@ -1,11 +1,6 @@
 #pragma once
-#include "components/ui/UIScreen.hpp"
-
 #include "components/GraphicsComponent.hpp"
-#include "components/ui/UIScreen.hpp"
-
-#include <etl/array.h>
-#include <nds.h>
+#include "components/screens/UIScreen.hpp"
 
 #include <etl/array.h>
 #include <nds.h>

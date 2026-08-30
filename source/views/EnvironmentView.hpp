@@ -8,8 +8,8 @@
 // components
 #include "components/menu/BattleMenuComponent.hpp"
 #include "components/menu/PauseMenuComponent.hpp"
-#include "components/ui/DialogueScreen.hpp"
-#include "components/ui/MenuHUDScreen.hpp"
+#include "components/screens/DialogueScreen.hpp"
+#include "components/screens/MenuHUDScreen.hpp"
 // controllers
 #include "controllers/AnimationController.hpp"
 #include "controllers/MusicController.hpp"

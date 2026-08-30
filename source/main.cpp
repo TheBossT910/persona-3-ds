@@ -21,7 +21,7 @@
 #include "views/VideoView.hpp"
 
 // components
-#include "components/ui/MenuHUDScreen.hpp"
+#include "components/screens/MenuHUDScreen.hpp"
 
 // sfx
 #include "soundbank_bin.h"
