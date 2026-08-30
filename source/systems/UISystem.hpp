@@ -31,7 +31,8 @@ class UISystem : public ae::SystemRouter<UISystem,
                                          Event::ShowScreen,
                                          Event::HideAllScreens,
                                          Event::SwitchView,
-                                         Event::RenderUIText>,
+                                         Event::RenderUIText,
+                                         Event::ResetUIResources>,
                  public ae::Singleton<UISystem>
 {
   public:
@@ -46,6 +47,11 @@ class UISystem : public ae::SystemRouter<UISystem,
 
     // TODO: move out of UISystem. Only here as a temporary fix
     void on_receive(const Event::SwitchView& msg);
+
+    /**
+     * @brief ETL message handler to cleanup UISystem resources
+     */
+    void on_receive(const Event::ResetUIResources& /*msg*/);
 
     /**
      * @brief ETL message handler to configure UIScreens
@@ -177,6 +183,11 @@ class UISystem : public ae::SystemRouter<UISystem,
      */
     void cancelSFX();
 
+    /**
+     * @brief Cleans up UISystem related resources
+     */
+    void resetUIResources();
+
     RenderManager& render = RenderManager::GetInstance();
 
     OamState* oamSub = nullptr;
@@ -203,9 +214,9 @@ class UISystem : public ae::SystemRouter<UISystem,
     MusicController* musicCtrl = MusicController::getInstance();
 
     // menu sfx
-    mm_sfxhand sfxMenuHandle;
-    mm_sfxhand sfxSelectHandle;
-    mm_sfxhand sfxCancelHandle;
+    mm_sfxhand sfxMenuHandle = 0;
+    mm_sfxhand sfxSelectHandle = 0;
+    mm_sfxhand sfxCancelHandle = 0;
 
     bool renderUIText = false;
 };

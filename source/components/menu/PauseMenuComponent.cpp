@@ -22,6 +22,7 @@ void PauseMenuComponent::destroy()
 {
     if (instance != nullptr)
     {
+        instance->cleanup();
         delete instance;
     }
     instance = nullptr;
@@ -36,11 +37,20 @@ PauseMenuComponent* PauseMenuComponent::getInstance()
     return instance;
 }
 
+void PauseMenuComponent::cleanup()
+{
+    if (pauseMenu != nullptr)
+    {
+        engine.DestroyEntity(pauseMenu);
+        pauseMenu = nullptr;
+        dialogue = nullptr;
+    }
+}
+
 void PauseMenuComponent::resetHook()
 {
     pauseMessage = "Pause";
     options = menuOptions;
-    optionCount = MENU_OPTIONS;
     isClosed = false;
 
     if (pauseMenu == nullptr)
@@ -113,54 +123,54 @@ ViewState PauseMenuComponent::openDebugMenu()
         debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: ?";
         break;
     }
-    return changeMenu(debugOptions, DEBUG_OPTIONS);
+    return changeMenu(debugOptions);
 }
 
 ViewState PauseMenuComponent::openSkillMenu()
 {
-    return changeMenu(skillOptions, SKILL_OPTIONS);
+    return changeMenu(skillOptions);
 }
 
 ViewState PauseMenuComponent::openItemMenu()
 {
-    return changeMenu(itemOptions, ITEM_OPTIONS);
+    return changeMenu(itemOptions);
 }
 
 ViewState PauseMenuComponent::openPersonaMenu()
 {
-    return changeMenu(personaOptions, PERSONA_OPTIONS);
+    return changeMenu(personaOptions);
 }
 
 ViewState PauseMenuComponent::openEquipMenu()
 {
-    return changeMenu(equipOptions, EQUIP_OPTIONS);
+    return changeMenu(equipOptions);
 }
 
 ViewState PauseMenuComponent::openStatusMenu()
 {
-    return changeMenu(statsOptions, STATS_OPTIONS);
+    return changeMenu(statsOptions);
 }
 
 ViewState PauseMenuComponent::openSLinkMenu()
 {
-    return changeMenu(sLinkOptions, S_LINK_OPTIONS);
+    return changeMenu(sLinkOptions);
 }
 
 ViewState PauseMenuComponent::openSystemMenu()
 {
-    return changeMenu(systemOptions, SYSTEM_OPTIONS);
+    return changeMenu(systemOptions);
 }
 
 ViewState PauseMenuComponent::openCharacterAnimMenu()
 {
-    return changeMenu(characterAnimOptions, CHARACTER_ANIM_OPTIONS);
+    return changeMenu(characterAnimOptions);
 }
 
 // selection handlers
 
 ViewState PauseMenuComponent::skillOptionSelected()
 {
-    return changeMenu(skills, SKILLS);
+    return changeMenu(skills);
 }
 
 ViewState PauseMenuComponent::itemOptionSelected()

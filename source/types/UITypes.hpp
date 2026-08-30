@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types/StateTypes.hpp"
+#include <etl/span.h>
 
 class UIMenu;
 
@@ -13,8 +14,7 @@ struct MenuOption
 
 struct MenuState
 {
-    MenuOption* options;
-    int optionCount;
+    etl::span<MenuOption> options;
     int selectedOption;
     int startIndex;
 };

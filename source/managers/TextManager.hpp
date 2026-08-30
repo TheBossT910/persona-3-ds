@@ -35,6 +35,8 @@ class TextManager : public ae::Manager, public ae::Singleton<TextManager>
      */
     Font* loadFont(std::string* name, int size);
 
+    void unloadFont(Font* font);
+
     /**
      * @brief Loads the predefined default palette.
      */

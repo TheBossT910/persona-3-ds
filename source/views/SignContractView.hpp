@@ -18,9 +18,9 @@ class SignContractView : public BaseView
     int firstNameIndex = 0;
 
     // sfx
-    mm_sfxhand sfxMenuHandle;
-    mm_sfxhand sfxSelectHandle;
-    mm_sfxhand sfxCancelHandle;
+    mm_sfxhand sfxMenuHandle = 0;
+    mm_sfxhand sfxSelectHandle = 0;
+    mm_sfxhand sfxCancelHandle = 0;
 
     // text
     std::string FONT_NAME = "cosmetica";

@@ -1,6 +1,8 @@
 #include "IwatodaiStreetsView.hpp"
+#include "core/globals.hpp"
 #include "events/BattleEvents.hpp"
 #include "events/GenericEvents.hpp"
+#include "events/UIEvents.hpp"
 
 IwatodaiStreetsView::IwatodaiStreetsView()
 {

@@ -1,10 +1,5 @@
 #include "components/menu/UIMenu.hpp"
 
-#define MAIN_MENU_OPTIONS 3
-#define LEVEL_OPTIONS 6
-#define SETTING_OPTIONS 2
-#define SETTING_INTRO_OPTIONS 4
-
 enum class MainMenuOptions
 {
     LOAD_GAME = 0,
@@ -41,13 +36,13 @@ class MainMenuComponent : public UIMenu
     MainMenuComponent() {};
     virtual ~MainMenuComponent() = default;
     static MainMenuComponent* instance;
-    MenuOption mainMenuOptions[MAIN_MENU_OPTIONS] = {
+    MenuOption mainMenuOptions[3] = {
         {"Load Game", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
         {"Settings", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
         {"Return to Title", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
     };
 
-    MenuOption levelOptions[LEVEL_OPTIONS] = {
+    MenuOption levelOptions[6] = {
         {"Start Game", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Dorm", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
@@ -56,12 +51,12 @@ class MainMenuComponent : public UIMenu
         {"Sign Contract", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
     };
 
-    MenuOption settingOptions[SETTING_OPTIONS] = {
+    MenuOption settingOptions[2] = {
         {"Change Intro Video", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
         {"v1.1.0", -1, nullptr},
     };
 
-    MenuOption settingIntroOptions[SETTING_INTRO_OPTIONS] = {
+    MenuOption settingIntroOptions[4] = {
         {"Original", -1, MENU_BIND(MainMenuComponent, settingIntroOptionSelected)},
         {"FES", -1, MENU_BIND(MainMenuComponent, settingIntroOptionSelected)},
         {"Portable", -1, MENU_BIND(MainMenuComponent, settingIntroOptionSelected)},

@@ -7,5 +7,3 @@ protected by compiler-specific feature flags.
 #else
 #define _ATTRIBUTE(attrs)
 #endif
-
-int iprintf(const char*, ...) _ATTRIBUTE((__format__(__printf__, 1, 2)));

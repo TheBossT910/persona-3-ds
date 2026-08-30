@@ -1,4 +1,5 @@
 #include "MenuHUDScreen.hpp"
+#include "core/globals.hpp"
 
 MenuHUDScreen* MenuHUDScreen::instance = nullptr;
 
@@ -172,14 +173,25 @@ void MenuHUDScreen::load()
 
 void MenuHUDScreen::unload()
 {
-    if (graphics != nullptr)
+    removeSprites();
+    // free sprites
+    for (SpriteRenderState& srs : spriteRenderStates)
     {
-        graphics->unloadAll();
+        // use alias for easy referencing
+        Sprite& sprite = srs.sprite;
+
+        // free vram
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+        }
+
+        // TODO: unload graphics from memory
+        // ...
     }
 
     if (menuHUD != nullptr)
     {
-        menuHUD->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(menuHUD);
 
         menuHUD = nullptr;

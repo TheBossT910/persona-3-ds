@@ -204,14 +204,46 @@ void DialogueScreen::renderBust()
 
 void DialogueScreen::unload()
 {
-    if (graphics != nullptr)
+    removeSprites();
+    // free sprites
+    for (SpriteRenderState& srs : spriteRenderStates)
     {
-        graphics->unloadAll();
+        // use alias for easy referencing
+        Sprite& sprite = srs.sprite;
+
+        // free vram
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+        }
+
+        // TODO: unload graphics from memory
+        // ...
+    }
+
+    // free bust sprites
+    for (SpritePayload& sp : this->bust)
+    {
+        // use alias for easy referencing
+        Sprite& sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
+
+        // free vram
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+        }
+
+        // unload from memory
+        graphics->unloadGraphic(graphic);
+
+        // reset data
+        sprite.paletteAlpha = -1;
+        graphic = {};
     }
 
     if (dialogue != nullptr)
     {
-        dialogue->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(dialogue);
 
         dialogue = nullptr;

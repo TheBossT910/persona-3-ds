@@ -1,5 +1,4 @@
 #pragma once
-
 #include "components/GraphicsComponent.hpp"
 #include "components/ui/UIScreen.hpp"
 
@@ -19,7 +18,6 @@ class DialogueScreen : public UIScreen
     void triggerAction(UIAction action) override;
     void renderSprites() override;
 
-    // debug
     void loadBust(etl::span<SpritePayload>& bust);
     void renderBust();
 
