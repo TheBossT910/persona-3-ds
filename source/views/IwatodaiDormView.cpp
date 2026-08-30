@@ -26,14 +26,13 @@ static CameraPath dormTestPath = {{
 
 void IwatodaiDormView::setCameraConfig()
 {
-    camConfig.mode = CameraMode::Path;
-    camConfig.initialAngle = -1.6f;
-    camConfig.distance = 0.8f;
+    camConfig.mode = CameraMode::Follow;
+    camConfig.initialAngle = 1.5708f * 2;
+    camConfig.distance = 1.0f;
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
-    camConfig.angleIncrement = 0.07f;
+    camConfig.angleIncrement = 0.05f;
     camConfig.isRotationLocked = true;
-    ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
 void IwatodaiDormView::setMusic()
@@ -90,9 +89,8 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
 
 void IwatodaiDormView::setDialogueConfig()
 {
-    demo_yukari_kenji_argument_init(); // DEBUG
-    dialogue->configureDialogue(
-        DialogueConfig(demo_yukari_kenji_argument_first(), textSub, textSubAlt, dialogueScreen));
+    demo_dialogue_init(); // DEBUG
+    dialogue->configureDialogue(DialogueConfig(demo_dialogue_first(), textSub, textSubAlt, dialogueScreen));
 }
 
 void IwatodaiDormView::setTextConfig()

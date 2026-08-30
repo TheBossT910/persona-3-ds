@@ -13,39 +13,39 @@
  */
 
 // dialogue content
-extern Dialogue demo_yukari_kenji_argument_lines[29];
+extern Dialogue demo_dialogue_lines[29];
 
 // init() needs to be called to properly set the dialogue content
-void demo_yukari_kenji_argument_init();
+void demo_dialogue_init();
 
 // DialogueSelection actions
-inline Dialogue* demo_yukari_kenji_argument_first()
+inline Dialogue* demo_dialogue_first()
 {
-    return &demo_yukari_kenji_argument_lines[0];
+    return &demo_dialogue_lines[0];
 }
-inline Dialogue* demo_yukari_kenji_argument_vouch()
+inline Dialogue* demo_dialogue_vouch()
 {
-    return &demo_yukari_kenji_argument_lines[7];
+    return &demo_dialogue_lines[7];
 }
-inline Dialogue* demo_yukari_kenji_argument_side_kenji()
+inline Dialogue* demo_dialogue_side_kenji()
 {
-    return &demo_yukari_kenji_argument_lines[12];
+    return &demo_dialogue_lines[12];
 }
-inline Dialogue* demo_yukari_kenji_argument_ask_curfew()
+inline Dialogue* demo_dialogue_ask_curfew()
 {
-    return &demo_yukari_kenji_argument_lines[15];
+    return &demo_dialogue_lines[15];
 }
-inline Dialogue* demo_yukari_kenji_argument_escort()
+inline Dialogue* demo_dialogue_escort()
 {
-    return &demo_yukari_kenji_argument_lines[20];
+    return &demo_dialogue_lines[20];
 }
-inline Dialogue* demo_yukari_kenji_argument_wait_morning()
+inline Dialogue* demo_dialogue_wait_morning()
 {
-    return &demo_yukari_kenji_argument_lines[23];
+    return &demo_dialogue_lines[23];
 }
-inline Dialogue* demo_yukari_kenji_argument_rules_right()
+inline Dialogue* demo_dialogue_rules_right()
 {
-    return &demo_yukari_kenji_argument_lines[26];
+    return &demo_dialogue_lines[26];
 }
 
 // busts

@@ -66,8 +66,8 @@ ViewState PauseMenuComponent::updateHook()
     // dialogue should be started, but has not
     if (isDialogueStarted && !dialogue->IsActive())
     {
-        demo_yukari_kenji_argument_init();
-        dialogue->configureDialogue(DialogueConfig(demo_yukari_kenji_argument_first(), text));
+        demo_dialogue_init();
+        dialogue->configureDialogue(DialogueConfig(demo_dialogue_first(), text));
         dialogue->start();
 
         isDialogueStarted = false;
