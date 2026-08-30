@@ -79,8 +79,13 @@
             "inherits": "nds-release"
         },
         {
+            "name": "release",
+            "displayName": "Release (NDS Release)",
+            "inherits": "nds-release"
+        },
+        {
             "name": "debug",
-            "displayName": "Default (NDS Debug)",
+            "displayName": "Debug (NDS Debug)",
             "inherits": "nds-debug-sdcard"
         },
         {
@@ -151,6 +156,11 @@
         {
             "name": "default",
             "displayName": "Default (NDS + sdcard)",
+            "inherits": "build-nds-sdcard"
+        },
+        {
+            "name": "release",
+            "displayName": "Release (NDS + sdcard)",
             "inherits": "build-nds-sdcard"
         },
         {
