@@ -1,6 +1,7 @@
 #pragma once
 #include "controllers/MusicController.hpp"
 #include "core/enums.hpp"
+#include <aegis/types.hpp>
 #include <nds.h>
 #include <string>
 
@@ -14,7 +15,7 @@ class VideoController
     static void destroy();
     static VideoController* getInstance();
 
-    void init(std::string iFileName, float iFps, ViewState iNextState);
+    void init(std::string iFileName, ae::q20_12_t iFps, ViewState iNextState);
     ViewState update();
     void cleanup();
 
@@ -24,7 +25,7 @@ class VideoController
     static VideoController* instance;
 
     ViewState nextState;
-    float fps;
+    ae::q20_12_t fps;
 
     FILE* videoFile;
     bool fileEOF;

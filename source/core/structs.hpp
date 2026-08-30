@@ -6,6 +6,7 @@
 #pragma once
 #include "core/enums.hpp"
 #include "core/geometry.hpp"
+#include <aegis/types.hpp>
 #include <etl/vector.h>
 #include <nds.h>
 #include <string>
@@ -104,10 +105,10 @@ struct EnvironmentDbEntry
     const char* binaryFile;
 
     // World bounds
-    float worldOffsetX;
-    float worldOffsetZ;
-    float worldWidth;
-    float worldDepth;
+    ae::q20_12_t worldOffsetX;
+    ae::q20_12_t worldOffsetZ;
+    ae::q20_12_t worldWidth;
+    ae::q20_12_t worldDepth;
 
     // Texture information
     int textureCount;
@@ -221,14 +222,14 @@ struct MovementConfig
     MovementConfig(int iMapWidth,
                    int iMapHeight,
                    uint16_t* iCollisionMap,
-                   float iTileSize,
-                   float iWorldOffsetX,
-                   float iWorldOffsetZ,
-                   Point2D<float> iCharacterSize,
-                   float iSpeed,
-                   float iHeight,
-                   Point2D<float> iCharacterTranslate,
-                   float iCharacterFacingAngle)
+                   ae::q20_12_t iTileSize,
+                   ae::q20_12_t iWorldOffsetX,
+                   ae::q20_12_t iWorldOffsetZ,
+                   Point2D<ae::q20_12_t> iCharacterSize,
+                   ae::q20_12_t iSpeed,
+                   ae::q20_12_t iHeight,
+                   Point2D<ae::q20_12_t> iCharacterTranslate,
+                   ae::q20_12_t iCharacterFacingAngle)
         : mapWidth(iMapWidth), mapHeight(iMapHeight), collisionMap(iCollisionMap), tileSize(iTileSize),
           worldOffsetX(iWorldOffsetX), worldOffsetZ(iWorldOffsetZ), characterSize(iCharacterSize), speed(iSpeed)
     {

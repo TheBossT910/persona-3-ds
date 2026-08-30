@@ -151,8 +151,10 @@ CharacterPosition MovementComponent::isCharacterAt()
 
 TileType MovementComponent::isTileAt()
 {
-    int tileX = (int)((config.characterTranslate.x + config.worldOffsetX) / config.tileSize);
-    int tileZ = (int)((config.characterTranslate.z + config.worldOffsetZ) / config.tileSize);
+    int tileX =
+        (int)(MathManager::GetInstance().div(config.characterTranslate.x + config.worldOffsetX, config.tileSize));
+    int tileZ =
+        (int)(MathManager::GetInstance().div(config.characterTranslate.z + config.worldOffsetZ, config.tileSize));
     return isTileAt(tileX, tileZ);
 }
 

@@ -33,7 +33,7 @@ VideoController* VideoController::getInstance()
     return instance;
 }
 
-void VideoController::init(std::string iFileName, float iFps, ViewState iNextState)
+void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState iNextState)
 {
     nextState = iNextState;
     fps = iFps; // default fallback if no header exists
@@ -73,7 +73,7 @@ void VideoController::init(std::string iFileName, float iFps, ViewState iNextSta
     if (hRead == 16 && memcmp(header, "VID\0", 4) == 0)
     {
         // bit-shifts safeguard against unaligned memory access crashes on the ARM9
-        fps = (float)(header[4] | (header[5] << 8));
+        ae::q20_12_t fps{static_cast<u16>(header[4] | (header[5] << 8))};
         bpp = header[6];
         frameW = header[8] | (header[9] << 8);
         frameH = header[10] | (header[11] << 8);

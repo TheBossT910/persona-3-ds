@@ -452,8 +452,8 @@ ViewState EnvironmentView::update()
                 debugText += buf;
                 std::sprintf(buf,
                              "tile(x,z): %d, %d\n",
-                             (int)((charPos.x + dbEntry->worldOffsetX) / tileSize),
-                             (int)((charPos.z + dbEntry->worldOffsetZ) / tileSize));
+                             (int)(MathManager::GetInstance().div(charPos.x + dbEntry->worldOffsetX, tileSize)),
+                             (int)(MathManager::GetInstance().div(charPos.z + dbEntry->worldOffsetZ, tileSize)));
                 debugText += buf;
                 std::sprintf(buf, "translate(x,z): %d, %d\n", (int)(charPos.x * 100), (int)(charPos.z * 100));
                 debugText += buf;
