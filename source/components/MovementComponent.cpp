@@ -30,17 +30,20 @@ void MovementComponent::Update(ae::fixed_t)
     ae::q20_12_t rightZ;
 
     ae::q20_12_t deltaX{0};
-    ae::q20_12_t deltaZ;
+    ae::q20_12_t deltaZ{0};
 
     ae::q20_12_t nextX;
     ae::q20_12_t nextZ;
 
     ae::q20_12_t angleRad;
 
-    forwardX = -math.sin(cameraAngle) * config.speed;
-    forwardZ = math.cos(cameraAngle) * config.speed;
-    rightX = math.cos(cameraAngle) * config.speed;
-    rightZ = math.sin(cameraAngle) * config.speed;
+    ae::q20_12_t sinAngle = MathManager::GetInstance().sinQ20_12(cameraAngle);
+    ae::q20_12_t cosAngle = MathManager::GetInstance().cosQ20_12(cameraAngle);
+
+    forwardX = -sinAngle * config.speed;
+    forwardZ = cosAngle * config.speed;
+    rightX = cosAngle * config.speed;
+    rightZ = sinAngle * config.speed;
 
     if (systemKeysHeld & KEY_UP)
     {
@@ -75,9 +78,9 @@ void MovementComponent::Update(ae::fixed_t)
         }
 
         // normalize diagonal movement to prevent faster speed
-        if (deltaX != 0.0f && deltaZ != 0.0f)
+        if (deltaX != ae::q20_12_t{0} && deltaZ != ae::q20_12_t{0})
         {
-            const float invSqrt2 = 0.707106781187f;
+            const ae::q20_12_t invSqrt2{0.707106781187};
             deltaX *= invSqrt2;
             deltaZ *= invSqrt2;
         }
@@ -163,14 +166,18 @@ TileType MovementComponent::isTileAt(int tileX, int tileZ)
     return (TileType)config.collisionMap[(tileZ * config.mapWidth) + tileX];
 }
 
-bool MovementComponent::isTileWalkable(float worldX, float worldZ)
+bool MovementComponent::isTileWalkable(ae::q20_12_t worldX, ae::q20_12_t worldZ)
 {
-    float distanceToEdge = config.characterSize.x * 0.5f;
+    ae::q20_12_t distanceToEdge = config.characterSize.x * ae::q20_12_t{0.5};
 
-    int tileMinX = (int)((worldX - distanceToEdge + config.worldOffsetX) / config.tileSize);
-    int tileMaxX = (int)((worldX + distanceToEdge + config.worldOffsetX) / config.tileSize);
-    int tileMinZ = (int)((worldZ - distanceToEdge + config.worldOffsetZ) / config.tileSize);
-    int tileMaxZ = (int)((worldZ + distanceToEdge + config.worldOffsetZ) / config.tileSize);
+    int tileMinX = static_cast<int>(
+        MathManager::GetInstance().div(worldX - distanceToEdge + config.worldOffsetX, config.tileSize));
+    int tileMaxX = static_cast<int>(
+        MathManager::GetInstance().div(worldX + distanceToEdge + config.worldOffsetX, config.tileSize));
+    int tileMinZ = static_cast<int>(
+        MathManager::GetInstance().div(worldZ - distanceToEdge + config.worldOffsetZ, config.tileSize));
+    int tileMaxZ = static_cast<int>(
+        MathManager::GetInstance().div(worldZ + distanceToEdge + config.worldOffsetZ, config.tileSize));
 
     for (int z = tileMinZ; z <= tileMaxZ; z++)
     {

@@ -214,7 +214,7 @@ struct MovementConfig
     ae::q20_12_t speed;
     ae::q20_12_t height;
     Point2D<ae::q20_12_t> characterTranslate;
-    float characterFacingAngle;
+    ae::q20_12_t characterFacingAngle;
 
     MovementConfig() = default;
 
