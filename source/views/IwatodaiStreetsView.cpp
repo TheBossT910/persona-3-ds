@@ -116,7 +116,7 @@ void IwatodaiStreetsView::setTextConfig()
 
 void IwatodaiStreetsView::setupUI()
 {
-    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     battleMenuCmpt = BattleMenuComponent::getInstance();
     pauseMenuCmpt = PauseMenuComponent::getInstance();
@@ -127,5 +127,5 @@ void IwatodaiStreetsView::setupUI()
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt, battleMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textSub, menus});
 }

@@ -134,13 +134,13 @@ class EnvironmentView : public BaseView
     // TODO: move dialogue, text component to actual actors!
     // In this case, it would be the Akihiko billboard
     DialogueComponent* dialogue = nullptr;
-    TextComponent* text = nullptr;
-    TextComponent* textSub = nullptr;
 
     // view
     ae::Entity* environment = nullptr;
     GraphicsComponent* graphics = nullptr;
-    TextComponent* textMenu = nullptr;
+    TextComponent* text = nullptr;
+    TextComponent* textSub = nullptr;
+    TextComponent* textSubAlt = nullptr;
 
     AnimationController* animationCtrl = AnimationController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();

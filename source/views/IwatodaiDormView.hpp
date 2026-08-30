@@ -29,4 +29,7 @@ class IwatodaiDormView : public EnvironmentView
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
     const float height = 0.0f;
     const float characterFacingAngle = 180.0f;
+
+    std::string FONT_NAME_ALT = "noto-sans-jp-black";
+    int FONT_SIZE_ALT = 16;
 };

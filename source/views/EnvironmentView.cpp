@@ -108,23 +108,23 @@ void EnvironmentView::init()
     {
         environment = engine.CreateEntity();
         graphics = engine.CreateComponent<GraphicsComponent>();
-        textMenu = engine.CreateComponent<TextComponent>();
+        text = engine.CreateComponent<TextComponent>();
+        textSub = engine.CreateComponent<TextComponent>();
+        textSubAlt = engine.CreateComponent<TextComponent>();
 
         environment->AddComponent(graphics);
-        environment->AddComponent(textMenu);
+        environment->AddComponent(text);
+        environment->AddComponent(textSub);
+        environment->AddComponent(textSubAlt);
     }
 
     if (player != nullptr)
     {
         movement = engine.CreateComponent<MovementComponent>();
         dialogue = engine.CreateComponent<DialogueComponent>();
-        text = engine.CreateComponent<TextComponent>();
-        textSub = engine.CreateComponent<TextComponent>();
 
         player->AddComponent(movement);
         player->AddComponent(dialogue);
-        player->AddComponent(text);
-        player->AddComponent(textSub);
     }
 
     // set modes
@@ -271,7 +271,7 @@ void EnvironmentView::init()
 
     bgSetPriority(0, 2); //set 3D view on main to be behind text layer
 
-    lineSpacing = text->getLineSpacing();
+    lineSpacing = textSub->getLineSpacing();
 }
 
 ViewState EnvironmentView::update()
@@ -520,16 +520,6 @@ void EnvironmentView::cleanup()
 {
     cleanupHook();
 
-    if (text != nullptr)
-    {
-        text->clearScreen();
-    }
-
-    if (textSub != nullptr)
-    {
-        textSub->clearScreen();
-    }
-
     // entity
     if (environment != nullptr)
     {
@@ -537,7 +527,9 @@ void EnvironmentView::cleanup()
 
         environment = nullptr;
         graphics = nullptr;
-        textMenu = nullptr;
+        text = nullptr;
+        textSub = nullptr;
+        textSubAlt = nullptr;
     }
 
     // entity
@@ -545,13 +537,9 @@ void EnvironmentView::cleanup()
     {
         engine.DestroyComponent(movement);
         engine.DestroyComponent(dialogue);
-        engine.DestroyComponent(text);
-        engine.DestroyComponent(textSub);
 
         movement = nullptr;
         dialogue = nullptr;
-        text = nullptr;
-        textSub = nullptr;
     }
 
     musicCtrl->cleanup();

@@ -90,5 +90,6 @@ class DialogueComponent : public ae::Component
     u32 prevKeys = 0;
 
     TextComponent* text;
+    TextComponent* textAlt;
     DialogueScreen* screen;
 };

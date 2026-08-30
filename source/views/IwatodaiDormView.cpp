@@ -91,19 +91,19 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
 void IwatodaiDormView::setDialogueConfig()
 {
     demo_yukari_kenji_argument_init(); // DEBUG
-    dialogue->configureDialogue(DialogueConfig(demo_yukari_kenji_argument_first(), textMenu, dialogueScreen));
+    dialogue->configureDialogue(
+        DialogueConfig(demo_yukari_kenji_argument_first(), textSub, textSubAlt, dialogueScreen));
 }
 
 void IwatodaiDormView::setTextConfig()
 {
     text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
     textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textSubAlt->configureText(TextConfig(textVideoBufferSub, &FONT_NAME_ALT, FONT_SIZE_ALT));
 }
 
 void IwatodaiDormView::setupUI()
 {
-    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
-
     // setup pause menu
     pauseMenuCmpt = PauseMenuComponent::getInstance();
 
@@ -114,5 +114,5 @@ void IwatodaiDormView::setupUI()
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textSub, menus});
 }

@@ -44,16 +44,19 @@ struct DialogueConfig
 {
     Dialogue* firstLine = nullptr;
     TextComponent* text = nullptr;
+    TextComponent* textAlt = nullptr;
     DialogueScreen* screen = nullptr;
 
     DialogueConfig() = default;
 
-    DialogueConfig(Dialogue* iFirstLine, TextComponent* iText, DialogueScreen* iScreen)
-        : firstLine(iFirstLine), text(iText), screen(iScreen)
+    DialogueConfig(Dialogue* iFirstLine, TextComponent* iText, TextComponent* iTextAlt, DialogueScreen* iScreen)
+        : firstLine(iFirstLine), text(iText), textAlt(iTextAlt), screen(iScreen)
     {
     }
 
+    // config only for debug purposes
     DialogueConfig(Dialogue* iFirstLine, TextComponent* iText) : firstLine(iFirstLine), text(iText)
     {
+        textAlt = text;
     }
 };

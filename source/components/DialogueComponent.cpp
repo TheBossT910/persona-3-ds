@@ -146,6 +146,7 @@ void DialogueComponent::Destroy()
 void DialogueComponent::configureDialogue(const DialogueConfig& config)
 {
     text = config.text;
+    textAlt = config.textAlt;
     screen = config.screen;
     prevKeys = 0;
     advanceTo(config.firstLine);
@@ -177,7 +178,7 @@ void DialogueComponent::advanceTo(Dialogue* next)
 
 void DialogueComponent::renderAnimFrame()
 {
-    text->drawText(current->name, 8, 133, TextColor::RichBlue);
+    textAlt->drawText("\xFF\x02\x01" + current->name, 8, 128, TextColor::RichBlue);
     text->appearText(current->text, 8, 154, TextColor::Black);
 }
 
@@ -185,7 +186,7 @@ void DialogueComponent::renderOptions()
 {
     /// reprint the complete line then list choices below it
     text->clearScreen();
-    text->drawText(current->name, 8, 133, TextColor::DualGreen);
+    textAlt->drawText("\xFF\x02\x01" + current->name, 8, 128, TextColor::DualGreen);
     text->drawText(current->text, 8, 154, TextColor::Black);
     //TODO: The options are currently drawn outside the textbox, do we want to add an extra overlay for them similar to the actual game?
     int textSize = text->getFontSize();
