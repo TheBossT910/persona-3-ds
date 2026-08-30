@@ -33,7 +33,9 @@ MenuHUDScreen* MenuHUDScreen::getInstance()
 void MenuHUDScreen::loadBackground()
 {
     if (bgLoaded)
+    {
         return;
+    }
 
     std::string bgPath = "graphics/MenuHUD/backgrounds/";
     GraphicAsset bgHUD = graphics->loadGraphic(bgPath + "menuHUD/menuHUD");
@@ -127,14 +129,18 @@ void MenuHUDScreen::load()
         Sprite& sprite = sp.srs.sprite;
         GraphicAsset& graphic = sp.ga;
 
-        // allocating space for sprite
-        sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
+        // load graphic if not already loaded
+        if (graphic.id <= -1)
+        {
+            // allocating space for sprite
+            sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
 
-        // load sprite
-        graphic = graphics->loadSpriteGraphic(sp.spritePath, sp.spriteType, sp.spriteVariant);
+            // load sprite
+            graphic = graphics->loadSpriteGraphic(sp.spritePath, sp.spriteType, sp.spriteVariant);
 
-        // copy sprite into memory
-        dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
+            // copy sprite into memory
+            dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
+        }
     }
 
     // load background
@@ -154,20 +160,18 @@ void MenuHUDScreen::unload()
         Sprite& sprite = sp.srs.sprite;
         GraphicAsset& graphic = sp.ga;
 
-        // free vram
-        if (sprite.gfx != nullptr)
-        {
-            oamFreeGfx(oam, sprite.gfx);
-        }
-
-        // unload from memory
+        // unload graphic if not already unloaded
         if (graphic.id > -1)
         {
-            graphics->unloadGraphic(graphic);
-        }
+            // free vram
+            oamFreeGfx(oam, sprite.gfx);
 
-        // reset data
-        graphic = {};
+            // unload sprite
+            graphics->unloadGraphic(graphic);
+
+            // reset data
+            graphic = {};
+        }
     }
 
     if (menuHUD != nullptr)

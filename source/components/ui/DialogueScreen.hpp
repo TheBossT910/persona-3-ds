@@ -27,6 +27,7 @@ class DialogueScreen : public UIScreen
     static DialogueScreen* instance;
 
     // busts
+    void unloadBust();
     etl::span<SpritePayload> bust;
     void* bustPalette = nullptr;
     int bustPaletteId = 4;
