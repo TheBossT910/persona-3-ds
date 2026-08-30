@@ -1,4 +1,6 @@
 #include "IwatodaiDormView.hpp"
+#include "core/globals.hpp"
+#include "events/UIEvents.hpp"
 #include "types/CameraTypes.hpp"
 // data
 #include "data/environmentDb.hpp"
@@ -24,12 +26,14 @@ static CameraPath dormTestPath = {{
 
 void IwatodaiDormView::setCameraConfig()
 {
+    camConfig.mode = CameraMode::Path;
     camConfig.initialAngle = -1.6f;
     camConfig.distance = 0.8f;
     camConfig.height = height + 0.6f;
     camConfig.lookAhead = 0.2f;
     camConfig.angleIncrement = 0.07f;
     camConfig.isRotationLocked = true;
+    ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
 void IwatodaiDormView::setMusic()
