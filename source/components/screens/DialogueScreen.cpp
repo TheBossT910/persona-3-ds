@@ -196,12 +196,15 @@ void DialogueScreen::unloadBust()
         // hide sprite
         oamClearSprite(oam, bustId);
 
+        // free sprite vram
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+        }
+
         // unload graphic if not already unloaded
         if (graphic.id > -1)
         {
-            // free vram
-            oamFreeGfx(oam, sprite.gfx);
-
             // unload sprite
             graphics->unloadGraphic(graphic);
 
@@ -209,6 +212,8 @@ void DialogueScreen::unloadBust()
             sprite.paletteAlpha = -1;
             graphic = {};
         }
+
+        bustId++;
     }
 }
 
@@ -224,12 +229,15 @@ void DialogueScreen::unload()
         Sprite& sprite = sp.srs.sprite;
         GraphicAsset& graphic = sp.ga;
 
+        // free sprite vram
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+        }
+
         // unload graphic if not already unloaded
         if (graphic.id > -1)
         {
-            // free vram
-            oamFreeGfx(oam, sprite.gfx);
-
             // unload sprite
             graphics->unloadGraphic(graphic);
 
