@@ -1,4 +1,4 @@
-#include "BattleCalcsCoreTestExample.h"
+#include "BattleCalcsCoreTestExample.hpp"
 
 #include <algorithm>
 

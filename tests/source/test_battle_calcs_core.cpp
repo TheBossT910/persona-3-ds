@@ -1,4 +1,4 @@
-#include "battleActions/skills/BattleCalcsCoreTestExample.h"
+#include "battleActions/skills/BattleCalcsCoreTestExample.hpp"
 
 #include <gtest/gtest.h>
 
