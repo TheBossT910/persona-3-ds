@@ -109,12 +109,28 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
     ae::q20_12_t angleToRadians(ae::angle16_t angle);
 
     /**
+     * @brief Sine of a cyclic angle.
+     *
+     * @param angle Cyclic angle (full turn = 1<<15).
+     * @return The sine in Q4.12.
+     */
+    ae::q4_12_t sinQ4_12(ae::angle16_t angle);
+
+    /**
      * @brief Sine, accepting radians (Q20.12)
      *
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The sine in Q4.12.
      */
     ae::q4_12_t sinQ4_12(ae::q20_12_t radians);
+
+    /**
+     * @brief Cosine of a cyclic angle.
+     *
+     * @param angle Cyclic angle (full turn = 1<<15).
+     * @return The cosine in Q4.12.
+     */
+    ae::q4_12_t cosQ4_12(ae::angle16_t angle);
 
     /**
      * @brief Cosine, accepting radians (Q20.12)

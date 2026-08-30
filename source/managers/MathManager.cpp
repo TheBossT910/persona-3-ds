@@ -37,9 +37,19 @@ ae::q4_12_t MathManager::sinQ4_12(ae::q20_12_t radians)
     return ae::q4_12_t::from_raw_value(sinLerp(radiansToAngle(radians)));
 }
 
+ae::q4_12_t MathManager::sinQ4_12(ae::angle16_t angle)
+{
+    return ae::q4_12_t::from_raw_value(sinLerp(angle));
+}
+
 ae::q4_12_t MathManager::cosQ4_12(ae::q20_12_t radians)
 {
     return ae::q4_12_t::from_raw_value(cosLerp(radiansToAngle(radians)));
+}
+
+ae::q4_12_t MathManager::cosQ4_12(ae::angle16_t angle)
+{
+    return ae::q4_12_t::from_raw_value(cosLerp(angle));
 }
 
 ae::q20_12_t MathManager::sinQ20_12(ae::q20_12_t radians)
@@ -159,7 +169,7 @@ float MathManager::atan2(float x, float y)
     }
 }
 
-/// uses depreciated solution internally
+/// TODO: uses depreciated solution internally, needs to be updated next blocksds release
 ae::q20_12_t MathManager::atan2(ae::q20_12_t x, ae::q20_12_t y)
 {
     float result = atan2(static_cast<float>(x), static_cast<float>(y));

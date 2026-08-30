@@ -1,4 +1,5 @@
 #pragma once
+#include <aegis/types.hpp>
 
 #include "views/EnvironmentView.hpp"
 
@@ -17,9 +18,9 @@ class PaulowniaMallView : public EnvironmentView
     {
         return g_environmentDb[2];
     }
-    float getCameraYOffset() const override
+    ae::q20_12_t getCameraYOffset() const override
     {
-        return 0.3f;
+        return ae::q20_12_t{0.3};
     }
     void setMovementConfig() override;
     void setMusic() override;
