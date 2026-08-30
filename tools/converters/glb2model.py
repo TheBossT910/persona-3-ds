@@ -15,6 +15,7 @@ FRAME_RATE = 30.0
 
 # NDS GPU Commands
 FIFO_BEGIN = 0x40
+FIFO_COLOR = 0x20
 FIFO_TEXCOORD = 0x22
 FIFO_VERTEX16 = 0x23
 FIFO_END = 0x41
@@ -76,6 +77,26 @@ def quat_float_to_s16(val):
     return max(-4096, min(4096, int(round(val * 4096.0))))
 
 
+def rgb_to_rgb15(color):
+    """Converts RGB float (0.0 - 1.0) or int (0 - 255) array to NDS 15-bit RGB integer."""
+    if color is None:
+        return 0x7FFF  # Default White
+
+    r, g, b = color[0], color[1], color[2]
+
+    # Handle uint8/uint16 byte colors vs float colors
+    if isinstance(r, (np.integer, int)) and max(r, g, b) > 1:
+        r_5 = (int(r) >> 3) & 0x1F
+        g_5 = (int(g) >> 3) & 0x1F
+        b_5 = (int(b) >> 3) & 0x1F
+    else:
+        r_5 = int(max(0.0, min(1.0, float(r))) * 31.0)
+        g_5 = int(max(0.0, min(1.0, float(g))) * 31.0)
+        b_5 = int(max(0.0, min(1.0, float(b))) * 31.0)
+
+    return r_5 | (g_5 << 5) | (b_5 << 10)
+
+
 # NDS Packing Functions
 
 
@@ -118,8 +139,12 @@ def build_nds_display_list(triangles, tex_w, tex_h):
     dl_words.append(FIFO_BEGIN)
     dl_words.append(GL_TRIANGLES)
 
-    for v_tri, uv_tri in triangles:
+    for v_tri, uv_tri, col_tri in triangles:
         for j in range(3):
+            if col_tri is not None and len(col_tri) > j:
+                dl_words.append(FIFO_COLOR)
+                dl_words.append(rgb_to_rgb15(col_tri[j]))
+
             if uv_tri is not None and len(uv_tri) > j:
                 u, v = uv_tri[j]
                 dl_words.append(FIFO_TEXCOORD)
@@ -229,7 +254,7 @@ def apply_texture_transform(uvs, transform):
     transformed[:, 0] *= float(scale[0])
     transformed[:, 1] *= float(scale[1])
 
-    # Apply rotation if necessary
+    # Apply rotation if necessary (small threshold to avoid unnecessary computation)
     if abs(rotation) >= 1e-8:
         cos_r = float(np.cos(rotation))
         sin_r = float(np.sin(rotation))
@@ -331,7 +356,7 @@ def process_texture_img(gltf, image_index, tmp_dir, output_dir):
 # Mesh Functions
 
 
-def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
+def unskin_primitive(gltf, primitive, skin, positions, uvs, colors, indices):
     """Splits skinned mesh vertices by primary bone and converts them to bone local space.
 
     Args:
@@ -340,6 +365,7 @@ def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
         skin: The skin object associated with the primitive.
         positions (np.ndarray): Vertex positions.
         uvs (np.ndarray): Vertex UV coordinates.
+        colors (np.ndarray): Vertex colors.
         indices (np.ndarray): Triangle indices.
     Returns:
         dict: A dictionary mapping joint node indices to lists of triangles (each triangle is a tuple of vertex positions and UVs).
@@ -392,6 +418,7 @@ def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
 
         v_tri = []
         uv_tri = []
+        col_tri = []
         for v_index in (index0, index1, index2):
             pos = positions[v_index]
             pos_h = np.array([pos[0], pos[1], pos[2], 1.0], dtype=np.float32)
@@ -401,9 +428,15 @@ def unskin_primitive(gltf, primitive, skin, positions, uvs, indices):
             v_tri.append(local_pos)
             if uvs is not None:
                 uv_tri.append(uvs[v_index])
+            if colors is not None:
+                col_tri.append(colors[v_index])
 
         joint_triangles[target_node].append(
-            (v_tri, uv_tri if uvs is not None else None)
+            (
+                v_tri,
+                uv_tri if uvs is not None else None,
+                col_tri if colors is not None else None,
+            )
         )
 
     # Check for discarded triangles due to unskinning
@@ -611,7 +644,6 @@ def convert_glb_to_mdl2(glb_path: str, output_path: str):
 
     output_dir = os.path.dirname(output_path) or "."
     os.makedirs(output_dir, exist_ok=True)
-    print(f"Exporting texture files to: '{os.path.abspath(output_dir)}'")
 
     # Textures table
     textures = []
@@ -640,11 +672,12 @@ def convert_glb_to_mdl2(glb_path: str, output_path: str):
             for prim in primitives:
                 attrs = get_prop(prim, "attributes", {})
                 pos_index = get_prop(attrs, "POSITION")
-                uv_index = get_prop(attrs, "TEXCOORD_0")
+                color_index = get_prop(attrs, "COLOR_0")  # Extract COLOR_0 index
                 indices_index = get_prop(prim, "indices")
                 mat_index = get_prop(prim, "material")
 
                 positions = read_accessor_data(gltf, pos_index)
+                colors = read_accessor_data(gltf, color_index)  # Read COLOR_0 accessor
                 indices = read_accessor_data(gltf, indices_index)
 
                 # Resolve Texture
@@ -688,9 +721,9 @@ def convert_glb_to_mdl2(glb_path: str, output_path: str):
                     else 128
                 )
 
-                # If skinned, split vertices to local bone nodes
+                # Pass colors to unskin_primitive
                 joint_triangles = (
-                    unskin_primitive(gltf, prim, skin, positions, uvs, indices)
+                    unskin_primitive(gltf, prim, skin, positions, uvs, colors, indices)
                     if skin
                     else None
                 )
@@ -721,7 +754,12 @@ def convert_glb_to_mdl2(glb_path: str, output_path: str):
                             if uvs is not None
                             else None
                         )
-                        triangles.append((v_tri, uv_tri))
+                        col_tri = (
+                            [colors[flat_indices[i + j]] for j in range(3)]
+                            if colors is not None
+                            else None
+                        )
+                        triangles.append((v_tri, uv_tri, col_tri))
 
                     dl_words = build_nds_display_list(triangles, tex_w, tex_h)
                     node_sub_lists[index].append(
