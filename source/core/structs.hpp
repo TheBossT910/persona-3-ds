@@ -86,14 +86,14 @@ struct EnvironmentTexture
 struct BillboardData
 {
     const char* name;
-    v16 x, y, z;
-    v16 halfWidth;
-    v16 halfHeight;
+    ae::q4_12_t x, y, z;
+    ae::q4_12_t halfWidth;
+    ae::q4_12_t halfHeight;
 
     int texSlot;
 
-    short u0, v0;
-    short u1, v1;
+    ae::q12_4_t u0, v0;
+    ae::q12_4_t u1, v1;
 };
 
 struct EnvironmentDbEntry

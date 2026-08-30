@@ -84,7 +84,7 @@ class Environment
      * @param camZ World-space Z coordinate of the camera, used only when
      *             @p faceCamera is true.
      */
-    void drawBillboards(bool faceCamera, float camX, float camY, float camZ);
+    void drawBillboards(bool faceCamera, ae::q20_12_t camX, ae::q20_12_t camY, ae::q20_12_t camZ);
 
     /**
      * @brief Frees all display lists and deletes all textures owned by
