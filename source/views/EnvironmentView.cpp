@@ -38,14 +38,6 @@ std::string gritBaseName(const char* compiledFileName)
 } // namespace
 
 // models
-// unsigned int* EnvironmentView::loadModelBitmap(const std::string& path)
-// {
-//     // std::string basePath = fatBasePath + "models/makoto/";
-//     GraphicAsset asset = graphics->loadGraphic(path);
-//     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
-//     return tiles;
-// }
-
 const unsigned int* EnvironmentView::loadBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphics->loadGraphic(path);
