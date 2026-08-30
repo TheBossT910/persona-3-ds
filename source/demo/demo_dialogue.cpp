@@ -14,7 +14,7 @@ void demo_dialogue_init()
 
     demo_dialogue_lines[0] = {"Aigis",
                               "Yukari, the\xFF\x01\x07 east path\xFF\x01\xFF is closed after sundown. "
-                              "This is the second time I have stated this.",
+                              "It's the second time I have stated this.",
                               BustAigis::spNeutral,
                               NULL,
                               &demo_dialogue_lines[1],
