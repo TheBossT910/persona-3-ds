@@ -160,13 +160,14 @@ void DialogueScreen::renderBust()
     dmaCopy(bustPalette, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
 
     // draw bust
+    int bustId = spriteId;
     for (SpritePayload& sp : bust)
     {
         // use alias for easy referencing
         SpriteRenderState& srs = sp.srs;
 
         oamSet(oam,
-               spriteId++,
+               bustId++,
                srs.x,
                srs.y,
                srs.priority,
@@ -185,11 +186,15 @@ void DialogueScreen::renderBust()
 
 void DialogueScreen::unloadBust()
 {
+    int bustId = spriteId;
     for (SpritePayload& sp : bust)
     {
         // use alias for easy referencing
         Sprite& sprite = sp.srs.sprite;
         GraphicAsset& graphic = sp.ga;
+
+        // hide sprite
+        oamClearSprite(oam, bustId);
 
         // unload graphic if not already unloaded
         if (graphic.id > -1)

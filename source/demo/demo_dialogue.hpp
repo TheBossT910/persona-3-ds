@@ -114,7 +114,56 @@ inline etl::array<SpritePayload, 8> spNeutral = {
 
 namespace BustAkihiko
 {
-inline etl::array<SpritePayload, 0> spNeutral = {};
+
+// asset paths
+inline std::string assetPath = "graphics/Busts/akihiko/sprites/";
+
+// base bust
+inline Sprite topLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
+// empty
+inline GraphicAsset topLeftGraphic = {};
+inline SpriteRenderState topLeftSrs = {topLeftSprite, 0, 0};
+inline SpritePayload topLeftSp = {topLeftSrs, assetPath, topLeftGraphic, SpriteType::BUST, (int)BustSprite::TOP_LEFT};
+
+inline Sprite topRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
+inline GraphicAsset topRightGraphic = {};
+inline SpriteRenderState topRightSrs = {topRightSprite, 64, 0};
+inline SpritePayload topRightSp = {
+    topRightSrs, assetPath, topRightGraphic, SpriteType::BUST, (int)BustSprite::TOP_RIGHT};
+
+inline Sprite middleLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
+inline GraphicAsset middleLeftGraphic = {};
+inline SpriteRenderState middleLeftSrs = {middleLeftSprite, 0, 64};
+inline SpritePayload middleLeftSp = {
+    middleLeftSrs, assetPath, middleLeftGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_LEFT};
+
+inline Sprite middleRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
+inline GraphicAsset middleRightGraphic = {};
+inline SpriteRenderState middleRightSrs = {middleRightSprite, 64, 64};
+inline SpritePayload middleRightSp = {
+    middleRightSrs, assetPath, middleRightGraphic, SpriteType::BUST, (int)BustSprite::MIDDLE_RIGHT};
+
+inline Sprite bottomLeftSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
+inline GraphicAsset bottomLeftGraphic = {};
+inline SpriteRenderState bottomLeftSrs = {bottomLeftSprite, 0, 128};
+inline SpritePayload bottomLeftSp = {
+    bottomLeftSrs, assetPath, bottomLeftGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_LEFT};
+
+inline Sprite bottomRightSprite = {SpriteSize_64x64, SpriteColorFormat_16Color};
+inline GraphicAsset bottomRightGraphic = {};
+inline SpriteRenderState bottomRightSrs = {bottomRightSprite, 64, 128};
+inline SpritePayload bottomRightSp = {
+    bottomRightSrs, assetPath, bottomRightGraphic, SpriteType::BUST, (int)BustSprite::BOTTOM_RIGHT};
+
+// expressions
+inline Sprite happySprite = {SpriteSize_32x32, SpriteColorFormat_16Color};
+inline GraphicAsset happyGraphic = {};
+inline SpriteRenderState happySrs = {happySprite, 37, 54, 0};
+inline SpritePayload happySp = {happySrs, assetPath, happyGraphic, SpriteType::BUST, (int)BustSprite::HAPPY};
+
+// grouping
+inline etl::array<SpritePayload, 7> spNeutral = {
+    topLeftSp, topRightSp, middleRightSp, bottomLeftSp, bottomRightSp, middleLeftSp, happySp};
 } // namespace BustAkihiko
 
 namespace BustKenji
