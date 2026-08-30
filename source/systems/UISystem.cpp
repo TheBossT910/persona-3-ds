@@ -466,9 +466,7 @@ void UISystem::resetUIResources()
     cancelSFX();
     cleanupScreens();
     cleanupMenus();
-    PauseMenuComponent::destroy();
-    BattleMenuComponent::destroy();
-    MainMenuComponent::destroy();
+
     isActive = false;
     renderUIText = false;
 }
