@@ -76,9 +76,6 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "dependsOn": [
-                "CMake: Configure (NDS Release)"
-            ],
             "problemMatcher": [
                 "$gcc"
             ]
@@ -90,9 +87,6 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "dependsOn": [
-                "CMake: Configure (NDS Debug)"
-            ],
             "problemMatcher": [
                 "$gcc"
             ]
@@ -104,9 +98,6 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "dependsOn": [
-                "CMake: Build (Host Tests)"
-            ],
             "problemMatcher": [],
             "group": "test"
         },
