@@ -1,4 +1,5 @@
 #include "DialogueScreen.hpp"
+#include "core/globals.hpp"
 
 DialogueScreen* DialogueScreen::instance = nullptr;
 
@@ -197,11 +198,6 @@ void DialogueScreen::renderSprites()
     // }
 }
 
-void DialogueScreen::removeSprites()
-{
-    oamClear(oam, 0, 6);
-}
-
 void DialogueScreen::load()
 {
     if (dialogue == nullptr)
@@ -265,14 +261,18 @@ void DialogueScreen::load()
 
 void DialogueScreen::unload()
 {
-    if (graphics != nullptr)
+    removeSprites();
+    for (Sprite& sprite : sprites)
     {
-        graphics->unloadAll();
+        if (sprite.gfx != nullptr)
+        {
+            oamFreeGfx(oam, sprite.gfx);
+            sprite.gfx = nullptr;
+        }
     }
 
     if (dialogue != nullptr)
     {
-        dialogue->RemoveComponent<GraphicsComponent>();
         engine.DestroyEntity(dialogue);
 
         dialogue = nullptr;

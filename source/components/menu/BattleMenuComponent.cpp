@@ -56,8 +56,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
         battleOptions.push_back(option);
     }
 
-    options = battleOptions.data();
-    optionCount = count;
+    options = battleOptions;
 }
 
 void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
@@ -86,8 +85,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
         battleOptions.push_back(option);
     }
 
-    options = battleOptions.data();
-    optionCount = count;
+    options = battleOptions;
 }
 
 void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* personas)
@@ -111,8 +109,7 @@ void BattleMenuComponent::loadPersonaOptions(etl::vector<PersonaBase*, 13>* pers
         battleOptions.push_back(option);
     }
 
-    options = battleOptions.data();
-    optionCount = count;
+    options = battleOptions;
 }
 
 void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>* targets, bool healTarget)
@@ -142,8 +139,7 @@ void BattleMenuComponent::loadTargetOptions(etl::vector<BattleParticipant*, 13>*
         battleOptions.push_back(option);
     }
 
-    options = battleOptions.data();
-    optionCount = battleOptions.size();
+    options = battleOptions;
 }
 
 void BattleMenuComponent::loadAllOutAttackConfirmation()
@@ -165,8 +161,7 @@ void BattleMenuComponent::loadAllOutAttackConfirmation()
     battleOptions.push_back(yes);
     battleOptions.push_back(no);
 
-    options = battleOptions.data();
-    optionCount = battleOptions.size();
+    options = battleOptions;
 }
 
 void BattleMenuComponent::loadAlertOptions(const std::string& text)
@@ -181,8 +176,7 @@ void BattleMenuComponent::loadAlertOptions(const std::string& text)
     pauseMessage = text;
     alertStartFrame = frame;
 
-    options = nullptr;
-    optionCount = 0;
+    options = {};
 }
 
 bool BattleMenuComponent::isAlertExpired(int durationFrames) const
@@ -193,8 +187,7 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
 void BattleMenuComponent::resetHook()
 {
     pauseMessage = "";
-    options = nullptr;
-    optionCount = 0;
+    options = {};
 
     loadedOption = BattleMenuOptions::NONE;
     messagePrinted = false;

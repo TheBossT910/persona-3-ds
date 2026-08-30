@@ -1,5 +1,5 @@
 /**
- * @file globals.h
+ * @file globals.hpp
  * @brief Holds global variables used game-wide
  */
 
@@ -66,7 +66,8 @@ using LargestMessage = etl::largest_type<Event::BattleResult,
                                          Event::HideAllScreens,
                                          Event::ConfigureUIMenu,
                                          Event::HideAllMenus,
-                                         Event::RenderUIText>;
+                                         Event::RenderUIText,
+                                         Event::ResetUIResources>;
 constexpr std::size_t kLargestComponentSize = sizeof(typename LargestMessage::type);
 constexpr std::size_t kLargestComponentAlign = alignof(typename LargestMessage::type);
 } // namespace GameEngineConfig

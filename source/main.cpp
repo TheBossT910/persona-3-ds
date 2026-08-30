@@ -2,6 +2,7 @@
 #include <fat.h>
 #include <filesystem.h>
 #include <maxmod9.h>
+#include <memory>
 #include <nds.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +54,7 @@ std::string fatBasePath = "";
 Save saveData;
 ViewState nextView = ViewState::DEFAULT;
 
-BaseView* currentView = nullptr;
+std::unique_ptr<BaseView> currentView;
 
 // models
 unsigned int** bitmapsCharacter = nullptr;
@@ -75,13 +76,10 @@ void SwitchView(BaseView* newView)
     if (currentView != nullptr)
     {
         currentView->cleanup();
-
-        // free memory
-        delete currentView;
     }
 
     // load new view
-    currentView = newView;
+    currentView.reset(newView);
     if (currentView != nullptr)
     {
         currentView->init();

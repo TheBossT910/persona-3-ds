@@ -4,6 +4,7 @@
 #include <string>
 
 // model
+#include "dialogue/demo_dialogue.hpp"
 #include "models/makoto.hpp"
 
 #include "systems/BattleSystem.hpp"
@@ -121,7 +122,7 @@ void EnvironmentView::init()
     glEnable(GL_OUTLINE); // stylistic outline
 
     glClearColor(0, 0, 0, 31);
-    glClearPolyID(63);
+    glClearPolyID(0);
     glClearDepth(0x7FFF);
 
     // viewport
@@ -500,16 +501,9 @@ void EnvironmentView::cleanup()
         textSub->clearScreen();
     }
 
-    if (graphics != nullptr)
-    {
-        graphics->unloadAll();
-    }
-
     // entity
     if (environment != nullptr)
     {
-        environment->RemoveComponent<GraphicsComponent>();
-        environment->RemoveComponent<TextComponent>();
         engine.DestroyEntity(environment);
 
         environment = nullptr;
@@ -520,9 +514,10 @@ void EnvironmentView::cleanup()
     // entity
     if (player != nullptr)
     {
-        player->RemoveComponent<MovementComponent>();
-        player->RemoveComponent<DialogueComponent>();
-        player->RemoveComponent<TextComponent>();
+        engine.DestroyComponent(movement);
+        engine.DestroyComponent(dialogue);
+        engine.DestroyComponent(text);
+        engine.DestroyComponent(textSub);
 
         movement = nullptr;
         dialogue = nullptr;
@@ -530,14 +525,11 @@ void EnvironmentView::cleanup()
         textSub = nullptr;
     }
 
-    // hide UI screens/menus
-    ae::BroadcastEvent(Event::HideAllScreens{});
-    ae::BroadcastEvent(Event::HideAllMenus{});
-
     musicCtrl->cleanup();
+    animationCtrl->unloadTextures();
     animationCtrl->stop();
 
-    BaseView::cleanup();
-
     env.cleanup();
+
+    BaseView::cleanup();
 }

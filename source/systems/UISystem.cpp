@@ -1,4 +1,9 @@
 #include "UISystem.hpp"
+#include "components/menu/BattleMenuComponent.hpp"
+#include "components/menu/MainMenuComponent.hpp"
+#include "components/menu/PauseMenuComponent.hpp"
+#include "components/ui/DialogueScreen.hpp"
+#include "components/ui/MenuHUDScreen.hpp"
 #include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
 
@@ -35,14 +40,14 @@ void UISystem::Update(ae::fixed_t dt)
     if (systemKeysDown & KEY_DOWN)
     {
         sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
-        activeMenu->selectedOption = (activeMenu->selectedOption + 1) % activeMenu->optionCount;
+        activeMenu->selectedOption = (activeMenu->selectedOption + 1) % activeMenu->options.size();
         renderUIText = true;
     }
     else if (systemKeysDown & KEY_UP)
     {
         sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
         activeMenu->selectedOption =
-            (activeMenu->selectedOption + activeMenu->optionCount - 1) % activeMenu->optionCount;
+            (activeMenu->selectedOption + activeMenu->options.size() - 1) % activeMenu->options.size();
         renderUIText = true;
     }
 
@@ -106,7 +111,8 @@ void UISystem::Update(ae::fixed_t dt)
     if (renderUIText)
     {
         renderUIText = false;
-        for (int i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < activeMenu->optionCount; i++)
+        for (int i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < int(activeMenu->options.size());
+             i++)
         {
             int option = activeMenu->startIndex + i;
             TextColor color = option == activeMenu->selectedOption ? TextColor::Blue : TextColor::White;
@@ -122,20 +128,17 @@ void UISystem::Update(ae::fixed_t dt)
 
 void UISystem::Shutdown()
 {
-    cancelSFX();
-    cleanupScreens();
-    if (activeMenu != nullptr)
-    {
-        activeMenu->resetMenu();
-        activeMenu = nullptr;
-    }
-    isActive = false;
-    renderUIText = false;
+    resetUIResources();
 }
 
 void UISystem::on_receive(const Event::SwitchView& msg)
 {
     nextView = msg.view;
+}
+
+void UISystem::on_receive(const Event::ResetUIResources& /*msg*/)
+{
+    resetUIResources();
 }
 
 void UISystem::on_receive(const Event::ConfigureUIScreen& config)
@@ -453,15 +456,39 @@ void UISystem::cancelSFX()
     musicCtrl->stopSFX(sfxMenuHandle);
     musicCtrl->stopSFX(sfxSelectHandle);
     musicCtrl->stopSFX(sfxCancelHandle);
+    sfxMenuHandle = 0;
+    sfxSelectHandle = 0;
+    sfxCancelHandle = 0;
+}
+
+void UISystem::resetUIResources()
+{
+    cancelSFX();
+    cleanupScreens();
+    cleanupMenus();
+    PauseMenuComponent::destroy();
+    BattleMenuComponent::destroy();
+    MainMenuComponent::destroy();
+    isActive = false;
+    renderUIText = false;
 }
 
 void UISystem::cleanupMenus()
 {
-    menus = {};
-    text = nullptr;
     if (activeMenu != nullptr)
     {
         activeMenu->resetMenu();
         activeMenu = nullptr;
     }
+
+    for (UIMenu* menu : menus)
+    {
+        if (menu != nullptr)
+        {
+            menu->text = nullptr;
+        }
+    }
+
+    menus = {};
+    text = nullptr;
 }

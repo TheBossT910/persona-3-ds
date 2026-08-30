@@ -1,4 +1,6 @@
 #include "PaulowniaMallView.hpp"
+#include "core/globals.hpp"
+#include "events/UIEvents.hpp"
 
 PaulowniaMallView::PaulowniaMallView()
 {

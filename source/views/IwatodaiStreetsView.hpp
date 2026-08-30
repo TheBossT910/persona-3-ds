@@ -7,13 +7,13 @@
 // maps
 #include "maps/iwatodai_streets.hpp"
 // battle
-#include "./battleActions/BattleParticipant.hpp"
-#include "./battleActions/BattleStartCondition.hpp"
-#include "./battleActions/enemies/Enemy.hpp"
-#include "./battleActions/enemies/EnemyProfileDb.hpp"
-#include "./battleActions/party/CharacterProfileDb.hpp"
-#include "./battleActions/party/PartyMember.hpp"
-#include "./battleActions/party/Player.hpp"
+#include "battleActions/BattleParticipant.hpp"
+#include "battleActions/BattleStartCondition.hpp"
+#include "battleActions/enemies/Enemy.hpp"
+#include "battleActions/enemies/EnemyProfileDb.hpp"
+#include "battleActions/party/CharacterProfileDb.hpp"
+#include "battleActions/party/PartyMember.hpp"
+#include "battleActions/party/Player.hpp"
 
 #include <etl/vector.h>
 
