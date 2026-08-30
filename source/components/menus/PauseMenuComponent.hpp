@@ -1,6 +1,6 @@
 #pragma once
 #include "components/DialogueComponent.hpp"
-#include "components/menu/UIMenu.hpp"
+#include "components/menus/UIMenu.hpp"
 #include "controllers/AnimationController.hpp"
 #include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"

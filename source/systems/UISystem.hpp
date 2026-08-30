@@ -16,7 +16,7 @@
 #include "events/GenericEvents.hpp"
 
 #include "components/TextComponent.hpp"
-#include "components/menu/UIMenu.hpp"
+#include "components/menus/UIMenu.hpp"
 #include "components/screens/UIScreen.hpp"
 
 #include "controllers/MusicController.hpp"

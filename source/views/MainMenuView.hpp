@@ -1,5 +1,5 @@
 #pragma once
-#include "components/menu/MainMenuComponent.hpp"
+#include "components/menus/MainMenuComponent.hpp"
 #include "views/BaseView.hpp"
 
 #include "components/GraphicsComponent.hpp"

@@ -4,7 +4,7 @@
 #include "battleActions/actions/ActionBase.hpp"
 #include "battleActions/personas/PersonaBase.hpp"
 
-#include "components/menu/UIMenu.hpp"
+#include "components/menus/UIMenu.hpp"
 #include "types/UITypes.hpp"
 
 #include <etl/vector.h>

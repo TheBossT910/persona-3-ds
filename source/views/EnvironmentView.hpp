@@ -6,8 +6,8 @@
 #include "data/environmentDb.hpp"
 #include "environment/Environment.hpp"
 // components
-#include "components/menu/BattleMenuComponent.hpp"
-#include "components/menu/PauseMenuComponent.hpp"
+#include "components/menus/BattleMenuComponent.hpp"
+#include "components/menus/PauseMenuComponent.hpp"
 #include "components/screens/DialogueScreen.hpp"
 #include "components/screens/MenuHUDScreen.hpp"
 // controllers

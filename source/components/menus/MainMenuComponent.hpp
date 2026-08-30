@@ -1,4 +1,4 @@
-#include "components/menu/UIMenu.hpp"
+#include "components/menus/UIMenu.hpp"
 
 enum class MainMenuOptions
 {
