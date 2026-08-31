@@ -42,7 +42,8 @@ struct Dialogue
  */
 struct DialogueConfig
 {
-    etl::array<etl::span<SpritePayload>, 3>* spritePayloads;
+    /// @note The maximum number of SpritePayloads is 10
+    etl::array<etl::span<SpritePayload>, 10>* spritePayloads;
 
     TextComponent* text = nullptr;
     TextComponent* textAlt = nullptr;
@@ -50,7 +51,7 @@ struct DialogueConfig
 
     DialogueConfig() = default;
 
-    DialogueConfig(etl::array<etl::span<SpritePayload>, 3>* iSpritePayloads,
+    DialogueConfig(etl::array<etl::span<SpritePayload>, 10>* iSpritePayloads,
                    TextComponent* iText,
                    TextComponent* iTextAlt,
                    DialogueScreen* iScreen)

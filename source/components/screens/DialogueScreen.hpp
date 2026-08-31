@@ -19,7 +19,7 @@ class DialogueScreen : public UIScreen
     void renderSprites() override;
 
     // load all busts into ram
-    void loadBusts(etl::array<etl::span<SpritePayload>, 3>* bustPayloads);
+    void loadBusts(etl::array<etl::span<SpritePayload>, 10>* bustPayloads);
 
     // render the specified bust onto the screen
     void renderBust(etl::span<SpritePayload>& bustPayload);
@@ -35,7 +35,7 @@ class DialogueScreen : public UIScreen
     // unload a specific bust SpritePayload. Helper for unload()
     void unloadBust(etl::span<SpritePayload>& bustPayload);
 
-    etl::array<etl::span<SpritePayload>, 3>* bustPayloads = nullptr;
+    etl::array<etl::span<SpritePayload>, 10>* bustPayloads = nullptr;
     etl::span<SpritePayload>* prevBust = nullptr;
     int bustPaletteId = 1;
 

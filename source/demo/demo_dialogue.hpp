@@ -221,5 +221,5 @@ inline etl::array<SpritePayload, 6> spNeutral = {
 } // namespace BustAigis
 
 // all unique SpritePayloads to be loaded
-inline etl::array<etl::span<SpritePayload>, 3> demo_dialogue_spritePayloads = {
+inline etl::array<etl::span<SpritePayload>, 10> demo_dialogue_spritePayloads = {
     BustYukari::spNeutral, BustAkihiko::spNeutral, BustAigis::spNeutral};

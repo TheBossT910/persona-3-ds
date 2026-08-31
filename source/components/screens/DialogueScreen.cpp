@@ -105,7 +105,7 @@ void DialogueScreen::load()
     palette1 = (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
 };
 
-void DialogueScreen::loadBusts(etl::array<etl::span<SpritePayload>, 3>* bustPayloads)
+void DialogueScreen::loadBusts(etl::array<etl::span<SpritePayload>, 10>* bustPayloads)
 {
     for (etl::span<SpritePayload>& sp : *bustPayloads)
     {
