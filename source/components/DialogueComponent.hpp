@@ -45,9 +45,11 @@ class DialogueComponent : public ae::Component
     /**
      * @brief Start the currently loaded dialogue
      *
-     * Dialogue must be set by configureDialogue() before start() can be called
+     * @note Dialogue must be set by configureDialogue() before start() can be called
+     *
+     * @param firstLine the first dialogue line
      */
-    void start();
+    void start(Dialogue* firstLine);
 
     /**
      * @brief End the dialogue display

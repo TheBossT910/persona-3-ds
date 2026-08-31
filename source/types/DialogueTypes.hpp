@@ -42,20 +42,24 @@ struct Dialogue
  */
 struct DialogueConfig
 {
-    Dialogue* firstLine = nullptr;
+    etl::array<etl::span<SpritePayload>, 3>* spritePayloads;
+
     TextComponent* text = nullptr;
     TextComponent* textAlt = nullptr;
     DialogueScreen* screen = nullptr;
 
     DialogueConfig() = default;
 
-    DialogueConfig(Dialogue* iFirstLine, TextComponent* iText, TextComponent* iTextAlt, DialogueScreen* iScreen)
-        : firstLine(iFirstLine), text(iText), textAlt(iTextAlt), screen(iScreen)
+    DialogueConfig(etl::array<etl::span<SpritePayload>, 3>* iSpritePayloads,
+                   TextComponent* iText,
+                   TextComponent* iTextAlt,
+                   DialogueScreen* iScreen)
+        : spritePayloads(iSpritePayloads), text(iText), textAlt(iTextAlt), screen(iScreen)
     {
     }
 
     // config only for debug purposes
-    DialogueConfig(Dialogue* iFirstLine, TextComponent* iText) : firstLine(iFirstLine), text(iText)
+    DialogueConfig(TextComponent* iText) : text(iText)
     {
         textAlt = text;
     }

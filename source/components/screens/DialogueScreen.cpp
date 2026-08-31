@@ -47,7 +47,12 @@ void DialogueScreen::renderSprites()
     for (SpritePayload& sp : spritePayloads)
     {
         // use alias for easy referencing
+        Sprite& sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
         SpriteRenderState& srs = sp.srs;
+
+        // copy sprite into vram
+        dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
 
         oamSet(oam,
                spriteId++,
@@ -90,11 +95,8 @@ void DialogueScreen::load()
             // allocating space for sprite
             sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
 
-            // load sprite
+            // load sprite into ram
             graphic = graphics->loadSpriteGraphic(sp.spritePath, sp.spriteType, sp.spriteVariant);
-
-            // copy sprite into memory
-            dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
         }
     }
 
@@ -103,23 +105,20 @@ void DialogueScreen::load()
     palette1 = (graphics->loadSpriteGraphic(spritePath, SpriteType::DIALOGUE, DialogueSprite::EDGE_GREEN)).pal;
 };
 
-void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
+void DialogueScreen::loadBusts(etl::array<etl::span<SpritePayload>, 3>* bustPayloads)
 {
-    // don't re-render the bust
-    if (this->bust.data() == bust.data())
+    for (etl::span<SpritePayload>& sp : *bustPayloads)
     {
-        return;
+        loadBust(sp);
     }
+    this->bustPayloads = bustPayloads;
+    prevBust = nullptr;
+}
 
-    // free previous bust sprites
-    unloadBust();
-
-    // clear old bust palette
-    dmaFillHalfWords(0, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
-    bustPalette = nullptr;
-
+void DialogueScreen::loadBust(etl::span<SpritePayload>& bustPayload)
+{
     // load new bust
-    for (SpritePayload& sp : bust)
+    for (SpritePayload& sp : bustPayload)
     {
         // use alias for easy referencing
         Sprite& sprite = sp.srs.sprite;
@@ -134,37 +133,58 @@ void DialogueScreen::loadBust(etl::span<SpritePayload>& bust)
             // allocating space for sprite
             sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
 
-            // load sprite
+            // load sprite into ram
             graphic = graphics->loadSpriteGraphic(sp.spritePath, sp.spriteType, sp.spriteVariant);
-
-            // copy sprite into memory
-            dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
-
-            // save the latest palette
-            bustPalette = graphic.pal;
         }
     }
-
-    this->bust = bust;
 }
 
-void DialogueScreen::renderBust()
+void DialogueScreen::renderBust(etl::span<SpritePayload>& bustPayload)
 {
-    // exit if no bust or if bustPalette is undefined
-    if (bust.empty() || bustPalette == nullptr)
+    // exit if no bust
+    if (bustPayload.empty())
     {
         return;
     }
+    // don't re-render the bust
+    else if (prevBust != nullptr && (prevBust->data() == bustPayload.data()))
+    {
+        return;
+    }
+    // hide the old bust sprites
+    else if (prevBust != nullptr)
+    {
+        // hide sprites
+        oamClear(oam, spriteId, prevBust->size());
 
-    // setup bust palette
-    dmaCopy(bustPalette, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
+        // clear palette
+        dmaFillHalfWords(0, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
+    }
+
+    // update to new bust
+    prevBust = &bustPayload;
 
     // draw bust
     int bustId = spriteId;
-    for (SpritePayload& sp : bust)
+    void* bustPalette = nullptr;
+    for (SpritePayload& sp : bustPayload)
     {
         // use alias for easy referencing
+        Sprite& sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
         SpriteRenderState& srs = sp.srs;
+
+        // skip; graphics have not been loaded
+        if (sprite.gfx == nullptr || graphic.id <= -1)
+        {
+            continue;
+        }
+
+        // save the latest palette
+        bustPalette = graphic.pal;
+
+        // copy sprite into vram
+        dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
 
         oamSet(oam,
                bustId++,
@@ -182,19 +202,18 @@ void DialogueScreen::renderBust()
                srs.vflip,
                srs.mosaic);
     }
+
+    // setup bust palette
+    dmaCopy(bustPalette, SPRITE_PALETTE_SUB + (bustPaletteId * 16), 16 * sizeof(u16));
 }
 
-void DialogueScreen::unloadBust()
+void DialogueScreen::unloadBust(etl::span<SpritePayload>& bustPayload)
 {
-    int bustId = spriteId;
-    for (SpritePayload& sp : bust)
+    for (SpritePayload& sp : bustPayload)
     {
         // use alias for easy referencing
         Sprite& sprite = sp.srs.sprite;
         GraphicAsset& graphic = sp.ga;
-
-        // hide sprite
-        oamClearSprite(oam, bustId);
 
         // free sprite vram
         if (sprite.gfx != nullptr)
@@ -213,8 +232,6 @@ void DialogueScreen::unloadBust()
             sprite.paletteAlpha = -1;
             graphic = {};
         }
-
-        bustId++;
     }
 }
 
@@ -249,7 +266,17 @@ void DialogueScreen::unload()
     }
 
     // free bust sprites
-    unloadBust();
+    if (bustPayloads != nullptr)
+    {
+        for (etl::span<SpritePayload>& sp : *bustPayloads)
+        {
+            unloadBust(sp);
+        }
+
+        // reset array pointers
+        bustPayloads = nullptr;
+        prevBust = nullptr;
+    }
 
     if (dialogue != nullptr)
     {

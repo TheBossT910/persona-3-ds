@@ -18,17 +18,25 @@ class DialogueScreen : public UIScreen
     void triggerAction(UIAction action) override;
     void renderSprites() override;
 
-    void loadBust(etl::span<SpritePayload>& bust);
-    void renderBust();
+    // load all busts into ram
+    void loadBusts(etl::array<etl::span<SpritePayload>, 3>* bustPayloads);
+
+    // render the specified bust onto the screen
+    void renderBust(etl::span<SpritePayload>& bustPayload);
 
   private:
     DialogueScreen() : UIScreen(false) {};
     ~DialogueScreen() {};
     static DialogueScreen* instance;
 
-    // busts
-    void unloadBust();
-    etl::span<SpritePayload> bust;
+    // load a specific bust SpritePayload into ram. Helper for loadBusts()
+    void loadBust(etl::span<SpritePayload>& bustPayload);
+
+    // unload a specific bust SpritePayload. Helper for unload()
+    void unloadBust(etl::span<SpritePayload>& bustPayload);
+
+    etl::array<etl::span<SpritePayload>, 3>* bustPayloads = nullptr;
+    etl::span<SpritePayload>* prevBust = nullptr;
     int bustPaletteId = 1;
 
     std::string spritePath = "graphics/Dialogue/sprites/";
@@ -36,7 +44,6 @@ class DialogueScreen : public UIScreen
     // palettes
     void* palette0 = nullptr;
     void* palette1 = nullptr;
-    void* bustPalette = nullptr;
 
     int spriteId = 0;
 

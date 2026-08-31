@@ -30,7 +30,7 @@ void IwatodaiStreetsView::startBattle()
 // ----------------------------
 // Camera
 // ----------------------------
-void IwatodaiStreetsView::setCameraConfig()
+void IwatodaiStreetsView::setupCamera()
 {
     camConfig.mode = CameraMode::Follow;
     camConfig.initialAngle = 1.5708f * 2;
@@ -44,7 +44,7 @@ void IwatodaiStreetsView::setCameraConfig()
 // ----------------------------
 // Player controller
 // ----------------------------
-void IwatodaiStreetsView::setMovementConfig()
+void IwatodaiStreetsView::setupMovement()
 {
     movement->configureMovement(MovementConfig(IWATODAI_STREETS_MAP_WIDTH,
                                                IWATODAI_STREETS_MAP_HEIGHT,
@@ -59,7 +59,7 @@ void IwatodaiStreetsView::setMovementConfig()
                                                characterFacingAngle));
 }
 
-void IwatodaiStreetsView::setMusic()
+void IwatodaiStreetsView::setupMusic()
 {
     musicCtrl->init((fatBasePath + "music/locations/iwatodaiStreets/changing_seasons.pcm").c_str(), 31.0f, 177.587f);
 }
@@ -108,7 +108,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiStreetsView::setTextConfig()
+void IwatodaiStreetsView::setupText()
 {
     text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
     textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));

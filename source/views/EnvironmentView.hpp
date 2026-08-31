@@ -20,6 +20,9 @@
 #include "managers/RenderManager.hpp"
 #include "systems/CameraSystem.hpp"
 
+#include <etl/array.h>
+#include <etl/span.h>
+
 enum class ViewPhase
 {
     Battle,
@@ -70,23 +73,23 @@ class EnvironmentView : public BaseView
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 
-    virtual void setTextConfig() = 0;
+    virtual void setupText() = 0;
 
-    virtual void setMusic() = 0;
+    virtual void setupMusic() = 0;
 
     virtual void setupUI()
     {
     }
 
-    virtual void setMovementConfig()
+    virtual void setupMovement()
     {
     }
 
-    virtual void setDialogueConfig()
+    virtual void setupDialogue()
     {
     }
 
-    virtual void setCameraConfig()
+    virtual void setupCamera()
     {
     }
 
@@ -148,7 +151,6 @@ class EnvironmentView : public BaseView
     // ui
     DialogueScreen* dialogueScreen = nullptr;
     MenuHUDScreen* menuHUDScreen = nullptr;
-    // MenuBackgroundScreen* menuBackgroundScreen = nullptr;
 
     BattleMenuComponent* battleMenuCmpt = nullptr;
     PauseMenuComponent* pauseMenuCmpt = nullptr;
@@ -167,6 +169,9 @@ class EnvironmentView : public BaseView
     int FONT_SIZE = 12;
     // set in Init
     int lineSpacing = 0;
+
+    // dialogue
+    Dialogue* dialogueFirstLine = nullptr;
 
     RenderManager& render = RenderManager::GetInstance();
 

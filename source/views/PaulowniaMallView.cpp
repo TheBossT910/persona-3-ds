@@ -6,13 +6,13 @@ PaulowniaMallView::PaulowniaMallView()
 {
 }
 
-void PaulowniaMallView::setMusic()
+void PaulowniaMallView::setupMusic()
 {
     musicCtrl->init(
         (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
 }
 
-void PaulowniaMallView::setCameraConfig()
+void PaulowniaMallView::setupCamera()
 {
     camConfig.mode = CameraMode::Follow;
     camConfig.initialAngle = 1.5708f * 2;
@@ -23,7 +23,7 @@ void PaulowniaMallView::setCameraConfig()
     camConfig.isRotationLocked = true;
 }
 
-void PaulowniaMallView::setMovementConfig()
+void PaulowniaMallView::setupMovement()
 {
     movement->configureMovement(MovementConfig(PAULOWNIA_MALL_MAP_WIDTH,
                                                PAULOWNIA_MALL_MAP_HEIGHT,
@@ -65,7 +65,7 @@ ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void PaulowniaMallView::setTextConfig()
+void PaulowniaMallView::setupText()
 {
     text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
     textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));

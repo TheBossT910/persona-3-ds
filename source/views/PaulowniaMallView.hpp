@@ -21,12 +21,12 @@ class PaulowniaMallView : public EnvironmentView
     {
         return 0.3f;
     }
-    void setMovementConfig() override;
-    void setMusic() override;
+    void setupMovement() override;
+    void setupMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
-    void setTextConfig() override;
+    void setupText() override;
     void setupUI() override;
-    void setCameraConfig() override;
+    void setupCamera() override;
 
   private:
     // movement and camera

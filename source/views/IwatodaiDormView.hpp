@@ -12,12 +12,12 @@ class IwatodaiDormView : public EnvironmentView
     {
         return g_environmentDb[0];
     }
-    void setMovementConfig() override;
-    void setMusic() override;
+    void setupMovement() override;
+    void setupMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
-    void setDialogueConfig() override;
-    void setCameraConfig() override;
-    void setTextConfig() override;
+    void setupDialogue() override;
+    void setupCamera() override;
+    void setupText() override;
     void setupUI() override;
 
   private:

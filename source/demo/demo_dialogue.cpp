@@ -2,7 +2,7 @@
 
 // dialogue content
 Dialogue demo_dialogue_lines[29];
-void demo_dialogue_init()
+Dialogue* demo_dialogue_init()
 {
     DialogueSelection demo_dialogue_sel_6_0 = {"Vouch for Yukari", false, &demo_dialogue_lines[7]};
     DialogueSelection demo_dialogue_sel_6_1 = {"Side with Aigis", false, &demo_dialogue_lines[12]};
@@ -181,4 +181,7 @@ void demo_dialogue_init()
                                {}};
     demo_dialogue_lines[28] = {
         "Yukari", "I'm going to bed. Alone. On purpose.", BustYukari::spNeutral, &demo_dialogue_lines[27], NULL, {}};
+
+    // return the first dialogue line
+    return &demo_dialogue_lines[0];
 }

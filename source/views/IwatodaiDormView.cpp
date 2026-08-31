@@ -24,7 +24,7 @@ static CameraPath dormTestPath = {{
     {240, {-0.40f, 0.60f, 2.82f}, {0.4f, 0.1f, 2.80f}},
 }};
 
-void IwatodaiDormView::setCameraConfig()
+void IwatodaiDormView::setupCamera()
 {
     camConfig.mode = CameraMode::Path;
     camConfig.initialAngle = -1.6f;
@@ -36,12 +36,12 @@ void IwatodaiDormView::setCameraConfig()
     ae::BroadcastEvent(Event::SetCameraPath{&dormTestPath});
 }
 
-void IwatodaiDormView::setMusic()
+void IwatodaiDormView::setupMusic()
 {
     musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.300f, -1.000f);
 }
 
-void IwatodaiDormView::setMovementConfig()
+void IwatodaiDormView::setupMovement()
 {
     movement->configureMovement(MovementConfig(IWATODAI_DORM_FLOOR_1_MAP_WIDTH,
                                                IWATODAI_DORM_FLOOR_1_MAP_HEIGHT,
@@ -88,13 +88,13 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiDormView::setDialogueConfig()
+void IwatodaiDormView::setupDialogue()
 {
-    demo_dialogue_init(); // DEBUG
-    dialogue->configureDialogue(DialogueConfig(demo_dialogue_first(), textSub, textSubAlt, dialogueScreen));
+    dialogueFirstLine = demo_dialogue_init();
+    dialogue->configureDialogue(DialogueConfig(&demo_dialogue_spritePayloads, textSub, textSubAlt, dialogueScreen));
 }
 
-void IwatodaiDormView::setTextConfig()
+void IwatodaiDormView::setupText()
 {
     text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
     textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));

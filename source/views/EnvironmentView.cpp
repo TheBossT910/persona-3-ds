@@ -215,10 +215,10 @@ void EnvironmentView::init()
     bgUpdate();
 
     // setup MovementComponent on player entity (room-specific map/tuning, generic call site)
-    setMovementConfig();
+    setupMovement();
     movement->start();
 
-    setCameraConfig();
+    setupCamera();
     ae::BroadcastEvent(Event::ConfigureCamera(camConfig));
 
     // setup character model (identical across rooms)
@@ -237,7 +237,7 @@ void EnvironmentView::init()
     bgSetPriority(bgTextSub, 0);
 
     // config text/textSub
-    setTextConfig();
+    setupText();
 
     // setup environment geometry/textures (fully generic, data-driven)
     setupEnvironment();
@@ -252,14 +252,14 @@ void EnvironmentView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    // TODO: update logic
-    // setup dialogue rendering target (which sub-bg the dialogue box uses)
-    // demo_dialogue_bg_slot = bgSharedSub1;
-
+    // setup UIScreen, UIMenu
     setupUI();
 
+    // setup dialogue
+    setupDialogue();
+
     // setup music (room-specific path/loop points)
-    setMusic();
+    setupMusic();
 
     // setup view phases
     prevPauseState = false;
@@ -313,7 +313,7 @@ ViewState EnvironmentView::update()
 
             phase = ViewPhase::Environment;
 
-            setMusic();
+            setupMusic();
         }
 
         break;
@@ -368,8 +368,11 @@ ViewState EnvironmentView::update()
 
             movement->stop();
             ae::BroadcastEvent(Event::StopCamera{});
-            setDialogueConfig();
-            dialogue->start();
+
+            if (dialogueFirstLine != nullptr)
+            {
+                dialogue->start(dialogueFirstLine);
+            }
 
             prevDialogueState = true;
         }
@@ -541,6 +544,8 @@ void EnvironmentView::cleanup()
         movement = nullptr;
         dialogue = nullptr;
     }
+
+    dialogueFirstLine = nullptr;
 
     musicCtrl->cleanup();
     animationCtrl->unloadTextures();

@@ -66,9 +66,8 @@ ViewState PauseMenuComponent::updateHook()
     // dialogue should be started, but has not
     if (isDialogueStarted && !dialogue->IsActive())
     {
-        demo_dialogue_init();
-        dialogue->configureDialogue(DialogueConfig(demo_dialogue_first(), text));
-        dialogue->start();
+        dialogue->configureDialogue(DialogueConfig(text));
+        dialogue->start(demo_dialogue_init());
 
         isDialogueStarted = false;
         isDialoguePrevActive = false;

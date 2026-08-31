@@ -24,8 +24,7 @@ void DialogueComponent::Update(ae::fixed_t)
         {
             if (screen != nullptr)
             {
-                screen->loadBust(current->spritePayload);
-                screen->renderBust();
+                screen->renderBust(current->spritePayload);
             }
 
             renderBust = false;
@@ -149,11 +148,19 @@ void DialogueComponent::configureDialogue(const DialogueConfig& config)
     textAlt = config.textAlt;
     screen = config.screen;
     prevKeys = 0;
-    advanceTo(config.firstLine);
+
+    // load busts into memory
+    if (screen != nullptr)
+    {
+        screen->loadBusts(config.spritePayloads);
+    }
 }
 
-void DialogueComponent::start()
+void DialogueComponent::start(Dialogue* firstLine)
 {
+    // point to first line
+    advanceTo(firstLine);
+
     prevKeys = systemKeysHeld;
     isActive = true;
     renderBust = true;

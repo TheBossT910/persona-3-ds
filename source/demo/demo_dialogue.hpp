@@ -16,13 +16,9 @@
 extern Dialogue demo_dialogue_lines[29];
 
 // init() needs to be called to properly set the dialogue content
-void demo_dialogue_init();
+Dialogue* demo_dialogue_init();
 
 // DialogueSelection actions
-inline Dialogue* demo_dialogue_first()
-{
-    return &demo_dialogue_lines[0];
-}
 inline Dialogue* demo_dialogue_vouch()
 {
     return &demo_dialogue_lines[7];
@@ -223,3 +219,7 @@ inline SpritePayload bottomRightSp = {
 inline etl::array<SpritePayload, 6> spNeutral = {
     topLeftSp, topRightSp, middleRightSp, bottomLeftSp, bottomRightSp, middleLeftSp};
 } // namespace BustAigis
+
+// all unique SpritePayloads to be loaded
+inline etl::array<etl::span<SpritePayload>, 3> demo_dialogue_spritePayloads = {
+    BustYukari::spNeutral, BustAkihiko::spNeutral, BustAigis::spNeutral};
