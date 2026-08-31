@@ -1,4 +1,5 @@
 #include "BattleCalcs.hpp"
+#include <aegis/types.hpp>
 #include <fpm/math.hpp>
 
 u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
@@ -16,16 +17,19 @@ u32 BattleCalcs::hitrate(BattleParticipant& attacker, BattleParticipant& defende
     if (skill.hitRate == 100)
         return skill.hitRate;
 
-    float baseAccuracy = (float)(attackerStats.ag + 200) / (defenderStats.ag + 200);
+    ae::q20_12_t baseAccuracy =
+        MathManager::GetInstance().div(ae::q20_12_t{attackerStats.ag + 200}, ae::q20_12_t{defenderStats.ag + 200});
     u32 multipliedAccuracy;
     if (attacker.participantType == ParticipantType::Enemy)
     {
-        float shoeMultiplier = (float)(attackerStats.ag + 200) / (defender.shoe.evasion / 2.0f + 200);
-        multipliedAccuracy = baseAccuracy * skill.hitRate * shoeMultiplier;
+        ae::q20_12_t shoeMultiplier = MathManager::GetInstance().div(
+            ae::q20_12_t{attackerStats.ag + 200},
+            MathManager::GetInstance().div(ae::q20_12_t{defender.shoe.evasion}, ae::q20_12_t{2}) + ae::q20_12_t{200});
+        multipliedAccuracy = static_cast<u32>(baseAccuracy * ae::q20_12_t{skill.hitRate} * shoeMultiplier);
     }
     else
     {
-        multipliedAccuracy = (u32)(baseAccuracy * skill.hitRate);
+        multipliedAccuracy = static_cast<u32>(baseAccuracy * ae::q20_12_t{skill.hitRate});
     }
 
     return std::clamp(multipliedAccuracy, (u32)50, (u32)99);

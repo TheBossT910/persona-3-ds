@@ -1,7 +1,7 @@
 #pragma once
+#include "../managers/MathManager.hpp"
 #include "BattlePhase.hpp"
 #include "BattleStats.hpp"
-#include "MathManager.hpp"
 #include "ParticipantType.hpp"
 #include "armours/Armour.hpp"
 #include "events/BattleEvents.hpp"

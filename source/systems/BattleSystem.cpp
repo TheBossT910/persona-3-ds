@@ -1,7 +1,6 @@
 #include "BattleSystem.hpp"
+#include "../managers/MathManager.hpp"
 #include "./battleActions/skills/BattleCalcs.hpp"
-#include "./helpers/random.hpp"
-#include "MathManager.hpp"
 #include "core/globals.hpp"
 #include <cstdlib>
 #include <ctime>
@@ -11,7 +10,7 @@ void BattleSystem::on_receive(const Event::ExecuteBattle& msg)
     isActive = true;
 
     std::string path = fatBasePath + "music/battle/" + "mass_destruction.pcm";
-    musicCtrl->init(path.c_str(), 0.0f, -1.0f);
+    musicCtrl->init(path.c_str(), ae::q20_12_t{0}, ae::q20_12_t{-1});
 
     this->player = new Player(msg.player);
     battleParticipants.push_back(this->player);
@@ -56,7 +55,7 @@ void BattleSystem::Init()
     isActive = false;
 }
 
-void BattleSystem::Update(ae::fixed_t)
+void BattleSystem::Update(ae::q20_12_t)
 {
     switch (phase)
     {

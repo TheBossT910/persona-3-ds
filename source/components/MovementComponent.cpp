@@ -19,7 +19,7 @@ void MovementComponent::Destroy()
     isActive = false;
 }
 
-void MovementComponent::Update(ae::fixed_t)
+void MovementComponent::Update(ae::q20_12_t)
 {
     // TODO: don't broadcast on every update (waste cpu cycles). Set it once?
     ae::BroadcastEvent(Event::SetCharacterPosition{isCharacterAt()});

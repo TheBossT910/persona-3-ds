@@ -232,14 +232,14 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param sampleRate Samples per second.
      * @return The equivalent sample count.
      */
-    u32 MathManager::secondsToSamples(ae::q20_12_t seconds, u32 sampleRate);
+    u32 secondsToSamples(ae::q20_12_t seconds, u32 sampleRate);
 
     /**
      * @brief Returns a uniformly distributed random fraction from 0 to 1.
      *
      * @return A random value in Q20.12, from 0 to 1.
      */
-    ae::q20_12_t MathManager::randFrac();
+    ae::q20_12_t randFrac();
 
   private:
     friend class Singleton<MathManager>;

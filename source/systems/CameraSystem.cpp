@@ -76,9 +76,9 @@ void CameraSystem::Shutdown()
     isActive = false;
 }
 
-void CameraSystem::Update(ae::fixed_t)
+void CameraSystem::Update(ae::q20_12_t)
 {
-    camPos.up.y = ae::q20_12_t{0};
+    camPos.up.y = ae::q20_12_t{1};
 
     switch (mode)
     {

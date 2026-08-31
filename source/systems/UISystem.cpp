@@ -1,6 +1,7 @@
 #include "UISystem.hpp"
 #include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
+#include <aegis/types.hpp>
 
 void UISystem::Init()
 {
@@ -12,7 +13,7 @@ void UISystem::Init()
     musicCtrl->loadSFX(SFX_CANCEL);
 }
 
-void UISystem::Update(ae::fixed_t dt)
+void UISystem::Update(ae::q20_12_t dt)
 {
     for (UIMenu*& menu : menus)
     {

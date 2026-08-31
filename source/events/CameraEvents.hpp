@@ -14,7 +14,7 @@
 namespace Event
 {
 /**
- * @brief Output of @ref CameraSystem::Update(ae::fixed_t), consumed by gluLookAt().
+ * @brief Output of @ref CameraSystem::Update(ae::q20_12_t), consumed by gluLookAt().
  */
 struct CameraPosition : public etl::message<EventID::CameraPosition>
 {

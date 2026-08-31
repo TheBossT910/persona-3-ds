@@ -44,7 +44,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      *
      * @param dt Fixed-point delta time passed from the aegis engine loop (currently unused).
      */
-    void Update(ae::fixed_t /*dt*/) override;
+    void Update(ae::q20_12_t /*dt*/) override;
 
     /**
      * @brief ETL message handler to configure the camera settings.
@@ -144,13 +144,13 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
     /**
      * @brief Returns the camera position.
      *
-     * camPos gets updated in the CameraSystem:Update(ae::fixed_t) loop. This is a temporary
+     * camPos gets updated in the CameraSystem:Update(ae::q20_12_t) loop. This is a temporary
      * helper function that should get removed while certain parts of the
      * game still do not comply with aegis-engine.
      *
      * @todo In practice, code that needs to recieve the CameraPosition should capture
      * CameraPosition as a Event, which automatically gets broadcasted during the
-     * CameraSystem::Update(ae::fixed_t) loop.
+     * CameraSystem::Update(ae::q20_12_t) loop.
      *
      * @return The latest camera position.
      */

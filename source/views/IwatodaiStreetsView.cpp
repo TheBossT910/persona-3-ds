@@ -59,7 +59,9 @@ void IwatodaiStreetsView::setMovementConfig()
 
 void IwatodaiStreetsView::setMusic()
 {
-    musicCtrl->init((fatBasePath + "music/locations/iwatodaiStreets/changing_seasons.pcm").c_str(), 31.0f, 177.587f);
+    musicCtrl->init((fatBasePath + "music/locations/iwatodaiStreets/changing_seasons.pcm").c_str(),
+                    ae::q20_12_t{31},
+                    ae::q20_12_t{177.587});
 }
 
 ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
