@@ -29,26 +29,29 @@ MenuHUDScreen* MenuHUDScreen::getInstance()
     return instance;
 }
 
-// helper
 void MenuHUDScreen::loadBackground()
 {
-    if (bgLoaded)
-    {
-        return;
-    }
+    // load background into ram
+    bgHUD = graphics->loadGraphic(bgPath + "menuHUD/menuHUD");
+}
 
-    std::string bgPath = "graphics/MenuHUD/backgrounds/";
-    GraphicAsset bgHUD = graphics->loadGraphic(bgPath + "menuHUD/menuHUD");
-
-    dmaCopy(bgHUD.tiles, bgGetGfxPtr(bgId), bgHUD.tilesLen);
-    dmaCopy(bgHUD.map, bgGetMapPtr(bgId), bgHUD.mapLen);
-
+void MenuHUDScreen::renderBackground()
+{
+    // load palettes
     vramSetBankH(VRAM_H_LCD);
     dmaCopy(bgHUD.pal, &VRAM_H_EXT_PALETTE[bgId % 4][0], bgHUD.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
+    // draw background (copy into vram)
+    dmaCopy(bgHUD.tiles, bgGetGfxPtr(bgId), bgHUD.tilesLen);
+    dmaCopy(bgHUD.map, bgGetMapPtr(bgId), bgHUD.mapLen);
+}
+
+void MenuHUDScreen::unloadBackground()
+{
+    // unload background from ram
     graphics->unloadGraphic(bgHUD);
-    bgLoaded = true;
+    bgHUD = {};
 }
 
 void MenuHUDScreen::renderSprites()
@@ -82,7 +85,12 @@ void MenuHUDScreen::renderSprites()
     for (SpritePayload& sp : spritePayloads)
     {
         // use alias for easy referencing
+        Sprite& sprite = sp.srs.sprite;
+        GraphicAsset& graphic = sp.ga;
         SpriteRenderState& srs = sp.srs;
+
+        // copy sprite into vram
+        dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
 
         oamSet(oam,
                j++,
@@ -100,6 +108,9 @@ void MenuHUDScreen::renderSprites()
                srs.vflip,
                srs.mosaic);
     }
+
+    // draw background
+    renderBackground();
 }
 
 int MenuHUDScreen::onTouch(touchPosition* touch)
@@ -135,16 +146,12 @@ void MenuHUDScreen::load()
             // allocating space for sprite
             sprite.gfx = oamAllocateGfx(oam, sprite.size, sprite.format);
 
-            // load sprite
+            // load sprite into ram
             graphic = graphics->loadSpriteGraphic(sp.spritePath, sp.spriteType, sp.spriteVariant);
-
-            // copy sprite into memory
-            dmaCopy(graphic.tiles, sprite.gfx, graphic.tilesLen);
         }
     }
 
     // load background
-    bgLoaded = false;
     loadBackground();
 };
 
@@ -177,6 +184,9 @@ void MenuHUDScreen::unload()
             graphic = {};
         }
     }
+
+    // unload background
+    unloadBackground();
 
     if (menuHUD != nullptr)
     {

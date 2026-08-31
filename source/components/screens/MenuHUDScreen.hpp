@@ -22,14 +22,20 @@ class MenuHUDScreen : public UIScreen
     ~MenuHUDScreen() {};
     static MenuHUDScreen* instance;
 
-    bool bgLoaded;
     void loadBackground();
+    void renderBackground();
+    void unloadBackground();
 
     ae::Entity* menuHUD = nullptr;
     GraphicsComponent* graphics = nullptr;
 
+    // background
+    const std::string bgPath = "graphics/MenuHUD/backgrounds/";
+    GraphicAsset bgHUD = {};
+
     // ---
     // sprite setup
+    // TODO: make const!
     std::string spritePath = "graphics/MenuHUD/sprites/";
 
     // moon sprite
