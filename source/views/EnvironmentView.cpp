@@ -81,7 +81,7 @@ void EnvironmentView::setupEnvironment()
 
     const std::string basePath = fatBasePath + "environments/" + dbEntry->name + "/";
 
-    for (uint8_t i = 0; i < dbEntry->textureCount; ++i)
+    for (int i = 0; i < dbEntry->textureCount; ++i)
     {
         bitmapsEnv[i] = loadBitmap(basePath + gritBaseName(dbEntry->textures[i].name), envTextures[i]);
     }
@@ -92,7 +92,7 @@ void EnvironmentView::setupEnvironment()
             "EnvironmentView: failed to load environment " + std::string(dbEntry->name), 0, 0, TextColor::Red);
     }
 
-    for (uint8_t i = 0; i < dbEntry->textureCount; ++i)
+    for (int i = 0; i < dbEntry->textureCount; ++i)
     {
         graphics->unloadGraphic(envTextures[i]);
     }
@@ -338,14 +338,6 @@ ViewState EnvironmentView::update()
             ae::BroadcastEvent(Event::ShowMenu{pauseMenuCmpt});
         }
 
-        ViewState menuResult = ViewState::KEEP_CURRENT;
-
-        if (menuResult != ViewState::KEEP_CURRENT)
-        {
-            musicCtrl->pause();
-            return menuResult;
-        }
-
         if ((systemKeysDown & KEY_START) || pauseMenuCmpt->isClosed)
         {
             prevPauseState = false;
@@ -546,6 +538,13 @@ void EnvironmentView::cleanup()
         movement = nullptr;
         dialogue = nullptr;
     }
+
+    dialogueScreen = nullptr;
+    menuHUDScreen = nullptr;
+    battleMenuCmpt = nullptr;
+    pauseMenuCmpt = nullptr;
+
+    dbEntry = nullptr;
 
     dialogueFirstLine = nullptr;
 
