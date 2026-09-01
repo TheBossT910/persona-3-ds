@@ -89,7 +89,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
         }
         if (pressed & KEY_A)
         {
-            phase = ViewPhase::Battle;
+            phase = ViewPhase::BATTLE;
             prevEnvironmentState = false;
         }
 
@@ -110,13 +110,13 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
 
 void IwatodaiStreetsView::setupText()
 {
-    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &fontName, fontSize));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 }
 
 void IwatodaiStreetsView::setupUI()
 {
-    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 
     battleMenuCmpt = BattleMenuComponent::getInstance();
     pauseMenuCmpt = PauseMenuComponent::getInstance();

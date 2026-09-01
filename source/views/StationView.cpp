@@ -53,13 +53,13 @@ ViewState StationView::onTileCheck(TileType tile, u32 pressed)
 
 void StationView::setupText()
 {
-    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &fontName, fontSize));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 }
 
 void StationView::setupUI()
 {
-    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 
     pauseMenuCmpt = PauseMenuComponent::getInstance();
 

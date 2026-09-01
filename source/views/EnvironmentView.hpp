@@ -23,12 +23,15 @@
 #include <etl/array.h>
 #include <etl/span.h>
 
+#include <cstdint>
+#include <string>
+
 enum class ViewPhase
 {
-    Battle,
-    Pause,
-    Dialogue,
-    Environment
+    BATTLE,
+    PAUSE,
+    DIALOGUE,
+    ENVIRONMENT
 };
 
 class EnvironmentView : public BaseView
@@ -65,7 +68,8 @@ class EnvironmentView : public BaseView
     void cleanup() override;
 
   protected:
-    // Room-specific hooks
+    // -------------------------------------------------
+    // Room-specific hooks (implemented/overridden by derived rooms)
     virtual float getCameraYOffset() const
     {
         return 0.1f;
@@ -77,11 +81,9 @@ class EnvironmentView : public BaseView
 
     virtual void setupMusic() = 0;
 
-    virtual void setupUI()
-    {
-    }
+    virtual void setupMovement() = 0;
 
-    virtual void setupMovement()
+    virtual void setupUI()
     {
     }
 
@@ -89,6 +91,7 @@ class EnvironmentView : public BaseView
     {
     }
 
+    // TODO: enforce?
     virtual void setupCamera()
     {
     }
@@ -97,10 +100,10 @@ class EnvironmentView : public BaseView
     {
     }
 
-    virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
+    virtual ViewState onTileCheck(TileType tile, uint32_t pressed) = 0;
 
     // -------------------------------------------------
-    // Battle
+    // Battle hooks
     virtual void startBattle()
     {
     }
@@ -109,14 +112,15 @@ class EnvironmentView : public BaseView
     {
     }
 
+    // -------------------------------------------------
     // Shared state
     touchPosition touch;
 
-    int bgSharedSub1;
-    int bgSharedSub2;
-    int bgSharedSub3;
+    int8_t bgSharedSub1 = -1;
+    int8_t bgSharedSub2 = -1;
+    int8_t bgSharedSub3 = -1;
 
-    ViewPhase phase;
+    ViewPhase phase = ViewPhase::ENVIRONMENT;
 
     bool prevPauseState = false;
     bool prevDialogueState = false;
@@ -132,13 +136,14 @@ class EnvironmentView : public BaseView
     Event::ConfigureCamera camConfig;
 
     // -------------------------------------------------
-    // player
+    // Player
     MovementComponent* movement = nullptr;
     // TODO: move dialogue, text component to actual actors!
     // In this case, it would be the Akihiko billboard
     DialogueComponent* dialogue = nullptr;
 
-    // view
+    // -------------------------------------------------
+    // View / entity
     ae::Entity* environment = nullptr;
     GraphicsComponent* graphics = nullptr;
     TextComponent* text = nullptr;
@@ -148,7 +153,8 @@ class EnvironmentView : public BaseView
     AnimationController* animationCtrl = AnimationController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
-    // ui
+    // -------------------------------------------------
+    // UI
     DialogueScreen* dialogueScreen = nullptr;
     MenuHUDScreen* menuHUDScreen = nullptr;
 
@@ -158,30 +164,32 @@ class EnvironmentView : public BaseView
     std::array<int, 2> bgMain;
     std::array<int, 3> bgSub;
 
+    // -------------------------------------------------
     // Environment
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
 
-    // text
-    uint16_t* textVideoBuffer;
-    uint16_t* textVideoBufferSub;
-    std::string FONT_NAME = "cosmetica";
-    int FONT_SIZE = 12;
-    // set in Init
-    int lineSpacing = 0;
+    // -------------------------------------------------
+    // Text
+    uint16_t* textVideoBuffer = nullptr;
+    uint16_t* textVideoBufferSub = nullptr;
+    std::string fontName = "cosmetica";
+    uint8_t fontSize = 12;
+    // set in init()
+    uint8_t lineSpacing = 0;
 
-    // dialogue
+    // -------------------------------------------------
+    // Dialogue
     Dialogue* dialogueFirstLine = nullptr;
 
-    RenderManager& render = RenderManager::GetInstance();
-
   private:
-    // fog properties
-    int shift = 1;
+    // -------------------------------------------------
+    // Fog properties
+    uint8_t shift = 1;
     // how thick (translucent) the fog is
-    int mass = 1;
+    uint8_t mass = 1;
     // how far the fog is (0x0000 to 0x8000)
-    int depth = 0x6000;
+    uint16_t depth = 0x6000;
 
     /**
      * @brief Loads a single .grit asset and returns its raw tile pointer.

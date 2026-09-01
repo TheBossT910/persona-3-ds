@@ -74,7 +74,7 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
         if (pressed & KEY_A)
         {
             prevEnvironmentState = false;
-            phase = ViewPhase::Dialogue;
+            phase = ViewPhase::DIALOGUE;
         }
         break;
     default:
@@ -96,9 +96,9 @@ void IwatodaiDormView::setupDialogue()
 
 void IwatodaiDormView::setupText()
 {
-    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
-    textSubAlt->configureText(TextConfig(textVideoBufferSub, &FONT_NAME_ALT, FONT_SIZE_ALT));
+    text->configureText(TextConfig(textVideoBuffer, &fontName, fontSize));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
+    textSubAlt->configureText(TextConfig(textVideoBufferSub, &fontNameAlt, fontSizeAlt));
 }
 
 void IwatodaiDormView::setupUI()
