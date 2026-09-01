@@ -84,7 +84,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     {
         if (!promptDrawn)
         {
-            textSub->drawText("Battle Zone", 0, 0, TextColor::White);
+            textSub->drawText("\xFF\x02\x01 Battle Zone", 0, 0, TextColor::Black);
             promptDrawn = true;
         }
         if (pressed & KEY_A)
