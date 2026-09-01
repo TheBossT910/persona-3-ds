@@ -32,7 +32,7 @@ void IwatodaiStreetsView::setCameraConfig()
 {
     camConfig.mode = CameraMode::Follow;
     camConfig.initialAngle = ae::q20_12_t{1.5708 * 2};
-    camConfig.distance = ae::q20_12_t{0};
+    camConfig.distance = ae::q20_12_t{1};
     camConfig.height = height + ae::q20_12_t{0.6};
     camConfig.lookAhead = ae::q20_12_t{0.2};
     camConfig.angleIncrement = ae::q20_12_t{0.05};

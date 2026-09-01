@@ -60,11 +60,11 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @note Internally calls the depreciated float-based atan2.
      * float conversion happens at this boundary until atan2 itself is ported.
      *
-     * @param x X component.
-     * @param y Y component.
+     * @param y Y Point 2.
+     * @param x X Point 1.
      * @return The angle in radians, as Q20.12.
      */
-    ae::q20_12_t atan2(ae::q20_12_t x, ae::q20_12_t y);
+    ae::q20_12_t atan2(ae::q20_12_t y, ae::q20_12_t x);
 
     /**
      * @brief Divides two Q20.12 values.
@@ -114,7 +114,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param angle Cyclic angle (full turn = 1<<15).
      * @return The sine in Q4.12.
      */
-    ae::q4_12_t sinQ4_12(ae::angle16_t angle);
+    ae::q4_12_t sin(ae::angle16_t angle);
 
     /**
      * @brief Sine, accepting radians (Q20.12)
@@ -122,7 +122,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The sine in Q4.12.
      */
-    ae::q4_12_t sinQ4_12(ae::q20_12_t radians);
+    ae::q4_12_t sin(ae::q20_12_t radians);
 
     /**
      * @brief Cosine of a cyclic angle.
@@ -130,7 +130,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param angle Cyclic angle (full turn = 1<<15).
      * @return The cosine in Q4.12.
      */
-    ae::q4_12_t cosQ4_12(ae::angle16_t angle);
+    ae::q4_12_t cos(ae::angle16_t angle);
 
     /**
      * @brief Cosine, accepting radians (Q20.12)
@@ -138,23 +138,7 @@ class MathManager : public ae::Manager, public ae::Singleton<MathManager>
      * @param radians Angle in radians, as a Q20.12 fixed-point value.
      * @return The cosine in Q4.12.
      */
-    ae::q4_12_t cosQ4_12(ae::q20_12_t radians);
-
-    /**
-      * @brief Sine, accepting radians (Q20.12)
-      *
-      * @param radians Angle in radians, as a Q20.12 fixed-point value.
-      * @return The sine in Q20.12
-      */
-    ae::q20_12_t sinQ20_12(ae::q20_12_t radians);
-
-    /**
-     * @brief Cosine, accepting radians (Q20.12) .
-     *
-     * @param radians Angle in radians, as a Q20.12 fixed-point value.
-     * @return The cosine in Q20.12.
-     */
-    ae::q20_12_t cosQ20_12(ae::q20_12_t radians);
+    ae::q4_12_t cos(ae::q20_12_t radians);
 
     /**
      * @brief Tangent, accepting radians (Q20.12)

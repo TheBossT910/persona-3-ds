@@ -378,7 +378,7 @@ ViewState IntroView::update()
     if (frame % 4 == 0)
     {
         waveAngle += 50;
-        int angle = MathManager::GetInstance().sinQ4_12(static_cast<ae::angle16_t>(waveAngle)).raw_value();
+        int angle = MathManager::GetInstance().sin(static_cast<ae::angle16_t>(waveAngle)).raw_value();
         int rotationSpeed = baseSpeed + ((angle * fluctuation) >> 12);
         currentRotation += rotationSpeed;
         bgSetRotateScale(bg[3], currentRotation, 256, 256);

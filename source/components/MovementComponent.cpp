@@ -37,13 +37,13 @@ void MovementComponent::Update(ae::q20_12_t)
 
     ae::q20_12_t angleRad;
 
-    ae::q20_12_t sinAngle = MathManager::GetInstance().sinQ20_12(cameraAngle);
-    ae::q20_12_t cosAngle = MathManager::GetInstance().cosQ20_12(cameraAngle);
+    const ae::q20_12_t sinVal = ae::q20_12_t{MathManager::GetInstance().sin(cameraAngle)};
+    const ae::q20_12_t cosVal = ae::q20_12_t{MathManager::GetInstance().cos(cameraAngle)};
 
-    forwardX = -sinAngle * config.speed;
-    forwardZ = cosAngle * config.speed;
-    rightX = cosAngle * config.speed;
-    rightZ = sinAngle * config.speed;
+    forwardX = -sinVal * config.speed;
+    forwardZ = cosVal * config.speed;
+    rightX = cosVal * config.speed;
+    rightZ = sinVal * config.speed;
 
     if (systemKeysHeld & KEY_UP)
     {

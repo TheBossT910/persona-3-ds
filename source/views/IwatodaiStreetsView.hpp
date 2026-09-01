@@ -51,7 +51,7 @@ class IwatodaiStreetsView : public EnvironmentView
     const ae::q20_12_t speed{0.03};
 
     // character position
-    const Point2D<ae::q20_12_t> characterTranslate{ae::q20_12_t{0.60}, ae::q20_12_t{0.60}};
+    const Point2D<ae::q20_12_t> characterTranslate{ae::q20_12_t{0.6}, ae::q20_12_t{0.6}};
     const ae::q20_12_t height{0.05};
     const ae::q20_12_t characterFacingAngle{0};
 

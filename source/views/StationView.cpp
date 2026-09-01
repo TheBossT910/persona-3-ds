@@ -8,7 +8,7 @@ void StationView::setMusic()
 {
     musicCtrl->init((fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(),
                     ae::q20_12_t{2.002},
-                    ae::q20_12_t{73.93f});
+                    ae::q20_12_t{73.93});
 }
 
 void StationView::setCameraConfig()
