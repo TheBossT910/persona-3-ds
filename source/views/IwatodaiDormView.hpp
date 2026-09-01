@@ -4,7 +4,6 @@
 class IwatodaiDormView : public EnvironmentView
 {
   public:
-    // TODO: dont forget to clear in future
     IwatodaiDormView();
 
   protected:

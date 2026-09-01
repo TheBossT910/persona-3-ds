@@ -1,12 +1,11 @@
 #pragma once
-#include "components/menus/MainMenuComponent.hpp"
-#include "views/BaseView.hpp"
-
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
+#include "components/menus/MainMenuComponent.hpp"
 #include "controllers/MusicController.hpp"
 #include "managers/MathManager.hpp"
 #include "managers/RenderManager.hpp"
+#include "views/BaseView.hpp"
 
 class MainMenuView : public BaseView
 {

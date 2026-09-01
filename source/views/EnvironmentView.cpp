@@ -1,10 +1,10 @@
 #include "EnvironmentView.hpp"
 #include "core/globals.hpp"
-#include <nds.h>
-#include <string>
-
 #include "models/makoto.hpp"
 #include "systems/BattleSystem.hpp"
+
+#include <nds.h>
+#include <string>
 
 namespace
 {

@@ -2,14 +2,11 @@
 #include "core/globals.hpp"
 #include "events/UIEvents.hpp"
 #include "types/CameraTypes.hpp"
-// data
-#include "data/environmentDb.hpp"
-// maps
-#include "maps/iwatodai_dorm_floor_1.hpp"
-// dialogue
-#include "demo/demo_dialogue.hpp"
 
-// TODO: dont forget to clear in future
+#include "data/environmentDb.hpp"
+#include "demo/demo_dialogue.hpp"
+#include "maps/iwatodai_dorm_floor_1.hpp"
+
 IwatodaiDormView::IwatodaiDormView()
 {
 }
@@ -61,14 +58,21 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
     switch (tile)
     {
     case TileType::SCENE_1:
+    {
         return ViewState::PAULOWNIA_MALL;
+    }
+
     case TileType::SCENE_0:
+    {
         return ViewState::IWATODAI_STREETS;
+    }
+
     case TileType::C_AK:
+    {
         // start dialogue
         if (!promptDrawn)
         {
-            textSub->drawText("Talk", 0, 0, TextColor::White);
+            textSub->drawText("\xFF\x02\x01Talk", 0, 0, TextColor::Black);
             promptDrawn = true;
         }
         if (pressed & KEY_A)
@@ -77,13 +81,17 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
             phase = ViewPhase::DIALOGUE;
         }
         break;
+    }
+
     default:
+    {
         if (promptDrawn)
         {
             textSub->clearScreen();
             promptDrawn = false;
         }
         break;
+    }
     }
     return ViewState::KEEP_CURRENT;
 }

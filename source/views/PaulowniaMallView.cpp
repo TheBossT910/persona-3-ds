@@ -44,10 +44,16 @@ ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
     {
     // left
     case TileType::SCENE_0:
+    {
         return ViewState::IWATODAI_STREETS;
+    }
+
     // right
     case TileType::SCENE_1:
+    {
         return ViewState::IWATODAI_DORM;
+    }
+
     // middle
     case TileType::SCENE_2:
     case TileType::SCENE_3:
@@ -57,9 +63,13 @@ ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
     case TileType::SCENE_7:
     case TileType::SCENE_8:
     case TileType::SCENE_9:
+    {
         return ViewState::STATION;
+    }
     default:
+    {
         break;
+    }
     }
 
     return ViewState::KEEP_CURRENT;

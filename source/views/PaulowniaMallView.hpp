@@ -1,10 +1,7 @@
 #pragma once
-
 #include "views/EnvironmentView.hpp"
 
-// data
 #include "data/environmentDb.hpp"
-// maps
 #include "maps/paulownia_mall.hpp"
 
 class PaulowniaMallView : public EnvironmentView

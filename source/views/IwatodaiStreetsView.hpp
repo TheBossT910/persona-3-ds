@@ -1,12 +1,9 @@
 #pragma once
-
 #include "views/EnvironmentView.hpp"
 
-// data
 #include "data/environmentDb.hpp"
-// maps
 #include "maps/iwatodai_streets.hpp"
-// battle
+
 #include "battleActions/BattleParticipant.hpp"
 #include "battleActions/BattleStartCondition.hpp"
 #include "battleActions/enemies/Enemy.hpp"

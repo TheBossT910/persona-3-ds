@@ -43,9 +43,13 @@ ViewState StationView::onTileCheck(TileType tile, u32 pressed)
     switch (tile)
     {
     case TileType::SCENE_0:
+    {
         return ViewState::PAULOWNIA_MALL;
+    }
     default:
+    {
         break;
+    }
     }
 
     return ViewState::KEEP_CURRENT;

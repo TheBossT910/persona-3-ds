@@ -1,5 +1,6 @@
 #include "MainMenuView.hpp"
 #include "core/globals.hpp"
+
 #include <nds.h>
 #include <stdio.h>
 #include <string>

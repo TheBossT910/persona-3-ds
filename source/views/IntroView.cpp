@@ -1,12 +1,10 @@
 #include "IntroView.hpp"
 #include "core/globals.hpp"
+
+#include "soundbank.h"
 #include <maxmod9.h>
 #include <nds.h>
-#include <stdio.h>
 #include <string>
-
-// sfx
-#include "soundbank.h"
 
 void IntroView::init()
 {

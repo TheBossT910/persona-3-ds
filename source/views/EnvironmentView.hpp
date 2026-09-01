@@ -1,11 +1,13 @@
 #pragma once
-
 #include "views/BaseView.hpp"
 
 // environments/data
 #include "data/environmentDb.hpp"
 #include "environment/Environment.hpp"
 // components
+#include "components/DialogueComponent.hpp"
+#include "components/GraphicsComponent.hpp"
+#include "components/MovementComponent.hpp"
 #include "components/menus/BattleMenuComponent.hpp"
 #include "components/menus/PauseMenuComponent.hpp"
 #include "components/screens/DialogueScreen.hpp"
@@ -13,17 +15,14 @@
 // controllers
 #include "controllers/AnimationController.hpp"
 #include "controllers/MusicController.hpp"
-
-#include "components/DialogueComponent.hpp"
-#include "components/GraphicsComponent.hpp"
-#include "components/MovementComponent.hpp"
+// managers
 #include "managers/RenderManager.hpp"
+//systems
 #include "systems/CameraSystem.hpp"
 
+#include <cstdint>
 #include <etl/array.h>
 #include <etl/span.h>
-
-#include <cstdint>
 #include <string>
 
 enum class ViewPhase

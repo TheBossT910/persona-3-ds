@@ -1,10 +1,7 @@
 #pragma once
-
 #include "views/EnvironmentView.hpp"
 
-// data
 #include "data/environmentDb.hpp"
-// maps
 #include "maps/station.hpp"
 
 class StationView : public EnvironmentView

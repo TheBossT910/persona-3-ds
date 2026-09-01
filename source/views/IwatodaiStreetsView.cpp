@@ -27,9 +27,6 @@ void IwatodaiStreetsView::startBattle()
     ae::BroadcastEvent(msg);
 }
 
-// ----------------------------
-// Camera
-// ----------------------------
 void IwatodaiStreetsView::setupCamera()
 {
     camConfig.mode = CameraMode::Follow;
@@ -41,9 +38,6 @@ void IwatodaiStreetsView::setupCamera()
     camConfig.isRotationLocked = true;
 }
 
-// ----------------------------
-// Player controller
-// ----------------------------
 void IwatodaiStreetsView::setupMovement()
 {
     movement->configureMovement(MovementConfig(IWATODAI_STREETS_MAP_WIDTH,
@@ -69,22 +63,28 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     switch (tile)
     {
     case TileType::SCENE_0:
+    {
         musicCtrl->pause();
         return ViewState::IWATODAI_DORM;
+    }
 
     case TileType::SCENE_1:
+    {
         musicCtrl->pause();
         return ViewState::PAULOWNIA_MALL;
+    }
 
     case TileType::SCENE_2:
+    {
         musicCtrl->pause();
         return ViewState::STATION;
+    }
 
     case TileType::SHD_W:
     {
         if (!promptDrawn)
         {
-            textSub->drawText("Battle Zone", 0, 0, TextColor::White);
+            textSub->drawText("\xFF\x02\x01 Battle Zone", 0, 0, TextColor::Black);
             promptDrawn = true;
         }
         if (pressed & KEY_A)
@@ -97,12 +97,14 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     }
 
     default:
+    {
         if (promptDrawn)
         {
             textSub->clearScreen();
             promptDrawn = false;
         }
         break;
+    }
     }
 
     return ViewState::KEEP_CURRENT;

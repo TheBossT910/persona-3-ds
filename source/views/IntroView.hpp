@@ -1,13 +1,12 @@
 #pragma once
-#include "controllers/MusicController.hpp"
-#include "core/globals.hpp"
-#include "views/BaseView.hpp"
-#include <etl/array.h>
-
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
+#include "controllers/MusicController.hpp"
 #include "managers/MathManager.hpp"
 #include "managers/RenderManager.hpp"
+#include "views/BaseView.hpp"
+
+#include <etl/array.h>
 
 class IntroView : public BaseView
 {
