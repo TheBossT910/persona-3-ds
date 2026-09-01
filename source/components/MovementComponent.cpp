@@ -117,8 +117,8 @@ void MovementComponent::Update(ae::q20_12_t)
 
     if (deltaX != ae::q20_12_t{0} || deltaZ != ae::q20_12_t{0})
     {
-        angleRad = MathManager::GetInstance().atan2(deltaZ, deltaX);
-        config.characterFacingAngle = angleRad * MathManager::GetInstance().div(ae::q20_12_t{180} / ae::q20_12_t{M_PI});
+        angleRad = MathManager::GetInstance().atan2(deltaX, deltaZ);
+        config.characterFacingAngle = angleRad * (ae::q20_12_t{180} / ae::q20_12_t{3.14159265});
     }
 }
 

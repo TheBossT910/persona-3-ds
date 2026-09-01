@@ -432,7 +432,7 @@ ViewState EnvironmentView::update()
         glPushMatrix();
 
         glTranslatef32(charPos.x.raw_value(), charPos.y.raw_value(), charPos.z.raw_value());
-        glRotatef(charPos.facingAngle.raw_value(), 0.0f, 1.0f, 0.0f);
+        glRotatef(static_cast<float>(charPos.facingAngle), 0.0f, 1.0f, 0.0f);
         glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
         animationCtrl->render();
         glPopMatrix(1);
