@@ -193,20 +193,39 @@ endif()
 p3d_group_enabled(graphics P3D_RUN_GRAPHICS)
 
 if(P3D_RUN_GRAPHICS)
-    # Graphics PNG -> data/**/*.img.bin/.map.bin/.pal.bin using grit
-    file(GLOB_RECURSE FAT_PNG_FILES
-        "${ASSETS_DIR}/graphics/*.png"
-        "${ASSETS_DIR}/environments/*.png"
-        "${ASSETS_DIR}/models/*.png"
-    )
+    # UI graphics PNG -> data/graphics/**/<name>/<name>.img.bin/.map.bin/.pal.bin using grit.
+    # Nested self-named folder matches every UI view's loadGraphic(path + "name/name") call.
+    file(GLOB_RECURSE UI_PNG_FILES "${ASSETS_DIR}/graphics/*.png")
 
-    foreach(png IN LISTS FAT_PNG_FILES)
+    foreach(png IN LISTS UI_PNG_FILES)
         file(RELATIVE_PATH rel "${ASSETS_DIR}" "${png}")
         get_filename_component(rel_dir "${rel}" DIRECTORY)
         get_filename_component(stem "${png}" NAME_WE)
 
-        set(out_base "${DATA_DIR}/${rel_dir}/${stem}")
-        file(MAKE_DIRECTORY "${DATA_DIR}/${rel_dir}")
+        set(out_dir "${DATA_DIR}/${rel_dir}/${stem}")
+        set(out_base "${out_dir}/${stem}")
+        file(MAKE_DIRECTORY "${out_dir}")
+
+        p3d_run(
+            WORKING_DIRECTORY "${P3D_SOURCE_DIR}"
+            COMMAND "${P3D_GRIT_EXECUTABLE}" "${png}" -ftb -fh! -o "${out_base}"
+        )
+    endforeach()
+
+    # Environment/model texture paths resolve through IOManager's self-named fallback.
+    file(GLOB_RECURSE ENV_MODEL_PNG_FILES
+        "${ASSETS_DIR}/environments/*.png"
+        "${ASSETS_DIR}/models/*.png"
+    )
+
+    foreach(png IN LISTS ENV_MODEL_PNG_FILES)
+        file(RELATIVE_PATH rel "${ASSETS_DIR}" "${png}")
+        get_filename_component(rel_dir "${rel}" DIRECTORY)
+        get_filename_component(stem "${png}" NAME_WE)
+
+        set(out_dir "${DATA_DIR}/${rel_dir}/${stem}")
+        set(out_base "${out_dir}/${stem}")
+        file(MAKE_DIRECTORY "${out_dir}")
 
         p3d_run(
             WORKING_DIRECTORY "${P3D_SOURCE_DIR}"
