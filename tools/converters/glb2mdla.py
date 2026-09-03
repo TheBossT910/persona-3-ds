@@ -1,5 +1,4 @@
 import sys
-import struct
 import re
 
 import numpy as np
@@ -9,14 +8,12 @@ from glb_utils import (
     get_prop,
     read_accessor_data,
     float_to_v16,
-    float_to_s16,
-    quat_float_to_s16,
     build_nds_display_list,
     construct_texture_table,
     apply_texture_transform,
+    write_mdl_file,
 )
 
-MAGIC = b"MDLA"
 FRAME_RATE = 30.0
 
 # Mesh Functions
@@ -371,104 +368,6 @@ def parse_animations(gltf, node_count):
     return animations
 
 
-def write_mdla_file(output_path, nodes, textures, animations):
-    """Write extracted data to binary MDLA file.
-
-    Args:
-        output_path (str): Path to the output MDLA file.
-        nodes (list): List of node dictionaries containing position and sublist data.
-        textures (list): List of texture dictionaries containing name, width, height, and RGBA flag.
-        animations (list): List of animation dictionaries containing name, number of frames, fps, and tracks.
-    """
-    with open(output_path, "wb") as f:
-        # Header: 'MDLA' | u32 nodeCount | u32 animCount | u32 texCount
-        f.write(
-            struct.pack("<4sIII", MAGIC, len(nodes), len(animations), len(textures))
-        )
-
-        # Tex Table
-        for tex in textures:
-            f.write(
-                struct.pack(
-                    "<64sHHB3s",
-                    tex["name"].encode("ascii"),
-                    tex["w"],
-                    tex["h"],
-                    tex["isRGBA"],
-                    b"\0\0\0",
-                )
-            )
-
-        # Nodes
-        for node in nodes:
-            f.write(
-                struct.pack(
-                    "<iiiiI",
-                    node["pid"],
-                    node["px"],
-                    node["py"],
-                    node["pz"],
-                    node["subListCount"],
-                )
-            )
-            for sub_list in node["subLists"]:
-                f.write(struct.pack("<iI", sub_list["texSlot"], sub_list["dlSize"]))
-                for word in sub_list["dlWords"]:
-                    f.write(struct.pack("<I", word))
-
-        # Animations
-        for anim in animations:
-            # 1. Anim Header: 32-byte name | u32 num_frames | float fps
-            name_bytes = anim["name"].encode("ascii")[:31].ljust(32, b"\0")
-            f.write(
-                struct.pack(
-                    "<32sIh", name_bytes, anim["num_frames"], float_to_s16(anim["fps"])
-                )
-            )
-
-            # 2. Track Count: u32 trackCount
-            tracks = anim["tracks"]
-            f.write(struct.pack("<I", len(tracks)))
-
-            # 3. Individual Tracks
-            for track in tracks:
-                # Node Index
-                f.write(struct.pack("<i", track["nodeIndex"]))
-                f.write(struct.pack("<I", len(track["t"])))
-
-                # Translation Keys: u32 count -> s16 time, s32 x, s32 y, s32 z
-                for k in track["t"]:
-                    val = k["val"]
-                    f.write(
-                        struct.pack(
-                            "<hiii",
-                            float_to_s16(k["time"]),
-                            int(val[0] * 0.25),
-                            int(val[1] * 0.25),
-                            int(val[2] * 0.25),
-                        )
-                    )
-
-                # Rotation Keys: u32 count -> s16 time, s16 x, s16 y, s16 z, s16 w
-                f.write(struct.pack("<I", len(track["r"])))
-                for k in track["r"]:
-                    val = k["val"]
-                    f.write(
-                        struct.pack(
-                            "<hhhhh",
-                            float_to_s16(k["time"]),
-                            quat_float_to_s16(val[0]),
-                            quat_float_to_s16(val[1]),
-                            quat_float_to_s16(val[2]),
-                            quat_float_to_s16(val[3]),
-                        )
-                    )
-
-        print(
-            f"Outputted '{output_path}' ({len(nodes)} nodes, {len(textures)} textures, {len(animations)} animations)."
-        )
-
-
 def convert_glb_to_mdla(glb_path: str, output_path: str):
     """Converts a GLB file to a custom MDLA format.
 
@@ -493,7 +392,7 @@ def convert_glb_to_mdla(glb_path: str, output_path: str):
     # Animations
     animations = parse_animations(gltf, len(nodes))
 
-    write_mdla_file(output_path, nodes, textures, animations)
+    write_mdl_file(output_path, nodes, textures, animations)
 
 
 if __name__ == "__main__":

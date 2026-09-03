@@ -1,5 +1,4 @@
 import sys
-import struct
 
 import pygltflib
 import numpy as np
@@ -10,6 +9,7 @@ from glb_utils import (
     build_nds_display_list,
     apply_texture_transform,
     construct_texture_table,
+    write_mdl_file,
 )
 
 MAGIC = b"MDLS"
@@ -249,62 +249,19 @@ def parse_mesh(gltf, textures):
 
         dl_words = build_nds_display_list(triangles, tex_w, tex_h)
         sub_lists.append(
-            {"tex_slot": tex_slot, "dlSize": len(dl_words), "dl_words": dl_words}
+            {"texSlot": tex_slot, "dlSize": len(dl_words), "dlWords": dl_words}
         )
 
-    return [{"pid": -1, "px": 0, "py": 0, "pz": 0, "sub_lists": sub_lists}]
-
-
-def write_mdls_file(output_path, nodes, textures):
-    """Write extracted data to binary MDLS file.
-
-    Args:
-        output_path (str): Path to the output MDLS file.
-        nodes (list): List of node dictionaries containing position and sublist data.
-        textures (list): List of texture dictionaries containing name, width, height, and RGBA flag.
-    """
-    with open(output_path, "wb") as f:
-        # Header: 'MDLS' | u32 nodeCount | u32 texCount
-        f.write(struct.pack("<4sIII", MAGIC, len(nodes), 0, len(textures)))
-
-        # Tex Table
-        for tex in textures:
-            f.write(
-                struct.pack(
-                    "<64sHHB3s",
-                    tex["name"].encode("ascii"),
-                    tex["w"],
-                    tex["h"],
-                    tex["isRGBA"],
-                    b"\0\0\0",
-                )
-            )
-
-        # Nodes
-        for node in nodes:
-            sub_lists = node.get("sub_lists", [])
-            sub_list_count = len(sub_lists)
-
-            # Node Header: s32 pid, s32 px, 32 py, s32 pz, u32 subListCount
-            f.write(
-                struct.pack(
-                    "<iiiiI",
-                    node["pid"],
-                    node["px"],
-                    node["py"],
-                    node["pz"],
-                    sub_list_count,
-                )
-            )
-
-            for sl in sub_lists:
-                dl_words = sl.get("dl_words", [])
-                f.write(struct.pack("<iI", sl["tex_slot"], len(dl_words)))
-                if dl_words:
-                    f.write(struct.pack(f"<{len(dl_words)}I", *dl_words))
-        print(
-            f"Outputted '{output_path}' ({len(nodes)} nodes, {len(textures)} textures)."
-        )
+    return [
+        {
+            "pid": -1,
+            "px": 0,
+            "py": 0,
+            "pz": 0,
+            "subListCount": len(sub_lists),
+            "subLists": sub_lists,
+        }
+    ]
 
 
 def convert_glb_to_mdls(input_glb, output_path):
@@ -323,7 +280,7 @@ def convert_glb_to_mdls(input_glb, output_path):
     nodes = parse_mesh(gltf, textures)
 
     # Write to the MDLS file
-    write_mdls_file(output_path, nodes, textures)
+    write_mdl_file(output_path, nodes, textures)
 
 
 if __name__ == "__main__":

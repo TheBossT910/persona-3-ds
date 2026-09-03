@@ -1,4 +1,5 @@
 import os
+import struct
 import tempfile
 import subprocess
 
@@ -6,6 +7,7 @@ import numpy as np
 from PIL import Image
 
 MAX_16_BIT_INT = 32767
+MAGIC = b"MDL3"
 
 # NDS GPU Commands
 FIFO_BEGIN = 0x40
@@ -362,3 +364,105 @@ def construct_texture_table(gltf, output_path):
             tex_info = process_texture_img(gltf, index, tmp_dir, output_dir)
             textures.append(tex_info)
     return textures
+
+
+def write_mdl_file(output_path, nodes, textures, animations=[]):
+    """Write extracted data to binary MDL3 file.
+
+    Args:
+        output_path (str): Path to the output MDL3 file.
+        nodes (list): List of node dictionaries containing position and sublist data.
+        textures (list): List of texture dictionaries containing name, width, height, and RGBA flag.
+        animations (list): List of animation dictionaries containing name, number of frames, fps, and tracks.
+    """
+    with open(output_path, "wb") as f:
+        # Header: 'MDL3' | u32 nodeCount | u32 animCount | u32 texCount
+        f.write(
+            struct.pack("<4sIII", MAGIC, len(nodes), len(animations), len(textures))
+        )
+
+        # Tex Table
+        for tex in textures:
+            f.write(
+                struct.pack(
+                    "<64sHHB3s",
+                    tex["name"].encode("ascii"),
+                    tex["w"],
+                    tex["h"],
+                    tex["isRGBA"],
+                    b"\0\0\0",
+                )
+            )
+
+        for node in nodes:
+            # Node Header: s32 pid, s32 px, 32 py, s32 pz, u32 subListCount
+            f.write(
+                struct.pack(
+                    "<iiiiI",
+                    node["pid"],
+                    node["px"],
+                    node["py"],
+                    node["pz"],
+                    node["subListCount"],
+                )
+            )
+            for sub_list in node["subLists"]:
+                f.write(struct.pack("<iI", sub_list["texSlot"], sub_list["dlSize"]))
+                for word in sub_list["dlWords"]:
+                    f.write(struct.pack("<I", word))
+
+        if animations != [] and animations is not None and len(animations) > 0:
+            # Animations
+            for anim in animations:
+                # 1. Anim Header: 32-byte name | u32 num_frames | s16 fps
+                name_bytes = anim["name"].encode("ascii")[:31].ljust(32, b"\0")
+                f.write(
+                    struct.pack(
+                        "<32sIh",
+                        name_bytes,
+                        anim["num_frames"],
+                        float_to_s16(anim["fps"]),
+                    )
+                )
+
+                # 2. Track Count: u32 trackCount
+                tracks = anim["tracks"]
+                f.write(struct.pack("<I", len(tracks)))
+
+                # 3. Individual Tracks
+                for track in tracks:
+                    # Node Index
+                    f.write(struct.pack("<i", track["nodeIndex"]))
+                    f.write(struct.pack("<I", len(track["t"])))
+
+                    # Translation Keys: u32 count -> s16 time, s32 x, s32 y, s32 z
+                    for k in track["t"]:
+                        val = k["val"]
+                        f.write(
+                            struct.pack(
+                                "<hiii",
+                                float_to_s16(k["time"]),
+                                int(val[0] * 0.25),
+                                int(val[1] * 0.25),
+                                int(val[2] * 0.25),
+                            )
+                        )
+
+                    # Rotation Keys: u32 count -> s16 time, s16 x, s16 y, s16 z, s16 w
+                    f.write(struct.pack("<I", len(track["r"])))
+                    for k in track["r"]:
+                        val = k["val"]
+                        f.write(
+                            struct.pack(
+                                "<hhhhh",
+                                float_to_s16(k["time"]),
+                                quat_float_to_s16(val[0]),
+                                quat_float_to_s16(val[1]),
+                                quat_float_to_s16(val[2]),
+                                quat_float_to_s16(val[3]),
+                            )
+                        )
+
+        print(
+            f"Outputted '{output_path}' ({len(nodes)} nodes, {len(textures)} textures, {len(animations)} animations)."
+        )
