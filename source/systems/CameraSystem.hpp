@@ -10,16 +10,14 @@
 
 #pragma once
 
-#include "core/enums.hpp"
+#include "core/geometry.hpp"
 #include "core/routerIDs.hpp"
 #include "events/CameraEvents.hpp"
 #include "events/GenericEvents.hpp"
 #include "managers/MathManager.hpp"
-#include <aegis/system.hpp>
+#include "types/CameraTypes.hpp"
 
-#include "core/enums.hpp"
-#include "core/geometry.hpp"
-#include "core/structs.hpp"
+#include <aegis/system.hpp>
 #include <etl/vector.h>
 
 // !Todo replace floats with fixed point math for camera position and target position.
@@ -50,7 +48,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      * @brief ETL message handler to configure the camera settings.
      *
      * @details Resets all tuning parameters and mode from @p config.
-     * Call this after setCameraConfig() sets up the room-specific
+     * Call this after setupCamera() sets up the room-specific
      * @ref CameraConfig.
      *
      * Required to call in order to enable the CameraSystem

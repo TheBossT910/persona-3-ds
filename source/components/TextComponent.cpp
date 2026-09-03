@@ -28,6 +28,8 @@ void TextComponent::Destroy()
 {
     isActive = false;
     appearTextStop();
+    tm.unloadFont(font);
+    font = nullptr;
 }
 
 void TextComponent::configureText(const TextConfig& config, bool loadDefaultPalette)
@@ -110,6 +112,11 @@ void TextComponent::clearScreen()
 int TextComponent::getFontSize()
 {
     return fontSize;
+}
+
+int TextComponent::getLineSpacing()
+{
+    return ts.LINE_SPACING;
 }
 
 void TextComponent::testBitmap()

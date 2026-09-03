@@ -1,10 +1,7 @@
 #pragma once
-
 #include "views/EnvironmentView.hpp"
 
-// data
 #include "data/environmentDb.hpp"
-// maps
 #include "maps/station.hpp"
 
 class StationView : public EnvironmentView
@@ -17,12 +14,12 @@ class StationView : public EnvironmentView
     {
         return g_environmentDb[3];
     }
-    void setMovementConfig() override;
-    void setMusic() override;
+    void setupMovement() override;
+    void setupMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
-    void setTextConfig() override;
+    void setupText() override;
     void setupUI() override;
-    void setCameraConfig() override;
+    void setupCamera() override;
 
   private:
     // movement and camera

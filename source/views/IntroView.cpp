@@ -1,12 +1,10 @@
 #include "IntroView.hpp"
 #include "core/globals.hpp"
+
+#include "soundbank.h"
 #include <maxmod9.h>
 #include <nds.h>
-#include <stdio.h>
 #include <string>
-
-// sfx
-#include "soundbank.h"
 
 void IntroView::init()
 {
@@ -126,8 +124,8 @@ void IntroView::init()
     bgSetScroll(bg[3], 256, 256); // pivot point on the image (at the image's center)
 
     // showing logo as sprite
-    logoSprite[0] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, -25, 100};
-    logoSprite[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 39, 100};
+    logoSprite[0] = {SpriteSize_64x64, SpriteColorFormat_256Color, 15};
+    logoSprite[1] = {SpriteSize_64x64, SpriteColorFormat_256Color, 15};
 
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
     oamInit(&oamMain, SpriteMapping_1D_128, false);
@@ -136,15 +134,12 @@ void IntroView::init()
     logoSprite[0].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
     logoSprite[1].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
 
-    if (logoLeft.tiles)
-        dmaCopy(logoLeft.tiles, logoSprite[0].gfx, logoLeft.tilesLen);
-    if (logoRight.tiles)
-        dmaCopy(logoRight.tiles, logoSprite[1].gfx, logoRight.tilesLen);
+    dmaCopy(logoLeft.tiles, logoSprite[0].gfx, logoLeft.tilesLen);
+    dmaCopy(logoRight.tiles, logoSprite[1].gfx, logoRight.tilesLen);
 
     // NOTE: left and right will use the same palette. Just ensure that the order of colours when indexed
     // is THE SAME for both images!
-    if (logoRight.pal)
-        dmaCopy(logoRight.pal, SPRITE_PALETTE, logoRight.palLen);
+    dmaCopy(logoRight.pal, SPRITE_PALETTE, logoRight.palLen);
 
     // for slide in animation
     // move camera to the empty right half of the 512px wide background
@@ -273,8 +268,6 @@ ViewState IntroView::update()
 
     if (animateText)
     {
-        text->drawText("Press Any Button", 80, 88, TextColor::White);
-
         durationCounter++;
 
         if (durationCounter >= duration)
@@ -302,27 +295,26 @@ ViewState IntroView::update()
     if (!displayLogo)
     {
         displayLogo = true;
-
-        for (int i = 0; i < 2; i++)
+        int spriteId = 0;
+        for (SpriteRenderState& srs : spriteRenderStates)
         {
-            oamSet(&oamMain, // main display (OamState)
-                   i,        // oam entry to set (id)
-                   logoSprite[i].x,
-                   logoSprite[i].y,            // position
-                   0,                          // priority
-                   logoSprite[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-                   logoSprite[i].size,
-                   logoSprite[i].format,
-                   logoSprite[i].gfx,
-                   logoSprite[i].rotationIndex,
-                   true,  // double the size of rotated sprites
-                   false, // don't hide the sprite
-                   false,
-                   false, // vflip, hflip
-                   false  // apply mosaic
-            );
+            oamSet(&oamMain,
+                   spriteId++,
+                   srs.x,
+                   srs.y,
+                   srs.priority,
+                   srs.sprite.paletteAlpha,
+                   srs.sprite.size,
+                   srs.sprite.format,
+                   srs.sprite.gfx,
+                   srs.affineIndex,
+                   srs.sizeDouble,
+                   srs.hide,
+                   srs.hflip,
+                   srs.vflip,
+                   srs.mosaic);
 
-            oamMain.oamMemory[i].attribute[0] |= ATTR0_TYPE_BLENDED;
+            oamMain.oamMemory[spriteId].attribute[0] |= ATTR0_TYPE_BLENDED;
         }
 
         // setup fade for main screen sprites
@@ -356,6 +348,7 @@ ViewState IntroView::update()
         animateText = true;
         REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG3 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
         REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
+        text->drawText("\xFF\x02\x01Press Any Button", 45, 80, TextColor::White);
     }
 
     // setup blending for overlay
@@ -390,15 +383,8 @@ ViewState IntroView::update()
 
 void IntroView::cleanup()
 {
-    if (graphics != nullptr)
-    {
-        graphics->unloadAll();
-    }
-
     if (intro != nullptr)
     {
-        intro->RemoveComponent<GraphicsComponent>();
-        intro->RemoveComponent<TextComponent>();
         engine.DestroyEntity(intro);
 
         intro = nullptr;
@@ -407,17 +393,19 @@ void IntroView::cleanup()
     }
 
     musicCtrl->cleanup();
-    BaseView::cleanup();
 
     // clear all sprites from oam
     oamClear(&oamMain, 0, 0);
 
     // free allocated sprite vram
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 2; ++i)
     {
-        if (logoSprite[i].gfx != NULL)
+        if (logoSprite[i].gfx != nullptr)
         {
             oamFreeGfx(&oamMain, logoSprite[i].gfx);
+            logoSprite[i].gfx = nullptr;
         }
     }
+
+    BaseView::cleanup();
 }

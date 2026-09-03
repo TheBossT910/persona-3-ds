@@ -7,7 +7,7 @@
 #pragma once
 
 #include "core/routerIDs.hpp"
-#include "core/structs.hpp"
+#include "types/TextTypes.hpp"
 #include <aegis/system.hpp>
 
 class TextSystem : public ae::System, public ae::Singleton<TextSystem>

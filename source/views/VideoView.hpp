@@ -1,7 +1,6 @@
 #pragma once
 #include "controllers/MusicController.hpp"
 #include "controllers/VideoController.hpp"
-#include "core/globals.hpp"
 #include "views/BaseView.hpp"
 
 class VideoView : public BaseView

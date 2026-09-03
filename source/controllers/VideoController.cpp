@@ -35,6 +35,24 @@ VideoController* VideoController::getInstance()
 
 void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState iNextState)
 {
+    // Make repeated initialization safe.
+    if (ramBuffer != nullptr)
+    {
+        free(ramBuffer);
+        ramBuffer = nullptr;
+    }
+    if (videoFile != nullptr)
+    {
+        fclose(videoFile);
+        videoFile = nullptr;
+    }
+
+    fileEOF = false;
+    framesAvailable = 0;
+    readIndex = 0;
+    writeIndex = 0;
+    currentFrame = 0;
+
     nextState = iNextState;
     fps = iFps; // default fallback if no header exists
     fileEOF = false;
@@ -45,7 +63,6 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
     writeIndex = 0;
     framesAvailable = 0;
     currentFrame = 0;
-    ramBuffer = nullptr;
 
     videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
     videoSetModeSub(MODE_0_2D);
@@ -62,14 +79,16 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
         consoleDemoInit();
         printf("ERR: %s", videoPath.c_str());
         while (1)
+        {
             swiWaitForVBlank();
+        }
     }
 
-    // dynamic header reading
+    // Read the optional dynamic video header.
     u8 header[16];
     size_t hRead = fread(header, 1, 16, videoFile);
 
-    // validate if the new magic "VID\0" Header is present
+    // Use the header when present.
     if (hRead == 16 && memcmp(header, "VID\0", 4) == 0)
     {
         // bit-shifts safeguard against unaligned memory access crashes on the ARM9
@@ -80,7 +99,7 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
     }
     else
     {
-        // fallback for older files without header (Assuming 16-bit, 256x192)
+        // Support legacy raw 16-bit 256x192 video files.
         fseek(videoFile, 0, SEEK_SET);
         bpp = 2;
         frameW = 256;
@@ -90,7 +109,7 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
     frameSize = frameW * frameH * bpp;
     bufferSize = frameSize * FRAMES_TO_BUFFER;
 
-    // configure DS backgrounds dynamically depending on parsed BPP
+    // Select the background format from the parsed bit depth.
     if (bpp == 1)
     {
         bg = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
@@ -102,7 +121,9 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
             consoleDemoInit();
             printf("ERR: palette read failed");
             while (1)
+            {
                 swiWaitForVBlank();
+            }
         }
 
         for (int i = 0; i < 256; i++)
@@ -116,7 +137,7 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
         bg = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
     }
 
-    // clear memory
+    // Clear the first frame target before playback.
     dmaFillWords(0, bgGetGfxPtr(bg), frameSize);
 
     ramBuffer = (u8*)memalign(32, bufferSize);
@@ -125,7 +146,9 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
         consoleDemoInit();
         printf("ERR: malloc failed");
         while (1)
+        {
             swiWaitForVBlank();
+        }
     }
 
     refillBuffer();
@@ -135,7 +158,9 @@ void VideoController::init(std::string iFileName, ae::q20_12_t iFps, ViewState i
 void VideoController::refillBuffer()
 {
     if (fileEOF || framesAvailable >= FRAMES_TO_BUFFER)
+    {
         return;
+    }
 
     u32 audioSize = 0;
 
@@ -150,10 +175,21 @@ void VideoController::refillBuffer()
     if (audioSize > 0)
     {
         u32 safeSize = (audioSize > sizeof(audioBuf)) ? sizeof(audioBuf) : audioSize;
-        fread(audioBuf, 1, safeSize, videoFile);
-        musicCtrl->pushVideoAudio(audioBuf, safeSize);
-        if (audioSize > safeSize)
-            fseek(videoFile, audioSize - safeSize, SEEK_CUR); // Skip overflowing remainder
+
+        // Keep audio chunks aligned to complete stereo sample frames.
+        safeSize -= (safeSize % BYTES_PER_FRAME);
+
+        if (safeSize > 0)
+        {
+            fread(audioBuf, 1, safeSize, videoFile);
+            musicCtrl->pushVideoAudio(audioBuf, safeSize);
+        }
+
+        u32 consumed = safeSize;
+        if (audioSize > consumed)
+        {
+            fseek(videoFile, audioSize - consumed, SEEK_CUR); // Skip overflowing/unaligned remainder
+        }
     }
 
     // read video frame utilizing dynamic frameSize
@@ -176,9 +212,11 @@ ViewState VideoController::update()
 {
     musicCtrl->update();
 
+    // Service audio between disk reads to avoid underruns.
     for (int r = 0; r < READS_PER_UPDATE; r++)
     {
         refillBuffer();
+        musicCtrl->update();
     }
 
     int expectedFrame = (int)(musicCtrl->getVideoTime() * fps);
@@ -228,9 +266,20 @@ void VideoController::cleanup()
         ramBuffer = nullptr;
     }
 
+    if (bg >= 0)
+    {
+        bg = -1;
+    }
+
     if (videoFile != nullptr)
     {
         fclose(videoFile);
         videoFile = nullptr;
     }
+
+    fileEOF = false;
+    framesAvailable = 0;
+    readIndex = 0;
+    writeIndex = 0;
+    currentFrame = 0;
 }

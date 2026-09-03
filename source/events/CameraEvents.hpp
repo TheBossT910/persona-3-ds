@@ -6,9 +6,11 @@
  */
 
 #pragma once
-#include "core/enums.hpp"
+
 #include "core/geometry.hpp"
-#include "core/structs.hpp"
+#include "types/CameraTypes.hpp"
+#include "types/aeTypes.hpp"
+
 #include <aegis/aegis.hpp>
 
 namespace Event

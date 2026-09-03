@@ -1,19 +1,16 @@
 #pragma once
-
 #include "views/EnvironmentView.hpp"
 
-// data
 #include "data/environmentDb.hpp"
-// maps
 #include "maps/iwatodai_streets.hpp"
-// battle
-#include "./battleActions/BattleParticipant.hpp"
-#include "./battleActions/BattleStartCondition.hpp"
-#include "./battleActions/enemies/Enemy.hpp"
-#include "./battleActions/enemies/EnemyProfileDb.hpp"
-#include "./battleActions/party/CharacterProfileDb.hpp"
-#include "./battleActions/party/PartyMember.hpp"
-#include "./battleActions/party/Player.hpp"
+
+#include "battleActions/BattleParticipant.hpp"
+#include "battleActions/BattleStartCondition.hpp"
+#include "battleActions/enemies/Enemy.hpp"
+#include "battleActions/enemies/EnemyProfileDb.hpp"
+#include "battleActions/party/CharacterProfileDb.hpp"
+#include "battleActions/party/PartyMember.hpp"
+#include "battleActions/party/Player.hpp"
 
 #include <etl/vector.h>
 
@@ -30,15 +27,15 @@ class IwatodaiStreetsView : public EnvironmentView
         return g_environmentDb[1];
     }
 
-    void setMovementConfig() override;
+    void setupMovement() override;
 
-    void setMusic() override;
+    void setupMusic() override;
 
     ViewState onTileCheck(TileType tile, u32 pressed) override;
 
-    void setCameraConfig() override;
+    void setupCamera() override;
 
-    void setTextConfig() override;
+    void setupText() override;
 
     void setupUI() override;
 

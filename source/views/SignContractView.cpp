@@ -1,10 +1,11 @@
 #include "SignContractView.hpp"
-#include "core/enums.hpp"
+
 #include "core/globals.hpp"
 #include "events/SaveEvents.hpp"
 
 #include <cstring>
 #include <nds.h>
+#include <nds/arm9/keyboard.h>
 #include <stdio.h>
 
 // sfx
@@ -15,6 +16,9 @@ void SignContractView::cancelSFX()
     musicCtrl->stopSFX(sfxMenuHandle);
     musicCtrl->stopSFX(sfxSelectHandle);
     musicCtrl->stopSFX(sfxCancelHandle);
+    sfxMenuHandle = 0;
+    sfxSelectHandle = 0;
+    sfxCancelHandle = 0;
 }
 
 void SignContractView::init()
@@ -87,7 +91,7 @@ void SignContractView::init()
     lastNameIndex = std::strlen(saveData.lastName);
 
     text->drawText(displayText, 0, 0);
-    text->drawText(animText, 88, 48, TextColor::White);
+    text->drawText(animText, 0, 96);
 
     // transition both screens from black
     for (int i = -16; i < 0; i++)
@@ -223,11 +227,11 @@ ViewState SignContractView::update()
     {
         if (frame % 120 < 60)
         {
-            text->drawText(animText, 88, 48, 2);
+            text->drawText(animText, 0, 96);
         }
         else
         {
-            text->clearArea(0, 48, 256, FONT_SIZE);
+            text->clearArea(0, 96, 256, FONT_SIZE + text->getLineSpacing());
         }
     }
 
@@ -237,16 +241,8 @@ ViewState SignContractView::update()
 
 void SignContractView::cleanup()
 {
-    if (graphics != nullptr)
-    {
-        graphics->unloadAll();
-    }
-
     if (signContract != nullptr)
     {
-        signContract->RemoveComponent<GraphicsComponent>();
-        signContract->RemoveComponent<TextComponent>();
-
         engine.DestroyEntity(signContract);
 
         signContract = nullptr;
@@ -256,6 +252,7 @@ void SignContractView::cleanup()
 
     // update save data (names)
     ae::BroadcastEvent(Event::WriteSave{});
+    keyboardHide();
     musicCtrl->cleanup();
     BaseView::cleanup();
 }
