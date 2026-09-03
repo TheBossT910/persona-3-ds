@@ -5,8 +5,11 @@
 u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
 {
     ae::q20_12_t base = attacker.calculateBaseDamage(defender, skill);
-    u32 range = 95 + (u32)(rand() % 11);
-    return std::clamp(static_cast<u32>(fpm::trunc(base * ae::q20_12_t{range} / ae::q20_12_t{100})), (u32)1, (u32)99999);
+    ae::q20_12_t range = ae::q20_12_t{95} + ae::q20_12_t{(rand() % 11)};
+    return std::clamp(
+        static_cast<u32>(fpm::trunc(MathManager::GetInstance().div(base * ae::q20_12_t{range}, ae::q20_12_t{100}))),
+        (u32)1,
+        (u32)99999);
 }
 
 u32 BattleCalcs::hitrate(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
@@ -42,9 +45,9 @@ u32 BattleCalcs::healing(BattleParticipant& user, Skill& skill)
 
     uint8_t magicBoost = BattleCalcs::getMagicBoostHeal(battleStats->ma);
     ae::q20_12_t base = fpm::floor(ae::q20_12_t{skill.movePower + magicBoost} * teamMultiplier);
-    u32 range = 95 + (u32)(rand() % 11);
+    ae::q20_12_t range = ae::q20_12_t{95} + ae::q20_12_t{(rand() % 11)};
 
-    return static_cast<u32>(fpm::floor(base * ae::q20_12_t{range} / ae::q20_12_t{100}));
+    return static_cast<u32>(fpm::floor(MathManager::GetInstance().div(base * range, ae::q20_12_t{100})));
 }
 
 u32 BattleCalcs::allOutAttack(Player& attacker, BattleParticipant& defender, u32 participantCount)
@@ -60,8 +63,8 @@ u32 BattleCalcs::allOutAttack(Player& attacker, BattleParticipant& defender, u32
             ae::q20_12_t{(attacker.weapon.weaponPower / 2) * 15 * attackerStats.st}, ae::q20_12_t{defenderStats.en})) *
         ae::q20_12_t{1.6} * (levelDifference * levelDifference) * affinityMtp * ae::q20_12_t{participantCount});
 
-    u32 range = 95 + (u32)(rand() % 11);
-    return static_cast<u32>(fpm::trunc(base * ae::q20_12_t{range} / ae::q20_12_t{100}));
+    ae::q20_12_t range = ae::q20_12_t{95} + ae::q20_12_t{(rand() % 11)};
+    return static_cast<u32>(fpm::trunc(MathManager::GetInstance().div(base * range, ae::q20_12_t{100})));
 }
 
 const ae::q20_12_t BattleCalcs::levelMultipliers[24] = {
@@ -117,6 +120,7 @@ ae::q20_12_t BattleCalcs::getLevelDifference(u32 attackerLevel, u32 defenderLeve
     s32 diff = attackerLevel - defenderLevel;
     diff = std::clamp(diff, (s32)-13, (s32)10);
 
+    // offset so -13 is 0
     return levelMultipliers[diff + 13];
 }
 
