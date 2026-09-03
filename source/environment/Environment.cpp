@@ -244,6 +244,7 @@ void Environment::drawBillboards(bool faceCamera, ae::q20_12_t camX, ae::q20_12_
             ae::q20_12_t dx = camX - bx;
             ae::q20_12_t dz = camZ - bz;
 
+            // Offset to align model pivot with NDS camera origin
             ae::q20_12_t dist = MathManager::GetInstance().length(dx, dz, ae::q20_12_t{0});
 
             if (dist > ae::q20_12_t{0.001})

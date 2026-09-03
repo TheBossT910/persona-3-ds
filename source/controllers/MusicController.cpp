@@ -161,7 +161,7 @@ void MusicController::init(const char* filePath, ae::q20_12_t loopStartSeconds, 
     s_isVideoAudio = false;
     s_currentFilePath = filePath;
 
-    s_loopEndSamples = MathManager::GetInstance().secondsToSamples(loopEndSeconds, AUDIO_SAMPLE_RATE);
+    s_loopStartSamples = MathManager::GetInstance().secondsToSamples(loopEndSeconds, AUDIO_SAMPLE_RATE);
     s_loopStartOffset = s_loopStartSamples * BYTES_PER_FRAME;
 
     if (loopEndSeconds == aegis::q20_12_t{-1.0})
@@ -169,17 +169,10 @@ void MusicController::init(const char* filePath, ae::q20_12_t loopStartSeconds, 
         s_loopAtEOF = true;
         s_loopEndSamples = 0;
     }
-
     else if (loopEndSeconds > aegis::q20_12_t{0})
     {
-        // Split into whole seconds (safe in plain u32 * u32) and fractional to avoid overflow while calculating
-        u32 wholeSeconds = static_cast<u32>(loopEndSeconds); // truncates fractional part
-        aegis::q20_12_t fractionalSeconds = loopEndSeconds - aegis::q20_12_t{wholeSeconds};
-        u32 fractionalSamples = static_cast<u32>(fractionalSeconds * AUDIO_SAMPLE_RATE);
-
-        s_loopStartSamples = MathManager::GetInstance().secondsToSamples(loopStartSeconds, AUDIO_SAMPLE_RATE);
+        s_loopEndSamples = MathManager::GetInstance().secondsToSamples(loopEndSeconds, AUDIO_SAMPLE_RATE);
     }
-
     else
     {
         s_loopEndSamples = 0;
@@ -257,13 +250,7 @@ void MusicController::pushVideoAudio(const u8* data, size_t size)
 
 ae::q20_12_t MusicController::getVideoTime()
 {
-    //TODO: formula wrong?
-    uint32_t elapsedSeconds = s_elapsedSamples / AUDIO_SAMPLE_RATE;
-    uint32_t remainderSamples = s_elapsedSamples % AUDIO_SAMPLE_RATE;
-    ae::q20_12_t fractionalSecond =
-        MathManager::GetInstance().div(ae::q20_12_t{remainderSamples}, ae::q20_12_t{AUDIO_SAMPLE_RATE});
-    ae::q20_12_t elapsedTime = ae::q20_12_t{elapsedSeconds} + fractionalSecond;
-    return elapsedTime;
+    return ae::q20_12_t{s_elapsedSamples} / ae::q20_12_t{AUDIO_SAMPLE_RATE};
 }
 
 void MusicController::update()
