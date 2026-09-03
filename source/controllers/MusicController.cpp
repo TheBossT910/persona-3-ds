@@ -161,7 +161,7 @@ void MusicController::init(const char* filePath, ae::q20_12_t loopStartSeconds, 
     s_isVideoAudio = false;
     s_currentFilePath = filePath;
 
-    s_loopStartSamples = MathManager::GetInstance().secondsToSamples(loopEndSeconds, AUDIO_SAMPLE_RATE);
+    s_loopStartSamples = MathManager::GetInstance().secondsToSamples(loopStartSeconds, AUDIO_SAMPLE_RATE);
     s_loopStartOffset = s_loopStartSamples * BYTES_PER_FRAME;
 
     if (loopEndSeconds == aegis::q20_12_t{-1.0})
