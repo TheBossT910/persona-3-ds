@@ -30,11 +30,8 @@ extern volatile int frame;
 extern ViewState nextView;
 extern volatile u32 systemKeysDown;
 extern volatile u32 systemKeysHeld;
-extern int fps;
-extern int fpsTimer;
 extern std::string fatBasePath;
 extern Save saveData;
-extern unsigned int** bitmapsCharacter;
 
 class Globals
 {
@@ -76,7 +73,3 @@ using GameEngine = ae::Engine<GameEngineConfig::kLargestComponentSize, GameEngin
 
 extern GameEngine engine;
 extern ae::Entity* player;
-
-// temporary solution to get some weird graphics implementations working
-extern ae::Entity* generic;
-extern GraphicsComponent* genericGraphics;

@@ -5,6 +5,7 @@
 
 #include <cstring>
 #include <nds.h>
+#include <nds/arm9/keyboard.h>
 #include <stdio.h>
 
 // sfx

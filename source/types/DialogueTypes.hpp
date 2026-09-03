@@ -1,24 +1,40 @@
 #pragma once
 
 #include "components/TextComponent.hpp"
+#include "types/GraphicsTypes.hpp"
+#include <etl/span.h>
 #include <string>
 #include <vector>
 
+class DialogueScreen;
 struct Dialogue;
+
+/**
+ * @brief Holds dialogue selection choice data
+ */
 struct DialogueSelection
 {
     std::string text;
     bool isSelected;
     Dialogue* next;
 };
+
+/**
+ * @brief Holds dialogue content and branching data
+ */
 struct Dialogue
 {
-    std::string characterName;
+    // content
+    std::string name;
     std::string text;
-    int imageId;
+
+    // bust
+    etl::span<SpritePayload> spritePayload;
+
+    // branching
     Dialogue* prev;
     Dialogue* next;
-    std::vector<DialogueSelection> selections;
+    etl::vector<DialogueSelection, 3> selections;
 };
 
 /**
@@ -26,14 +42,26 @@ struct Dialogue
  */
 struct DialogueConfig
 {
-    Dialogue* firstLine = nullptr;
-    void (*loader)(int bgIndex) = nullptr;
+    /// @note The maximum number of SpritePayloads is 10
+    etl::array<etl::span<SpritePayload>, 10>* spritePayloads;
+
     TextComponent* text = nullptr;
+    TextComponent* textAlt = nullptr;
+    DialogueScreen* screen = nullptr;
 
     DialogueConfig() = default;
 
-    DialogueConfig(Dialogue* iFirstLine, void (*iLoader)(int bgIndex), TextComponent* iText)
-        : firstLine(iFirstLine), loader(iLoader), text(iText)
+    DialogueConfig(etl::array<etl::span<SpritePayload>, 10>* iSpritePayloads,
+                   TextComponent* iText,
+                   TextComponent* iTextAlt,
+                   DialogueScreen* iScreen)
+        : spritePayloads(iSpritePayloads), text(iText), textAlt(iTextAlt), screen(iScreen)
     {
+    }
+
+    // config only for debug purposes
+    DialogueConfig(TextComponent* iText) : text(iText)
+    {
+        textAlt = text;
     }
 };

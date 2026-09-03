@@ -27,10 +27,7 @@ void IwatodaiStreetsView::startBattle()
     ae::BroadcastEvent(msg);
 }
 
-// ----------------------------
-// Camera
-// ----------------------------
-void IwatodaiStreetsView::setCameraConfig()
+void IwatodaiStreetsView::setupCamera()
 {
     camConfig.mode = CameraMode::Follow;
     camConfig.initialAngle = 1.5708f * 2;
@@ -41,10 +38,7 @@ void IwatodaiStreetsView::setCameraConfig()
     camConfig.isRotationLocked = true;
 }
 
-// ----------------------------
-// Player controller
-// ----------------------------
-void IwatodaiStreetsView::setMovementConfig()
+void IwatodaiStreetsView::setupMovement()
 {
     movement->configureMovement(MovementConfig(IWATODAI_STREETS_MAP_WIDTH,
                                                IWATODAI_STREETS_MAP_HEIGHT,
@@ -59,7 +53,7 @@ void IwatodaiStreetsView::setMovementConfig()
                                                characterFacingAngle));
 }
 
-void IwatodaiStreetsView::setMusic()
+void IwatodaiStreetsView::setupMusic()
 {
     musicCtrl->init((fatBasePath + "music/locations/iwatodaiStreets/changing_seasons.pcm").c_str(), 31.0f, 177.587f);
 }
@@ -69,27 +63,33 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     switch (tile)
     {
     case TileType::SCENE_0:
+    {
         musicCtrl->pause();
         return ViewState::IWATODAI_DORM;
+    }
 
     case TileType::SCENE_1:
+    {
         musicCtrl->pause();
         return ViewState::PAULOWNIA_MALL;
+    }
 
     case TileType::SCENE_2:
+    {
         musicCtrl->pause();
         return ViewState::STATION;
+    }
 
     case TileType::SHD_W:
     {
         if (!promptDrawn)
         {
-            textSub->drawText("Battle Zone", 0, 0, TextColor::White);
+            textSub->drawText("\xFF\x02\x01 Battle Zone", 0, 0, TextColor::Black);
             promptDrawn = true;
         }
         if (pressed & KEY_A)
         {
-            phase = ViewPhase::Battle;
+            phase = ViewPhase::BATTLE;
             prevEnvironmentState = false;
         }
 
@@ -97,6 +97,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     }
 
     default:
+    {
         if (promptDrawn)
         {
             textSub->clearScreen();
@@ -104,19 +105,20 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
         }
         break;
     }
+    }
 
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiStreetsView::setTextConfig()
+void IwatodaiStreetsView::setupText()
 {
-    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &fontName, fontSize));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 }
 
 void IwatodaiStreetsView::setupUI()
 {
-    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 
     battleMenuCmpt = BattleMenuComponent::getInstance();
     pauseMenuCmpt = PauseMenuComponent::getInstance();
@@ -127,5 +129,5 @@ void IwatodaiStreetsView::setupUI()
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt, battleMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textSub, menus});
 }

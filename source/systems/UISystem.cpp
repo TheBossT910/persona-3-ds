@@ -1,9 +1,9 @@
 #include "UISystem.hpp"
-#include "components/menu/BattleMenuComponent.hpp"
-#include "components/menu/MainMenuComponent.hpp"
-#include "components/menu/PauseMenuComponent.hpp"
-#include "components/ui/DialogueScreen.hpp"
-#include "components/ui/MenuHUDScreen.hpp"
+#include "components/menus/BattleMenuComponent.hpp"
+#include "components/menus/MainMenuComponent.hpp"
+#include "components/menus/PauseMenuComponent.hpp"
+#include "components/screens/DialogueScreen.hpp"
+#include "components/screens/MenuHUDScreen.hpp"
 #include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
 
@@ -466,9 +466,7 @@ void UISystem::resetUIResources()
     cancelSFX();
     cleanupScreens();
     cleanupMenus();
-    PauseMenuComponent::destroy();
-    BattleMenuComponent::destroy();
-    MainMenuComponent::destroy();
+
     isActive = false;
     renderUIText = false;
 }

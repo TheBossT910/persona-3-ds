@@ -1,12 +1,9 @@
-#include <dirent.h>
-#include <fat.h>
-#include <filesystem.h>
-#include <maxmod9.h>
 #include <memory>
-#include <nds.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
+
+#include <fat.h>
+#include <maxmod9.h>
+#include <nds.h>
 
 // states
 #include "views/BaseView.hpp"
@@ -20,14 +17,8 @@
 #include "views/StationView.hpp"
 #include "views/VideoView.hpp"
 
-// components
-#include "components/ui/MenuHUDScreen.hpp"
-
 // sfx
 #include "soundbank_bin.h"
-
-// character models
-#include "models/makoto.hpp"
 
 // DBs
 #include "battleActions/armours/ArmourDb.hpp"
@@ -41,34 +32,16 @@
 // game engine
 GameEngine engine;
 ae::Entity* player;
-ae::Entity* generic;
-GraphicsComponent* genericGraphics;
 
 // variables
 volatile int frame = 0;
 volatile u32 systemKeysDown = 0;
 volatile u32 systemKeysHeld = 0;
-int fps = 0;
-int fpsTimer = 0;
 std::string fatBasePath = "";
 Save saveData;
 ViewState nextView = ViewState::DEFAULT;
 
 std::unique_ptr<BaseView> currentView;
-
-// models
-unsigned int** bitmapsCharacter = nullptr;
-
-static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
-
-// TODO: figure out a way to unload after being copied to ram
-static unsigned int* loadCharacterTexture(const std::string& name)
-{
-    std::string basePath = fatBasePath + "models/makoto/";
-    GraphicAsset asset = genericGraphics->loadGraphic(basePath + name);
-    unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
-    return tiles;
-}
 
 void SwitchView(BaseView* newView)
 {
@@ -90,19 +63,6 @@ void SwitchView(BaseView* newView)
 void Vblank()
 {
     frame = frame + 1;
-}
-
-void loadModels()
-{
-    // Makoto
-
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3");
-    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4");
-
-    bitmapsCharacter = bitmapsMakoto;
 }
 
 // TODO: add doxyen docs
@@ -129,7 +89,9 @@ int main(int argc, char* argv[])
         consoleDemoInit();
         printf("FAT initialization failed!\nPlease ensure the SD card is inserted.\n");
         while (1)
+        {
             swiWaitForVBlank();
+        }
     }
 
     // dynamically resolve runtime path using argv[0]
@@ -198,14 +160,8 @@ int main(int argc, char* argv[])
     // create entity
     player = engine.CreateEntity();
 
-    // TODO: replace this temporary workaround for graphics
-    generic = engine.CreateEntity();
-    genericGraphics = engine.CreateComponent<GraphicsComponent>();
-    generic->AddComponent(genericGraphics);
-
     // load save data
     ae::BroadcastEvent(Event::ReadSave{});
-    loadModels();
 
     // Default is DisclaimerView
     SwitchView(new DisclaimerView());
@@ -237,51 +193,75 @@ int main(int argc, char* argv[])
             switch (nextState)
             {
             case ViewState::INTRO:
+            {
                 SwitchView(new IntroView());
                 break;
+            }
 
             case ViewState::MAIN_MENU:
+            {
                 SwitchView(new MainMenuView());
                 break;
+            }
 
             case ViewState::IWATODAI_DORM:
+            {
                 SwitchView(new IwatodaiDormView());
                 break;
+            }
 
             case ViewState::IWATODAI_STREETS:
+            {
                 SwitchView(new IwatodaiStreetsView());
                 break;
+            }
 
             case ViewState::DISCLAIMER:
+            {
                 SwitchView(new DisclaimerView());
                 break;
+            }
 
             case ViewState::INTRO_VIDEO:
+            {
                 SwitchView(new VideoView(saveData.introVideoPath, ViewState::INTRO));
                 break;
+            }
 
             case ViewState::CUTSCENE_1:
+            {
                 SwitchView(new VideoView("cutscene-1.vid", ViewState::SIGN_CONTRACT));
                 break;
+            }
 
             case ViewState::SIGN_CONTRACT:
+            {
                 SwitchView(new SignContractView());
                 break;
+            }
 
             case ViewState::CUTSCENE_2:
+            {
                 SwitchView(new VideoView("cutscene-2.vid", ViewState::IWATODAI_DORM));
                 break;
+            }
 
             case ViewState::STATION:
+            {
                 SwitchView(new StationView());
                 break;
+            }
 
             case ViewState::PAULOWNIA_MALL:
+            {
                 SwitchView(new PaulowniaMallView());
                 break;
+            }
 
             default:
+            {
                 break;
+            }
             }
         }
 

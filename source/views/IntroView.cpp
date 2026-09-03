@@ -1,12 +1,10 @@
 #include "IntroView.hpp"
 #include "core/globals.hpp"
+
+#include "soundbank.h"
 #include <maxmod9.h>
 #include <nds.h>
-#include <stdio.h>
 #include <string>
-
-// sfx
-#include "soundbank.h"
 
 void IntroView::init()
 {
@@ -126,8 +124,8 @@ void IntroView::init()
     bgSetScroll(bg[3], 256, 256); // pivot point on the image (at the image's center)
 
     // showing logo as sprite
-    logoSprite[0] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, -25, 100};
-    logoSprite[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 39, 100};
+    logoSprite[0] = {SpriteSize_64x64, SpriteColorFormat_256Color, 15};
+    logoSprite[1] = {SpriteSize_64x64, SpriteColorFormat_256Color, 15};
 
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
     oamInit(&oamMain, SpriteMapping_1D_128, false);
@@ -296,27 +294,26 @@ ViewState IntroView::update()
     if (!displayLogo)
     {
         displayLogo = true;
-
-        for (int i = 0; i < 2; i++)
+        int spriteId = 0;
+        for (SpriteRenderState& srs : spriteRenderStates)
         {
-            oamSet(&oamMain, // main display (OamState)
-                   i,        // oam entry to set (id)
-                   logoSprite[i].x,
-                   logoSprite[i].y,            // position
-                   0,                          // priority
-                   logoSprite[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
-                   logoSprite[i].size,
-                   logoSprite[i].format,
-                   logoSprite[i].gfx,
-                   logoSprite[i].rotationIndex,
-                   true,  // double the size of rotated sprites
-                   false, // don't hide the sprite
-                   false,
-                   false, // vflip, hflip
-                   false  // apply mosaic
-            );
+            oamSet(&oamMain,
+                   spriteId++,
+                   srs.x,
+                   srs.y,
+                   srs.priority,
+                   srs.sprite.paletteAlpha,
+                   srs.sprite.size,
+                   srs.sprite.format,
+                   srs.sprite.gfx,
+                   srs.affineIndex,
+                   srs.sizeDouble,
+                   srs.hide,
+                   srs.hflip,
+                   srs.vflip,
+                   srs.mosaic);
 
-            oamMain.oamMemory[i].attribute[0] |= ATTR0_TYPE_BLENDED;
+            oamMain.oamMemory[spriteId].attribute[0] |= ATTR0_TYPE_BLENDED;
         }
 
         // setup fade for main screen sprites
