@@ -1,7 +1,6 @@
 #pragma once
 
 #include "controllers/MusicController.hpp"
-#include "core/enums.hpp"
 #include "types/StateTypes.hpp"
 #include <aegis/types.hpp>
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/geometry.hpp"
+#include <aegis/types.hpp>
 #include <etl/vector.h>
 
 /**
@@ -29,9 +30,9 @@ enum class CameraMode
  */
 struct CameraKeyframe
 {
-    int time;           ///< Frame index at which this keyframe is reached.
-    Vec3<float> eye;    ///< Camera eye position.
-    Vec3<float> target; ///< Look-at position.
+    int time;                  ///< Frame index at which this keyframe is reached.
+    Vec3<ae::q20_12_t> eye;    ///< Camera eye position.
+    Vec3<ae::q20_12_t> target; ///< Look-at position.
 };
 
 /**
