@@ -59,8 +59,8 @@ ae::q20_12_t CameraSystem::getMovementAngle() const
     {
     case CameraMode::CCTV:
     case CameraMode::Static:
-        return MathManager::GetInstance().atan2(ae::q20_12_t{charPos.z - currentPos.z},
-                                                ae::q20_12_t{currentPos.x - charPos.x});
+        return MathManager::GetInstance().atan2(ae::q20_12_t{currentPos.x - charPos.x},
+                                                ae::q20_12_t{charPos.z - currentPos.z});
     default:
         return angle;
     }
