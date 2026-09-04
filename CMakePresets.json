@@ -32,7 +32,7 @@
         },
         {
             "name": "nds-debug",
-            "displayName": "NDS ARM9 Debug",
+            "displayName": "NDS Debug",
             "binaryDir": "${sourceDir}/out/build/nds-debug",
             "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
             "cacheVariables": {
@@ -47,7 +47,7 @@
         },
         {
             "name": "nds-debug-sdcard",
-            "displayName": "NDS ARM9 Debug (with sdcard)",
+            "displayName": "NDS Debug (with sdcard)",
             "binaryDir": "${sourceDir}/out/build/nds-debug-sdcard",
             "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
             "cacheVariables": {
@@ -62,7 +62,7 @@
         },
         {
             "name": "nds-release",
-            "displayName": "NDS ARM9 Release",
+            "displayName": "NDS Release (with sdcard)",
             "binaryDir": "${sourceDir}/out/build/nds-release",
             "toolchainFile": "${sourceDir}/cmake/toolchains/blocksds-arm9.cmake",
             "cacheVariables": {
