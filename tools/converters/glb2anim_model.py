@@ -381,7 +381,7 @@ def convert_glb_to_mdla(glb_path: str, output_path: str):
         raise ValueError("Error: No animations found in the GLB file.")
 
     # Textures table
-    textures = construct_texture_table(gltf, output_path)
+    textures, images = construct_texture_table(gltf, output_path)
 
     # Parse Mesh Primitives and Unskin if necessary
     node_sub_lists = parse_mesh_primitives(gltf, textures)
@@ -392,7 +392,7 @@ def convert_glb_to_mdla(glb_path: str, output_path: str):
     # Animations
     animations = parse_animations(gltf, len(nodes))
 
-    write_mdl_file(output_path, nodes, textures, animations)
+    write_mdl_file(output_path, nodes, textures, images, animations)
 
 
 if __name__ == "__main__":

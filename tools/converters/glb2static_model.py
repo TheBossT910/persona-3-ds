@@ -274,13 +274,13 @@ def convert_glb_to_mdls(input_glb, output_path):
     gltf = pygltflib.GLTF2().load(input_glb)
 
     # Textures Table
-    textures = construct_texture_table(gltf, output_path)
+    textures, images = construct_texture_table(gltf, output_path)
 
     # Parse Mesh hierarchy and construct display list
     nodes = parse_mesh(gltf, textures)
 
     # Write to the MDLS file
-    write_mdl_file(output_path, nodes, textures)
+    write_mdl_file(output_path, nodes, textures, images)
 
 
 if __name__ == "__main__":

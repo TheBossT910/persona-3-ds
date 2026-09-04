@@ -262,7 +262,7 @@ def apply_texture_transform(uvs, transform):
     return transformed
 
 
-def process_texture_img(gltf, image_index, tmp_dir, output_dir):
+def process_texture_img(gltf, image_index, tmp_dir):
     """Extracts glTF image, resizes to NDS power-of-two dimensions, and runs GRIT on it.
 
     Args:
@@ -314,7 +314,7 @@ def process_texture_img(gltf, image_index, tmp_dir, output_dir):
     # Run GRIT command to convert PNG to NDS texture format
     # TODO DECIDE: Leave here ot pass it to outside script ? (similar to whatever obj2model was doing idk)
     # -gt: Texture mode | -gB16: 16-bit A1BGR555 | -gT!: set alpha-bit  | -ftb: Binary output | -fh!: No C header
-    grit_output_base = os.path.join(output_dir, texture_base_name)
+    temp_grit_output_base = os.path.join(tmp_dir, texture_base_name)
     grit_cmd = [
         "/opt/wonderful/thirdparty/blocksds/core/tools/grit/grit",  # TODO: shorten this monstrousity with env var or something
         temp_png_path,
@@ -324,7 +324,7 @@ def process_texture_img(gltf, image_index, tmp_dir, output_dir):
         "-ftb",
         "-fh!",
         "-o",
-        grit_output_base,
+        temp_grit_output_base,
     ]
 
     try:
@@ -338,12 +338,22 @@ def process_texture_img(gltf, image_index, tmp_dir, output_dir):
     texture_base_name = f"tex_{image_index}"
     tex_name = texture_base_name[:63].ljust(64, "\0")
 
-    return {
+    tex_data = {
         "name": tex_name,
         "w": target_w,
         "h": target_h,
         "isRGBA": 1,
     }
+    with open(temp_grit_output_base + ".img.bin", "rb") as f:
+        image_data = f.read()
+
+    image = {
+        "name": tex_name,
+        "byteLength": len(image_data),
+        "data": image_data,
+    }
+
+    return tex_data, image
 
 
 # Core Functions
@@ -354,19 +364,19 @@ def construct_texture_table(gltf, output_path):
         output_path (str): Path to the output MDL2 file.
     Returns:
         list: A list of texture data.
+        list: A list of image binary data.
     """
-
-    output_dir = os.path.dirname(output_path) or "."
-    os.makedirs(output_dir, exist_ok=True)
     textures = []
+    images = []
     with tempfile.TemporaryDirectory() as tmp_dir:
         for index in range(len(gltf.images)):
-            tex_info = process_texture_img(gltf, index, tmp_dir, output_dir)
+            tex_info, image = process_texture_img(gltf, index, tmp_dir)
             textures.append(tex_info)
-    return textures
+            images.append(image)
+    return textures, images
 
 
-def write_mdl_file(output_path, nodes, textures, animations=[]):
+def write_mdl_file(output_path, nodes, textures, images, animations=[]):
     """Write extracted data to binary MDL3 file.
 
     Args:
@@ -462,6 +472,13 @@ def write_mdl_file(output_path, nodes, textures, animations=[]):
                                 quat_float_to_s16(val[3]),
                             )
                         )
+
+        # Write texture binary data to end of file
+        for image in images:
+            # Anim Header: 32-byte name | u32 byteLength
+            tex_name_bytes = tex["name"].encode("ascii")[:31].ljust(32, b"\0")
+            f.write(struct.pack("<32sI", tex_name_bytes, image["byteLength"]))
+            f.write(image["data"])
 
         print(
             f"Outputted '{output_path}' ({len(nodes)} nodes, {len(textures)} textures, {len(animations)} animations)."
