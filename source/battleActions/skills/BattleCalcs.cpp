@@ -22,21 +22,21 @@ bool BattleCalcs::hit(BattleParticipant& attacker, BattleParticipant& defender, 
 
     ae::q20_12_t baseAccuracy =
         MathManager::GetInstance().div(ae::q20_12_t{attackerStats.ag + 200}, ae::q20_12_t{defenderStats.ag + 200});
-    u32 multipliedAccuracy;
+    ae::q20_12_t multipliedAccuracy;
     if (attacker.participantType == ParticipantType::Enemy)
     {
         ae::q20_12_t shoeMultiplier = MathManager::GetInstance().div(
             ae::q20_12_t{attackerStats.ag + 200},
             MathManager::GetInstance().div(ae::q20_12_t{defender.shoe.evasion}, ae::q20_12_t{2}) + ae::q20_12_t{200});
-        multipliedAccuracy = static_cast<u32>(baseAccuracy * ae::q20_12_t{skill.hitRate} * shoeMultiplier);
+        multipliedAccuracy = baseAccuracy * ae::q20_12_t{skill.hitRate} * shoeMultiplier;
     }
     else
     {
-        multipliedAccuracy = static_cast<u32>(baseAccuracy * ae::q20_12_t{skill.hitRate});
+        multipliedAccuracy = baseAccuracy * ae::q20_12_t{skill.hitRate};
     }
 
-    multipliedAccuracy = std::clamp(multipliedAccuracy, (u32)50, (u32)99);
-    return multipliedAccuracy > u32(rand() % 100);
+    multipliedAccuracy = std::clamp(multipliedAccuracy, ae::q20_12_t{50}, ae::q20_12_t{99});
+    return multipliedAccuracy > ae::q20_12_t{rand() % 100};
 }
 
 u32 BattleCalcs::healing(BattleParticipant& user, Skill& skill)
