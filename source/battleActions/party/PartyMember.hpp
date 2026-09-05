@@ -40,4 +40,7 @@ struct PartyMember : BattleParticipant
     ~PartyMember()
     {
     }
+
+  private:
+    MathManager& math = MathManager::GetInstance();
 };

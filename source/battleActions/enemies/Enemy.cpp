@@ -86,15 +86,13 @@ ae::q20_12_t Enemy::calculateBaseDamage(BattleParticipant& defender, Skill& skil
     ae::q20_12_t affinityMtp = BattleCalcs::getAffinityMtp(*defender.getBattleStats(), skill);
 
     if (skill.skillType == SkillType::RegularAttack)
-        return (MathManager::GetInstance().sqrt(MathManager::GetInstance().div(
-                    ae::q20_12_t{skill.movePower * 6 * atk},
-                    ae::q20_12_t{8 * defender.getBattleStats()->en + defender.armour.defense})) *
+        return (math.sqrt(math.div(ae::q20_12_t{skill.movePower * 6 * atk},
+                                   ae::q20_12_t{8 * defender.getBattleStats()->en + defender.armour.defense})) *
                 ae::q20_12_t{9} * levelDifference) *
                affinityMtp;
     else if (skill.skillType == SkillType::Attack || skill.skillType == SkillType::MultiAttack)
-        return ((MathManager::GetInstance().sqrt(MathManager::GetInstance().div(
-                     ae::q20_12_t{skill.movePower * 6 * atk},
-                     ae::q20_12_t{8 * defender.getBattleStats()->en + defender.armour.defense})) *
+        return ((math.sqrt(math.div(ae::q20_12_t{skill.movePower * 6 * atk},
+                                    ae::q20_12_t{8 * defender.getBattleStats()->en + defender.armour.defense})) *
                      ae::q20_12_t{9} * levelDifference -
                  ae::q20_12_t{10}) *
                 affinityMtp);

@@ -37,8 +37,8 @@ void MovementComponent::Update(ae::q20_12_t)
 
     ae::q20_12_t angleRad;
 
-    const ae::q20_12_t sinVal = ae::q20_12_t{MathManager::GetInstance().sin(cameraAngle)};
-    const ae::q20_12_t cosVal = ae::q20_12_t{MathManager::GetInstance().cos(cameraAngle)};
+    const ae::q20_12_t sinVal = ae::q20_12_t{math.sin(cameraAngle)};
+    const ae::q20_12_t cosVal = ae::q20_12_t{math.cos(cameraAngle)};
 
     forwardX = -sinVal * config.speed;
     forwardZ = cosVal * config.speed;
@@ -117,9 +117,8 @@ void MovementComponent::Update(ae::q20_12_t)
 
     if (deltaX != ae::q20_12_t{0} || deltaZ != ae::q20_12_t{0})
     {
-        angleRad = MathManager::GetInstance().atan2(deltaX, deltaZ);
-        config.characterFacingAngle =
-            angleRad * MathManager::GetInstance().div(ae::q20_12_t{180}, ae::q20_12_t{3.14159265});
+        angleRad = math.atan2(deltaX, deltaZ);
+        config.characterFacingAngle = angleRad * math.div(ae::q20_12_t{180}, ae::q20_12_t{3.14159265});
     }
 }
 
@@ -152,10 +151,10 @@ CharacterPosition MovementComponent::isCharacterAt()
 
 TileType MovementComponent::isTileAt()
 {
-    int tileX =
-        (int)(MathManager::GetInstance().div(config.characterTranslate.x + config.worldOffsetX, config.tileSize));
-    int tileZ =
-        (int)(MathManager::GetInstance().div(config.characterTranslate.z + config.worldOffsetZ, config.tileSize));
+    MathManager& math = MathManager::GetInstance();
+
+    int tileX = (int)(math.div(config.characterTranslate.x + config.worldOffsetX, config.tileSize));
+    int tileZ = (int)(math.div(config.characterTranslate.z + config.worldOffsetZ, config.tileSize));
     return isTileAt(tileX, tileZ);
 }
 
@@ -173,14 +172,10 @@ bool MovementComponent::isTileWalkable(ae::q20_12_t worldX, ae::q20_12_t worldZ)
 {
     ae::q20_12_t distanceToEdge = config.characterSize.x * ae::q20_12_t{0.5};
 
-    int tileMinX = static_cast<int>(
-        MathManager::GetInstance().div(worldX - distanceToEdge + config.worldOffsetX, config.tileSize));
-    int tileMaxX = static_cast<int>(
-        MathManager::GetInstance().div(worldX + distanceToEdge + config.worldOffsetX, config.tileSize));
-    int tileMinZ = static_cast<int>(
-        MathManager::GetInstance().div(worldZ - distanceToEdge + config.worldOffsetZ, config.tileSize));
-    int tileMaxZ = static_cast<int>(
-        MathManager::GetInstance().div(worldZ + distanceToEdge + config.worldOffsetZ, config.tileSize));
+    int tileMinX = static_cast<int>(math.div(worldX - distanceToEdge + config.worldOffsetX, config.tileSize));
+    int tileMaxX = static_cast<int>(math.div(worldX + distanceToEdge + config.worldOffsetX, config.tileSize));
+    int tileMinZ = static_cast<int>(math.div(worldZ - distanceToEdge + config.worldOffsetZ, config.tileSize));
+    int tileMaxZ = static_cast<int>(math.div(worldZ + distanceToEdge + config.worldOffsetZ, config.tileSize));
 
     for (int z = tileMinZ; z <= tileMaxZ; z++)
     {

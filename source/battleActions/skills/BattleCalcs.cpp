@@ -14,20 +14,21 @@ u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender
 
 bool BattleCalcs::hit(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
 {
+    MathManager& math = MathManager::GetInstance();
+
     BattleStats& attackerStats = *attacker.getBattleStats();
     BattleStats& defenderStats = *defender.getBattleStats();
 
     if (skill.hitRate == 100)
         return true;
 
-    ae::q20_12_t baseAccuracy =
-        MathManager::GetInstance().div(ae::q20_12_t{attackerStats.ag + 200}, ae::q20_12_t{defenderStats.ag + 200});
+    ae::q20_12_t baseAccuracy = math.div(ae::q20_12_t{attackerStats.ag + 200}, ae::q20_12_t{defenderStats.ag + 200});
     ae::q20_12_t multipliedAccuracy;
     if (attacker.participantType == ParticipantType::Enemy)
     {
-        ae::q20_12_t shoeMultiplier = MathManager::GetInstance().div(
-            ae::q20_12_t{attackerStats.ag + 200},
-            MathManager::GetInstance().div(ae::q20_12_t{defender.shoe.evasion}, ae::q20_12_t{2}) + ae::q20_12_t{200});
+        ae::q20_12_t shoeMultiplier =
+            math.div(ae::q20_12_t{attackerStats.ag + 200},
+                     math.div(ae::q20_12_t{defender.shoe.evasion}, ae::q20_12_t{2}) + ae::q20_12_t{200});
         multipliedAccuracy = baseAccuracy * ae::q20_12_t{skill.hitRate} * shoeMultiplier;
     }
     else
@@ -53,6 +54,8 @@ u32 BattleCalcs::healing(BattleParticipant& user, Skill& skill)
 
 u32 BattleCalcs::allOutAttack(Player& attacker, BattleParticipant& defender, u32 participantCount)
 {
+    MathManager& math = MathManager::GetInstance();
+
     ae::q20_12_t levelDifference = BattleCalcs::getLevelDifference(attacker.lv, defender.lv);
     BattleStats& attackerStats = *attacker.getBattleStats();
     BattleStats& defenderStats = *defender.getBattleStats();
@@ -60,12 +63,12 @@ u32 BattleCalcs::allOutAttack(Player& attacker, BattleParticipant& defender, u32
     ae::q20_12_t affinityMtp = BattleCalcs::getAffinityMtp(*defender.getBattleStats(), SkillDb::allOutAttack);
 
     ae::q20_12_t base = fpm::trunc(
-        MathManager::GetInstance().sqrt(MathManager::GetInstance().div(
-            ae::q20_12_t{(attacker.weapon.weaponPower / 2) * 15 * attackerStats.st}, ae::q20_12_t{defenderStats.en})) *
+        math.sqrt(math.div(ae::q20_12_t{(attacker.weapon.weaponPower / 2) * 15 * attackerStats.st},
+                           ae::q20_12_t{defenderStats.en})) *
         ae::q20_12_t{1.6} * (levelDifference * levelDifference) * affinityMtp * ae::q20_12_t{participantCount});
 
     ae::q20_12_t range = ae::q20_12_t{95} + ae::q20_12_t{(rand() % 11)};
-    return static_cast<u32>(fpm::trunc(MathManager::GetInstance().div(base * range, ae::q20_12_t{100})));
+    return static_cast<u32>(fpm::trunc(math.div(base * range, ae::q20_12_t{100})));
 }
 
 const ae::q20_12_t BattleCalcs::levelMultipliers[24] = {

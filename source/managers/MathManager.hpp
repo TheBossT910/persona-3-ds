@@ -2,6 +2,7 @@
  * @file MathManger.hpp
  * @brief Manager for hardware specific math functions
  * @author Taha Rashid (TheBossT910 / thebosst)
+ * @author Nolan Kolb (TrueGiles / themoonwalker8692)
  */
 
 #pragma once

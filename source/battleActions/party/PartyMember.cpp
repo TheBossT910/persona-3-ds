@@ -31,9 +31,9 @@ ae::q20_12_t PartyMember::calculateBaseDamage(BattleParticipant& defender, Skill
     ae::q20_12_t affinityMtp = BattleCalcs::getAffinityMtp(*defender.getBattleStats(), skill);
     u32 movePower = (skill.skillType == SkillType::RegularAttack) ? (weapon.weaponPower / 2) : skill.movePower;
 
-    return fpm::floor(MathManager::GetInstance().sqrt(MathManager::GetInstance().div(
-                          ae::q20_12_t{movePower * 15 * atk}, ae::q20_12_t{defender.getBattleStats()->en})) *
-                      ae::q20_12_t{2} * levelDifference * affinityMtp);
+    return fpm::floor(
+        math.sqrt(math.div(ae::q20_12_t{movePower * 15 * atk}, ae::q20_12_t{defender.getBattleStats()->en})) *
+        ae::q20_12_t{2} * levelDifference * affinityMtp);
 }
 
 ae::q20_12_t PartyMember::getTeamMultiplier()

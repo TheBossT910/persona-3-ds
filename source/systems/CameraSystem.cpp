@@ -116,13 +116,13 @@ void CameraSystem::Update(ae::q20_12_t)
             angle += angleIncrement;
         }
 
-        camPos.eye.x = charPos.x + ae::q20_12_t{MathManager::GetInstance().sin(angle)} * distance;
+        camPos.eye.x = charPos.x + ae::q20_12_t{math.sin(angle)} * distance;
         camPos.eye.y = charPos.y + height;
-        camPos.eye.z = charPos.z - ae::q20_12_t{MathManager::GetInstance().cos(angle)} * distance;
+        camPos.eye.z = charPos.z - ae::q20_12_t{math.cos(angle)} * distance;
 
-        camPos.target.x = charPos.x - ae::q20_12_t{MathManager::GetInstance().sin(angle)} * lookAhead;
+        camPos.target.x = charPos.x - ae::q20_12_t{math.sin(angle)} * lookAhead;
         camPos.target.y = charPos.y + ae::q20_12_t{0.1};
-        camPos.target.z = charPos.z + ae::q20_12_t{MathManager::GetInstance().cos(angle)} * lookAhead;
+        camPos.target.z = charPos.z + ae::q20_12_t{math.cos(angle)} * lookAhead;
         break;
     }
 
@@ -146,8 +146,8 @@ void CameraSystem::Update(ae::q20_12_t)
             angle += angleIncrement;
         }
 
-        const ae::q20_12_t fwdX = -ae::q20_12_t{MathManager::GetInstance().sin(angle)} * freeCameraSpeed;
-        const ae::q20_12_t fwdZ = ae::q20_12_t{MathManager::GetInstance().cos(angle)} * freeCameraSpeed;
+        const ae::q20_12_t fwdX = -ae::q20_12_t{math.sin(angle)} * freeCameraSpeed;
+        const ae::q20_12_t fwdZ = ae::q20_12_t{math.cos(angle)} * freeCameraSpeed;
 
         if (systemKeysHeld & KEY_UP)
         {
@@ -173,9 +173,9 @@ void CameraSystem::Update(ae::q20_12_t)
         camPos.eye.x = currentPos.x;
         camPos.eye.y = currentPos.y;
         camPos.eye.z = currentPos.z;
-        camPos.target.x = currentPos.x - ae::q20_12_t{MathManager::GetInstance().sin(angle)};
+        camPos.target.x = currentPos.x - ae::q20_12_t{math.sin(angle)};
         camPos.target.y = currentPos.y;
-        camPos.target.z = currentPos.z + ae::q20_12_t{MathManager::GetInstance().cos(angle)};
+        camPos.target.z = currentPos.z + ae::q20_12_t{math.cos(angle)};
 
         break;
     }
@@ -210,9 +210,8 @@ void CameraSystem::Update(ae::q20_12_t)
         }
 
         int span = kf1.time - kf0.time;
-        ae::q20_12_t t = (span > 0)
-                             ? MathManager::GetInstance().div(ae::q20_12_t{pathFrame - kf0.time}, ae::q20_12_t{span})
-                             : ae::q20_12_t{1};
+        ae::q20_12_t t =
+            (span > 0) ? math.div(ae::q20_12_t{pathFrame - kf0.time}, ae::q20_12_t{span}) : ae::q20_12_t{1};
 
         camPos.eye.x = kf0.eye.x + (kf1.eye.x - kf0.eye.x) * t;
         camPos.eye.y = kf0.eye.y + (kf1.eye.y - kf0.eye.y) * t;

@@ -31,4 +31,7 @@ struct Enemy : BattleParticipant
     void setCurrentTurnOrderAgility(ae::q20_12_t boost);
 
     virtual ~Enemy() = default;
+
+  private:
+    MathManager& math = MathManager::GetInstance();
 };
