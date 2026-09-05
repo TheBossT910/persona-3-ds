@@ -46,7 +46,7 @@ struct BattleCalcs
      * @param skill The skill used.
      * @return If it hit the target.
      */
-    static u32 hitrate(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill);
+    static bool hit(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill);
 
     /**
      * @brief Calculates heal of a skill.

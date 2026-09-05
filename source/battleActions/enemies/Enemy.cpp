@@ -58,8 +58,7 @@ TurnResult Enemy::resolve(BattleParticipant* target, Skill* skill)
     std::string targetLog = name + " targets " + target->name + "\n";
 
     *resource -= skill->cost;
-    u32 accuracy = BattleCalcs::hitrate(*this, *target, *skill);
-    bool hit = accuracy > u32(rand() % 100);
+    bool hit = BattleCalcs::hit(*this, *target, *skill);
 
     if (!hit)
         return {false, 0, false, targetLog + "Miss"};

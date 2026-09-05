@@ -12,13 +12,13 @@ u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender
         (u32)99999);
 }
 
-u32 BattleCalcs::hitrate(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
+bool BattleCalcs::hit(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
 {
     BattleStats& attackerStats = *attacker.getBattleStats();
     BattleStats& defenderStats = *defender.getBattleStats();
 
     if (skill.hitRate == 100)
-        return skill.hitRate;
+        return true;
 
     ae::q20_12_t baseAccuracy =
         MathManager::GetInstance().div(ae::q20_12_t{attackerStats.ag + 200}, ae::q20_12_t{defenderStats.ag + 200});
@@ -35,7 +35,8 @@ u32 BattleCalcs::hitrate(BattleParticipant& attacker, BattleParticipant& defende
         multipliedAccuracy = static_cast<u32>(baseAccuracy * ae::q20_12_t{skill.hitRate});
     }
 
-    return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
+    multipliedAccuracy = std::clamp(multipliedAccuracy, (u32)50, (u32)99);
+    return multipliedAccuracy > u32(rand() % 100);
 }
 
 u32 BattleCalcs::healing(BattleParticipant& user, Skill& skill)
