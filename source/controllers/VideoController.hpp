@@ -2,6 +2,7 @@
 
 #include "controllers/MusicController.hpp"
 #include "types/StateTypes.hpp"
+#include <aegis/ndsTypes.hpp>
 #include <aegis/types.hpp>
 
 #include <nds.h>

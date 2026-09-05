@@ -1,5 +1,6 @@
 #pragma once
 #include "types/AnimationTypes.hpp"
+#include <aegis/ndsTypes.hpp>
 
 #include <aegis/types.hpp>
 #include <nds.h>

@@ -1,13 +1,13 @@
 #pragma once
-#include "../managers/MathManager.hpp"
 #include "BattlePhase.hpp"
 #include "BattleStats.hpp"
 #include "ParticipantType.hpp"
 #include "armours/Armour.hpp"
 #include "events/BattleEvents.hpp"
+#include "managers/MathManager.hpp"
 #include "shoes/Shoe.hpp"
 #include "skills/Skill.hpp"
-#include <aegis/types.hpp>
+#include <aegis/ndsTypes.hpp>
 #include <nds.h>
 #include <vector>
 

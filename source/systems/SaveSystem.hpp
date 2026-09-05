@@ -12,6 +12,7 @@
 #include "managers/IOManager.hpp"
 #include "types/SaveTypes.hpp"
 
+#include <aegis/ndsTypes.hpp>
 #include <aegis/system.hpp>
 #include <aegis/types.hpp>
 

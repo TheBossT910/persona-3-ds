@@ -1,5 +1,5 @@
 #include "MusicController.hpp"
-#include "../managers/MathManager.hpp"
+#include "managers/MathManager.hpp"
 #include <malloc.h>
 #include <nds.h>
 #include <stdint.h>

@@ -1,5 +1,5 @@
 #include "BattleCalcs.hpp"
-#include <aegis/types.hpp>
+#include <aegis/ndsTypes.hpp>
 #include <fpm/math.hpp>
 
 u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)

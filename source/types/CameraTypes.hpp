@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/geometry.hpp"
+#include <aegis/ndsTypes.hpp>
 #include <aegis/types.hpp>
 #include <etl/vector.h>
 

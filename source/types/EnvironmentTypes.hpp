@@ -1,5 +1,6 @@
 #pragma once
 
+#include <aegis/ndsTypes.hpp>
 #include <aegis/types.hpp>
 #include <nds.h>
 

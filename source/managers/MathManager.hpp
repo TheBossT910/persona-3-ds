@@ -6,6 +6,7 @@
 
 #pragma once
 #include <aegis/manager.hpp>
+#include <aegis/ndsTypes.hpp>
 #include <aegis/types.hpp>
 #include <math.h>
 #include <nds/arm9/math.h>

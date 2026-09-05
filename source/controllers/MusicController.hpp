@@ -1,4 +1,5 @@
 #pragma once
+#include <aegis/ndsTypes.hpp>
 #include <aegis/types.hpp>
 #include <maxmod9.h>
 #include <nds.h>

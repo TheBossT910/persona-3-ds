@@ -11,6 +11,7 @@
 
 #include "core/routerIDs.hpp"
 #include <aegis/component.hpp>
+#include <aegis/ndsTypes.hpp>
 #include <aegis/types.hpp>
 
 #include "controllers/AnimationController.hpp"

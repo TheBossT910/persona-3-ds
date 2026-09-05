@@ -1,6 +1,6 @@
 #include "BattleSystem.hpp"
-#include "../managers/MathManager.hpp"
 #include "battleActions/skills/BattleCalcs.hpp"
+#include "managers/MathManager.hpp"
 
 #include "core/globals.hpp"
 #include <cstdlib>

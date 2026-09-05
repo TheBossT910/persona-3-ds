@@ -6,6 +6,7 @@
 #include "components/screens/MenuHUDScreen.hpp"
 #include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
+#include <aegis/ndsTypes.hpp>
 #include <aegis/types.hpp>
 
 void UISystem::Init()
