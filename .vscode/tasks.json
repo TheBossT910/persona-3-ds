@@ -104,7 +104,7 @@
         {
             "label": "CMake: Clean (NDS Debug)",
             "type": "shell",
-            "command": "cmake --build out/build/nds-debug-sdcard --target clean",
+            "command": "if [ -d out/build/nds-debug-sdcard ]; then cmake --build out/build/nds-debug-sdcard --target clean; else echo 'Skipping NDS Debug clean: build directory does not exist'; fi",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -113,7 +113,7 @@
         {
             "label": "CMake: Clean (NDS Release)",
             "type": "shell",
-            "command": "cmake --build out/build/nds-release --target clean",
+            "command": "if [ -d out/build/nds-release ]; then cmake --build out/build/nds-release --target clean; else echo 'Skipping NDS Release clean: build directory does not exist'; fi",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -122,7 +122,7 @@
         {
             "label": "CMake: Clean (Host Debug)",
             "type": "shell",
-            "command": "cmake --build out/build/host-debug --target clean",
+            "command": "if [ -d out/build/host-debug ]; then cmake --build out/build/host-debug --target clean; else echo 'Skipping Host Debug clean: build directory does not exist'; fi",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
