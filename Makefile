@@ -47,7 +47,6 @@ TOOLS_DIR       := $(CURDIR)/tools
 VENV_PYTHON     := $(HOME)/.venv/bin/python3
 ASSETS_DIR      := $(CURDIR)/assets
 
-ASSETS_DIALOGUE     := $(ASSETS_DIR)/dialogue
 ASSETS_MUSIC        := $(ASSETS_DIR)/music
 ASSETS_VIDEO        := $(ASSETS_DIR)/video
 ASSETS_ENVIRONMENTS := $(ASSETS_DIR)/environments
@@ -60,7 +59,6 @@ DATA_VIDEO := $(CURDIR)/data/video
 #---------------------------------------------------------------------------------
 # Collect source files
 #---------------------------------------------------------------------------------
-DLG_FILES        := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
 MP3_FILES        := $(shell find $(ASSETS_MUSIC) -type f -name '*.mp3' 2>/dev/null)
 MP4_FILES        := $(wildcard $(ASSETS_VIDEO)/*.mp4)
 ENV_OBJ_FILES    := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
@@ -76,7 +74,6 @@ FONT_FNT_FILES   := $(shell find $(CURDIR)/assets/fonts -type f -name '*.fnt' 2>
 #---------------------------------------------------------------------------------
 # Derive output paths
 #---------------------------------------------------------------------------------
-DIALOGUE_OUT    := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
 MUSIC_OUT       := $(patsubst $(ASSETS_MUSIC)/%.mp3,$(DATA_MUSIC)/%.pcm,$(MP3_FILES))
 VIDEO_OUT       := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
 JMAP_OUT        := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.hpp)
@@ -88,17 +85,9 @@ MODEL_OUT       := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(
 # Map obj files to sentinel files in data/environments/<name>/.sentinel
 ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/data/environments/$(notdir $(patsubst %/,%,$(dir $(file))))/.sentinel)
 
-.PHONY: assets dialogue music video environments jmaps models graphics font_bitmap sdcard help
+.PHONY: assets music video environments jmaps models graphics font_bitmap sdcard help
 
-assets: dialogue music video environments jmaps models graphics font_bitmap
-
-# Dialogue
-#---------------------------------------------------------------------------------
-$(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $$(wildcard $(ASSETS_DIALOGUE)/$$*.build.json)
-	@echo "  DLG   $(notdir $<)"
-	@mkdir -p $(CURDIR)/source/dialogue
-	@cd $(CURDIR)/source/dialogue && $(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$*"
-dialogue: $(DIALOGUE_OUT)
+assets: music video environments jmaps models graphics font_bitmap
 
 # Music
 #---------------------------------------------------------------------------------
@@ -247,8 +236,7 @@ clean: clean-assets
 
 clean-assets:
 	@echo "  CLEAN   assets"
-	$(V)$(RM) $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) \
-	          $(CURDIR)/source/dialogue/*_dialogue.hpp
+	$(V)$(RM) $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT)
 	$(V)$(RM) $(CURDIR)/data/models/* $(CURDIR)/data/graphics/* $(CURDIR)/data/fonts/* $(CURDIR)/data/environments/*
 	$(V)$(RM) sdcard.img sdcard.img.idx
 

@@ -1,18 +1,9 @@
 #pragma once
-
 #include "views/EnvironmentView.hpp"
-
-// data
-#include "data/environmentDb.hpp"
-// maps
-#include "maps/iwatodai_dorm_floor_1.hpp"
-// dialogue
-#include "dialogue/demo_dialogue.hpp"
 
 class IwatodaiDormView : public EnvironmentView
 {
   public:
-    // TODO: dont forget to clear in future
     IwatodaiDormView();
 
   protected:
@@ -20,12 +11,12 @@ class IwatodaiDormView : public EnvironmentView
     {
         return g_environmentDb[0];
     }
-    void setMovementConfig() override;
-    void setMusic() override;
+    void setupMovement() override;
+    void setupMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
-    void setDialogueConfig() override;
-    void setCameraConfig() override;
-    void setTextConfig() override;
+    void setupDialogue() override;
+    void setupCamera() override;
+    void setupText() override;
     void setupUI() override;
 
   private:
@@ -37,4 +28,7 @@ class IwatodaiDormView : public EnvironmentView
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
     const float height = 0.0f;
     const float characterFacingAngle = 180.0f;
+
+    std::string fontNameAlt = "noto-sans-jp-black";
+    int fontSizeAlt = 16;
 };

@@ -7,9 +7,11 @@
 
 #pragma once
 
-#include "core/enums.hpp"
-#include "core/structs.hpp"
+#include "data/spriteDb.hpp"
 #include "managers/IOManager.hpp"
+#include "types/GraphicsTypes.hpp"
+#include "types/aeTypes.hpp"
+
 #include <aegis/component.hpp>
 #include <etl/vector.h>
 

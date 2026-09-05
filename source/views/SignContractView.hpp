@@ -1,12 +1,10 @@
 #pragma once
-#include "controllers/MusicController.hpp"
-#include "views/BaseView.hpp"
-#include <maxmod9.h>
-#include <nds/arm9/console.h>
-#include <nds/arm9/keyboard.h>
-
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
+#include "controllers/MusicController.hpp"
+#include "views/BaseView.hpp"
+
+#include <maxmod9.h>
 
 class SignContractView : public BaseView
 {
@@ -18,9 +16,9 @@ class SignContractView : public BaseView
     int firstNameIndex = 0;
 
     // sfx
-    mm_sfxhand sfxMenuHandle;
-    mm_sfxhand sfxSelectHandle;
-    mm_sfxhand sfxCancelHandle;
+    mm_sfxhand sfxMenuHandle = 0;
+    mm_sfxhand sfxSelectHandle = 0;
+    mm_sfxhand sfxCancelHandle = 0;
 
     // text
     std::string FONT_NAME = "cosmetica";

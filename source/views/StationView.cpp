@@ -1,16 +1,18 @@
 #include "StationView.hpp"
+#include "core/globals.hpp"
+#include "events/UIEvents.hpp"
 
 StationView::StationView()
 {
 }
 
-void StationView::setMusic()
+void StationView::setupMusic()
 {
     musicCtrl->init(
         (fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(), 2.002f, 73.939f);
 }
 
-void StationView::setCameraConfig()
+void StationView::setupCamera()
 {
     camConfig.mode = CameraMode::Follow;
     camConfig.initialAngle = 1.5708f * 2;
@@ -21,7 +23,7 @@ void StationView::setCameraConfig()
     camConfig.isRotationLocked = true;
 }
 
-void StationView::setMovementConfig()
+void StationView::setupMovement()
 {
     movement->configureMovement(MovementConfig(STATION_MAP_WIDTH,
                                                STATION_MAP_HEIGHT,
@@ -41,31 +43,35 @@ ViewState StationView::onTileCheck(TileType tile, u32 pressed)
     switch (tile)
     {
     case TileType::SCENE_0:
+    {
         return ViewState::PAULOWNIA_MALL;
+    }
     default:
+    {
         break;
+    }
     }
 
     return ViewState::KEEP_CURRENT;
 }
 
-void StationView::setTextConfig()
+void StationView::setupText()
 {
-    text->configureText(TextConfig(textVideoBuffer, &FONT_NAME, FONT_SIZE));
-    textSub->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    text->configureText(TextConfig(textVideoBuffer, &fontName, fontSize));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 }
 
 void StationView::setupUI()
 {
-    textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
+    textSub->configureText(TextConfig(textVideoBufferSub, &fontName, fontSize));
 
     pauseMenuCmpt = PauseMenuComponent::getInstance();
 
     menuHUDScreen = MenuHUDScreen::getInstance();
 
-    std::array<UIScreen*, 7> screens = {menuHUDScreen};
+    std::array<UIScreen*, 5> screens = {menuHUDScreen};
     std::array<UIMenu*, 10> menus = {pauseMenuCmpt};
 
     ae::BroadcastEvent(Event::ConfigureUIScreen{bgSub, bgMain, &oamSub, &oamMain, screens});
-    ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
+    ae::BroadcastEvent(Event::ConfigureUIMenu{textSub, menus});
 }

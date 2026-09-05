@@ -1,10 +1,16 @@
 #include "UISystem.hpp"
+#include "components/menus/BattleMenuComponent.hpp"
+#include "components/menus/MainMenuComponent.hpp"
+#include "components/menus/PauseMenuComponent.hpp"
+#include "components/screens/DialogueScreen.hpp"
+#include "components/screens/MenuHUDScreen.hpp"
 #include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
 
 void UISystem::Init()
 {
     isActive = false;
+    renderUIText = false;
 
     // load sfx
     musicCtrl->loadSFX(SFX_MENU);
@@ -14,124 +20,125 @@ void UISystem::Init()
 
 void UISystem::Update(ae::fixed_t dt)
 {
-    for (UIMenu*& menu : menus)
+    // skip if nullptr or not active
+    if ((activeMenu == nullptr) || !activeMenu->isActive)
     {
-        // skip if nullptr or not active
-        if ((menu == nullptr) || !menu->isActive)
-        {
-            continue;
-        }
+        return;
+    }
 
-        // run the hook
-        ViewState updateHookState = menu->updateHook();
-        if (updateHookState != ViewState::DEFAULT)
-        {
-            ae::BroadcastEvent(Event::SwitchView{updateHookState});
-            // TODO: remove after musicCtrl refactor for aegis engine compliance
-            musicCtrl->update();
-            continue;
-        }
+    // run the hook
+    ViewState updateHookState = activeMenu->updateHook();
+    if (updateHookState != ViewState::DEFAULT)
+    {
+        ae::BroadcastEvent(Event::SwitchView{updateHookState});
+        // TODO: remove after musicCtrl refactor for aegis engine compliance
+        musicCtrl->update();
+        return;
+    }
 
-        // navigate options
-        if (systemKeysDown & KEY_DOWN)
-        {
-            sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
-            menu->selectedOption = (menu->selectedOption + 1) % menu->optionCount;
-        }
-        else if (systemKeysDown & KEY_UP)
-        {
-            sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
-            menu->selectedOption = (menu->selectedOption + menu->optionCount - 1) % menu->optionCount;
-        }
+    // navigate options
+    if (systemKeysDown & KEY_DOWN)
+    {
+        sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
+        activeMenu->selectedOption = (activeMenu->selectedOption + 1) % activeMenu->options.size();
+        renderUIText = true;
+    }
+    else if (systemKeysDown & KEY_UP)
+    {
+        sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
+        activeMenu->selectedOption =
+            (activeMenu->selectedOption + activeMenu->options.size() - 1) % activeMenu->options.size();
+        renderUIText = true;
+    }
 
-        // Adjust scroll position
-        if (menu->selectedOption < menu->startIndex)
-        {
-            menu->startIndex = menu->selectedOption;
-            text->clearScreen();
-        }
+    // Adjust scroll position
+    if (activeMenu->selectedOption < activeMenu->startIndex)
+    {
+        activeMenu->startIndex = activeMenu->selectedOption;
+        text->clearScreen();
+        renderUIText = true;
+    }
+    else if (activeMenu->selectedOption >= activeMenu->startIndex + activeMenu->visibleOptions)
+    {
+        activeMenu->startIndex = activeMenu->selectedOption - activeMenu->visibleOptions + 1;
+        text->clearScreen();
+        renderUIText = true;
+    }
 
-        if (menu->selectedOption >= menu->startIndex + menu->visibleOptions)
-        {
-            menu->startIndex = menu->selectedOption - menu->visibleOptions + 1;
-            text->clearScreen();
-        }
-        else if (systemKeysDown & KEY_A)
-        {
-            cancelSFX();
-            sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
-            text->clearScreen();
+    if (systemKeysDown & KEY_A)
+    {
+        cancelSFX();
+        sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
+        text->clearScreen();
+        renderUIText = true;
 
-            if (menu->options[menu->selectedOption].onSelect != nullptr)
+        if (activeMenu->options[activeMenu->selectedOption].onSelect != nullptr)
+        {
+            ViewState result = (activeMenu->*(activeMenu->options[activeMenu->selectedOption].onSelect))();
+            if (result != ViewState::KEEP_CURRENT)
             {
-                ViewState result = (menu->*(menu->options[menu->selectedOption].onSelect))();
-                if (result != ViewState::KEEP_CURRENT)
-                {
-                    menu->nextViewState = result;
-                    menu->isActive = false;
-                }
+                activeMenu->nextViewState = result;
+                activeMenu->isActive = false;
             }
         }
+    }
+    else if (systemKeysDown & KEY_B)
+    {
+        cancelSFX();
+        musicCtrl->playSFX(SFX_CANCEL, 255, 128);
+        activeMenu->selectedOption = 0;
+        activeMenu->startIndex = 0;
+        text->clearScreen();
+        renderUIText = true;
+        activeMenu->prevOption();
+    }
 
-        if (systemKeysDown & KEY_B)
+    // blink the "Pause" text
+    if (activeMenu->pauseMessage.length() != 0)
+    {
+        if (frame % 60 < 30)
         {
-            cancelSFX();
-            musicCtrl->playSFX(SFX_CANCEL, 255, 128);
-            menu->selectedOption = 0;
-            menu->startIndex = 0;
-            text->clearScreen();
-            menu->prevOption();
+            text->drawText(activeMenu->pauseMessage, 0, 0, 2);
         }
+        else
+        {
+            text->clearArea(0, 0, 256, text->getFontSize() + text->getLineSpacing());
+        }
+    }
 
-        // blink the "Pause" text
-        if (menu->pauseMessage.length() != 0)
+    // display options
+    int textSize = text->getFontSize();
+    if (renderUIText)
+    {
+        renderUIText = false;
+        for (int i = 0; i < activeMenu->visibleOptions && activeMenu->startIndex + i < int(activeMenu->options.size());
+             i++)
         {
-            if (frame % 60 < 30)
-            {
-                text->drawText(menu->pauseMessage, 0, 0, 2);
-            }
-            else
-            {
-                text->clearArea(0, 0, 256, text->getFontSize());
-            }
+            int option = activeMenu->startIndex + i;
+            TextColor color = option == activeMenu->selectedOption ? TextColor::Blue : TextColor::White;
+            text->drawText(activeMenu->options[option].name, 10, textSize + textSize * i, color);
         }
+    }
 
-        // display options
-        for (int i = 0; i < menu->visibleOptions && menu->startIndex + i < menu->optionCount; i++)
-        {
-            int option = menu->startIndex + i;
-            if (option == menu->selectedOption)
-            {
-                text->drawText(menu->options[option].name, 10, 8 + i * 9, TextColor::Blue);
-            }
-            else
-            {
-                text->drawText(menu->options[option].name, 10, 8 + i * 9, TextColor::White);
-            }
-        }
-
-        if (menu->nextViewState != ViewState::KEEP_CURRENT)
-        {
-            ae::BroadcastEvent(Event::SwitchView{menu->nextViewState});
-        }
+    if (activeMenu->nextViewState != ViewState::KEEP_CURRENT)
+    {
+        ae::BroadcastEvent(Event::SwitchView{activeMenu->nextViewState});
     }
 }
 
 void UISystem::Shutdown()
 {
-    cancelSFX();
-    cleanupScreens();
-    if (activeMenu != nullptr)
-    {
-        activeMenu->resetMenu();
-        activeMenu = nullptr;
-    }
-    isActive = false;
+    resetUIResources();
 }
 
 void UISystem::on_receive(const Event::SwitchView& msg)
 {
     nextView = msg.view;
+}
+
+void UISystem::on_receive(const Event::ResetUIResources& /*msg*/)
+{
+    resetUIResources();
 }
 
 void UISystem::on_receive(const Event::ConfigureUIScreen& config)
@@ -172,6 +179,8 @@ void UISystem::on_receive(const Event::ConfigureUIMenu& config)
     menus = config.menus;
     text = config.text;
 
+    int textSize = text->getFontSize();
+
     for (UIMenu*& menu : menus)
     {
         // skip if nullptr
@@ -182,6 +191,8 @@ void UISystem::on_receive(const Event::ConfigureUIMenu& config)
 
         menu->isActive = false;
         menu->text = text;
+        /// @note 192px is the screen height. 1 row is reserved for the flashing text. Each line takes the font size height
+        menu->visibleOptions = (192 / textSize) - 1;
     }
 }
 
@@ -191,7 +202,7 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
     if (!msg.screen->isLoaded)
     {
         // add screen if space
-        if (msg.screen->isMain ? (screenMainCount < 3) : (screenSubCount < 4))
+        if (msg.screen->isMain ? (screenMainCount < 2) : (screenSubCount < 3))
         {
             registerScreen(msg.screen);
         }
@@ -204,7 +215,7 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
             if (msg.screen->isMain)
             {
                 int targetBgId = lruBgMain[0];
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     if ((loadedMain[i] != nullptr) && (loadedMain[i]->bgId == targetBgId))
                     {
@@ -217,7 +228,7 @@ void UISystem::on_receive(const Event::ShowScreen& msg)
             else
             {
                 int targetBgId = lruBgSub[0];
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     if ((loadedSub[i] != nullptr) && (loadedSub[i]->bgId == targetBgId))
                     {
@@ -266,6 +277,7 @@ void UISystem::on_receive(const Event::ShowMenu& msg)
         activeMenu->isActive = false;
     }
 
+    renderUIText = true;
     activeMenu = msg.menu;
     activeMenu->resetMenu();
     activeMenu->isActive = true;
@@ -273,11 +285,17 @@ void UISystem::on_receive(const Event::ShowMenu& msg)
 
 void UISystem::on_receive(const Event::HideAllMenus& /*msg*/)
 {
+    renderUIText = false;
     if (activeMenu != nullptr)
     {
         activeMenu->resetMenu();
         activeMenu = nullptr;
     }
+}
+
+void UISystem::on_receive(const Event::RenderUIText& /*msg*/)
+{
+    renderUIText = true;
 }
 
 void UISystem::lruUpdate(int id, bool isMain)
@@ -287,7 +305,7 @@ void UISystem::lruUpdate(int id, bool isMain)
         int pos = 0;
 
         // find where the existing id currently is
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (lruBgMain[i] == id)
             {
@@ -297,20 +315,20 @@ void UISystem::lruUpdate(int id, bool isMain)
         }
 
         // shift everything after that position to the left to close the gap
-        for (int i = pos; i < 2; i++)
+        for (int i = pos; i < 1; i++)
         {
             lruBgMain[i] = lruBgMain[i + 1];
         }
 
         // place the updated id at the very end (most recently used)
-        lruBgMain[2] = id;
+        lruBgMain[1] = id;
     }
     else
     {
         int pos = 0;
 
         // find where the existing id currently is
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (lruBgSub[i] == id)
             {
@@ -320,13 +338,13 @@ void UISystem::lruUpdate(int id, bool isMain)
         }
 
         // shift everything after that position to the left to close the gap
-        for (int i = pos; i < 3; i++)
+        for (int i = pos; i < 2; i++)
         {
             lruBgSub[i] = lruBgSub[i + 1];
         }
 
         // place the updated id at the very end (most recently used)
-        lruBgSub[3] = id;
+        lruBgSub[2] = id;
     }
 }
 
@@ -335,7 +353,7 @@ void UISystem::registerScreen(UIScreen* screen)
     sassert(screen != nullptr, "UIScreen cannot be nullptr.");
 
     // load screen
-    if (screen->isMain && screenMainCount < 3)
+    if (screen->isMain && screenMainCount < 2)
     {
         loadedMain[screenMainCount] = screen;
         screen->bgId = hwBgMain[screenMainCount];
@@ -345,7 +363,7 @@ void UISystem::registerScreen(UIScreen* screen)
         screen->isLoaded = true;
         return;
     }
-    else if (!screen->isMain && screenSubCount < 4)
+    else if (!screen->isMain && screenSubCount < 3)
     {
         loadedSub[screenSubCount] = screen;
         screen->bgId = hwBgSub[screenSubCount];
@@ -360,13 +378,13 @@ void UISystem::registerScreen(UIScreen* screen)
     // throw error (too many screens registered)
     if (screen->isMain)
     {
-        sassert(screenMainCount < 3,
-                "Too many screens registered. A maximum of 4 main screens and 3 sub screens can be registered.");
+        sassert(screenMainCount < 2,
+                "Too many screens registered. A maximum of 2 main screens and 3 sub screens can be registered.");
     }
     else
     {
-        sassert(screenSubCount < 4,
-                "Too many screens registered. A maximum of 4 main screens and 3 sub screens can be registered.");
+        sassert(screenSubCount < 3,
+                "Too many screens registered. A maximum of 2 main screens and 3 sub screens can be registered.");
     }
 }
 
@@ -400,7 +418,7 @@ void UISystem::cleanupScreens()
 {
     // reset all bg ids, UIScreens
     // sub
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     {
         lruBgSub[i] = hwBgSub[i];
         if (loadedSub[i] == nullptr)
@@ -415,7 +433,7 @@ void UISystem::cleanupScreens()
     }
 
     // main
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 2; j++)
     {
         lruBgMain[j] = hwBgMain[j];
         if (loadedMain[j] == nullptr)
@@ -438,15 +456,37 @@ void UISystem::cancelSFX()
     musicCtrl->stopSFX(sfxMenuHandle);
     musicCtrl->stopSFX(sfxSelectHandle);
     musicCtrl->stopSFX(sfxCancelHandle);
+    sfxMenuHandle = 0;
+    sfxSelectHandle = 0;
+    sfxCancelHandle = 0;
+}
+
+void UISystem::resetUIResources()
+{
+    cancelSFX();
+    cleanupScreens();
+    cleanupMenus();
+
+    isActive = false;
+    renderUIText = false;
 }
 
 void UISystem::cleanupMenus()
 {
-    menus = {};
-    text = nullptr;
     if (activeMenu != nullptr)
     {
         activeMenu->resetMenu();
         activeMenu = nullptr;
     }
+
+    for (UIMenu* menu : menus)
+    {
+        if (menu != nullptr)
+        {
+            menu->text = nullptr;
+        }
+    }
+
+    menus = {};
+    text = nullptr;
 }

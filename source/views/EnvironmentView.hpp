@@ -1,25 +1,37 @@
 #pragma once
-
 #include "views/BaseView.hpp"
 
-// core
-#include "core/enums.hpp"
 // environments/data
 #include "data/environmentDb.hpp"
 #include "environment/Environment.hpp"
 // components
-#include "components/menu/BattleMenuComponent.hpp"
-#include "components/menu/PauseMenuComponent.hpp"
-#include "components/ui/DialogueScreen.hpp"
-#include "components/ui/MenuHUDScreen.hpp"
-// controllers
-#include "controllers/AnimationController.hpp"
-
 #include "components/DialogueComponent.hpp"
 #include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
+#include "components/menus/BattleMenuComponent.hpp"
+#include "components/menus/PauseMenuComponent.hpp"
+#include "components/screens/DialogueScreen.hpp"
+#include "components/screens/MenuHUDScreen.hpp"
+// controllers
+#include "controllers/AnimationController.hpp"
+#include "controllers/MusicController.hpp"
+// managers
 #include "managers/RenderManager.hpp"
+//systems
 #include "systems/CameraSystem.hpp"
+
+#include <cstdint>
+#include <etl/array.h>
+#include <etl/span.h>
+#include <string>
+
+enum class ViewPhase
+{
+    BATTLE,
+    PAUSE,
+    DIALOGUE,
+    ENVIRONMENT
+};
 
 class EnvironmentView : public BaseView
 {
@@ -54,21 +66,9 @@ class EnvironmentView : public BaseView
      */
     void cleanup() override;
 
-    /**
-     * @brief Loads and uploads a room's environment geometry and textures,
-     *        driven entirely by dbEntry
-     *
-     * @note  No per-room texture-slot code and no per-room generated class needed.
-     *
-     * Loads each texture slot's texture assets to build display lists and upload
-     * textures to VRAM, then unloads the texture assets. Logs a message if environment
-     * loading fails, since a failed load otherwise leaves environments silently
-     * rendering nothing.
-     */
-    void setupEnvironment();
-
   protected:
-    // Room-specific hooks
+    // -------------------------------------------------
+    // Room-specific hooks (implemented/overridden by derived rooms)
     virtual float getCameraYOffset() const
     {
         return 0.1f;
@@ -76,23 +76,22 @@ class EnvironmentView : public BaseView
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 
-    virtual void setTextConfig() = 0;
+    virtual void setupText() = 0;
 
-    virtual void setMusic() = 0;
+    virtual void setupMusic() = 0;
+
+    virtual void setupMovement() = 0;
 
     virtual void setupUI()
     {
     }
 
-    virtual void setMovementConfig()
+    virtual void setupDialogue()
     {
     }
 
-    virtual void setDialogueConfig()
-    {
-    }
-
-    virtual void setCameraConfig()
+    // TODO: enforce?
+    virtual void setupCamera()
     {
     }
 
@@ -100,10 +99,10 @@ class EnvironmentView : public BaseView
     {
     }
 
-    virtual ViewState onTileCheck(TileType tile, u32 pressed) = 0;
+    virtual ViewState onTileCheck(TileType tile, uint32_t pressed) = 0;
 
     // -------------------------------------------------
-    // Battle
+    // Battle hooks
     virtual void startBattle()
     {
     }
@@ -112,14 +111,15 @@ class EnvironmentView : public BaseView
     {
     }
 
+    // -------------------------------------------------
     // Shared state
     touchPosition touch;
 
-    int bgSharedSub1;
-    int bgSharedSub2;
-    int bgSharedSub3;
+    int8_t bgSharedSub1 = -1;
+    int8_t bgSharedSub2 = -1;
+    int8_t bgSharedSub3 = -1;
 
-    ViewPhase phase;
+    ViewPhase phase = ViewPhase::ENVIRONMENT;
 
     bool prevPauseState = false;
     bool prevDialogueState = false;
@@ -135,52 +135,60 @@ class EnvironmentView : public BaseView
     Event::ConfigureCamera camConfig;
 
     // -------------------------------------------------
-    // player
+    // Player
     MovementComponent* movement = nullptr;
     // TODO: move dialogue, text component to actual actors!
     // In this case, it would be the Akihiko billboard
     DialogueComponent* dialogue = nullptr;
-    TextComponent* text = nullptr;
-    TextComponent* textSub = nullptr;
 
-    // view
+    // -------------------------------------------------
+    // View / entity
     ae::Entity* environment = nullptr;
     GraphicsComponent* graphics = nullptr;
-    TextComponent* textMenu = nullptr;
+    TextComponent* text = nullptr;
+    TextComponent* textSub = nullptr;
+    TextComponent* textSubAlt = nullptr;
 
     AnimationController* animationCtrl = AnimationController::getInstance();
     MusicController* musicCtrl = MusicController::getInstance();
 
-    // ui
+    // -------------------------------------------------
+    // UI
     DialogueScreen* dialogueScreen = nullptr;
     MenuHUDScreen* menuHUDScreen = nullptr;
-    // MenuBackgroundScreen* menuBackgroundScreen = nullptr;
 
     BattleMenuComponent* battleMenuCmpt = nullptr;
     PauseMenuComponent* pauseMenuCmpt = nullptr;
 
-    std::array<int, 3> bgMain;
-    std::array<int, 4> bgSub;
+    std::array<int, 2> bgMain;
+    std::array<int, 3> bgSub;
 
+    // -------------------------------------------------
     // Environment
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
 
-    // text
-    uint16_t* textVideoBuffer;
-    uint16_t* textVideoBufferSub;
-    std::string FONT_NAME = "cosmetica";
-    int FONT_SIZE = 12;
+    // -------------------------------------------------
+    // Text
+    uint16_t* textVideoBuffer = nullptr;
+    uint16_t* textVideoBufferSub = nullptr;
+    std::string fontName = "cosmetica";
+    uint8_t fontSize = 12;
+    // set in init()
+    uint8_t lineSpacing = 0;
 
-    RenderManager& render = RenderManager::GetInstance();
+    // -------------------------------------------------
+    // Dialogue
+    Dialogue* dialogueFirstLine = nullptr;
 
   private:
-    // fog properties
-    int shift = 1;
+    // -------------------------------------------------
+    // Fog properties
+    uint8_t shift = 1;
     // how thick (translucent) the fog is
-    int mass = 1;
+    uint8_t mass = 1;
     // how far the fog is (0x0000 to 0x8000)
-    int depth = 0x6000;
+    uint16_t depth = 0x6000;
 
     /**
      * @brief Loads a single .grit asset and returns its raw tile pointer.
@@ -194,5 +202,23 @@ class EnvironmentView : public BaseView
      * @return Raw pointer to the asset's tile data, reinterpreted as
      *         unsigned int, suitable for passing to the texture upload code.
      */
-    const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset);
+    const unsigned int* loadBitmap(const std::string& path, GraphicAsset& asset);
+
+    /**
+     * @brief Loads and uploads a room's environment geometry and textures,
+     *        driven entirely by dbEntry
+     *
+     * @note  No per-room texture-slot code and no per-room generated class needed.
+     *
+     * Loads each texture slot's texture assets to build display lists and upload
+     * textures to VRAM, then unloads the texture assets. Logs a message if environment
+     * loading fails, since a failed load otherwise leaves environments silently
+     * rendering nothing.
+     */
+    void setupEnvironment();
+
+    /**
+     * Loads a model's bitmap textures into memory & passes them to AnimationController
+     */
+    void setupModel();
 };
