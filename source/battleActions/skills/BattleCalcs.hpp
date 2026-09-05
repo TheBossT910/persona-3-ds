@@ -69,7 +69,6 @@ struct BattleCalcs
      */
     static u32 allOutAttack(Player& attacker, BattleParticipant& defender, u32 participantCount);
 
-  private:
     /**
      * @brief Gets correct stat for damage calculations based on skill type.
      *
@@ -97,6 +96,7 @@ struct BattleCalcs
      */
     static ae::q20_12_t getAffinityMtp(BattleStats& battleStats, Skill& skill);
 
+  private:
     /**
      * @brief Calculate healing bonus based on an arbitrary hardcoded table.
      *
