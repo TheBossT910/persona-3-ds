@@ -99,21 +99,8 @@ const uint8_t BattleCalcs::magicBoostTableHeal[20] = {
 
 u32 BattleCalcs::getAtk(BattleStats& attackerStats, Skill& skill)
 {
-    if (skill.skillRace == SkillRace::phys)
-    {
-        return attackerStats.st;
-    }
-    else
-    {
-        return attackerStats.ma;
-    }
+    return skill.skillRace == SkillRace::phys ? attackerStats.st : attackerStats.ma;
 }
-
-/**
- * @brief gets a multiplier used for damage calcs based on some arbitrary hardcoded table
- *
- * @author Nolan Kolb (TrueGiles / themoonwalker8692)
- */
 
 ae::q20_12_t BattleCalcs::getLevelDifference(u32 attackerLevel, u32 defenderLevel)
 {
@@ -146,11 +133,6 @@ ae::q20_12_t BattleCalcs::getAffinityMtp(BattleStats& defenderStats, Skill& skil
     }
 }
 
-/**
- * @brief gets a boost for healing based on some arbitrary table, decided by lvl
- *
- * @author Nolan Kolb (TrueGiles / themoonwalker8692)
- */
 uint8_t BattleCalcs::getMagicBoostHeal(uint8_t& magic)
 {
     uint8_t index = (magic - 1) / 5;
