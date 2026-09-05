@@ -74,7 +74,11 @@ def quat_float_to_s16(val):
 
 
 def rgb_to_rgb15(color):
-    """Converts RGB float (0.0 - 1.0) or int (0 - 255) array to NDS 15-bit RGB integer."""
+    """Converts RGB float (0.0 - 1.0) or int (0 - 255) array to NDS 15-bit RGB integer.
+    Args:
+        color (list): The input color as a list or array of three values (R, G, B).
+    Returns:
+        int: The resulting 15-bit RGB integer."""
     if color is None:
         return 0x7FFF  # Default White
 
@@ -273,6 +277,9 @@ def process_texture_img(gltf, image_index, tmp_dir):
     Returns:
         dict: A dictionary containing texture information (name, width, height, isRGBA).
     """
+    # TODO Can we integrate this whole process into this python script (so no temp files are created)?
+    # Currently we're extracting the image into a png file, converting it to a binary file, and then attaching it to our mdl file
+
     image = gltf.images[image_index]
     texture_base_name = f"tex_{image_index}"
 
@@ -290,8 +297,8 @@ def process_texture_img(gltf, image_index, tmp_dir):
         length = get_prop(bv, "byteLength")
         img_bytes = blob[offset : offset + length]
 
-        # Save temporary input png
         # TODO: arg for non_temp output? for debugging
+        # Save temporary input png
         temp_png_path = os.path.join(tmp_dir, f"tex_{image_index}.png")
         with open(temp_png_path, "wb") as f:
             f.write(img_bytes)
@@ -303,7 +310,7 @@ def process_texture_img(gltf, image_index, tmp_dir):
     # Enforce NDS texture size constraints (power-of-two)
     img = Image.open(temp_png_path).convert(
         "RGBA"
-    )  # TODO DECIDE: support for non RGBA?
+    )  # TODO do we need support for non RGBA?
 
     target_w = min(1024, next_pow2(img.width))
     target_h = min(1024, next_pow2(img.height))
@@ -312,7 +319,6 @@ def process_texture_img(gltf, image_index, tmp_dir):
         img.save(temp_png_path)
 
     # Run GRIT command to convert PNG to NDS texture format
-    # TODO DECIDE: Leave here ot pass it to outside script ? (similar to whatever obj2model was doing idk)
     # -gt: Texture mode | -gB16: 16-bit A1BGR555 | -gT!: set alpha-bit  | -ftb: Binary output | -fh!: No C header
     temp_grit_output_base = os.path.join(tmp_dir, texture_base_name)
     grit_cmd = [
@@ -383,6 +389,7 @@ def write_mdl_file(output_path, nodes, textures, images, animations=[]):
         output_path (str): Path to the output MDL3 file.
         nodes (list): List of node dictionaries containing position and sublist data.
         textures (list): List of texture dictionaries containing name, width, height, and RGBA flag.
+        images (list): Images dictionaries containing name, byte length, and binary data.
         animations (list): List of animation dictionaries containing name, number of frames, fps, and tracks.
     """
     with open(output_path, "wb") as f:
