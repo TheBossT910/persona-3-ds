@@ -1,5 +1,7 @@
 #include "TextComponent.hpp"
 
+#include <algorithm>
+
 void TextComponent::Update(ae::fixed_t)
 {
     if (appearingText != nullptr)
@@ -47,6 +49,13 @@ void TextComponent::configureText(const TextConfig& config, bool loadDefaultPale
     {
         font = tm.loadFont(config.fontNamePath, config.fontSize);
         fontSize = config.fontSize;
+
+        /// Auto-derive spacing from fontSize, using the same ratios the old fixed
+        /// defaults had at a 12px font (1/12 letter, 2/12 line, 2/12 space).
+        /// Call the setters after configureText() to override any of these manually.
+        letterSpacing = std::max(1, fontSize / 12);
+        lineSpacing = std::max(1, fontSize / 6);
+        spaceWidth = std::max(1, fontSize / 6);
     }
     // load font palette
     else if (config.fontPalettePath != nullptr)
@@ -64,12 +73,12 @@ void TextComponent::configureText(const TextConfig& config, bool loadDefaultPale
 
 void TextComponent::drawText(const std::string& text, int x, int y, int color)
 {
-    ts.drawText(text, font, videoBuffer, x, y, color);
+    ts.drawText(text, font, videoBuffer, x, y, color, letterSpacing, lineSpacing, spaceWidth);
 }
 
 void TextComponent::appearText(const std::string& text, int x, int y, int color)
 {
-    ts.appearText(appearingText, text, font, videoBuffer, x, y, color);
+    ts.appearText(appearingText, text, font, videoBuffer, x, y, color, letterSpacing, lineSpacing, spaceWidth);
 }
 
 void TextComponent::appearTextSkip()
@@ -114,7 +123,32 @@ int TextComponent::getFontSize()
 
 int TextComponent::getLineSpacing()
 {
-    return ts.LINE_SPACING;
+    return lineSpacing;
+}
+
+int TextComponent::getLetterSpacing()
+{
+    return letterSpacing;
+}
+
+int TextComponent::getSpaceWidth()
+{
+    return spaceWidth;
+}
+
+void TextComponent::setLetterSpacing(int value)
+{
+    letterSpacing = value;
+}
+
+void TextComponent::setLineSpacing(int value)
+{
+    lineSpacing = value;
+}
+
+void TextComponent::setSpaceWidth(int value)
+{
+    spaceWidth = value;
 }
 
 void TextComponent::testBitmap()
