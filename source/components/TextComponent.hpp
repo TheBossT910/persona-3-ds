@@ -125,6 +125,36 @@ class TextComponent : public ae::Component
      */
     int getLineSpacing();
 
+    /**
+     * @brief A getter to return the letter spacing
+     * @return The letter spacing
+     */
+    int getLetterSpacing();
+
+    /**
+     * @brief A getter to return the space width (width of a ' ' character)
+     * @return The space width
+     */
+    int getSpaceWidth();
+
+    /**
+     * @brief Manually override the auto-calculated letter spacing.
+     * @param value Pixels of horizontal space to add after each glyph.
+     */
+    void setLetterSpacing(int value);
+
+    /**
+     * @brief Manually override the auto-calculated line spacing.
+     * @param value Pixels of vertical space to add after each line, on top of the font's line height.
+     */
+    void setLineSpacing(int value);
+
+    /**
+     * @brief Manually override the auto-calculated space width.
+     * @param value Pixels of horizontal space a ' ' character takes up.
+     */
+    void setSpaceWidth(int value);
+
   protected:
     void SubmitToManager() override
     {
@@ -138,6 +168,11 @@ class TextComponent : public ae::Component
     Font* font = nullptr;
     uint16_t* videoBuffer = nullptr;
     int fontSize = 0;
+
+    /// Auto-derived from fontSize in configureText(); can be overridden manually via the setters above.
+    int letterSpacing = 1;
+    int lineSpacing = 2;
+    int spaceWidth = 2;
 
     /**
      * @brief A wrapper for testBitmap in TextSystem

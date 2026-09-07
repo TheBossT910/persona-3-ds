@@ -94,6 +94,9 @@ struct Text
     bool bold;
     bool italic;
     bool underline;
+    int letterSpacing;
+    int lineSpacing;
+    int spaceWidth;
 };
 
 /**
