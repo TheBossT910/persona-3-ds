@@ -49,7 +49,7 @@ class CameraSystem : public ae::SystemRouter<CameraSystem,
      * @brief ETL message handler to configure the camera settings.
      *
      * @details Resets all tuning parameters and mode from @p config.
-     * Call this after setCameraConfig() sets up the room-specific
+     * Call this after setupCamera() sets up the room-specific
      * @ref CameraConfig.
      *
      * Required to call in order to enable the CameraSystem

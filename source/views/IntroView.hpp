@@ -1,17 +1,22 @@
 #pragma once
-#include "controllers/MusicController.hpp"
-#include "core/globals.hpp"
-#include "views/BaseView.hpp"
-
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
+#include "controllers/MusicController.hpp"
 #include "managers/MathManager.hpp"
 #include "managers/RenderManager.hpp"
+#include "views/BaseView.hpp"
+
+#include <etl/array.h>
 
 class IntroView : public BaseView
 {
   private:
     Sprite logoSprite[2];
+    // 64
+    SpriteRenderState srs0 = {logoSprite[0], 5, 128};
+    SpriteRenderState srs1 = {logoSprite[1], 69, 128};
+    etl::array<SpriteRenderState, 2> spriteRenderStates = {srs0, srs1};
+
     int bg[4];
 
     // sub screen

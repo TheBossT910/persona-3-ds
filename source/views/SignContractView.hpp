@@ -1,12 +1,10 @@
 #pragma once
-#include "controllers/MusicController.hpp"
-#include "views/BaseView.hpp"
-#include <maxmod9.h>
-#include <nds/arm9/console.h>
-#include <nds/arm9/keyboard.h>
-
 #include "components/GraphicsComponent.hpp"
 #include "components/TextComponent.hpp"
+#include "controllers/MusicController.hpp"
+#include "views/BaseView.hpp"
+
+#include <maxmod9.h>
 
 class SignContractView : public BaseView
 {

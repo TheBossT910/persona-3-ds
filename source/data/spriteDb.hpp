@@ -11,6 +11,7 @@ enum class SpriteType
     TIME,
     SKILL_SPRITE,
     DIALOGUE,
+    BUST,
     CUSTOM,
 };
 
@@ -112,10 +113,26 @@ enum class DigitSprite
 
 enum class DialogueSprite
 {
-    NAME_TAG = 0,
-    CALENDAR,
-    TEXT_CORNER,
-    TEXT_MIDDLE,
+    BLUE_BLOCK = 0,
+    WHITE_BLOCK,
+    CORNER,
+    EDGE,
+    CORNER_GREEN,
+    EDGE_GREEN
+};
+
+enum class BustSprite
+{
+    TOP_LEFT = 0,
+    TOP_RIGHT,
+    MIDDLE_LEFT,
+    MIDDLE_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT,
+    // DEBUG
+    EYES_NEUTRAL,
+    MOUTH_NEUTRAL,
+    HAPPY
 };
 
 std::string getSpriteFilename(SpriteType type, int id);

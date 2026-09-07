@@ -122,6 +122,13 @@ add_dependencies(p3d_assets_graphics p3d_assets_environments p3d_assets_models)
 add_custom_target(p3d_environment_db DEPENDS p3d_assets_environments)
 
 add_custom_target(p3d_assets)
+add_custom_target(p3d_clean_assets
+    COMMAND ${CMAKE_COMMAND}
+    -DP3D_SOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -P ${CMAKE_SOURCE_DIR}/cmake/CleanAssets.cmake
+    COMMENT "Cleaning generated asset outputs"
+    VERBATIM
+)
 get_property(P3D_ASSET_GROUP_TARGETS GLOBAL PROPERTY P3D_ASSET_GROUP_TARGETS)
 
 if(P3D_ASSET_GROUP_TARGETS)

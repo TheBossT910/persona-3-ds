@@ -12,7 +12,7 @@
 #include "events/GenericEvents.hpp"
 #include <aegis/system.hpp>
 
-#include "components/menu/BattleMenuComponent.hpp"
+#include "components/menus/BattleMenuComponent.hpp"
 #include "controllers/MusicController.hpp"
 
 #include <algorithm>

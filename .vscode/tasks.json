@@ -129,9 +129,19 @@
             "problemMatcher": []
         },
         {
+            "label": "CMake: Clean Assets",
+            "type": "shell",
+            "command": "if [ -d out/build/nds-debug-sdcard ]; then cmake --build out/build/nds-debug-sdcard --target p3d_clean_assets; else echo 'Skipping asset clean: NDS Debug build directory does not exist'; fi",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "CMake: Clean (All)",
             "dependsOrder": "sequence",
             "dependsOn": [
+                "CMake: Clean Assets",
                 "CMake: Clean (Host Debug)",
                 "CMake: Clean (NDS Debug)",
                 "CMake: Clean (NDS Release)"

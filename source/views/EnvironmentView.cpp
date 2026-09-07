@@ -1,17 +1,13 @@
 #include "EnvironmentView.hpp"
 #include "core/globals.hpp"
+#include "models/makoto.hpp"
+#include "systems/BattleSystem.hpp"
+
 #include <nds.h>
 #include <string>
 
-// model
-#include "dialogue/demo_dialogue.hpp"
-#include "models/makoto.hpp"
-
-#include "systems/BattleSystem.hpp"
-
 namespace
 {
-
 /**
  * @brief Strips the compiled ".img.bin" suffix from a texture filename to
  *        recover the base name expected by loadGrit.
@@ -37,11 +33,46 @@ std::string gritBaseName(const char* compiledFileName)
 }
 } // namespace
 
-const unsigned int* EnvironmentView::loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
+// -------------------------------------------------
+// Models
+
+const unsigned int* EnvironmentView::loadBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphics->loadGraphic(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
+
+void EnvironmentView::setupModel()
+{
+    GraphicAsset modelTextures[MODEL_MAKOTO_TEX_COUNT] = {};
+    const unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
+
+    const std::string basePath = fatBasePath + "models/makoto/";
+
+    // load textures
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] =
+        loadBitmap(basePath + "makoto_texture_0", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] =
+        loadBitmap(basePath + "makoto_texture_1", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] =
+        loadBitmap(basePath + "makoto_texture_2", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] =
+        loadBitmap(basePath + "makoto_texture_3", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3]);
+    bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] =
+        loadBitmap(basePath + "makoto_texture_4", modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4]);
+
+    makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsMakoto);
+
+    // unload texture graphics
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3]);
+    graphics->unloadGraphic(modelTextures[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4]);
+}
+
+// -------------------------------------------------
+// Environment
 
 void EnvironmentView::setupEnvironment()
 {
@@ -52,7 +83,7 @@ void EnvironmentView::setupEnvironment()
 
     for (int i = 0; i < dbEntry->textureCount; ++i)
     {
-        bitmapsEnv[i] = loadEnvironmentBitmap(basePath + gritBaseName(dbEntry->textures[i].name), envTextures[i]);
+        bitmapsEnv[i] = loadBitmap(basePath + gritBaseName(dbEntry->textures[i].name), envTextures[i]);
     }
 
     if (!env.load(dbEntry, bitmapsEnv))
@@ -67,6 +98,9 @@ void EnvironmentView::setupEnvironment()
     }
 }
 
+// -------------------------------------------------
+// Lifecycle
+
 void EnvironmentView::init()
 {
     // clearing so nothing from the previous enviorment shows during load
@@ -79,28 +113,28 @@ void EnvironmentView::init()
     {
         environment = engine.CreateEntity();
         graphics = engine.CreateComponent<GraphicsComponent>();
-        textMenu = engine.CreateComponent<TextComponent>();
+        text = engine.CreateComponent<TextComponent>();
+        textSub = engine.CreateComponent<TextComponent>();
+        textSubAlt = engine.CreateComponent<TextComponent>();
 
         environment->AddComponent(graphics);
-        environment->AddComponent(textMenu);
+        environment->AddComponent(text);
+        environment->AddComponent(textSub);
+        environment->AddComponent(textSubAlt);
     }
 
     if (player != nullptr)
     {
         movement = engine.CreateComponent<MovementComponent>();
         dialogue = engine.CreateComponent<DialogueComponent>();
-        text = engine.CreateComponent<TextComponent>();
-        textSub = engine.CreateComponent<TextComponent>();
 
         player->AddComponent(movement);
         player->AddComponent(dialogue);
-        player->AddComponent(text);
-        player->AddComponent(textSub);
     }
 
     // set modes
     videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
-    videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+    videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE);
 
     // set vram
     vramSetBankA(VRAM_A_TEXTURE_SLOT0); // texture slot 0
@@ -147,8 +181,8 @@ void EnvironmentView::init()
     glFogOffset(depth);
 
     // generate a linear density table
-    int density = 0;
-    for (int i = 0; i < 32; i++) // it has 32 steps
+    uint8_t density = 0;
+    for (uint8_t i = 0; i < 32; ++i) // it has 32 steps
     {
         glFogDensity(i, density);
         // exponentially increase mass the furthur back the fog is
@@ -156,7 +190,9 @@ void EnvironmentView::init()
 
         // entries are 7 bit, so cap the density to 127
         if (density > 127)
+        {
             density = 127;
+        }
     }
 
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG);
@@ -186,30 +222,29 @@ void EnvironmentView::init()
     bgUpdate();
 
     // setup MovementComponent on player entity (room-specific map/tuning, generic call site)
-    setMovementConfig();
+    setupMovement();
     movement->start();
 
-    setCameraConfig();
+    setupCamera();
     ae::BroadcastEvent(Event::ConfigureCamera(camConfig));
 
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
     animationCtrl->loadModel((modelPath + "makoto/makoto.bin").c_str());
+    setupModel();
 
-    makoto_loadTextures(*animationCtrl, (const unsigned int**)bitmapsCharacter);
-
-    //setup main screen text engine
+    // setup main screen text engine
     int bgText = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
     textVideoBuffer = (uint16_t*)bgGetGfxPtr(bgText);
-    bgSetPriority(bgText, 0); //set text layer on main to be on top of 3D view
+    bgSetPriority(bgText, 0); // set text layer on main to be on top of 3D view
 
-    //setup sub screen text engine
+    // setup sub screen text engine
     int bgTextSub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 4, 0);
     textVideoBufferSub = (uint16_t*)bgGetGfxPtr(bgTextSub);
     bgSetPriority(bgTextSub, 0);
 
     // config text/textSub
-    setTextConfig();
+    setupText();
 
     // setup environment geometry/textures (fully generic, data-driven)
     setupEnvironment();
@@ -217,20 +252,20 @@ void EnvironmentView::init()
     // setup UI
     // NOTE: bg 0 is the 3D view
     bgMain = {1, 2};
-    // TODO: Setting the first index to anything other than bgSharedSub results in black bg (but sprites still load)
-    // This might be okay/intended, as long as we create 4 seperate bg to pass in
-    bgSub = {bgSharedSub2, bgSharedSub3, 4};
+    // NOTE: Setting the first index to anything other than bgSharedSub results in black bg (but sprites still load)
+    bgSub = {bgSharedSub1, bgSharedSub2, bgSharedSub3};
 
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    // setup dialogue rendering target (which sub-bg the dialogue box uses)
-    demo_dialogue_bg_slot = bgSharedSub1;
-
+    // setup UIScreen, UIMenu
     setupUI();
 
+    // setup dialogue
+    setupDialogue();
+
     // setup music (room-specific path/loop points)
-    setMusic();
+    setupMusic();
 
     // setup view phases
     prevPauseState = false;
@@ -238,11 +273,11 @@ void EnvironmentView::init()
     prevEnvironmentState = false;
     isBattleMenuActive = false;
     prevBattleState = false;
-    phase = ViewPhase::Environment;
+    phase = ViewPhase::ENVIRONMENT;
 
-    bgSetPriority(0, 2); //set 3D view on main to be behind text layer
+    bgSetPriority(0, 2); // set 3D view on main to be behind text layer
 
-    lineSpacing = text->getLineSpacing();
+    lineSpacing = textSub->getLineSpacing();
 }
 
 ViewState EnvironmentView::update()
@@ -255,7 +290,7 @@ ViewState EnvironmentView::update()
 
     switch (phase)
     {
-    case ViewPhase::Battle:
+    case ViewPhase::BATTLE:
     {
         if (!prevBattleState)
         {
@@ -282,15 +317,15 @@ ViewState EnvironmentView::update()
             movement->start();
             ae::BroadcastEvent(Event::StartCamera{});
 
-            phase = ViewPhase::Environment;
+            phase = ViewPhase::ENVIRONMENT;
 
-            setMusic();
+            setupMusic();
         }
 
         break;
     }
 
-    case ViewPhase::Pause:
+    case ViewPhase::PAUSE:
     {
         if (!prevPauseState)
         {
@@ -301,14 +336,6 @@ ViewState EnvironmentView::update()
 
             ae::BroadcastEvent(Event::HideAllScreens{});
             ae::BroadcastEvent(Event::ShowMenu{pauseMenuCmpt});
-        }
-
-        ViewState menuResult = ViewState::KEEP_CURRENT;
-
-        if (menuResult != ViewState::KEEP_CURRENT)
-        {
-            musicCtrl->pause();
-            return menuResult;
         }
 
         if ((systemKeysDown & KEY_START) || pauseMenuCmpt->isClosed)
@@ -323,13 +350,13 @@ ViewState EnvironmentView::update()
             movement->start();
             ae::BroadcastEvent(Event::StartCamera{});
 
-            phase = ViewPhase::Environment;
+            phase = ViewPhase::ENVIRONMENT;
         }
 
         break;
     }
 
-    case ViewPhase::Dialogue:
+    case ViewPhase::DIALOGUE:
     {
         bool isActive = dialogue->IsActive();
 
@@ -339,17 +366,16 @@ ViewState EnvironmentView::update()
 
             movement->stop();
             ae::BroadcastEvent(Event::StopCamera{});
-            setDialogueConfig();
-            dialogue->start();
+
+            if (dialogueFirstLine != nullptr)
+            {
+                dialogue->start(dialogueFirstLine);
+            }
 
             prevDialogueState = true;
         }
         else if (!isActive && prevDialogueState)
         {
-            // TODO: remove manually managed dialogue backgrounds
-            // the demo_dialogue loader function manually calls bgShow, which is bad!
-            render.hideBg(bgSharedSub1);
-
             ae::BroadcastEvent(Event::HideAllScreens{});
 
             prevDialogueState = false;
@@ -358,13 +384,13 @@ ViewState EnvironmentView::update()
             movement->start();
             ae::BroadcastEvent(Event::StartCamera{});
 
-            phase = ViewPhase::Environment;
+            phase = ViewPhase::ENVIRONMENT;
         }
 
         break;
     }
 
-    case ViewPhase::Environment:
+    case ViewPhase::ENVIRONMENT:
     {
         if (!prevEnvironmentState)
         {
@@ -383,7 +409,7 @@ ViewState EnvironmentView::update()
             movement->stop();
             ae::BroadcastEvent(Event::StopCamera{});
 
-            phase = ViewPhase::Pause;
+            phase = ViewPhase::PAUSE;
             break;
         }
 
@@ -398,7 +424,7 @@ ViewState EnvironmentView::update()
                 movement->stop();
                 ae::BroadcastEvent(Event::StopCamera{});
 
-                phase = ViewPhase::Pause;
+                phase = ViewPhase::PAUSE;
                 break;
             }
         }
@@ -444,7 +470,7 @@ ViewState EnvironmentView::update()
 
         if (Globals::enableDebugPrint)
         {
-            if (frame % 60 == 30) //restricting this 2Hz otherwise it tanks performance
+            if (frame % 60 == 30) // restricting this 2Hz otherwise it tanks performance
             {
                 textSub->clearArea(1, 120, 128, 72);
                 char buf[128];
@@ -467,7 +493,7 @@ ViewState EnvironmentView::update()
                 debugText += buf;
 
                 // screen height - 5 lines * (size of text in each line + spacing between each line)
-                textSub->drawText(debugText, 1, 192 - 5 * (FONT_SIZE + lineSpacing), TextColor::Red);
+                textSub->drawText(debugText, 1, 192 - 5 * (fontSize + lineSpacing), TextColor::Red);
             }
         }
 
@@ -476,7 +502,7 @@ ViewState EnvironmentView::update()
 
     default:
     {
-        phase = ViewPhase::Environment;
+        phase = ViewPhase::ENVIRONMENT;
         break;
     }
     }
@@ -491,16 +517,6 @@ void EnvironmentView::cleanup()
 {
     cleanupHook();
 
-    if (text != nullptr)
-    {
-        text->clearScreen();
-    }
-
-    if (textSub != nullptr)
-    {
-        textSub->clearScreen();
-    }
-
     // entity
     if (environment != nullptr)
     {
@@ -508,7 +524,9 @@ void EnvironmentView::cleanup()
 
         environment = nullptr;
         graphics = nullptr;
-        textMenu = nullptr;
+        text = nullptr;
+        textSub = nullptr;
+        textSubAlt = nullptr;
     }
 
     // entity
@@ -516,14 +534,19 @@ void EnvironmentView::cleanup()
     {
         engine.DestroyComponent(movement);
         engine.DestroyComponent(dialogue);
-        engine.DestroyComponent(text);
-        engine.DestroyComponent(textSub);
 
         movement = nullptr;
         dialogue = nullptr;
-        text = nullptr;
-        textSub = nullptr;
     }
+
+    dialogueScreen = nullptr;
+    menuHUDScreen = nullptr;
+    battleMenuCmpt = nullptr;
+    pauseMenuCmpt = nullptr;
+
+    dbEntry = nullptr;
+
+    dialogueFirstLine = nullptr;
 
     musicCtrl->cleanup();
     animationCtrl->unloadTextures();
