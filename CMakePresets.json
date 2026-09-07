@@ -119,27 +119,6 @@
             ]
         },
         {
-            "name": "build-sdcard",
-            "configurePreset": "host-assets",
-            "targets": [
-                "p3d_sdcard_image"
-            ]
-        },
-        {
-            "name": "build-nds-elf",
-            "configurePreset": "nds-debug",
-            "targets": [
-                "p3d_arm9_elf"
-            ]
-        },
-        {
-            "name": "build-nds-rom",
-            "configurePreset": "nds-release",
-            "targets": [
-                "p3d_nds_rom"
-            ]
-        },
-        {
             "name": "build-nds-debug-sdcard",
             "configurePreset": "nds-debug-sdcard",
             "targets": [
