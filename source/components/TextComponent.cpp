@@ -67,7 +67,6 @@ void TextComponent::configureText(const TextConfig& config, bool loadDefaultPale
     if (loadDefaultPalette)
     {
         sassert(font != nullptr, "Cannot load a font palette if a font has not been loaded first!");
-        sassert(font != nullptr, "Cannot load a font palette if a font has not been loaded first!");
         tm.loadDefaultPalette();
     }
 }
