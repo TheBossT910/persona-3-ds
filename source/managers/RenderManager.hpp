@@ -1,10 +1,11 @@
 /**
  * @file RenderManager.hpp
- * @brief Manager for hardware specific rendering functions
- * @author Taha Rashid (TheBossT910 / thebosst)
+ * @brief Manager for hardware specific rendering functionse
+ * @author Gregory Munro (ggmini)
  */
 
 #pragma once
+#include "types/RenderTypes.hpp"
 #include <aegis/manager.hpp>
 
 class RenderManager : public ae::Manager, public ae::Singleton<RenderManager>
@@ -22,19 +23,9 @@ class RenderManager : public ae::Manager, public ae::Singleton<RenderManager>
     {
     }
 
-    /**
-     * @brief Shows the specified background
-     *
-     * @param bgId background layer to show
-     */
-    void showBg(int bgId);
+    void initialize3DView(View3DConfig config);
 
-    /**
-     * @brief Hides the specified background
-     *
-     * @param bgId background layer to hide
-     */
-    void hideBg(int bgId);
+    void renderDisplayList(const void* list);
 
   private:
     friend class Singleton<RenderManager>;
