@@ -35,7 +35,8 @@ void TextSystem::appearText(Text*& appearingText,
 {
     if (appearingText != nullptr)
         delete appearingText;
-    appearingText = createText(content, font, videoBuffer, startX, startY, color, letterSpacing, lineSpacing, spaceWidth);
+    appearingText =
+        createText(content, font, videoBuffer, startX, startY, color, letterSpacing, lineSpacing, spaceWidth);
 }
 
 void TextSystem::appearTextSkip(Text*& appearingText)
