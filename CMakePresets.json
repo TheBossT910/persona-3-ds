@@ -75,17 +75,17 @@
         },
         {
             "name": "default",
-            "displayName": "Default (NDS Release)",
+            "displayName": "Default (NDS Release (with sdcard))",
             "inherits": "nds-release"
         },
         {
             "name": "release",
-            "displayName": "Release (NDS Release)",
+            "displayName": "Release (NDS Release (with sdcard))",
             "inherits": "nds-release"
         },
         {
             "name": "debug",
-            "displayName": "Debug (NDS Debug)",
+            "displayName": "Debug (NDS Debug (with sdcard))",
             "inherits": "nds-debug-sdcard"
         },
         {
