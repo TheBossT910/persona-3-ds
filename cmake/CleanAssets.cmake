@@ -10,6 +10,18 @@ file(GLOB_RECURSE P3D_MUSIC_OUTPUTS
 file(GLOB_RECURSE P3D_VIDEO_OUTPUTS
     "${P3D_SOURCE_DIR}/data/video/*.vid"
 )
+file(GLOB_RECURSE P3D_GRAPHICS_OUTPUTS
+    "${P3D_SOURCE_DIR}/data/graphics/*"
+)
+file(GLOB_RECURSE P3D_ENVIRONMENT_OUTPUTS
+    "${P3D_SOURCE_DIR}/data/environments/*"
+)
+file(GLOB_RECURSE P3D_DATA_MODEL_OUTPUTS
+    "${P3D_SOURCE_DIR}/data/models/*"
+)
+file(GLOB_RECURSE P3D_FONT_OUTPUTS
+    "${P3D_SOURCE_DIR}/data/fonts/*"
+)
 file(GLOB P3D_MAP_OUTPUTS
     "${P3D_SOURCE_DIR}/source/maps/*.hpp"
 )
@@ -25,13 +37,29 @@ file(GLOB P3D_ASSET_STAMPS
     "${P3D_SOURCE_DIR}/out/build/*/p3d_assets_*.stamp"
 )
 
-file(REMOVE
+foreach(P3D_OUTPUT_LIST
+        P3D_GRAPHICS_OUTPUTS
+        P3D_ENVIRONMENT_OUTPUTS
+        P3D_DATA_MODEL_OUTPUTS
+        P3D_FONT_OUTPUTS)
+    list(FILTER ${P3D_OUTPUT_LIST} EXCLUDE REGEX "/\\.gitkeep$")
+endforeach()
+
+set(P3D_GENERATED_OUTPUTS
     ${P3D_MUSIC_OUTPUTS}
     ${P3D_VIDEO_OUTPUTS}
+    ${P3D_GRAPHICS_OUTPUTS}
+    ${P3D_ENVIRONMENT_OUTPUTS}
+    ${P3D_DATA_MODEL_OUTPUTS}
+    ${P3D_FONT_OUTPUTS}
     ${P3D_MAP_OUTPUTS}
     ${P3D_MODEL_OUTPUTS}
     ${P3D_DIALOGUE_OUTPUTS}
     ${P3D_ASSET_STAMPS}
 )
+
+if(P3D_GENERATED_OUTPUTS)
+    file(REMOVE ${P3D_GENERATED_OUTPUTS})
+endif()
 
 message(STATUS "Generated asset outputs cleaned")

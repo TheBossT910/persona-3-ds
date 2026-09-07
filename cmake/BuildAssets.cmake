@@ -237,7 +237,7 @@ endif()
 p3d_group_enabled(fonts P3D_RUN_FONTS)
 
 if(P3D_RUN_FONTS)
-    # Font PNG -> data/fonts/**/*.img.bin using grit with font flags
+    # Font PNG -> data/fonts/**/*.img.bin and .pal.bin using grit with font flags
     file(GLOB_RECURSE FONT_PNG_FILES "${ASSETS_DIR}/fonts/*.png")
 
     foreach(png IN LISTS FONT_PNG_FILES)
