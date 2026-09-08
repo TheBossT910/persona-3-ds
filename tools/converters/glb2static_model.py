@@ -264,28 +264,29 @@ def parse_mesh(gltf, textures):
     ]
 
 
-def convert_glb_to_mdls(input_glb, output_path):
-    """Converts a GLB file to the custom MDLS format, for static meshes.
+def convert_glb_to_mdls(input_glb: str, output_path: str):
+    """Converts a GLB file to the custom MDL3 format, for static meshes.
 
     Args:
-        glb_path (str): Path to the input GLB file.
-        output_path (str): Path to the output MDLS file.
+        input_glb (str): Path to the input GLB file.
+        output_path (str): Path to the output MDL3 file.
+        rgba (bool): Whether to export images in RGBA format.
     """
     gltf = pygltflib.GLTF2().load(input_glb)
 
     # Textures Table
-    textures, images = construct_texture_table(gltf, output_path)
+    textures, images = construct_texture_table(gltf)
 
     # Parse Mesh hierarchy and construct display list
     nodes = parse_mesh(gltf, textures)
 
-    # Write to the MDLS file
+    # Write to the MDL3 file
     write_mdl_file(output_path, nodes, textures, images)
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python glb2mdls.py <input.glb> <output.mdls>")
+        print("Usage: python glb2mdls.py <input.glb> <output.mdl3>")
         sys.exit(1)
 
     input_glb = sys.argv[1]

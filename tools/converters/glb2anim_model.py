@@ -369,11 +369,11 @@ def parse_animations(gltf, node_count):
 
 
 def convert_glb_to_mdla(glb_path: str, output_path: str):
-    """Converts a GLB file to a custom MDLA format.
+    """Converts a GLB file to a custom MDL3 format as an animated mesh.
 
     Args:
         glb_path (str): Path to the input GLB file.
-        output_path (str): Path to the output MDLA file.
+        output_path (str): Path to the output MDL3 file.
     """
     gltf = pygltflib.GLTF2().load(glb_path)
 
@@ -381,7 +381,7 @@ def convert_glb_to_mdla(glb_path: str, output_path: str):
         raise ValueError("Error: No animations found in the GLB file.")
 
     # Textures table
-    textures, images = construct_texture_table(gltf, output_path)
+    textures, images = construct_texture_table(gltf)
 
     # Parse Mesh Primitives and Unskin if necessary
     node_sub_lists = parse_mesh_primitives(gltf, textures)
@@ -397,7 +397,7 @@ def convert_glb_to_mdla(glb_path: str, output_path: str):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python glb2model.py <input.glb> <output.mdla>")
+        print("Usage: python glb2model.py <input.glb> <output.mdl3>")
         sys.exit(1)
 
     input_glb = sys.argv[1]
