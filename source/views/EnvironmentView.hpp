@@ -1,4 +1,8 @@
 #pragma once
+
+#include <aegis/ndsTypes.hpp>
+#include <aegis/types.hpp>
+
 #include "views/BaseView.hpp"
 
 // environments/data
@@ -8,8 +12,8 @@
 #include "components/DialogueComponent.hpp"
 #include "components/GraphicsComponent.hpp"
 #include "components/MovementComponent.hpp"
-#include "components/menus/BattleMenuComponent.hpp"
-#include "components/menus/PauseMenuComponent.hpp"
+#include "components/menus/BattleMenu.hpp"
+#include "components/menus/PauseMenu.hpp"
 #include "components/screens/DialogueScreen.hpp"
 #include "components/screens/MenuHUDScreen.hpp"
 // controllers
@@ -67,11 +71,10 @@ class EnvironmentView : public BaseView
     void cleanup() override;
 
   protected:
-    // -------------------------------------------------
     // Room-specific hooks (implemented/overridden by derived rooms)
-    virtual float getCameraYOffset() const
+    virtual ae::q20_12_t getCameraYOffset() const
     {
-        return 0.1f;
+        return ae::q20_12_t{0.1};
     } // default
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
@@ -129,7 +132,7 @@ class EnvironmentView : public BaseView
     bool promptDrawn = false;
 
     Event::CameraPosition camPos;
-    const float tileSize = 0.062500f;
+    const ae::q20_12_t tileSize{0.062500};
 
     // Override fields in setCameraConfig() — same struct for all modes
     Event::ConfigureCamera camConfig;
@@ -157,8 +160,8 @@ class EnvironmentView : public BaseView
     DialogueScreen* dialogueScreen = nullptr;
     MenuHUDScreen* menuHUDScreen = nullptr;
 
-    BattleMenuComponent* battleMenuCmpt = nullptr;
-    PauseMenuComponent* pauseMenuCmpt = nullptr;
+    BattleMenu* battleMenuCmpt = nullptr;
+    PauseMenu* pauseMenuCmpt = nullptr;
 
     std::array<int, 2> bgMain;
     std::array<int, 3> bgSub;

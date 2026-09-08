@@ -18,7 +18,8 @@ void MainMenuView::init()
     }
 
     // setup music
-    musicCtrl->init((fatBasePath + "music/menus/velvetRoom/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
+    musicCtrl->init(
+        (fatBasePath + "music/menus/velvetRoom/aria_of_the_soul.pcm").c_str(), ae::q20_12_t{0}, ae::q20_12_t{164.940});
 
     // transition both screens from black
     for (int i = -16; i < 0; i++)
@@ -56,7 +57,7 @@ void MainMenuView::init()
     textMenu->configureText(TextConfig(textVideoBufferSub, &FONT_NAME, FONT_SIZE));
 
     // setup main menu
-    mainMenuCmpt = MainMenuComponent::getInstance();
+    mainMenuCmpt = MainMenu::getInstance();
     std::array<UIMenu*, 10> menus = {mainMenuCmpt};
     ae::BroadcastEvent(Event::ConfigureUIMenu{textMenu, menus});
     ae::BroadcastEvent(Event::ShowMenu{mainMenuCmpt});
@@ -203,7 +204,8 @@ ViewState MainMenuView::update()
     if (displayFog && frame % 4 == 0)
     {
         waveAngle += 50;
-        int angle = math.sin(waveAngle);
+        int angle = MathManager::GetInstance().sin(static_cast<ae::angle16_t>(waveAngle)).raw_value();
+
         int rotationSpeed = baseSpeed + ((angle * fluctuation) >> 12);
         currentRotation += rotationSpeed;
         bgSetRotateScale(bg[2], currentRotation, 256, 256);

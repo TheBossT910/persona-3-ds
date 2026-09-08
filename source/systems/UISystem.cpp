@@ -1,11 +1,13 @@
 #include "UISystem.hpp"
-#include "components/menus/BattleMenuComponent.hpp"
-#include "components/menus/MainMenuComponent.hpp"
-#include "components/menus/PauseMenuComponent.hpp"
+#include "components/menus/BattleMenu.hpp"
+#include "components/menus/MainMenu.hpp"
+#include "components/menus/PauseMenu.hpp"
 #include "components/screens/DialogueScreen.hpp"
 #include "components/screens/MenuHUDScreen.hpp"
 #include "core/globals.hpp"
 #include "events/GenericEvents.hpp"
+#include <aegis/ndsTypes.hpp>
+#include <aegis/types.hpp>
 
 void UISystem::Init()
 {
@@ -18,7 +20,7 @@ void UISystem::Init()
     musicCtrl->loadSFX(SFX_CANCEL);
 }
 
-void UISystem::Update(ae::fixed_t dt)
+void UISystem::Update(ae::q20_12_t dt)
 {
     // skip if nullptr or not active
     if ((activeMenu == nullptr) || !activeMenu->isActive)

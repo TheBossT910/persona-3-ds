@@ -12,7 +12,7 @@
 #include "events/GenericEvents.hpp"
 #include <aegis/system.hpp>
 
-#include "components/menus/BattleMenuComponent.hpp"
+#include "components/menus/BattleMenu.hpp"
 #include "controllers/MusicController.hpp"
 
 #include <algorithm>
@@ -62,7 +62,7 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
      *
      * @param dt Fixed-point delta time passed from the aegis engine loop (currently unused).
      */
-    void Update(ae::fixed_t /*dt*/) override;
+    void Update(ae::q20_12_t /*dt*/) override;
 
     /**
      * @brief ETL message handler that initializes and starts a new battle.
@@ -236,5 +236,5 @@ class BattleSystem : public ae::SystemRouter<BattleSystem, Event::ExecuteBattle>
     }
 
     MusicController* musicCtrl = nullptr;
-    BattleMenuComponent* battleMenuCmpt = nullptr;
+    BattleMenu* battleMenuCmpt = nullptr;
 };
