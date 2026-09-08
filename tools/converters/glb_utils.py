@@ -8,6 +8,7 @@ from PIL import Image
 
 MAX_16_BIT_INT = 32767
 MAGIC = b"MDL3"
+GRIT_PATH = "/opt/wonderful/thirdparty/blocksds/core/tools/grit/grit"
 
 # NDS GPU Commands
 FIFO_BEGIN = 0x40
@@ -273,7 +274,6 @@ def process_texture_img(gltf, image_index, tmp_dir):
         gltf: The GLTF object.
         image_index (int): The index of the image to process.
         tmp_dir (str): Temporary directory for intermediate files.
-        output_dir (str): Directory to save the final texture files.
     Returns:
         dict: A dictionary containing texture information (name, width, height, isRGBA).
     """
@@ -308,9 +308,7 @@ def process_texture_img(gltf, image_index, tmp_dir):
         )
 
     # Enforce NDS texture size constraints (power-of-two)
-    img = Image.open(temp_png_path).convert(
-        "RGBA"
-    )  # TODO do we need support for non RGBA?
+    img = Image.open(temp_png_path).convert("RGBA")
 
     target_w = min(1024, next_pow2(img.width))
     target_h = min(1024, next_pow2(img.height))
@@ -322,7 +320,7 @@ def process_texture_img(gltf, image_index, tmp_dir):
     # -gt: Texture mode | -gB16: 16-bit A1BGR555 | -gT!: set alpha-bit  | -ftb: Binary output | -fh!: No C header
     temp_grit_output_base = os.path.join(tmp_dir, texture_base_name)
     grit_cmd = [
-        "/opt/wonderful/thirdparty/blocksds/core/tools/grit/grit",  # TODO: shorten this monstrousity with env var or something
+        GRIT_PATH,
         temp_png_path,
         "-gb",
         "-gB16",
@@ -363,11 +361,10 @@ def process_texture_img(gltf, image_index, tmp_dir):
 
 
 # Core Functions
-def construct_texture_table(gltf, output_path):
+def construct_texture_table(gltf):
     """Constructs a texture table from the GLTF images and passes them to GRIT.
     Args:
         gltf: The GLTF object.
-        output_path (str): Path to the output MDL2 file.
     Returns:
         list: A list of texture data.
         list: A list of image binary data.
