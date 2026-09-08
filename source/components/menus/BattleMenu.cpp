@@ -80,8 +80,7 @@ void BattleMenu::loadSkillOptions(PersonaBase* persona)
 
     for (int i = 0; i < count; i++)
     {
-        MenuOption option = {
-            persona->skills[i]->name.c_str(), -1, MENU_BIND(BattleMenu, battleOptionSelected)};
+        MenuOption option = {persona->skills[i]->name.c_str(), -1, MENU_BIND(BattleMenu, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
