@@ -34,8 +34,6 @@ PauseMenu* PauseMenu::getInstance()
     return instance;
 }
 
-
-
 void PauseMenu::resetHook()
 {
     pauseMessage = "Pause";
